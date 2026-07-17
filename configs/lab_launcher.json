@@ -1,0 +1,15 @@
+{
+  "camera_id": 1,
+  "vision_port": 9871,
+  "aa_port": 9872,
+  "ws_port": 0,
+  "pipeline": "shm",
+  "aim_control": true,
+  "player_id": 0,
+  "theme_bg": "eva",
+  "auto_start": false,
+  "start_delay_ms": 650,
+  "auto_inject_dll": true,
+  "client_use_input_bridge": true,
+  "client_bridge_exclusive": false
+}

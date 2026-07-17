@@ -1,0 +1,64 @@
+﻿# =============================================================================
+# POLAR-RM (rm_custom_client) 鈥?Git ignore rules
+# Repo: https://github.com/lulunomaro/polar-rm-client
+# Only infrastructure; does not change application source.
+# =============================================================================
+
+# --- Python env / bytecode ---
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Local editor / agent scratch ---
+.claude/
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- OS junk ---
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# --- Runtime caches (regenerable) ---
+.wallpaper_cache/
+*.log
+
+# --- Temp / debug render dumps (do not version) ---
+tmp_render_checks/
+tmp_selfcheck/
+tmp_*/
+_backup_*/
+
+# --- Release archives (large; rebuild with tools/build_release.ps1) ---
+release/*.zip
+release/**/*.zip
+
+# --- User-imported wallpapers (local only) ---
+assets/wallpapers/user/
+
+# --- Large built-in video wallpapers (keep on disk, not in git) ---
+# Re-add with Git LFS later if you need them in the remote.
+assets/wallpapers/**/*.mp4
+assets/wallpapers/**/*.webm
+assets/wallpapers/**/*.mov
+assets/wallpapers/**/*.mkv
+assets/wallpapers/**/*.avi
+
+# --- Machine-local calibration data ---
+calibrations/*
+!calibrations/.gitkeep
+
+# --- Optional: ignore entire unpacked release tree under release/ ---
+release/POLAR-RM_Custom_Client_*/

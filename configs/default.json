@@ -1,0 +1,652 @@
+{
+  "version": 1,
+  "gui_mode": "PolarPanel",
+  "selected_category": "Combat",
+  "selected_module": "SpinMode",
+  "module_expanded": [],
+  "old_panels": {
+    "Combat": {
+      "x": 20.0,
+      "y": 66.0,
+      "expanded": true,
+      "dragged": false
+    },
+    "Movement": {
+      "x": 247.83600000000004,
+      "y": 66.0,
+      "expanded": false,
+      "dragged": false
+    },
+    "Vision": {
+      "x": 475.6720000000001,
+      "y": 66.0,
+      "expanded": true,
+      "dragged": false
+    },
+    "Strategy": {
+      "x": 703.5080000000002,
+      "y": 66.0,
+      "expanded": false,
+      "dragged": false
+    },
+    "System": {
+      "x": 931.3440000000002,
+      "y": 66.0,
+      "expanded": false,
+      "dragged": false
+    },
+    "Render": {
+      "x": 1159.1800000000003,
+      "y": 66.0,
+      "expanded": true,
+      "dragged": false
+    }
+  },
+  "new_panels": {
+    "Combat": {
+      "scroll": 0.0
+    },
+    "Movement": {
+      "scroll": 0.0
+    },
+    "Vision": {
+      "scroll": 0.0
+    },
+    "Strategy": {
+      "scroll": 0.0
+    },
+    "System": {
+      "scroll": 0.0
+    },
+    "Render": {
+      "scroll": 0.0
+    }
+  },
+  "dropdown_panels": {
+    "Combat": {
+      "expanded": true,
+      "scroll": 0.0
+    },
+    "Movement": {
+      "expanded": true,
+      "scroll": 0.0
+    },
+    "Vision": {
+      "expanded": true,
+      "scroll": 0.0
+    },
+    "Strategy": {
+      "expanded": true,
+      "scroll": 0.0
+    },
+    "System": {
+      "expanded": true,
+      "scroll": 0.0
+    },
+    "Render": {
+      "expanded": true,
+      "scroll": 0.0
+    }
+  },
+  "modules": {
+    "Scenario": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Mode": "LabDebug",
+        "Show Startup": true,
+        "Startup Style": "LiquidMenu",
+        "Mock Writes": true,
+        "Official Limits": false
+      }
+    },
+    "StartupVisual": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Background Mode": "VideoParallax",
+        "Wallpaper Profile": "VendingMachine4K",
+        "Motion Quality": "Balanced30",
+        "Glass Style": "LiquidGlass",
+        "Glass Strength": 1.0,
+        "Parallax Strength": 22.0,
+        "Background Zoom": 1.0,
+        "Dim Overlay": 0.28,
+        "Import Wallpaper": "Import Wallpaper",
+        "Reset Wallpaper": "Reset Wallpaper"
+      }
+    },
+    "MatchMode": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Mode": "RMUL3v3",
+        "Alliance": "Red",
+        "Second Step": true
+      }
+    },
+    "AllianceProfile": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Side": "Red",
+        "Mirror Tactical Map": true
+      }
+    },
+    "ConfigManager": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Profile": "default",
+        "Auto Save": true,
+        "Load On Start": true,
+        "Save Current": "Save Current",
+        "Reload Profile": "Reload Profile",
+        "Import Config": "Import Config"
+      }
+    },
+    "ArmorAutoAim": {
+      "enabled": true,
+      "keybind": "R",
+      "settings": {
+        "Mock Output": true,
+        "Fov": 85.0,
+        "Smooth": 0.28,
+        "Priority": "Distance",
+        "Lock Style": "White Outline",
+        "Draw Fov": true
+      }
+    },
+    "EliminationFX": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Preset": "Valorant Gaia",
+        "Element Visibility": "Preset",
+        "Team Theme": "Alliance",
+        "Sound Enabled": true,
+        "Sound Volume": 55.0,
+        "Scale": 1.0,
+        "Responsive Scale": "Auto",
+        "Anchor Policy": "Combat Focus",
+        "X Offset": 0.0,
+        "Y Offset": 0.0,
+        "Combo Window": 5.0,
+        "Evidence Mode": "Auto",
+        "Preview Sequence": "Normal 1-6",
+        "Preview FX": "Preview FX",
+        "Test Elimination": "Test Elimination"
+      }
+    },
+    "AudioFeedback": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Enabled": true,
+        "Module Toggle Sounds": true,
+        "Sound Theme": "Polar",
+        "UI Volume": 45.0,
+        "Preview Enable": "Preview Enable",
+        "Preview Disable": "Preview Disable",
+        "Preview Invalid": "Preview Invalid"
+      }
+    },
+    "EnergyAutoAim": {
+      "enabled": false,
+      "keybind": "G",
+      "settings": {
+        "Mock Output": true,
+        "Rune Type": "Auto",
+        "Predict": "Adaptive",
+        "Lead Time": 0.18,
+        "Fov": 58.0,
+        "Lock Style": "Rune Ring",
+        "Show Progress": true
+      }
+    },
+    "ArmorLock": {
+      "enabled": true,
+      "keybind": "B",
+      "settings": {
+        "Lock Point": "Center",
+        "Predict": 0.18,
+        "Heat Guard": true
+      }
+    },
+    "FireControlStub": {
+      "enabled": false,
+      "keybind": "None",
+      "settings": {
+        "Safety Lock": true,
+        "Max Rate": 8.0,
+        "Mode": "Manual"
+      }
+    },
+    "SpinMode": {
+      "enabled": false,
+      "keybind": "V",
+      "settings": {
+        "Direction": "Auto",
+        "Spin Speed": 420.0,
+        "Power Guard": true
+      }
+    },
+    "ChassisAssist": {
+      "enabled": false,
+      "keybind": "C",
+      "settings": {
+        "Power Limit": 70.0,
+        "Buffer Protect": true,
+        "Follow": "Gimbal"
+      }
+    },
+    "PowerGuard": {
+      "enabled": false,
+      "keybind": "None",
+      "settings": {
+        "Heat Warn": 180.0,
+        "Energy Warn": 20.0,
+        "Auto Limit": false
+      }
+    },
+    "CameraFeed": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Source": "Gestalt SHM",
+        "Camera ID": 1.0,
+        "WS Port": 0,
+        "Game PID": 0,
+        "Capture Width": 960.0,
+        "Capture Height": 540.0,
+        "Display Max FPS": 30.0,
+        "Display Max Width": 960.0,
+        "Mirror": false,
+        "SHM Native Size": true
+      }
+    },
+    "TongjiVisionBridge": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Vision Source": "Tongji",
+        "Listen": true,
+        "UDP Port": 9871.0,
+        "UDP Timeout": 250.0,
+        "Local Device": "AUTO",
+        "External Device": "AUTO",
+        "Local Model": "Tongji YOLOv5",
+        "Desktop Safe": true
+      }
+    },
+    "CameraCalibration": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Profile": "polar_webcam",
+        "Board Columns": 9.0,
+        "Board Rows": 6.0,
+        "Square Size": 25.0,
+        "Capture Chessboard": "Capture Chessboard",
+        "Solve Calibration": "Solve Calibration",
+        "Export Tongji YAML": "Export Tongji YAML"
+      }
+    },
+    "Armor3DESP": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Style": "Wireframe3D",
+        "Renderer": "GPU Auto",
+        "Show Prediction": true,
+        "Show Labels": true,
+        "Show Depth": true,
+        "Line Width": 2.0,
+        "Opacity": 0.82
+      }
+    },
+    "RobotOverlay": {
+      "enabled": true,
+      "keybind": "R",
+      "settings": {
+        "Armor Boxes": true,
+        "Robot ID": true,
+        "Distance": true,
+        "Color": "Threat",
+        "ESP Style": "3D Wire",
+        "3D Depth": 0.22,
+        "Predict Plates": true,
+        "Armor Count": 4,
+        "Radius M": 0.23,
+        "Predict Horizon": 0.06,
+        "Max Targets": 6.0,
+        "Only Secondary": true
+      }
+    },
+    "RadarOverlay": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "High Light": false,
+        "Fade": 0.65,
+        "Map": "Mini"
+      }
+    },
+    "MapMarker": {
+      "enabled": true,
+      "keybind": "M",
+      "settings": {
+        "Mark Type": "Defense",
+        "Send All": false,
+        "Repeat": 1
+      }
+    },
+    "TacticalMap": {
+      "enabled": true,
+      "keybind": "Tab",
+      "settings": {
+        "Map Size": "Compact",
+        "Chrome": "Full",
+        "Status Display": "LiquidAuto",
+        "Palette": "RM Tactical",
+        "Official Map": "RMUL 3v3 Official Map",
+        "Mirror Blue": true,
+        "Robot Dots": true,
+        "Map Marks": true,
+        "Radar Pulse": true,
+        "Opacity": 0.7000000000000001
+      }
+    },
+    "LiquidTacticalMap": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Pointer Style": "Triangle",
+        "Entity Color": "Team",
+        "Show Labels": true,
+        "Show Values": true,
+        "Dock Animation": "Fly"
+      }
+    },
+    "SentinelCommand": {
+      "enabled": false,
+      "keybind": "None",
+      "settings": {
+        "Posture": "Attack",
+        "Confirm Prompt": true
+      }
+    },
+    "AirSupport": {
+      "enabled": false,
+      "keybind": "None",
+      "settings": {
+        "Command": "Free",
+        "Require Confirm": true
+      }
+    },
+    "MatchTimer": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Show Stage": true,
+        "Show Scores": true,
+        "Pulse Last 30s": true
+      }
+    },
+    "BaseOutpostStatus": {
+      "enabled": false,
+      "keybind": "None",
+      "settings": {
+        "Own Base": true,
+        "Enemy Base": true,
+        "Outposts": true,
+        "Shield": true
+      }
+    },
+    "VictoryPointStatus": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Victory Points": true,
+        "Control Zone": true,
+        "Team Status": true
+      }
+    },
+    "EconomyPanel": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Gold": true,
+        "Tech Level": true,
+        "Radar Level": true
+      }
+    },
+    "ProjectileShop": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Ammo Type": "17mm",
+        "Mock Request": true,
+        "Show Cost": true
+      }
+    },
+    "ThermalPowerPanel": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Heat": false,
+        "Chassis Power": false,
+        "Buffer": false
+      }
+    },
+    "BuffTimeline": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Buffs": true,
+        "Special Mechanism": true,
+        "Timeline": true
+      }
+    },
+    "MQTTLink": {
+      "enabled": false,
+      "keybind": "None",
+      "settings": {
+        "Host": "127.0.0.1",
+        "Port": 3333,
+        "Auto Connect": false
+      }
+    },
+    "UDPVideo": {
+      "enabled": false,
+      "keybind": "None",
+      "settings": {
+        "Host": "127.0.0.1",
+        "Port": 3334,
+        "Reassemble": true
+      }
+    },
+    "SerialBridge": {
+      "enabled": false,
+      "keybind": "None",
+      "settings": {
+        "Port": "Stub",
+        "Baud": 115200,
+        "Mock Writes": true
+      }
+    },
+    "GestaltControl": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Inject Enabled": true,
+        "Use Input Bridge DLL": true,
+        "Exclusive Capture": false,
+        "Focus Game": false,
+        "Keep Client Focus": true,
+        "Mouse Sensitivity": 1.0,
+        "Inject Mouse": true,
+        "Inject Fire": false
+      }
+    },
+    "GestaltTelemetry": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Listen Attr Relay": true,
+        "Relay Port": 9840.0,
+        "Show Source Watermark": true
+      }
+    },
+    "HUD": {
+      "enabled": true,
+      "keybind": "H",
+      "settings": {
+        "Watermark": true,
+        "Module List": true,
+        "Dynamic Island": true,
+        "Target HUD": true,
+        "KeyBinds": true,
+        "Robot List": true,
+        "Status Cards": true,
+        "RM Indicators": true,
+        "Density": "Balanced",
+        "Visual Tone": "LiquidClean",
+        "Target Style": "BarOnly",
+        "Right Display": "ModuleListHud",
+        "ModuleList Style": "StatusBars",
+        "ModuleList Surface": "LiquidGlass",
+        "ModuleList Alignment": "Right",
+        "ModuleList Order": "Descending",
+        "Module Tags": "Category",
+        "Module Animation": "Slide"
+      }
+    },
+    "UIScale": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Auto Scale": true,
+        "High Res Optimize": true,
+        "Glass Quality": "Full",
+        "HUD Scale": 1.0,
+        "GUI Scale": 1.0,
+        "Animation Speed": 1.0,
+        "Reference Width": 1280.0,
+        "Reference Height": 720.0
+      }
+    },
+    "Crosshair": {
+      "enabled": false,
+      "keybind": "None",
+      "settings": {
+        "Style": "RM Dot",
+        "Size": 18.0,
+        "Heat Color": true
+      }
+    },
+    "ChassisGimbalIndicator": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Style": "Minimal",
+        "Show Angle": true,
+        "Show Mode": true,
+        "Size": 56.0,
+        "Smooth": 0.35
+      }
+    },
+    "ClickGui": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Mode": "PolarPanel",
+        "Scale": 1.0,
+        "Save Layout": true
+      }
+    },
+    "GimbalPower": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Show Voltage": true,
+        "Glow Alert": true,
+        "Warn Below": 18.0
+      }
+    },
+    "PowerLimit": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Show Limit": true,
+        "Limit": 80.0,
+        "Pulse Overrun": true
+      }
+    },
+    "SpeedLimit": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Show Speed": true,
+        "Limit": 420.0,
+        "Unit": "dps"
+      }
+    },
+    "Capacitor": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Show Bar": true,
+        "Warn": 25.0,
+        "Use Glow": true
+      }
+    },
+    "FrictionWheel": {
+      "enabled": true,
+      "keybind": "F",
+      "settings": {
+        "Show State": true,
+        "Spin Preview": true,
+        "Target RPM": 5500.0
+      }
+    },
+    "LockState": {
+      "enabled": true,
+      "keybind": "L",
+      "settings": {
+        "Show Lock": true,
+        "Lock Source": "Vision",
+        "Pulse Locked": true
+      }
+    },
+    "BuffStatus": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "Small Buff": true,
+        "Large Buff": true,
+        "Anti Rotation": true
+      }
+    },
+    "ProjectileAllowance": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "17mm": true,
+        "42mm": true,
+        "Warn Low": true
+      }
+    },
+    "JumpPTEWheelLES": {
+      "enabled": true,
+      "keybind": "None",
+      "settings": {
+        "JUP": true,
+        "PTE": true,
+        "WHE": true,
+        "LES": true
+      }
+    }
+  },
+  "profile": "default"
+}

@@ -1,0 +1,4 @@
+﻿TongjiSuperPower sp_vision_25 OpenVINO armor model weights (yolov5.xml / yolov5.bin).
+Upstream project: 同济 sp_vision_25 (MIT License, Copyright 2025 TongjiSuperPower).
+These two files are vendored for Local Vision / armor box detection packaging.
+Runtime path in current code still resolves to workspace parent 同济自瞄; this copy is for git distribution only until paths are wired.

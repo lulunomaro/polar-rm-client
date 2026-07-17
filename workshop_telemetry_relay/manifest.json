@@ -1,0 +1,15 @@
+{
+  "sdk_version": 1,
+  "name": "POLAR Gestalt Telemetry Relay",
+  "version": "1.0.0",
+  "author": "POLAR Lab",
+  "description": "Relays Gestalt hud:attribute_update (battle/global/base/playerBattle) to UDP 127.0.0.1:9840 as polar.gestalt.attrs.v1 for rm_custom_client. Data root = game Attr system.",
+  "compatible_maps": [
+    "L_Traning",
+    "L_Map2026",
+    "L_MapRMUL2026",
+    "L_MapRMUL2026_IF",
+    "L_Map20261V1"
+  ],
+  "entry": "index.html"
+}

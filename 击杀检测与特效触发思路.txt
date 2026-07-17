@@ -1,0 +1,448 @@
+================================================================================
+POLAR-RM Custom Client — 击杀检测与特效触发思路（完整设计说明）
+================================================================================
+面向：需要复现 / 重写 / 让其他模型对照的开发者
+代码主目录：rm_custom_client/
+关键实现文件：
+  - rm_client/combat_events.py     战果事件模型 + 官方裁判解析 + 视觉灭灯判定
+  - rm_client/kill_fx.py           GD656 击杀 HUD 调度与绘制
+  - rm_client/ui/polar_app.py      每帧串联：收事件 → accept → trigger → draw
+  - assets/kill_fx/gd656/          纹理 / 音效资源
+  - README_战果判定与阵营.md        产品向简版说明
+
+本文目标：把「如何判定击杀」和「如何出现特效」拆成可实现的状态机与管线，
+而不是只写「检测到死了就播动画」。
+
+--------------------------------------------------------------------------------
+一、总原则（为什么这样设计）
+--------------------------------------------------------------------------------
+
+1. 双证据源，不互相污染
+   - 官方裁判链路（MQTT / 裁判协议 / 血量归零）→ 高置信、可确认
+   - 视觉链路（同济装甲灯态：亮 → 灭）→ 无裁判时的桌面联调 / 自瞄联调
+   - 用 Evidence Mode 明确谁说了算，避免「视觉误触 + 官方再触」双播
+
+2. 事件与表现解耦
+   - 检测层只产出 CombatEvent（结构化事件）
+   - 表现层 KillFxRenderer 只消费事件（trigger / draw）
+   - UI 层 polar_app 负责路由、阵营过滤、计数与 Dynamic Island 文案
+
+3. 视觉判定宁可漏、不可乱
+   - 必须先稳定识别为敌方亮灯，再持续灭灯
+   - 单帧灭灯 / 遮挡 / 低置信 / 曝光突变 → 一律不触发
+   - 亮灯恢复 → 重置该目标轨道，防止「灭一下又亮」误报
+
+4. 特效忠于 GD656 资源语义
+   - Preset 决定元素组合（Scrolling / Combo / Card / BF / Valorant…）
+   - 布局按分辨率响应式缩放，锚点可选 Combat Focus / 底部原版
+   - 特效内部不叠 POLAR 液态玻璃，避免污染原皮肤
+
+5. 安全边界
+   - 击杀逻辑只驱动显示、音效、mock 建议
+   - 不发送真实发射 / 云台控制指令
+
+--------------------------------------------------------------------------------
+二、核心数据：CombatEvent
+--------------------------------------------------------------------------------
+
+位置：combat_events.py
+
+字段（frozen dataclass）：
+  kind         : "elimination" | "death" | "objective" | …
+  source       : "referee" | "referee_health" | "vision" | "team_byte_block"
+                 | "preview" | …
+  confirmed    : bool          # 是否已确认（本实现里视觉/裁判触发均为 True）
+  timestamp    : float         # time.perf_counter() 本地时基
+  victim_id    : int
+  killer_id    : int
+  detail       : str           # 人类可读细节，如 vision_confirmed_lamp_off
+  kill_type    : NORMAL | HEADSHOT | EXPLOSION | CRIT | ASSIST | DESTROY_VEHICLE
+  combo        : int           # 事件自带连杀数；0 时由 KillFx 按时间窗累计
+  victim_name  : str
+  distance_m   : float
+  score_delta  : int
+  tags         : tuple[str, …]
+
+设计要点：
+  - 检测端尽量填满字段；特效端对缺失字段有默认（kill_type→NORMAL）
+  - kind=death 表示本机阵亡：特效层会清空连杀，一般不播击杀图标
+  - kind=elimination 才是「我方/本机侧击杀」展示主路径
+
+--------------------------------------------------------------------------------
+三、证据模式 Evidence Mode（路由策略）
+--------------------------------------------------------------------------------
+
+模块：EliminationFX → Evidence Mode
+
+  Auto
+    - 官方数据「新鲜」时：只信裁判（不跑视觉击杀）
+    - 官方超时 / 不在线：改用视觉灭灯判定
+    - 新鲜度由 OfficialMatchFeed.is_fresh() 判断
+
+  Referee Only
+    - 只接受裁判相关 source
+    - process_vision_kill_events 直接 return
+
+  Vision Only
+    - 只接受 source=vision / preview
+    - 官方事件在 accept_combat_event 里被滤掉
+
+实现位置：
+  polar_app.process_vision_kill_events()
+  polar_app.accept_combat_event()
+
+建议实现时永远先做「证据模式过滤」，再改计数与特效，顺序不要反。
+
+--------------------------------------------------------------------------------
+四、官方裁判击杀（高置信路径）
+--------------------------------------------------------------------------------
+
+类：OfficialMatchFeed（combat_events.py）
+
+输入形态（多路并存）：
+  1) 官方 Event 字段（protobuf 精简解码，不引入完整 proto 依赖）
+  2) 单位血量序列：从 >0 变为 0 → referee_health / health_zero
+  3) 自定义字节块：
+       - 文本协议 POLAR_KILL/1|…
+       - JSON 协议 polar.kill.v1
+
+处理要点：
+  A. 轻量 protobuf 解码
+     - 只解析 varint / 定长 / length-delimited
+     - 失败即停，不抛全局异常
+
+  B. 血量边沿检测（_health_transitions）
+     - 必须 previous 存在，且 before>0、current==0
+     - 跳过本方槽位（own_count），只报敌方归零
+     - 用阵营 + 槽位映射 victim_id（红/蓝 id 规则与比赛协议一致）
+
+  C. 去重 _dedupe
+     - key = (kind, victim_id, killer_id)
+     - 2 秒内相同 key 只接受一次
+     - 防止 MQTT 重传 / 多话题重复
+
+  D. last_official_event_at
+     - 有有效官方事件时刷新
+     - 供 Auto 模式判断「裁判是否在说话」
+
+输出：list[CombatEvent]，再进入 accept_combat_event。
+
+--------------------------------------------------------------------------------
+五、视觉击杀判定（灭灯状态机）——本方案核心
+--------------------------------------------------------------------------------
+
+类：VisionKillDetector（combat_events.py）
+调用：polar_app.process_vision_kill_events()
+输入：当前帧 detections（装甲观测列表）+ alliance + 可选帧亮度
+
+5.1 为什么看「灯」而不是「框消失」
+
+  装甲框消失的原因太多：
+    - 遮挡、出画、置信度掉、跟踪 id 切换、预测框消失
+  灯态是 RM 装甲语义上更接近「被击中熄灭」的信号：
+    - 先稳定亮（红/蓝）
+    - 再连续灭（extinguish）并保持足够时间
+
+5.2 每个目标一条轨道 _VisionTrack
+
+  key = f"{armor_id}:{label}"   # 同一物理装甲尽量稳定
+
+  字段：
+    lit_at            最近一次确认为敌方亮灯的时间
+    extinguish_start  进入灭灯累计的起点
+    extinguish_frames 连续灭灯帧数
+    triggered         本轮是否已触发过（防连发）
+
+5.3 每帧对单条装甲的处理逻辑（顺序严格执行）
+
+  ① 跳过预测框 predicted=True
+     （预测不是观测，不能当证据）
+
+  ② color 归一化到 red / blue / extinguish
+     其他 unknown 忽略
+
+  ③ 阵营过滤：亮灯颜色 == 本机 alliance → 忽略
+     （只判定敌方被灭，不判定友军）
+
+  ④ 置信度 confidence < 0.70 → 忽略
+     （低置信灭灯极易误报）
+
+  ⑤ 若 color 为 red/blue（敌方亮灯）：
+       lit_at = now
+       清空 extinguish_start / frames
+       triggered = False
+       continue
+     含义：亮灯即「重置灭灯进度」，并重新允许下一次击杀
+
+  ⑥ 若 color 为 extinguish（灭灯观测）：
+       必须满足全部前置条件，否则清空灭灯累计：
+         - lit_at > 0（曾经亮过）
+         - now - lit_at <= 2.0s（亮→灭时间窗，过久无效）
+         - now 不在曝光抑制窗内（见 5.4）
+         - light_strength <= 0.38（灯条确实暗，不是误标 extinguish）
+
+       通过后：
+         - 首次进入灭灯：extinguish_start = now
+         - extinguish_frames += 1
+
+  ⑦ 触发条件（同时满足）：
+         - 尚未 triggered
+         - extinguish_frames >= 5
+         - now - extinguish_start >= 0.45 秒
+
+       触发后：
+         triggered = True
+         产出 CombatEvent(
+           kind=elimination,
+           source=vision,
+           confirmed=True,
+           detail=vision_confirmed_lamp_off,
+           victim_id=armor_id,
+         )
+
+5.4 曝光 / 全局亮度防抖
+
+  输入 frame_luminance（相机帧下采样平均亮度，约 /255）
+  若相邻帧 |Δluminance| > 0.20：
+    开启 exposure_hold 约 0.40s
+  抑制窗内不允许累计灭灯
+
+  原因：AE 突然变暗会让整屏灯态乱跳，像「全体熄灭」。
+
+5.5 不会触发的典型情况（验收时要覆盖）
+
+  - 从未亮过直接灭
+  - 亮了超过 2s 才灭
+  - 只灭 1～4 帧
+  - 灭灯不足 0.45s
+  - 灭灯时 light_strength 仍偏亮
+  - 友军灯色
+  - 预测框 / 低置信
+  - 曝光突变抑制窗内
+  - 同一目标 triggered 后尚未重新亮灯
+
+5.6 与 Auto 模式的协作
+
+  process_vision_kill_events：
+    if Evidence=Referee Only → return
+    if Evidence=Auto 且 official_feed.is_fresh() → return
+    否则才跑 VisionKillDetector
+
+  即：裁判在线时，视觉击杀闭嘴，避免双证据双特效。
+
+--------------------------------------------------------------------------------
+六、事件接纳 accept_combat_event（唯一入口）
+--------------------------------------------------------------------------------
+
+位置：polar_app.accept_combat_event
+
+步骤：
+  1) Evidence Mode 二次过滤（source 维度）
+  2) 统计：
+       elimination + vision → visual_kill_count++
+       elimination + 其他   → referee_kill_count++
+       elimination          → kill_streak++
+       death                → kill_streak = 0
+  3) 状态栏 / Dynamic Island 文案：
+       vision → "VISION CONFIRMED"
+       其他   → "Official combat event" / Referee…
+  4) 若 EliminationFX 模块 enabled：
+       kill_fx.trigger(event, combo_window, sound, volume, preset, visibility)
+
+预览 / 测试：
+  Test Elimination / Preview FX → 注入本地 preview 事件，走同一 accept 路径
+  （保证预览与真触发同构）
+
+--------------------------------------------------------------------------------
+七、特效层：从事件到画面（KillFxRenderer）
+--------------------------------------------------------------------------------
+
+7.1 触发 trigger(event)
+
+  - 仅处理 elimination / death
+  - death：combo_count=0，return（不播击杀皮）
+  - elimination：
+      * 连杀窗 combo_window（默认 5s）内累加 combo_count
+      * 超时重开为 1
+      * 事件自带 combo>0 时优先用事件 combo
+  - 构造 TriggerContext（kill_type, combo, victim…）
+  - 按 Preset + Element Visibility 得到元素列表 elements
+  - 对各子渲染器 trigger：
+      scrolling / scrolling_bf5 / combo / card / card_bar
+      battlefield1 / valorant / companion
+  - 可选播音：按 kill_type + combo + preset 选 ogg
+
+7.2 元素组合 elements_for_preset
+
+  - Preset 映射默认元素表（与 GD656 一致）
+  - Visibility：
+      Preset     → 严格预设
+      Icons Only → 只保留图标类元素
+      Full HUD   → 预设 + kill_feed / combo_subtitle / score / bonus
+
+7.3 每帧 draw（与 trigger 分离）
+
+  调用：polar_app.draw_elimination_fx（在战斗 paint 路径）
+
+  - 用当前时间 now 驱动各子动画生命周期
+  - KillFxLayout：
+      * 分辨率响应式 scale（1080 基准，2K 约 1.5x 等）
+      * Anchor：Combat Focus（偏下中）/ Original / Manual
+      * 锚点做指数平滑，避免 resize / Safe Area 跳变
+  - Team Theme：Alliance → 红/蓝映射到 CT Blue / T Gold 等皮肤侧
+  - 各子渲染器按 elements 绘制；互不抢事件，只共享 layout 与时间
+
+7.4 资源
+
+  assets/kill_fx/gd656/
+  - 纹理帧 / 音效命名遵循上游 GD656
+  - 不在特效层叠 POLAR 字样或液态玻璃
+
+--------------------------------------------------------------------------------
+八、整帧时序（建议实现时照抄顺序）
+--------------------------------------------------------------------------------
+
+  on_tick（逻辑帧）
+    ├─ 吃相机 / 视觉结果
+    ├─ consume_official_messages → OfficialMatchFeed → accept_combat_event*
+    ├─ process_vision_kill_events → VisionKillDetector → accept_combat_event*
+    ├─ 状态同步、registry.tick
+    └─ 按 combat_target_fps 请求重绘
+
+  paint / paintGL（绘制帧）
+    ├─ 底图（GPU 图传 / 合成）
+    ├─ draw_rm_hud（瞄准、地图、遥测…）
+    ├─ draw_elimination_fx → kill_fx.draw   ← 特效叠在 HUD 之上
+    └─ ClickGUI 等上层 UI
+
+* accept 内可能 kill_fx.trigger：只改内部动画状态，真正像素在 draw 产生。
+
+--------------------------------------------------------------------------------
+九、推荐配置语义（产品层）
+--------------------------------------------------------------------------------
+
+EliminationFX 模块关键项：
+  Enabled
+  Evidence Mode     Auto | Referee Only | Vision Only
+  Preset            Default Scrolling / Combo / Card / BF / Valorant…
+  Element Visibility  Preset | Icons Only | Full HUD
+  Team Theme        Alliance | CT Blue | T Gold | …
+  Combo Window      连杀时间窗（秒）
+  Sound Enabled / Sound Volume
+  Anchor Policy     Combat Focus | Original | Manual
+  Scale / X Offset / Y Offset / Responsive Scale
+  Test Elimination  本地注入一条事件做联调
+
+AllianceProfile.Side：
+  视觉击杀过滤 + 地图敌我色 + Team Theme=Alliance 时的映射
+
+--------------------------------------------------------------------------------
+十、实现检查清单（给「重写的人」）
+--------------------------------------------------------------------------------
+
+检测：
+  [ ] 有 CombatEvent 统一结构，不散落 dict
+  [ ] 视觉轨道按 armor_id+label 跟踪
+  [ ] 亮灯重置、灭灯累计、triggered 防连发
+  [ ] 帧数 + 时间双阈值（>=5 帧 且 >=0.45s）
+  [ ] light_strength / 置信度 / 阵营 / 预测框过滤
+  [ ] 曝光突变抑制
+  [ ] 官方去重 2s
+  [ ] Evidence Mode 在视觉处理与 accept 两处都生效
+
+特效：
+  [ ] trigger 与 draw 分离
+  [ ] combo 时间窗
+  [ ] preset → elements 表驱动
+  [ ] 分辨率 scale 与锚点策略
+  [ ] death 清连杀、不播击杀皮
+  [ ] 音效按类型/连杀/预设选文件
+
+联调：
+  [ ] Test Elimination 与真触发同路径
+  [ ] Auto 下裁判在线时视觉不抢特效
+  [ ] 只显示、不发实弹指令
+
+--------------------------------------------------------------------------------
+十一、常见错误（GPT 版经常踩的）
+--------------------------------------------------------------------------------
+
+1. 「框没了 = 击杀」
+   → 遮挡/出画误报爆炸；必须亮→灭状态机
+
+2. 只看单帧 extinguish
+   → 噪声一帧就播；必须帧数+时间
+
+3. 无 lit_at 直接灭
+   → 开局未识别亮灯也会报；必须先敌方亮灯
+
+4. 官方与视觉同时触发
+   → 必须 Evidence 仲裁 + 可选去重
+
+5. 特效写死在检测里
+   → 无法换皮肤/预览；必须 Event → Renderer
+
+6. 用墙钟 datetime 驱动动画
+   → 暂停/跳帧乱；用 perf_counter 与绘制同一时基
+
+7. 友军灯色不过滤
+   → 己方装甲闪烁当击杀
+
+8. 把预测框当观测
+   → 自瞄预测「灭」假阳性
+
+--------------------------------------------------------------------------------
+十二、最小可复现伪代码
+--------------------------------------------------------------------------------
+
+  # 视觉每帧
+  for armor in detections:
+      if predicted or conf < 0.7: continue
+      if color in (red,blue) and color == my_alliance: continue
+      track = tracks[id]
+      if color in (red,blue):
+          track.lit(); continue
+      if color == extinguish and track.was_lit_recently() and not exposure_hold:
+          track.count_extinguish()
+          if track.frames>=5 and track.duration>=0.45 and not track.fired:
+              track.fired = True
+              emit CombatEvent(elimination, source=vision, ...)
+
+  # 接纳
+  if evidence_allows(event):
+      update_counters(event)
+      kill_fx.trigger(event)
+
+  # 绘制
+  kill_fx.draw(painter, w, h, preset, ...)
+
+--------------------------------------------------------------------------------
+十三、文件索引（改代码时从这里跳）
+--------------------------------------------------------------------------------
+
+  combat_events.py
+    CombatEvent
+    OfficialMatchFeed.ingest / _health_transitions / _dedupe
+    VisionKillDetector.process / _VisionTrack
+
+  polar_app.py
+    process_vision_kill_events
+    accept_combat_event
+    draw_elimination_fx
+    consume_official_messages（官方入口，内部走到 feed）
+
+  kill_fx.py
+    KillFxRenderer.trigger / draw / elements_for_preset
+    KillFxLayout.create / responsive_factor
+    各 ScrollingRenderer / ComboRenderer / Card… / Valorant…
+
+  model.py
+    EliminationFX 模块设置项定义
+
+  README_战果判定与阵营.md
+    产品向短说明
+
+================================================================================
+文档版本：与 openzenuicodexver / rm_custom_client 当前实现一致
+用途：给 GPT / 同事对照重写时「抄思路不抄歪」
+================================================================================

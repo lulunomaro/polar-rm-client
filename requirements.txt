@@ -1,0 +1,9 @@
+PySide6
+opencv-python
+openvino
+numpy
+paho-mqtt
+pyserial
+PyYAML>=6.0
+# 完整同济 Python 管线（sp_vision_py）额外依赖；onnxruntime 可选
+onnxruntime>=1.16.0
