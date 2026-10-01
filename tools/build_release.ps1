@@ -228,6 +228,49 @@ if ($venvProbeExit -ne 0) {
            "requirements-build.txt; do NOT just re-run the build.")
 }
 Write-Host ("  [build-env] .venv OK (python " + ($venvProbe | Select-Object -Last 1) + ")")
+# 解释器活着**不等于**依赖装齐了。一个只有 PyInstaller、没有 PySide6 的 venv
+# 完全能通过上面那两步，然后要等到 PyInstaller 分析到某个 import 时才炸 ——
+# 那时候已经跑完了源码暂存与哈希校验，报错还指向一个包名，
+# 而根因（构建环境没按 requirements.txt 装）离现场很远。
+#
+# 所以这里再验一次：把运行时那几个包挨个 import 一遍，缺哪个直接点名。
+# 这一步很便宜（import 已经缓存过大部分），但把"环境没装全"从
+# "跑到一半才炸"变成"第一条就说清楚缺哪个包"。
+# 用临时 .py 文件，而不是 `python -c "<一长串>"`。
+# 第三种写法了，三种都踩过：
+#   1. `-c @"..."@`        —— here-string 不能当行内参数，报错还指着 $python；
+#   2. `-c '...双引号...'`  —— PowerShell 拼原生命令行时会**吃掉**双引号，
+#                             Python 收到的是 names=(PySide6,cv2,...)，SyntaxError；
+#   3. PS 单引号里写 `''`   —— 能过，但嵌套引号让人读两遍才敢确认。
+# 写文件只有一个转义要处理，而且这段会随发布脚本一起被 review，值得这点啰嗦。
+$depCheckPy = Join-Path ([System.IO.Path]::GetTempPath()) ("polar-build-env-check-" + [guid]::NewGuid().ToString("N") + ".py")
+@"
+import importlib.util as u
+names = ('PySide6', 'cv2', 'numpy', 'openvino', 'paho', 'serial')
+missing = [n for n in names if u.find_spec(n) is None]
+print('MISSING:' + ','.join(missing) if missing else 'ALL_PRESENT')
+"@ | Set-Content -LiteralPath $depCheckPy -Encoding UTF8
+$previousErrorAction = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+$depProbe = & $python $depCheckPy 2>&1
+$depExit = $LASTEXITCODE
+$ErrorActionPreference = $previousErrorAction
+Remove-Item -LiteralPath $depCheckPy -Force -ErrorAction SilentlyContinue
+if ($depExit -ne 0) {
+    throw ("Build environment is broken: `.venv` interpreter cannot run an import check`n" +
+           "  probe output: $depProbe`n" +
+           "  Recreate .venv from requirements.txt + requirements-build.txt.")
+}
+if ($depProbe -match '^MISSING:(.+)$') {
+    $miss = $Matches[1] -split ',' | Where-Object { $_ }
+    throw ("Build environment is incomplete: `.venv` is missing " + $miss.Count +
+           " runtime package(s): " + ($miss -join ", ") + "`n" +
+           "  A .venv with PyInstaller but no PySide6 passes the interpreter check,`n" +
+           "  then fails deep inside PyInstaller with a bare ImportError.`n" +
+           "  Install requirements.txt into .venv (runtime) plus requirements-build.txt`n" +
+           "  (PyInstaller), then retry.")
+}
+Write-Host "  [build-env] runtime deps OK"
 
 # 资源参数现在改成非 Mandatory，所以**这里**才校验给没给。
 # 每个都报清楚是哪个参数、要给什么 —— 报错要指向下一步该做什么，

@@ -160,6 +160,49 @@ def test_probe_suppresses_terminating_error() -> None:
           "没看到 if ($venvProbeExit -ne 0)")
 
 
+def test_probe_also_checks_runtime_dependencies() -> None:
+    """解释器活着**不等于**依赖装齐了。
+
+    一个只有 PyInstaller、没有 PySide6 的 venv 完全能通过"文件在 + 解释器能跑"
+    两步，然后要等到 PyInstaller 分析到某个 import 时才炸 —— 那时候源码暂存
+    与哈希校验都跑完了，报错还只给一个包名，根因离现场很远。
+
+    本机实测就是这个场景：重建 venv + 装 PyInstaller 之后，探测报
+    "venv OK"，而实际上 6 个运行时包一个都没有。现在它报：
+
+        Build environment is incomplete: `.venv` is missing 6 runtime package(s):
+        PySide6, cv2, numpy, openvino, paho, serial
+
+    并说明为什么不在这里拦（会跑到 PyInstaller 深处才炸）。
+    """
+    text = _read()
+    for name in ("PySide6", "cv2", "numpy", "openvino", "paho", "serial"):
+        check(f"依赖检查覆盖 {name}", f"'{name}'" in text, f"脚本里找不到 '{name}'")
+
+    check("依赖检查排在解释器探测之后",
+          text.find("$depCheckPy") > text.find("$venvProbe = & $python"),
+          "依赖检查没排在探测之后")
+    check("依赖检查也降了 ErrorActionPreference（否则 import 报错直接终止）",
+          text.find("$ErrorActionPreference = \"Continue\"",
+                    text.find("$depCheckPy")) > text.find("$depCheckPy"),
+          "依赖检查前没降优先级")
+    check("缺包时报的是**具体缺哪几个**，不是笼统一句",
+          "runtime package(s): " in text and "$miss -join" in text,
+          "没看到逐个点名")
+    check("解释了为什么不在别处拦（避免只看到 ImportError）",
+          "fails deep inside PyInstaller" in text, "缺少'为什么会这样'的说明")
+
+    # 临时 .py 文件而不是 `python -c "<长串>"`：PowerShell 拼原生命令行时会吃掉
+    # 双引号，Python 收到的是 names=(PySide6,cv2,...) → SyntaxError。
+    # 三种写法都踩过（here-string 当行内参数 / 双引号被吃 / 单引号嵌套），
+    # 写文件只剩一个转义要处理。
+    check("依赖检查用临时 .py 文件（绕开 PowerShell 原生命令行的引号处理）",
+          "$depCheckPy = Join-Path" in text and "Set-Content -LiteralPath $depCheckPy" in text,
+          "没找到临时文件写法")
+    check("临时文件用完会删掉", "Remove-Item -LiteralPath $depCheckPy" in text,
+          "临时文件没清理，会在 %TEMP% 里越积越多")
+
+
 def test_env_probe_runs_before_first_interpreter_use() -> None:
     """核心断言：探测必须在第一次**真正使用**解释器之前。
 
@@ -227,37 +270,80 @@ def test_old_duplicate_check_removed() -> None:
 
 
 def test_probe_would_catch_a_dead_interpreter() -> None:
-    """拿本机真实的坏 .venv 验证探测逻辑本身有效。"""
-    python = ROOT / ".venv" / "Scripts" / "python.exe"
-    if not python.is_file():
-        check("本机没有 .venv，跳过实机验证", True, "没有坏 venv 可测")
-        return
+    """自己造一个"文件在但解释器是死的"的 venv，验探测逻辑本身有效。
 
-    # 完全复刻 build_release.ps1 里的探测两行
+    原来的写法是"拿本机真实的坏 .venv 测"。那条有个隐患：
+    **它把断言建立在本机状态上**。本轮重建了 .venv 之后它立刻变红 ——
+    "本机 exit=0"，可这不是代码错了，是机器状态变了。
+
+    一条会随机器状态变红变绿的测试，等于把"这台机器现在恰好这样"写成了断言。
+    别人在新机器上跑，它要么红（venv 好的话），要么跳过（没 venv 的话）——
+    两种都说明它其实什么都没守住。
+
+    现在自造场景：一个 `python.exe` 是**文本文件**（不是 PE），
+    路径存在、扩展名对、但执行必然失败 —— 这正是"base 解释器被删/被移走"
+    之后 venv 里剩下的那种东西（Windows 上 venv 的 python.exe 是个转发器，
+    base 没了它就只是个指向空处的壳）。
+    """
+    import shutil
+    import subprocess
+    import tempfile
+
+    fake_root = Path(tempfile.mkdtemp(prefix="fake_dead_venv_"))
+    try:
+        scripts = fake_root / "Scripts"
+        scripts.mkdir()
+        python = scripts / "python.exe"
+        # 内容不是有效的 Windows 可执行文件
+        python.write_text("this is not a PE image", encoding="ascii")
+
+        check("造出来的假解释器：文件确实在（所以 Test-Path 会通过）",
+              python.is_file(), str(python))
+
+        proc = subprocess.run(
+            [str(python), "-c", "import sys; print(sys.version_info[:2])"],
+            capture_output=True, text=True, errors="replace",
+        )
+        ran = True
+        detail = (proc.stdout + proc.stderr)[:120]
+        exit_code = proc.returncode
+    except OSError as exc:
+        # WinError 216「该版本的 %1 与你运行的 Windows 版本不兼容」——
+        # 这**就是**我们想造的场景，只是 Python 把它抛成异常而不是返回退出码。
+        # PowerShell 那边拿到的是一个非零 exit，两种表现形式对"跑不起来"
+        # 这件事的判断是一致的。所以这里不该把它当测试失败。
+        ran = False
+        detail = f"{type(exc).__name__}: {exc}"
+        exit_code = None
+    finally:
+        shutil.rmtree(fake_root, ignore_errors=True)
+
+    check("文件在但跑不起来 —— 这正是旧 Test-Path 检查抓不到的那种情况",
+          (not ran) or exit_code != 0, f"ran={ran} exit={exit_code} {detail}")
+    check("失败方式是明确可判定的（异常或非零退出码，二者必居其一）",
+          (not ran) or exit_code != 0,
+          f"ran={ran} exit={exit_code}")
+
+
+def test_probe_passes_on_the_real_venv() -> None:
+    """本机 .venv 探测通过时，环境自检应当整体放行。
+
+    与上一条互补：上一条造"死"的场景，这条用真的。
+    注意断言只写"自检逻辑会放行"，**不**断言本机装全了依赖 ——
+    那是环境状态，不是代码性质。
+    """
     import subprocess
 
+    python = ROOT / ".venv" / "Scripts" / "python.exe"
+    if not python.is_file():
+        check("本机没有 .venv，跳过", True, "没有 venv 可测")
+        return
     proc = subprocess.run(
         [str(python), "-c", "import sys; print('%d.%d' % sys.version_info[:2])"],
         capture_output=True, text=True, errors="replace",
     )
-    check(
-        f"探测能区分'文件在'与'解释器活着'（本机 exit={proc.returncode}）",
-        (proc.returncode == 0) != python.is_file() or proc.returncode != 0,
-        f"文件在={python.is_file()} exit={proc.returncode}",
-    )
-    if proc.returncode != 0:
-        check(
-            "坏解释器的输出里带有 base 路径线索（No Python at '...'）",
-            "No Python at" in (proc.stdout + proc.stderr),
-            f"实际输出 {(proc.stdout + proc.stderr)[:120]!r}",
-        )
-        check(
-            "这正是旧 Test-Path 检查抓不到的那种情况",
-            python.is_file(),
-            "如果文件都不在，那旧检查本来就有效；文件在但跑不起来才是 bug",
-        )
-    else:
-        check("本机 .venv 其实是好的（探测通过）", proc.returncode == 0)
+    check(f"本机 .venv 的解释器能跑（exit={proc.returncode}）",
+          proc.returncode == 0, (proc.stdout + proc.stderr)[:120])
 
 
 def main() -> int:
@@ -266,10 +352,12 @@ def main() -> int:
         test_env_probe_runs_before_any_other_work,
         test_asset_params_are_not_mandatory,
         test_probe_suppresses_terminating_error,
+        test_probe_also_checks_runtime_dependencies,
         test_env_probe_runs_before_first_interpreter_use,
         test_probe_actually_executes_the_interpreter,
         test_old_duplicate_check_removed,
         test_probe_would_catch_a_dead_interpreter,
+        test_probe_passes_on_the_real_venv,
     ]
     for test in tests:
         print(f"\n--- {test.__name__} ---")
