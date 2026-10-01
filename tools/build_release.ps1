@@ -403,6 +403,19 @@ print('polar spec OK: %d segments, %d roles, %d warnings'
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\polar_selftest_test.py") "polar_selftest" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\polar_startup_test.py") "polar_startup" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\api_freeze_test.py") "api_freeze" 180 $testLogRoot
+        # ---- 2026-09 补登记 ----
+        # 这几个 suite 之前在 tools/verify_all.py 里注册了、这里没有 ——
+        # 于是"发布前跑一遍"这道闸门**从来没跑过它们**。
+        # 是 tests/docs_and_tests_test.py 报出来的（它专门比对两个注册表的一致性）：
+        # 只在一个地方注册 = 另一半的失败没人看得见。两处必须同步改。
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\encode_invariant_attack_test.py") "encode_invariant_attack" 180 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\spin_readback_test.py") "spin_readback" 180 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\settings_access_test.py") "settings_access" 180 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\test_suite_selfcheck.py") "suite_selfcheck" 180 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\polar_link_snapshot_test.py") "polar_link_snapshot" 180 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\overlay_write_guard_test.py") "overlay_write_guard" 180 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\protocol_crc_test.py") "protocol_crc" 180 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\udp_transport_test.py") "udp_transport" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\field_candidate_test.py") "field_candidate" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\smoke_test.py") "ui_backend_regression" 300 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\gpu_compositor_test.py") "gpu_compositor" 180 $testLogRoot

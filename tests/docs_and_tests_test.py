@@ -431,26 +431,21 @@ def _build_release_suites() -> set[str]:
 #: 一键重写（改了会打印改了什么）。
 KNOWN_UNREGISTERED = {
     "verify_all": (
-        "combat_events_test.py", "config_store_io_test.py", "control_loop_test.py",
-        "docs_and_tests_test.py", "economy_safety_test.py", "field_candidate_test.py",
-        "field_log_async_test.py", "gpu_compositor_test.py", "gpu_renderer_runtime_smoke.py",
-        "hotpath_cache_test.py", "overlay_write_guard_test.py", "polar_link_failclosed_test.py",
-        "polar_link_snapshot_test.py", "protocol_crc_test.py", "robot_health_field_test.py",
-        "smoke_test.py", "startup_gpu_runtime_smoke.py", "tongji_postprocess_parity_test.py",
-        "transition_visual_check.py", "udp_transport_test.py", "vision_pipeline_hardening_test.py",
+        "docs_and_tests_test.py", "field_candidate_test.py", "gpu_compositor_test.py",
+        "gpu_renderer_runtime_smoke.py", "smoke_test.py", "startup_gpu_runtime_smoke.py",
+        "transition_visual_check.py",
     ),
     "build_release": (
         "autoaim_settings_test.py", "combat_events_test.py", "config_store_io_test.py",
-        "control_loop_test.py", "docs_and_tests_test.py", "economy_safety_test.py",
-        "field_log_async_test.py", "gimbal_host_request_test.py", "hotpath_cache_test.py",
-        "hud_batch10_settings_test.py", "hud_batch13_settings_test.py", "hud_batch14_settings_test.py",
-        "hud_batch16_killfx_test.py", "hud_batch17_crosshair_test.py", "hud_batch18_powerguard_test.py",
-        "hud_batch19_bufftimeline_test.py", "hud_batch20_robotoverlay_color_test.py", "hud_batch21_radaroverlay_map_test.py",
-        "hud_batch8_settings_test.py", "hud_batch9_settings_test.py", "hud_overlay_settings_test.py",
-        "hud_status_settings_test.py", "hud_telemetry_settings_test.py", "overlay_write_guard_test.py",
-        "polar_link_failclosed_test.py", "polar_link_snapshot_test.py", "protocol_crc_test.py",
-        "robot_health_field_test.py", "settings_doc_consistency_test.py", "tongji_postprocess_parity_test.py",
-        "transition_visual_check.py", "udp_transport_test.py", "vision_pipeline_hardening_test.py",
+        "control_loop_test.py", "economy_safety_test.py", "field_log_async_test.py",
+        "gimbal_host_request_test.py", "hotpath_cache_test.py", "hud_batch10_settings_test.py",
+        "hud_batch13_settings_test.py", "hud_batch14_settings_test.py", "hud_batch16_killfx_test.py",
+        "hud_batch17_crosshair_test.py", "hud_batch18_powerguard_test.py", "hud_batch19_bufftimeline_test.py",
+        "hud_batch20_robotoverlay_color_test.py", "hud_batch21_radaroverlay_map_test.py", "hud_batch8_settings_test.py",
+        "hud_batch9_settings_test.py", "hud_overlay_settings_test.py", "hud_status_settings_test.py",
+        "hud_telemetry_settings_test.py", "polar_link_failclosed_test.py", "robot_health_field_test.py",
+        "settings_doc_consistency_test.py", "tongji_postprocess_parity_test.py", "transition_visual_check.py",
+        "vision_pipeline_hardening_test.py",
     ),
 }
 
