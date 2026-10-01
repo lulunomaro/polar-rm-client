@@ -212,7 +212,27 @@ class OfficialMatchFeed:
                 "encryption_level": _field_int(fields, 4),
             })
         elif name == "GlobalUnitStatus":
-            health_values = fields.get(11) or fields.get(6) or []
+            # 字段 11（robot_health）是机器人血量的**唯一**来源。
+            #
+            # 这里原来写的是 `fields.get(11) or fields.get(6)`，而字段 6 是
+            # **敌方基地血量**（backend/protocol.py:313 的 enemy_base_health，
+            # 一个标量），不是任何机器人的血量。于是报文缺字段 11 时
+            # （被截断 / 协议版本差异 / 解析丢字段）会把基地血量当成一张
+            # 长度为 1 的机器人血量表：
+            #
+            #   health = [enemy_base_health]
+            #   own_count = min(5, len(health) // 2) = min(5, 0) = 0
+            #     → 第 0 个被当成**敌方**机器人
+            #   基地血量从 5000 掉到 0 时 before=5000 > 0 且 current == 0
+            #     → 凭空发出 victim_id=101 的"敌方机器人被淘汰"
+            #
+            # 也就是说：**敌方基地一被摧毁，客户端就报一条根本没发生的淘汰**，
+            # 同时把 state.official_robot_health 写成 [5000] 这种离谱值
+            # （manager 之后会拿它做 [:10] 切片喂给 HUD）。
+            #
+            # 拿不到机器人血量就不给，不拿别的字段顶替 —— 与 AGENT.md
+            # "不要静默产生假数据"是同一条取向。
+            health_values = fields.get(11) or []
             health = [number for value in health_values for number in _packed_uints(value)]
             updates.update({
                 "base_health": _field_int(fields, 1),

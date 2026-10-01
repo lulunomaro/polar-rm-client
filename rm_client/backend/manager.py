@@ -802,26 +802,9 @@ class BackendManager:
         )
         # 诊断快照必须每帧自己刷：`apply_updates` 只在收到官方 MQTT 消息时
         # 才写 backend_stats，而台架/实车场景根本没有裁判机流量。
-        target.backend_stats["polar_link"] = {
-            **self.polar.stats(),
-            "link_alive": bool(bridge.active),
-            "segment_counts": {
-                f"0x{key:02X}": int(value)
-                for key, value in sorted(bridge.segment_counts.items())
-            },
-            "dropped_segments": bridge.dropped,
-            "decode": {
-                "frames_ok": self.polar.codec.stats.frames_ok,
-                "crc8_errors": self.polar.codec.stats.crc8_errors,
-                "crc16_errors": self.polar.codec.stats.crc16_errors,
-                "unknown_segments": self.polar.codec.stats.unknown_segments,
-                "length_errors": self.polar.codec.stats.length_errors,
-                "buffer_overflows": self.polar.codec.stats.buffer_overflows,
-            },
-            "authority": arbiter_stats,
-            "motion": motion_stats,
-            "timestamp_roll_detected": self.polar.timestamp.roll_detected,
-        }
+        target.backend_stats["polar_link"] = self._polar_link_stats(
+            arbiter_stats=arbiter_stats, motion_stats=motion_stats
+        )
 
         # “受击后小陀螺”走 0x5A。
         #
@@ -2237,6 +2220,59 @@ class BackendManager:
             values["shooter"], values["chassis"], values["sentry_control"])
 
     # ------------------------------------------------------------------
+    def _polar_link_stats(
+        self,
+        *,
+        arbiter_stats: dict[str, Any] | None = None,
+        motion_stats: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """0x5A 队内链路的诊断快照 —— **唯一的一份构造逻辑**。
+
+        为什么从两处合并成一处
+        ----------------------
+        以前这段 20 行的字典字面量在 manager.py 里写了两遍：
+        ``tick_polar_link`` 每帧写进 ``state.backend_stats["polar_link"]``，
+        ``stats()`` 在被 ``apply_updates`` 调用时整份替换它。两份已经漂移 ——
+        ``tick_polar_link`` 那份多一个 ``"motion"`` 键。
+
+        漂移的后果是实打实的：``apply_updates``（:1428-1433）拿 ``self.stats()``
+        的结果覆盖 ``state.backend_stats``，而它的合并循环只搬运
+        "runtime_stats 里没有的顶层键"；``polar_link`` 本身在 runtime_stats 里，
+        于是**每收到一条官方 MQTT 消息，刚写进去的 ``motion`` 就被丢掉**
+        （实测 True → False）。而 ``motion`` 正是自转/运动回读闭环的判据
+        （AGENT.md 第 4 节不变量 9 说的 0x1F 回读），丢它等于现场无法判断
+        "车到底动没动"。
+
+        合并之后不可能再漂移：新增键只需要改这一处。
+        ``arbiter_stats`` / ``motion_stats`` 允许外部传入，是为了让
+        ``tick_polar_link`` 复用它本拍刚算出来的值，不必重算一遍。
+        """
+        if arbiter_stats is None:
+            arbiter_stats = self.polar_arbiter.stats()
+        if motion_stats is None:
+            motion_stats = self.polar_motion.stats()
+        return {
+            **self.polar.stats(),
+            "link_alive": bool(self.polar_bridge.active),
+            "segment_counts": {
+                f"0x{key:02X}": int(value)
+                for key, value in sorted(self.polar_bridge.segment_counts.items())
+            },
+            "dropped_segments": self.polar_bridge.dropped,
+            "decode": {
+                "frames_ok": self.polar.codec.stats.frames_ok,
+                "crc8_errors": self.polar.codec.stats.crc8_errors,
+                "crc16_errors": self.polar.codec.stats.crc16_errors,
+                "unknown_segments": self.polar.codec.stats.unknown_segments,
+                "length_errors": self.polar.codec.stats.length_errors,
+                "buffer_overflows": self.polar.codec.stats.buffer_overflows,
+            },
+            "authority": arbiter_stats,
+            "motion": motion_stats,
+            "timestamp_roll_detected": self.polar.timestamp.roll_detected,
+        }
+
+    # ------------------------------------------------------------------
     def stats(self) -> dict[str, Any]:
         native_at = self.native_decoder.latest_timestamp()
         native_width, native_height = self.native_decoder.frame_size()
@@ -2252,25 +2288,7 @@ class BackendManager:
             "mqtt": self.mqtt.stats(),
             "udp": self.udp.stats(),
             "serial": self.serial.stats(),
-            "polar_link": {
-                **self.polar.stats(),
-                "link_alive": bool(self.polar_bridge.active),
-                "segment_counts": {
-                    f"0x{key:02X}": int(value)
-                    for key, value in sorted(self.polar_bridge.segment_counts.items())
-                },
-                "dropped_segments": self.polar_bridge.dropped,
-                "decode": {
-                    "frames_ok": self.polar.codec.stats.frames_ok,
-                    "crc8_errors": self.polar.codec.stats.crc8_errors,
-                    "crc16_errors": self.polar.codec.stats.crc16_errors,
-                    "unknown_segments": self.polar.codec.stats.unknown_segments,
-                    "length_errors": self.polar.codec.stats.length_errors,
-                    "buffer_overflows": self.polar.codec.stats.buffer_overflows,
-                },
-                "authority": self.polar_arbiter.stats(),
-                "timestamp_roll_detected": self.polar.timestamp.roll_detected,
-            },
+            "polar_link": self._polar_link_stats(),
             "native_0310": {
                 "decoder_ready": self.native_decoder.available,
                 "decoded_connected": bool(
