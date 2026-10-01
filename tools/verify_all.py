@@ -78,6 +78,7 @@ PYTHON_SUITES = (
     "control_loop_test",             # 控制回路限频与闸门
     "test_suite_selfcheck",          # 套件自检：无零断言测试、关键 suite 都被登记
     "encode_invariant_attack_test",  # 攻编码路径：fire 恒 0、禁位不上线（不只查常量）
+    "zero_frame_and_diagnostics_test",  # 断流归零（stop/下降沿全零）+ s[0] 诊断提示（变异验证挖出来的三处零覆盖）
 )
 
 C_CHECKS = (

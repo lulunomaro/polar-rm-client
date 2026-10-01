@@ -415,6 +415,7 @@ print('polar spec OK: %d segments, %d roles, %d warnings'
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\polar_link_snapshot_test.py") "polar_link_snapshot" 180 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\overlay_write_guard_test.py") "overlay_write_guard" 180 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\protocol_crc_test.py") "protocol_crc" 180 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\zero_frame_and_diagnostics_test.py") "zero_frame_and_diagnostics" 180 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\udp_transport_test.py") "udp_transport" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\field_candidate_test.py") "field_candidate" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\smoke_test.py") "ui_backend_regression" 300 $testLogRoot
