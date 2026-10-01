@@ -20,6 +20,7 @@ from ..model import RobotState
 from ..native_viewer_telemetry import parse_vehicle_telemetry, parse_video_0310_chunk
 from .. import robot_roles
 from ..scenarios import SCENARIOS
+from ..settings_access import collect_settings
 from . import cc_link
 from . import dt7_link
 from . import protocol as proto
@@ -46,6 +47,40 @@ from .video_backend import AnnexBRecoveryGate, ContinuousMjpegDecoder, RmVideoBa
 from .field_log import RotatingJsonlLogger
 from .qualification import QualificationEvidenceStore, QualificationManager
 from ..runtime_paths import RuntimePaths
+
+#: ``RobotLink`` 模块里、队内链路每帧要看的设置项。
+#:
+#: 提成模块级常量是因为它以前内联在 ``tick_polar_link`` 的字典推导式里 ——
+#: 方法本身已经 560 行，再往中间塞一个 25 项的元组字面量，加一项要翻半天。
+#: 现在这里是唯一声明处，而且 tools/test_settings_are_read.py 那套
+#: "设置项有没有人读"的审计可以直接对着它核对。
+ROBOT_LINK_SETTING_NAMES: tuple[str, ...] = (
+    "Allow Drive",
+    "Link Mode",
+    "Bridge Host",
+    "Bridge Port",
+    "Mock Writes",
+    "Allow Spin Key",
+    "Radio KM Egress",
+    "Custom Controller Egress",
+    "Direct DT7 Egress",
+    "DT7 Port",
+    "DT7 Real TX",
+    "DT7 Allow Fire Keys",
+    "CC Port",
+    "CC Hz",
+    "CC Mock Writes",
+    "Client Chassis Drive",
+    "Client Gimbal Control",
+    "Vision NUC Occupied",
+    "Speed Scale %",
+    "Yaw Scale %",
+    "Gimbal Slew",
+    "Drive Channel",
+    "Send Hz",
+    "Port",
+    "Baud",
+)
 
 # 官方性能体系取值（对齐 messages.proto 与 Shark RoboModeSettings）
 HERO_MELEE = 3
@@ -414,36 +449,11 @@ class BackendManager:
         target.apply_polar_overlay()
 
         module = registry.get("RobotLink") if registry is not None else None
-        settings = {
-            name: (module.get_setting(name) if module is not None else None)
-            for name in (
-                "Allow Drive",
-                "Link Mode",
-                "Bridge Host",
-                "Bridge Port",
-                "Mock Writes",
-                "Allow Spin Key",
-                "Radio KM Egress",
-                "Custom Controller Egress",
-                "Direct DT7 Egress",
-                "DT7 Port",
-                "DT7 Real TX",
-                "DT7 Allow Fire Keys",
-                "CC Port",
-                "CC Hz",
-                "CC Mock Writes",
-                "Client Chassis Drive",
-                "Client Gimbal Control",
-                "Vision NUC Occupied",
-                "Speed Scale %",
-                "Yaw Scale %",
-                "Gimbal Slew",
-                "Drive Channel",
-                "Send Hz",
-                "Port",
-                "Baud",
-            )
-        }
+        # 取法搬到 settings_access.collect_settings，**逐位不变**（取的是原始
+        # Setting 对象而不是 value，后面还要读 options/kind）。
+        # 名单单独提成模块级常量：它是"这个模块关心哪些设置项"的唯一声明处，
+        # 以前内联在字典推导式里，谁加一项要翻到方法中间。
+        settings = collect_settings(module, ROBOT_LINK_SETTING_NAMES)
         # RobotLink 的 Port / Baud 要落到传输层：以前只有场景初值
         # （config.connection.polar_port）被用过一次，界面上选口/改波特率**一点作用都没有**,
         # 而出错提示还写着"在 RobotLink.Port 里显式选口"，等于指了一条不起作用的路。

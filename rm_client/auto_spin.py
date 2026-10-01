@@ -13,6 +13,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from .settings_access import read_bool_strict, read_number_guarded
+
 
 @dataclass(frozen=True, slots=True)
 class SpinDirective:
@@ -28,16 +30,13 @@ class SpinDirective:
 
 
 def _bool_setting(module: Any, name: str, default: bool) -> bool:
-    setting = module.get_setting(name) if module is not None else None
-    return bool(setting.value) if setting is not None else bool(default)
+    # 语义搬到 settings_access.read_bool_strict，**逐位不变**（包括不捕获类型错）。
+    # 两种语义（strict / guarded）现在都有名字了，见 rm_client/settings_access.py 顶部。
+    return read_bool_strict(module, name, default)
 
 
 def _number_setting(module: Any, name: str, default: float) -> float:
-    setting = module.get_setting(name) if module is not None else None
-    try:
-        return float(setting.value) if setting is not None else float(default)
-    except (TypeError, ValueError):
-        return float(default)
+    return read_number_guarded(module, name, default)
 
 
 class ProjectileHitSpinController:

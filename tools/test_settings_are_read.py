@@ -87,6 +87,59 @@ def read_names_in(scopes: list) -> set:
         if k >= 0:
             end = src.find(")", k)
             names |= set(re.findall(Q + r"([^" + Q + r"]+)" + Q, src[k:end]))
+    names |= _names_from_collect_settings(ROOT)
+    return names
+
+
+#: ``collect_settings(module, SOME_NAMES)`` 这种"名单提在模块级常量里"的写法。
+_COLLECT_CALL = re.compile(r"collect_settings\(\s*[^,]+,\s*([A-Z_][A-Z_0-9]*)\s*\)")
+
+
+def _names_from_collect_settings(root: Path) -> set:
+    """解析 ``collect_settings(module, ROBOT_LINK_SETTING_NAMES)`` 这种写法。
+
+    为什么必须加这一条
+    ------------------
+    这套审计是靠**扫字符串**发现"哪个设置项被读了"的。名单原先是内联的
+    ``for name in ("A", "B", ...)``，扫得到；被提成模块级常量、调用点改成
+    ``collect_settings(module, ROBOT_LINK_SETTING_NAMES)`` 之后，扫不到了 ——
+    于是 6 个只出现在名单里、别处没有 ``settings.get()`` 的设置项
+    （Mock Writes / Client Chassis Drive / Vision NUC Occupied /
+      Speed Scale % / Yaw Scale % / Gimbal Slew）被误报成"没人读"。
+
+    危险之处在于**红灯会诱导人做错事**：看到"没人读"，最自然的反应是
+    "那就把它从名单里删掉"—— 于是这几个设置项真的从每帧的取用里消失了，
+    审计反而变绿，而功能已经没了。
+
+    所以正确的做法是让审计跟上重构，而不是把重构退回去迁就正则。
+    解析规则：看到 ``collect_settings(x, NAME)`` 就去源码里找
+    ``NAME = (...)`` 这个元组，把里面的字符串全收下。
+    """
+    names: set = set()
+    Q = chr(34)
+    for path in (root / "rm_client").rglob("*.py"):
+        try:
+            src = path.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        for call in _COLLECT_CALL.finditer(src):
+            constant = call.group(1)
+            # 找该常量的元组定义：NAME = ( ... )
+            m = re.search(r"^" + constant + r"[A-Z_0-9]*\s*(:[^=]+)?=\s*\(", src, re.M)
+            if not m:
+                continue
+            open_paren = src.find("(", m.start())
+            depth = 0
+            end = open_paren
+            for index in range(open_paren, len(src)):
+                if src[index] == "(":
+                    depth += 1
+                elif src[index] == ")":
+                    depth -= 1
+                    if depth == 0:
+                        end = index
+                        break
+            names |= set(re.findall(Q + r"([^" + Q + r"]+)" + Q, src[open_paren:end]))
     return names
 
 
@@ -116,6 +169,18 @@ def main() -> int:
           str(len(declared)))
     check("确实找到了读到 RobotLink 设置的代码块（一块都没有说明解析坏了）",
           len(scopes) >= 2, f"{len(scopes)} 块")
+    # 名单已经提成模块级常量，这里必须真的解析出它来。
+    # **这条是防"解析器静默失效"的**：解析不到 → 下面会把一整批设置项报成
+    # "没人读" → 下一个人最自然的反应是"那就从名单里删掉" → 功能悄悄消失、
+    # 审计反而变绿。宁可这里红，也不要让人去删设置项。
+    collected = _names_from_collect_settings(ROOT)
+    check("解析到了 collect_settings 的模块级名单常量",
+          len(collected) >= 20,
+          f"只解析出 {len(collected)} 个：{sorted(collected)[:8]} —— 解析器可能已失效")
+    declared_in_list = [n for n in declared if n in collected]
+    check(f"名单常量里覆盖了 {len(declared_in_list)}/{len(declared)} 个已声明的 RobotLink 设置项",
+          len(declared_in_list) >= 20,
+          f"只覆盖 {len(declared_in_list)} 个，缺失 {sorted(set(declared) - collected)[:8]}")
     missing = [n for n in declared if n not in names and n not in UI_ONLY]
     check("每个 RobotLink 设置项都在提到 RobotLink 的代码里被取用（或登记为只在界面用）",
           not missing, f"没人读：{missing}")

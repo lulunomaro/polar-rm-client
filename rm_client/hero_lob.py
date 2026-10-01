@@ -13,6 +13,8 @@ import math
 import time
 from typing import Any
 
+from .settings_access import raw_value
+
 
 @dataclass(frozen=True, slots=True)
 class LobSolution:
@@ -212,8 +214,8 @@ class HeroLobPlanner:
     @classmethod
     def preview_from_state(cls, state: Any, module: Any, *, hero_range_profile: bool) -> tuple[LobSolution, LobReadiness]:
         def setting(name: str, fallback: Any) -> Any:
-            item = module.get_setting(name) if module is not None else None
-            return item.value if item is not None else fallback
+            # 语义搬到 settings_access.raw_value，**逐位不变**（不转型、不捕获）。
+            return raw_value(module, name, fallback)
 
         telemetry_speed = float(getattr(state, "native_bullet_speed", 0.0) or 0.0)
         fallback_speed = float(setting("Muzzle Speed", 16.0))
