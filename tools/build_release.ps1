@@ -200,6 +200,44 @@ try {
     }
     Set-Content -LiteralPath (Join-Path $sourceRoot "BUILD_COMMIT.txt") -Value $commit -Encoding ASCII
 
+    # --- 构建环境探测：必须在**第一次用**这个解释器之前就做 ---
+    #
+    # 原来这里只有一句 `Test-Path .venv\Scripts\python.exe`，而它出现的位置在
+    # 第 217 行那次调用**之后**。于是两种坏法都拿不到准确提示：
+    #
+    #   * .venv 整个不存在 → 第 217 行直接报"polar protocol spec is not usable
+    #     in the release source tree"，而真正的原因是没装构建环境；
+    #   * .venv 在、但解释器是死的（本机实测：python.exe 与 pyinstaller.exe
+    #     都在磁盘上，pyvenv.cfg 指向一个已被删除的 codex runtime，进程一跑就
+    #     exit 103 "No Python at ..."）→ Test-Path 照样通过，同样死在第 217 行。
+    #
+    # 第 244 行那句准确的 "Build environment missing" 因此**永远不可达**。
+    # 这里改成：先探测，且探测**真的把解释器跑起来**看它能不能执行。
+    $python = Join-Path $clientRoot ".venv\Scripts\python.exe"
+    $pyinstaller = Join-Path $clientRoot ".venv\Scripts\pyinstaller.exe"
+    if (-not (Test-Path -LiteralPath $python) -or -not (Test-Path -LiteralPath $pyinstaller)) {
+        throw "Build environment missing at $clientRoot\.venv " +
+              "(python.exe or pyinstaller.exe not found). " +
+              "Install requirements-build.txt before release; runtime never installs packages."
+    }
+    # Test-Path 只证明"文件在"，不证明"解释器活着"。一个 base 解释器被删/被移走的
+    # venv 完全符合前者，却会在第一次调用时炸出一句毫不相干的错误。
+    $venvProbe = & $python -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        $cfg = Join-Path $clientRoot ".venv\pyvenv.cfg"
+        $base = ""
+        if (Test-Path -LiteralPath $cfg) {
+            $base = (Get-Content -LiteralPath $cfg -ErrorAction SilentlyContinue |
+                     Where-Object { $_ -match '^\s*(home|executable)\s*=' } | Select-Object -First 1)
+        }
+        throw ("Build environment is broken: `.venv` exists but its interpreter cannot run " +
+               "(exit $LASTEXITCODE).`n  probe output: $venvProbe`n  pyvenv.cfg: $base`n" +
+               "  This happens when the venv's base interpreter was moved or deleted " +
+               "(e.g. a wiped toolchain cache). Delete .venv and recreate it from " +
+               "requirements-build.txt; do NOT just re-run the build.")
+    }
+    Write-Host ("  [build-env] .venv OK (python " + ($venvProbe | Select-Object -Last 1) + ")")
+
     # 队内 0x5A 链路的协议规格是数据文件（电控改它即可适配新固件）。
     # 代码在规格缺失/损坏时会回退到内置表继续跑，所以“能跑”不代表“规格已 shipped”。
     # 发布一个缺规格的包，会让电控改的 JSON 静默失效 —— 必须在这里拦住。
@@ -214,7 +252,7 @@ try {
     }
 
     # 不只要文件在，还要真能加载且不回退
-    & (Join-Path $clientRoot ".venv\Scripts\python.exe") -c @"
+    & $python -c @"
 import sys
 sys.path.insert(0, r'$sourceRoot')
 from rm_client.backend import polar_spec
@@ -238,11 +276,6 @@ print('polar spec OK: %d segments, %d roles, %d warnings'
     Copy-Item -LiteralPath $TexasWallpaperPath -Destination (Join-Path $sourceWallpaperRoot "texas.mp4") -Force
     Copy-Item -LiteralPath $VendingWallpaperPath -Destination (Join-Path $sourceWallpaperRoot "vending-machine.mp4") -Force
 
-    $python = Join-Path $clientRoot ".venv\Scripts\python.exe"
-    $pyinstaller = Join-Path $clientRoot ".venv\Scripts\pyinstaller.exe"
-    if (-not (Test-Path -LiteralPath $python) -or -not (Test-Path -LiteralPath $pyinstaller)) {
-        throw "Build environment missing. Install requirements-build.txt before release; runtime never installs packages."
-    }
     $testLogRoot = Join-Path $stageRoot "test-logs"
 
     # Run against the exact source tree that will be frozen. Runtime state is
@@ -378,6 +411,21 @@ exit /b %errorlevel%
 
     $pythonVersion = (& $python --version) 2>&1
     $dependencyLines = (& $python -m pip freeze) | Sort-Object
+    # 重量级包（cv2 / openvino）收没收、收了多少，由 POLAR-RM.spec 自己写在这里。
+    # 以前这个决定不留痕：openvino 独占 211 MB（占压缩包 22.7%），而打包规则
+    # 与 requirements-core.txt "openvino 不该进首发路径" 的说法互相矛盾，
+    # 包体变大时构建日志里找不到任何对应证据。
+    $bundledPackages = @{}
+    $bundledReport = Join-Path $sourceRoot "build\bundled_packages.json"
+    if (Test-Path -LiteralPath $bundledReport) {
+        try {
+            $bundledPackages = Get-Content -LiteralPath $bundledReport -Raw -Encoding UTF8 | ConvertFrom-Json
+        } catch {
+            $bundledPackages = @{ _unreadable = $_.Exception.Message }
+        }
+    } else {
+        $bundledPackages = @{ _missing = "POLAR-RM.spec did not write build/bundled_packages.json" }
+    }
     $criticalFiles = [ordered]@{
         "bin/ffmpeg.exe" = $expectedFfmpeg
         "defaults/default.json" = (Get-FileHash (Join-Path $portable "defaults\default.json") -Algorithm SHA256).Hash
@@ -402,6 +450,7 @@ exit /b %errorlevel%
         protocol_version = "1.3.1"
         python = "$pythonVersion"
         dependencies = $dependencyLines
+        bundled_packages = $bundledPackages
         critical_files = $criticalFiles
         ffmpeg = [ordered]@{
             version = ($ffVersion -split "`n")[0]
