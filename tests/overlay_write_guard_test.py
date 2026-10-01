@@ -23,7 +23,22 @@
 跑法：``python tests/overlay_write_guard_test.py``
 """
 
-from __future__ import annotations
+# 改动这个文件之前先读下面这段。
+#
+# **做负证（临时改坏源码再跑）之后，"还原了"不等于"跑的是还原后的代码"。**
+# 本轮就踩了：把 `apply_polar_overlay` 的闸门判断挪到循环之后跑出 3 项红，
+# 还原文件后 `git status` 显示**零差异**，可测试**仍然是红的**。
+# 原因不是没还原，而是 Python 拿了变异版编译出来的 `__pycache__/*.pyc`。
+#
+# 同一类坑 Rust 那边也踩过：`Copy-Item` 会保留 LastWriteTime，
+# cargo 按 mtime 判脏，于是"恢复后全绿"一度是假的。
+#
+# 所以规矩是：**凡是用备份/还原做负证，必须先 bust 缓存再复跑**，
+# 而且要拿 `git status` 证明源码真的回去了 —— 光看"没抛异常"不算证据。
+#   PowerShell: Get-ChildItem -Recurse -Directory -Filter __pycache__ |
+#               ForEach-Object { Remove-Item "$($_.FullName)\*.pyc" -Force }
+#   Rust:       touch 一下被改过的源文件，再 cargo test
+
 
 import sys
 from pathlib import Path
@@ -204,11 +219,108 @@ def test_spec_state_fields_landing_sites() -> None:
 # --- 7. 链路未激活时照旧不写（既有语义不许被改） -----------------------
 
 def test_inactive_link_does_not_write() -> None:
+    """AGENT.md 表二第 3 条：**链路未激活时一个字段都不回写**。
+
+    原来的版本只有一条断言、只测了 `polar_ally_hp` 一个键。表二说的是
+    "overlay 只在 polar_link_active 为真时回写" —— 那是**对全部字段**的断言，
+    只测一个键等于没测：白名单里另外三十几个键要是哪天被挪到了 gate 之前
+    （比如为了"先写再判断"），原来那条照样绿。
+
+    所以这里改成两遍全量：
+    * 未激活：**全部** polar_* 键一个都不能动；
+    * 已激活：全部 polar_* 键都要真的落下去（否则"一个都没写"也能满足上面那条）。
+    """
+    from rm_client.model import RobotState as _RS
+
+    polar_names = sorted(
+        name for name in _RS.__dataclass_fields__
+        if name.startswith("polar_") and name not in ("polar_overlay",)
+    )
+    check("确实抓到了 polar_* 字段族（少于 10 个说明取值方式变了）",
+          len(polar_names) >= 10, f"只有 {len(polar_names)} 个：{polar_names[:5]}")
+
+    # --- 未激活：一个都不许动 ---
+    state = _RS()
+    state.polar_link_active = False
+    sentinel = 424242
+    overlay = {name: sentinel for name in polar_names if name != "polar_link_active"}
+    state.polar_overlay = dict(overlay)
+    before = {name: getattr(state, name, "<missing>") for name in overlay}
+    state.apply_polar_overlay()
+    leaked = [n for n in overlay if getattr(state, n, "<missing>") != before[n]
+              and n != "polar_dropped_overlay_keys"
+              and not n.startswith("polar_first_dropped")]
+    check(f"未激活时 {len(overlay)} 个键一个都没回写", not leaked, f"漏写了：{leaked[:6]}")
+
+    # --- 已激活：全部都要落下去（反向对照） ---
+    state2 = _RS()
+    state2.polar_link_active = True
+    state2.polar_overlay = {name: sentinel for name in polar_names
+                            if name != "polar_link_active"}
+    before2 = {n: getattr(state2, n, "<missing>") for n in state2.polar_overlay}
+    state2.apply_polar_overlay()
+    # 只要求"至少有一批确实变了"，因为不同字段类型不同，int 塞进 float 字段等
+    # 情况会让某些键的值恰好不变或报错。全量逐键比在这里没有意义。
+    changed = [n for n in state2.polar_overlay if getattr(state2, n, "<missing>") != before2[n]]
+    check(f"已激活时确实回写了字段（{len(changed)}/{len(state2.polar_overlay)} 个键值变了）",
+          len(changed) >= 10, f"只有 {len(changed)} 个变了，回写可能没生效")
+
+
+def test_overlay_cannot_bootstrap_its_own_gate() -> None:
+    """overlay **不能**把自己所在的闸门打开。
+
+    `apply_polar_overlay` 的判断在循环**之前**（model.py:693），而
+    `polar_link_active` 本身又是一个合法的 dataclass 字段、因而落在白名单里。
+    这两条凑在一起就产生一个必须钉死的问题：
+
+        overlay = {"polar_link_active": True, "polar_ally_hp": 999}
+        state.polar_link_active = False
+        state.apply_polar_overlay()
+
+    如果判断被挪到循环之后（比如为了"先写再判断"），上面这段就会**打开闸门**
+    并把 999 写下去 —— 而 overlay 的键**不是硬编码的**，它由 polar_bridge
+    从 `polar_protocol.json` 的 `state_fields` 读出来。也就是说：
+    电控往 JSON 里加一行 `"state_fields": {"polar_link_active": "..."}`
+    就能让客户端自己解除 fail-closed 门控。
+
+    这是"不可达"必须做到结构上的又一例，跟不变量 2 是同一个道理。
+    """
     state = RobotState()
     state.polar_link_active = False
-    state.polar_overlay = {"polar_ally_hp": 777}
+    state.polar_ally_hp = 0
+    state.polar_overlay = {"polar_link_active": True, "polar_ally_hp": 999}
     state.apply_polar_overlay()
-    check("链路未激活时不回写（让官方/仿真值说话）", state.polar_ally_hp != 777, str(state.polar_ally_hp))
+    check("overlay 没能把自己写进 polar_link_active（闸门仍关着）",
+          state.polar_link_active is False, f"polar_link_active={state.polar_link_active}")
+    check("闸门关着时连 payload 字段也没跟着落下去",
+          state.polar_ally_hp == 0, f"polar_ally_hp={state.polar_ally_hp}")
+
+    # 反向对照：闸门本来就是开的，那 overlay 里的 polar_link_active=True 无害，
+    # 但 payload 字段要真的落下去 —— 证明上面那条不是"什么都不写"。
+    state2 = RobotState()
+    state2.polar_link_active = True
+    state2.polar_ally_hp = 0
+    state2.polar_overlay = {"polar_link_active": True, "polar_ally_hp": 999}
+    state2.apply_polar_overlay()
+    check("闸门本来就开时，payload 字段确实回写（反向对照）",
+          state2.polar_ally_hp == 999, f"polar_ally_hp={state2.polar_ally_hp}")
+
+
+def test_empty_overlay_is_a_no_op() -> None:
+    """空 overlay 直接返回，连 `official_state_at` 都不该被动。
+
+    model.py:691 有 `if not self.polar_overlay: return`。这条测它**真的**早退：
+    如果空 dict 也往下走，`official_state_at` 会被写成当前时间，
+    于是"队内链路的值是什么时候到的"这个诊断字段在**根本没链路**时就有了值 ——
+    现场看到它有值就会以为链路来过。
+    """
+    state = RobotState()
+    state.polar_link_active = True
+    state.polar_overlay = {}
+    state.official_state_at = None
+    state.apply_polar_overlay()
+    check("空 overlay 不会给 official_state_at 打时间戳",
+          state.official_state_at is None, str(state.official_state_at))
 
 
 def main() -> int:
@@ -220,6 +332,8 @@ def main() -> int:
         test_dropped_keys_are_counted,
         test_spec_state_fields_landing_sites,
         test_inactive_link_does_not_write,
+        test_overlay_cannot_bootstrap_its_own_gate,
+        test_empty_overlay_is_a_no_op,
     ]
     for test in tests:
         print(f"\n--- {test.__name__} ---")
