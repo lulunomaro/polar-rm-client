@@ -55,7 +55,20 @@ FROZEN_GLOBS: tuple[str, ...] = (
     "rm_client/startup_wallpaper.py",
     # 视频解码链路：任何改动都可能改变画面像素
     "rm_client/backend/video_backend.py",
-    "rm_client/vision_wire_gpu.py",
+    # GPU 合成链路（视觉回归基线依赖它）。
+    #
+    # 这一条以前写的是 "rm_client/vision_wire_gpu.py" —— 而那个文件**早已搬到**
+    # rm_client/ui/vision_wire_gpu.py，所以这条**什么也没保护**。红线没有被突破
+    # （真实文件仍被上面那条 rm_client/ui/** 罩着），但清单在骗人：
+    # 看到单文件条目会以为"GPU 合成链路是单独锁的"，而实际上它只是碰巧被
+    # 更宽的通配罩住；哪天有人收窄 ui/** 的范围，这条失效条目不会提醒任何人。
+    #
+    # 路径已改成真实位置（保留显式条目而不是删掉：它是那条通配的"双保险"，
+    # 将来若有人把 ui/** 改窄，这一条还能单独兜住）。
+    # tests/rust_port_coverage_test.py 里的
+    # `test_freeze_globs_actually_match_something` 会在任何条目失效时报警 ——
+    # 冻结清单是本项目唯一的红线，不允许有失效条目。
+    "rm_client/ui/vision_wire_gpu.py",
     # 视觉回归基线本身
     "tests/baselines/**",
 )
