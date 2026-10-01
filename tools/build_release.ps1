@@ -1,12 +1,15 @@
-param(
+﻿param(
     # Windows PowerShell 5.1 evaluates parameter default expressions before
     # $PSScriptRoot is populated. Resolve the default in the script body so
     # the checked-in release entry point works with powershell.exe -File.
     [string]$Output = "",
     [string]$GitRef = "HEAD",
-    [Parameter(Mandatory=$true)][string]$FfmpegPath,
-    [Parameter(Mandatory=$true)][string]$TexasWallpaperPath,
-    [Parameter(Mandatory=$true)][string]$VendingWallpaperPath,
+    # 这三个**故意不再是 Mandatory**：PowerShell 在进脚本体之前就拦下缺参数的用户，
+    # 那样下面那个构建环境探测（脚本体的第一件事）根本轮不到跑 —— 操作员得先把
+    # 三样资产找齐，才会发现 venv 解释器其实是死的。校验挪到探测之后。
+    [string]$FfmpegPath = "",
+    [string]$TexasWallpaperPath = "",
+    [string]$VendingWallpaperPath = "",
     [switch]$UseWorkingTree
 )
 
@@ -168,6 +171,80 @@ function Get-TreeHash([string]$Python, [string]$Source, [string]$Root) {
     return $value
 }
 
+# --- 构建环境探测：整个脚本的**第一件事** ---
+#
+# 原来这里只有一句 `Test-Path .venv\Scripts\python.exe`，而且位置在第一次真正调用
+# 解释器**之后**，更在三个资源哈希校验与 `git archive` 源码暂存**之后**。
+# 于是 venv 是坏的时候，操作员的实际体验是：
+#
+#   1. 把 FFmpeg 找出来，跑一遍哈希
+#   2. 把两张壁纸找出来，各跑一遍哈希
+#   3. 检查 GPL 许可证正文长度
+#   4. 等 git archive 把整个仓库暂存完（这一步不便宜）
+#   5. **然后**才被告知 venv 解释器是死的
+#
+# 前四步全是白做的。更糟的是第 1 步失败时人会以为"是我路径给错了"，
+# 于是去翻目录、翻文档，而真正的原因根本不在那里。
+#
+# 现在这段提到脚本体的最前面：环境坏不坏，先说。
+# 配套改动缺一不可 ——
+#   * 位置提到任何 `Assert-Hash` 之前；
+#   * 三个资源参数从 `Mandatory=$true` 改成空默认值，否则 PowerShell 在**进脚本体
+#     之前**就把人拦下，探测根本轮不到跑；
+#   * 参数校验挪到这里之后（下面的 $requiredAssets）。
+#
+# 关键点：Test-Path 只证明"文件在"，不证明"解释器活着"。一个 base 解释器被删/
+# 被移走的 venv 完全符合前者，却会在第一次调用时炸出一句毫不相干的错误。
+# 所以这里**真的把解释器跑起来**看它能不能执行。
+$python = Join-Path $clientRoot ".venv\Scripts\python.exe"
+$pyinstaller = Join-Path $clientRoot ".venv\Scripts\pyinstaller.exe"
+if (-not (Test-Path -LiteralPath $python) -or -not (Test-Path -LiteralPath $pyinstaller)) {
+    throw "Build environment missing at $clientRoot\.venv " +
+          "(python.exe or pyinstaller.exe not found). " +
+          "Install requirements-build.txt before release; runtime never installs packages."
+}
+# 这里必须临时把 $ErrorActionPreference 降到 Continue：`2>&1` 会把解释器写到
+# stderr 的 "No Python at ..." 变成 PowerShell 的错误记录，而在 Stop 模式下
+# **那本身就是终止性错误** —— 脚本停在探测这一行就结束了，我们精心写的
+# "删掉 .venv 重建、不要只是重跑"根本来不及显示。
+# 实测过：不降优先级的话，操作员看到的是解释器自己那句 "No Python at"，
+# 而不是可执行的下一步。降完再自己判退出码。
+$previousErrorAction = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+$venvProbe = & $python -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>&1
+$venvProbeExit = $LASTEXITCODE
+$ErrorActionPreference = $previousErrorAction
+if ($venvProbeExit -ne 0) {
+    $cfg = Join-Path $clientRoot ".venv\pyvenv.cfg"
+    $base = ""
+    if (Test-Path -LiteralPath $cfg) {
+        $base = (Get-Content -LiteralPath $cfg -ErrorAction SilentlyContinue |
+                 Where-Object { $_ -match '^\s*(home|executable)\s*=' } | Select-Object -First 1)
+    }
+    throw ("Build environment is broken: `.venv` exists but its interpreter cannot run " +
+           "(exit $venvProbeExit).`n  probe output: $venvProbe`n  pyvenv.cfg: $base`n" +
+           "  This happens when the venv's base interpreter was moved or deleted " +
+           "(e.g. a wiped toolchain cache). Delete .venv and recreate it from " +
+           "requirements-build.txt; do NOT just re-run the build.")
+}
+Write-Host ("  [build-env] .venv OK (python " + ($venvProbe | Select-Object -Last 1) + ")")
+
+# 资源参数现在改成非 Mandatory，所以**这里**才校验给没给。
+# 每个都报清楚是哪个参数、要给什么 —— 报错要指向下一步该做什么，
+# 而不是"参数缺失"这种要人自己回去翻文档的措辞。
+$requiredAssets = @(
+    @("-FfmpegPath", $FfmpegPath, "FFmpeg 可执行文件（须通过 SHA-256 校验）"),
+    @("-TexasWallpaperPath", $TexasWallpaperPath, "Texas 启动壁纸（须通过 SHA-256 校验）"),
+    @("-VendingWallpaperPath", $VendingWallpaperPath, "补给站壁纸（须通过 SHA-256 校验）")
+)
+foreach ($asset in $requiredAssets) {
+    if ([string]::IsNullOrWhiteSpace($asset[1])) {
+        throw ("缺少必需参数 $($asset[0])：$($asset[2])`n" +
+               "  用法：.\tools\build_release.ps1 -FfmpegPath <exe> " +
+               "-TexasWallpaperPath <file> -VendingWallpaperPath <file>")
+    }
+}
+
 try {
     Assert-Hash $FfmpegPath $expectedFfmpeg "FFmpeg"
     Assert-Hash $TexasWallpaperPath $expectedTexas "Texas wallpaper"
@@ -200,43 +277,6 @@ try {
     }
     Set-Content -LiteralPath (Join-Path $sourceRoot "BUILD_COMMIT.txt") -Value $commit -Encoding ASCII
 
-    # --- 构建环境探测：必须在**第一次用**这个解释器之前就做 ---
-    #
-    # 原来这里只有一句 `Test-Path .venv\Scripts\python.exe`，而它出现的位置在
-    # 第 217 行那次调用**之后**。于是两种坏法都拿不到准确提示：
-    #
-    #   * .venv 整个不存在 → 第 217 行直接报"polar protocol spec is not usable
-    #     in the release source tree"，而真正的原因是没装构建环境；
-    #   * .venv 在、但解释器是死的（本机实测：python.exe 与 pyinstaller.exe
-    #     都在磁盘上，pyvenv.cfg 指向一个已被删除的 codex runtime，进程一跑就
-    #     exit 103 "No Python at ..."）→ Test-Path 照样通过，同样死在第 217 行。
-    #
-    # 第 244 行那句准确的 "Build environment missing" 因此**永远不可达**。
-    # 这里改成：先探测，且探测**真的把解释器跑起来**看它能不能执行。
-    $python = Join-Path $clientRoot ".venv\Scripts\python.exe"
-    $pyinstaller = Join-Path $clientRoot ".venv\Scripts\pyinstaller.exe"
-    if (-not (Test-Path -LiteralPath $python) -or -not (Test-Path -LiteralPath $pyinstaller)) {
-        throw "Build environment missing at $clientRoot\.venv " +
-              "(python.exe or pyinstaller.exe not found). " +
-              "Install requirements-build.txt before release; runtime never installs packages."
-    }
-    # Test-Path 只证明"文件在"，不证明"解释器活着"。一个 base 解释器被删/被移走的
-    # venv 完全符合前者，却会在第一次调用时炸出一句毫不相干的错误。
-    $venvProbe = & $python -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        $cfg = Join-Path $clientRoot ".venv\pyvenv.cfg"
-        $base = ""
-        if (Test-Path -LiteralPath $cfg) {
-            $base = (Get-Content -LiteralPath $cfg -ErrorAction SilentlyContinue |
-                     Where-Object { $_ -match '^\s*(home|executable)\s*=' } | Select-Object -First 1)
-        }
-        throw ("Build environment is broken: `.venv` exists but its interpreter cannot run " +
-               "(exit $LASTEXITCODE).`n  probe output: $venvProbe`n  pyvenv.cfg: $base`n" +
-               "  This happens when the venv's base interpreter was moved or deleted " +
-               "(e.g. a wiped toolchain cache). Delete .venv and recreate it from " +
-               "requirements-build.txt; do NOT just re-run the build.")
-    }
-    Write-Host ("  [build-env] .venv OK (python " + ($venvProbe | Select-Object -Last 1) + ")")
 
     # 队内 0x5A 链路的协议规格是数据文件（电控改它即可适配新固件）。
     # 代码在规格缺失/损坏时会回退到内置表继续跑，所以“能跑”不代表“规格已 shipped”。

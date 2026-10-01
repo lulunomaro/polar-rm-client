@@ -72,6 +72,94 @@ def test_script_exists_and_parses_as_powershell() -> None:
     check("花括号配平", depth == 0, f"最终深度 {depth}")
 
 
+def test_env_probe_runs_before_any_other_work() -> None:
+    """探测必须是**整个脚本的第一件事**，不只是"第一次用解释器之前"。
+
+    上一轮的版本已经把探测提到第一次调用解释器之前了，但那还不够 —— 它当时
+    排在三个 `Assert-Hash`（资源哈希校验）和 `git archive` 源码暂存**之后**。
+    于是 venv 坏的时候操作员的实际顺序是：
+
+        1. 找 FFmpeg，跑哈希        2. 找两张壁纸，各跑哈希
+        3. 检查 GPL 正文长度         4. 等 git archive 暂存整个仓库
+        5. **然后**才被告知 venv 解释器是死的
+
+    前四步全是白做的。而且第 1 步失败时人会以为"是我路径给错了"，
+    去翻目录、翻文档 —— 真正的原因根本不在那里。
+
+    只比"探测 vs 第一次用解释器"抓不到这个：那个位置关系在上一轮就已经
+    成立了。这条断言比的是**探测 vs 一切别的检查**。
+    """
+    text = _read()
+    probe = text.find("$venvProbe = & $python")
+    check("找得到探测那一行", probe > 0, f"index={probe}")
+
+    # 判据是 `probe < at`（探测在前的**前面**）。第一版写成了 `at < probe`，
+    # 于是"资源哈希校验在探测之前"反倒被判成通过 —— 断言的方向反了，
+    # 而方向写反的断言比没有断言更糟：它看起来在守着，绿灯其实没意义。
+    #
+    # 标记必须挑**只出现在代码里**的那一处。第一版用 `git archive` 和
+    # `$requiredAssets` 直接 find，结果两次都先命中了本次改动**写在注释里的**
+    # 那些词（注释在 177/183/194 行，代码在 272/235 行），于是断言红，
+    # 而实际顺序是对的。教训和前面几次一样：搜索标记时先确认它不会在注释里出现。
+    for marker, label in (
+        ("Assert-Hash $FfmpegPath", "资源哈希校验"),
+        ('"git archive failed"', "git archive 源码暂存"),
+    ):
+        at = text.find(marker)
+        check(f"探测排在{label}之前",
+              0 <= at and probe < at, f"{label}@{at} 探测@{probe}")
+
+
+def test_asset_params_are_not_mandatory() -> None:
+    """三个资源参数**不许**是 ``Mandatory=$true``。
+
+    这条是上一条断言的前提：PowerShell 在**进脚本体之前**就拦下缺参数的用户，
+    所以只要这三个还是 Mandatory，探测代码根本轮不到执行 ——
+    操作员会先看到"缺少必需参数"，然后去找资产，最后才发现 venv 是死的。
+
+    代价是把 Mandatory 去掉之后，校验得挪到脚本体里（探测之后），
+    报错措辞要写清楚是哪个参数、要给什么。
+    """
+    text = _read()
+    param_block = text[text.find("param("):text.find("\n)", text.find("param("))]
+    for name in ("FfmpegPath", "TexasWallpaperPath", "VendingWallpaperPath"):
+        line = next((ln for ln in param_block.splitlines() if "$" + name in ln), "")
+        check(f"{name} 不再是 Mandatory",
+              "Mandatory" not in line and "$" + name in line,
+              f"实际：{line.strip()}")
+
+    # 标记要用 `$requiredAssets = @(`：直接 find `$requiredAssets` 会先命中
+    # 这次改动写在注释里的那句 "下面的 $requiredAssets"，位置在探测之前。
+    probe = text.find("$venvProbe = & $python")
+    assets = text.find("$requiredAssets = @(")
+    check("资源参数校验挪到了脚本体里（探测之后）",
+          probe > 0 and assets > probe, f"探测@{probe} 资源校验@{assets}")
+
+
+def test_probe_suppresses_terminating_error() -> None:
+    """探测必须临时把 ``$ErrorActionPreference`` 降下来。
+
+    不降的话有个反直觉的后果：``2>&1`` 把解释器写到 stderr 的
+    ``No Python at ...`` 变成 PowerShell 的错误记录，而在 ``Stop`` 模式下
+    **那本身就是终止性错误** —— 脚本停在探测这一行就结束了，
+    我们写的那段"删掉 .venv 重建、不要只是重跑"根本来不及显示。
+
+    实测过：不加这一段，操作员看到的是解释器自己那句 "No Python at"，
+    恰恰不是可执行的下一步。所以这条不是洁癖，是那句话能不能被看见的问题。
+    """
+    text = _read()
+    probe = text.find("$previousErrorAction = $ErrorActionPreference")
+    restore = text.find("$ErrorActionPreference = $previousErrorAction")
+    run = text.find("$venvProbe = & $python")
+    check("探测前降低了 ErrorActionPreference", 0 < probe < run,
+          f"降低@{probe} 实跑@{run}")
+    check("探测后恢复了 ErrorActionPreference", run < restore,
+          f"实跑@{run} 恢复@{restore}")
+    check("判定用的是退出码，不是 $LASTEXITCODE 被后续覆盖",
+          "if ($venvProbeExit -ne 0)" in text,
+          "没看到 if ($venvProbeExit -ne 0)")
+
+
 def test_env_probe_runs_before_first_interpreter_use() -> None:
     """核心断言：探测必须在第一次**真正使用**解释器之前。
 
@@ -175,6 +263,9 @@ def test_probe_would_catch_a_dead_interpreter() -> None:
 def main() -> int:
     tests = [
         test_script_exists_and_parses_as_powershell,
+        test_env_probe_runs_before_any_other_work,
+        test_asset_params_are_not_mandatory,
+        test_probe_suppresses_terminating_error,
         test_env_probe_runs_before_first_interpreter_use,
         test_probe_actually_executes_the_interpreter,
         test_old_duplicate_check_removed,
