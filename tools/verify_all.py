@@ -56,6 +56,27 @@ PYTHON_SUITES = (
     "hud_overlay_settings_test",    # RobotOverlay Robot ID / Crosshair Heat Color（第 4 批）
     "backend_protocol_test",  # 官方裁判协议（回归护栏）
     "api_freeze_test",        # 窗口成员冻结（防误删公开面）
+    # ---- 2026-09 补登记 ----
+    # 下面这几个 suite 之前**存在但没登记**在这里，等于它们的红没人看得见。
+    # 是 tests/test_suite_selfcheck.py 报出来的（它专门查"关键 suite 有没有
+    # 被闸门覆盖"）。教训：写完新测试不等于它被跑了。
+    "protocol_crc_test",             # CRC-8/MAXIM 与 CRC-16/X-25 黄金向量
+    "polar_link_failclosed_test",    # 解码器 fail-closed（含畸形输入模糊测试）
+    "overlay_write_guard_test",      # overlay 只能写白名单字段
+    "tongji_postprocess_parity_test",  # AI 后处理与 Python 逐位一致
+    "settings_access_test",          # 设置项读取：6 处手写收敛后的逐位等价
+    "spin_readback_test",            # 自转 0x1F 回读闭环（AGENT.md 不变量 9）
+    "hotpath_cache_test",            # 热路径缓存不返回同一份可变对象
+    "robot_health_field_test",       # 敌方基地血量不得当成机器人血量
+    "polar_link_snapshot_test",      # polar_link 快照是单一来源
+    "udp_transport_test",            # UDP 传输：丢包/乱序/大帧
+    "combat_events_test",            # 击杀判定的累计增量语义
+    "economy_safety_test",           # 经济准入与操作员开关
+    "config_store_io_test",          # 配置落盘与并发写
+    "vision_pipeline_hardening_test",  # 视觉管线的空帧/坏帧处理
+    "field_log_async_test",          # 现场日志异步写盘
+    "control_loop_test",             # 控制回路限频与闸门
+    "test_suite_selfcheck",          # 套件自检：无零断言测试、关键 suite 都被登记
 )
 
 C_CHECKS = (
