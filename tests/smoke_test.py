@@ -4147,6 +4147,63 @@ def test_estop_zero_frame_bypass_and_backend_readiness() -> None:
     manager.shutdown()
 
 
+def _wired_test_names() -> tuple[set[str], set[str]]:
+    """返回 (模块级 test_* 定义集合, `__main__` 里真正调用过的 test_* 集合)。
+
+    用 ast 静态比对，不靠运行时打点：运行时的"调用过"会被别的测试顺手
+    调一下就骗过去，而这里要问的是"**这个文件自己的 runner 会不会跑它**"。
+    """
+    import ast
+
+    tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
+    defined = {
+        node.name
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")
+    }
+    called: set[str] = set()
+    for node in tree.body:
+        if not isinstance(node, ast.If):
+            continue
+        # 只认 `if __name__ == "__main__":` 里的调用，别把别处的调用算进来
+        test = node.test
+        is_main = (
+            isinstance(test, ast.Compare)
+            and isinstance(test.left, ast.Name)
+            and test.left.id == "__name__"
+            and any(isinstance(op, ast.Eq) for op in test.ops)
+        )
+        if not is_main:
+            continue
+        for sub in ast.walk(node):
+            if (
+                isinstance(sub, ast.Call)
+                and isinstance(sub.func, ast.Name)
+                and sub.func.id.startswith("test_")
+            ):
+                called.add(sub.func.id)
+    return defined, called
+
+
+def _assert_every_test_is_wired() -> None:
+    """任何一个 test_* 写了却没接进 runner，当场 exit 1。
+
+    为什么要有这条：本文件历史上积了 **9 个**从未被调用的测试函数
+    （8 个 VisionKillDetector 击杀判定分支 + 1 个 GL pixel-store 状态还原
+    回归），它们从初始提交起就躺在文件里 —— 63 个被调用、72 个被定义，
+    差的 9 个一个都没跑过。也就是说"判定分支被人改坏"根本不会让本文件变红，
+    而没人看得出少跑了 9 个。这条自检把那种静默回归变成必红。
+    """
+    defined, called = _wired_test_names()
+    missing = sorted(defined - called)
+    if missing:
+        raise SystemExit(
+            "[smoke] 以下测试函数定义了却没接进 `if __name__ == '__main__'`：\n  "
+            + "\n  ".join(missing)
+            + "\n（补进 runner 后再跑；否则它们是永不执行的假覆盖。）"
+        )
+
+
 if __name__ == "__main__":
     test_registry()
     test_audio_feedback_and_kill_sound_mapping()
@@ -4158,6 +4215,17 @@ if __name__ == "__main__":
     test_vision_kill_dark_loss_requires_prior_dimming()
     test_vision_kill_bright_or_exiting_loss_never_eliminates()
     test_vision_kill_external_missing_data_never_eliminates()
+    # ↓ 这 7 个 + local_target_identity 与 dark_loss 那一组同源（VisionKillDetector
+    # 的击杀判定分支）。它们从初始提交起就定义了却**从未**被 __main__ 调用过，
+    # 于是"判定分支有人改错了"不会有任何测试变红 —— 2026-09 才补接。
+    test_vision_kill_same_empty_snapshot_never_times_out()
+    test_vision_kill_exposure_hold_blocks_missing_path()
+    test_vision_kill_reliable_mode_rejects_missing_path()
+    test_vision_kill_dim_uses_target_baseline()
+    test_vision_kill_no_lit_history_no_miss()
+    test_vision_kill_exposure_pauses_not_clears()
+    test_vision_kill_dim_lamp()
+    test_local_target_identity_survives_extinguish()
     test_gd656_renderer_presets()
     test_wallpaper_pkg_index_reader()
     test_wallpaper_profiles_and_user_import()
@@ -4210,5 +4278,7 @@ if __name__ == "__main__":
     test_estop_zero_frame_bypass_and_backend_readiness()
     test_liquid_glass_snapshot_stability()
     test_gpu_glass_commands_do_not_accumulate_between_frames()
+    test_dynamic_texture_upload_restores_qt_text_pixel_store_state()
     test_hud_liquid_glass_snapshot_stability()
-    print("smoke tests passed")
+    _assert_every_test_is_wired()
+    print(f"smoke tests passed（{len(_wired_test_names()[0])} 个测试函数全部被调用）")

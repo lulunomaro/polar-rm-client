@@ -1,6 +1,8 @@
 # 模块 ↔ 后端实现 对照（通俗版，脚本生成）
 
-> 生成命令：`python tools/module_backend_map.py`（本文件即其输出，改代码后重跑即可）
+> 生成命令：`python tools/module_backend_map.py`（本文件即其输出）　过期自检：`python tools/module_backend_map.py --check`（exit 1 = 该重跑了）
+> 
+> **改了 `rm_client/` 下任何一个文件都要重跑**：这张表是数出来的，代码一动证据就变，而过期的行号照样能点开、只是点到了别的函数——没人看得出它过期了，所以它由 `--check` / `tests/docs_and_tests_test.py` 把关。
 > 
 > **怎么读**：一行 = 一个模块。`附近出现的段字段`=模块名附近 8 行内数到的段字段（**弱证据，只用来指路**，见第 4 节）
 > `其它通路`=官方裁判 / MQTT / 本地视觉 / 串口这几条非段通路；`上行`=它会不会往车里发东西；`主要落点`=可直接点开核对的文件
@@ -38,7 +40,7 @@
 
 | 模块 | 开关 | 设置项 | 附近出现的段字段（弱证据） | 其它通路 | 上行 | 主要落点 |
 |---|---|---:|---|---|---|---|
-| **SpinMode** | 开 | 4 | — | 官方裁判协议x3、MQTT/图传x1、本地视觉(同济)x1 | — | `rm_client/auto_spin.py`、`rm_client/ui/polar/mixins/config_actions_mixin.py` |
+| **SpinMode** | 开 | 4 | — | 官方裁判协议x3、MQTT/图传x2、本地视觉(同济)x1 | — | `rm_client/auto_spin.py`、`rm_client/ui/polar/mixins/config_actions_mixin.py` |
 | **AutoSpinOnHit** | 关 | 8 | — | — | — | `rm_client/ui/polar/mixins/video_backend_mixin.py`、`rm_client/ui/polar/renderers/module_list.py` |
 | **ChassisAssist** | 关 | 3 | — | — | — | `rm_client/control.py`、`rm_client/ui/polar/renderers/module_list.py` |
 | **PowerGuard** | 关 | 3 | — | — | — | `rm_client/ui/polar/renderers/tactical_map.py`、`rm_client/ui/polar/renderers/module_list.py` |
@@ -48,7 +50,7 @@
 | 模块 | 开关 | 设置项 | 附近出现的段字段（弱证据） | 其它通路 | 上行 | 主要落点 |
 |---|---|---:|---|---|---|---|
 | **CameraFeed** | 开 | 5 | — | 本地视觉(同济)x6、MQTT/图传x1 | — | `rm_client/ui/polar/mixins/video_backend_mixin.py`、`rm_client/app.py` |
-| **TongjiVisionBridge** | 开 | 9 | — | 本地视觉(同济)x5、MQTT/图传x2、官方裁判协议x1 | — | `rm_client/ui/polar/mixins/video_backend_mixin.py`、`rm_client/ui/polar_app.py` |
+| **TongjiVisionBridge** | 开 | 9 | — | 本地视觉(同济)x6、MQTT/图传x2、官方裁判协议x1 | — | `rm_client/ui/polar/mixins/video_backend_mixin.py`、`rm_client/vision.py` |
 | **CameraCalibration** | 开 | 7 | — | — | — | `rm_client/ui/polar/mixins/config_actions_mixin.py` |
 | **Armor3DESP** | 开 | 8 | — | — | — | `rm_client/ui/polar/renderers/esp_wireframe.py`、`rm_client/config_store.py` |
 | **RobotOverlay** | 开 | 12 | — | 本地视觉(同济)x2 | — | `rm_client/ui/polar/renderers/esp_wireframe.py`、`rm_client/app.py` |
@@ -65,8 +67,8 @@
 | **MatchTimer** | 开 | 3 | — | — | — | `rm_client/ui/polar/renderers/tactical_map.py`、`rm_client/ui/polar_app.py` |
 | **BaseOutpostStatus** | 开 | 4 | — | — | — | `rm_client/ui/polar/renderers/tactical_map.py` |
 | **VictoryPointStatus** | 关 | 3 | — | — | — | `rm_client/ui/polar/renderers/tactical_map.py` |
-| **EconomyPanel** | 开 | 5 | — | MQTT/图传x6、官方裁判协议x1、本地视觉(同济)x1 | — | `rm_client/ui/polar/renderers/tactical_map.py`、`rm_client/scenarios.py` |
-| **ProjectileShop** | 开 | 3 | 0x08 裁判警告 RefereeWarning x12、0x0A 本体状态 RobotStatus（热量/电容/转速） x6 | MQTT/图传x6、官方裁判协议x1、本地视觉(同济)x1 | — | `rm_client/ui/polar/renderers/tactical_map.py`、`rm_client/scenarios.py` |
+| **EconomyPanel** | 开 | 5 | — | MQTT/图传x4、官方裁判协议x1、本地视觉(同济)x1 | — | `rm_client/ui/polar/renderers/tactical_map.py`、`rm_client/scenarios.py` |
+| **ProjectileShop** | 开 | 3 | 0x08 裁判警告 RefereeWarning x12、0x0A 本体状态 RobotStatus（热量/电容/转速） x6 | MQTT/图传x4、官方裁判协议x1、本地视觉(同济)x1 | — | `rm_client/ui/polar/renderers/tactical_map.py`、`rm_client/scenarios.py` |
 | **MatchChat** | 开 | 4 | — | 官方裁判协议x4、本地视觉(同济)x4 | — | `rm_client/ui/polar_app.py`、`rm_client/ui/polar/mixins/video_backend_mixin.py` |
 | **BuffStatus** | 开 | 3 | — | — | — | `rm_client/ui/polar/renderers/module_list.py` |
 | **ProjectileAllowance** | 开 | 3 | — | — | — | `rm_client/ui/polar/renderers/tactical_map.py` |
@@ -85,10 +87,10 @@
 | **MatchReadiness** | 开 | 1 | — | — | — | （只在注册表里出现，**没有消费端**） |
 | **AudioFeedback** | 开 | 13 | — | — | — | `rm_client/ui/polar/mixins/config_actions_mixin.py`、`rm_client/ui/polar/mixins/persistence_mixin.py` |
 | **QuickActionWheel** | 开 | 14 | — | — | — | `rm_client/ui/polar_app.py`、`rm_client/ui/polar/mixins/input_dispatch_mixin.py` |
-| **MQTTLink** | 关 | 3 | — | — | — | `rm_client/scenarios.py` |
+| **MQTTLink** | 关 | 3 | — | — | — | `rm_client/backend/manager.py`、`rm_client/scenarios.py` |
 | **UDPVideo** | 关 | 3 | — | — | — | `rm_client/scenarios.py` |
 | **SerialBridge** | 关 | 3 | — | 官方裁判协议x3、MQTT/图传x3、本地视觉(同济)x3 | — | `rm_client/scenarios.py` |
-| **RobotLink** | 关 | 29 | — | 官方裁判协议x1、MQTT/图传x1、本地视觉(同济)x1 | — | `rm_client/backend/manager.py`、`rm_client/backend/polar_transport.py` |
+| **RobotLink** | 关 | 44 | — | MQTT/图传x7、官方裁判协议x1、本地视觉(同济)x1 | — | `rm_client/backend/manager.py`、`rm_client/ui/polar/mixins/config_actions_mixin.py` |
 | **JumpPTEWheelLES** | 开 | 4 | — | — | — | （只在注册表里出现，**没有消费端**） |
 
 ### 分类 Render（15 个）
@@ -133,23 +135,28 @@
 ## 3. 已知不准的地方（别当真到那份上）
 
 先交代被整文件丢掉的「清单文件」（它们只列名字、不含实现）：
-- ``rm_client/match_modes.py`：出现 26 个模块名，平均每 6 行就点一个（清单，不含实现）`
+- `rm_client/match_modes.py`：出现 26 个模块名，平均每 6 行就点一个（清单，不含实现）
 
 1. 统计窗口只有上下各 8 行、段字段要命中 >= 2 次才写表 —— 取向是「宁可少写也不要写错」，所以**空列不代表这个模块一定没读该段**，只代表附近没数到；相邻模块共用绘制代码时仍可能互相记到；
 2. 通用字段名（如 `energy`、`heat`）在多个段里都有，出现次数会被各段都记一份；
 3. `—` 不等于"这个模块一定没用"，只等于"在它自己那几行代码附近没找到这类关键字"；
 4. 真要改某个模块，先看第 1 列模块名在 `polar_app.py` / `ui/` 里的实现，别看这张表。
-## 4. 重点模块：数据到底从哪个函数进来（人写的，带行号）
+
+## 4. 重点模块：数据到底从哪个函数进来（人写的，行号生成时现查）
 
 第 1 节是机器数出来的，只会指路；这一节是逐条核过代码写的。要改哪个模块，先看这里。
+
+> 每一处行号都由 `locate()` 在**生成这一刻**现查 `rm_client/` 源码得到，
+> 脚本里只写「去哪找」（文件 + 那一行原文），不写死行号。
+> 真出现 `未找到` / `缺失` 就是符号被改名或文件被删了，**不要**沿用上一版的旧数字。
 
 ### 开车 / 控车这条线（队内 0x5A 上行）
 
 | 模块 | 后端实现在哪 | 说人话 |
 |---|---|---|
-| **RobotLink** | 编码：`backend/polar_link.py:597 encode_robot_cmd`(0x01)、`<br>:636 encode_virtual_rc`(0x03 键位图)、`<br>:678 encode_chassis_cmd`(0x04 自转+云台直控)；`<br>成帧与串口：`backend/polar_transport.py:487 / :506 / :513`；`<br>开关判定：`backend/manager.py:371` | 整条「客户端往车里发东西」的路都归它。松键时它会补发一次全零（`:513`），所以固件那边不会因为停发而冻在最后一帧 |
-| **SpinMode** / **AutoSpinOnHit** | `auto_spin.py:44`（受击后限时开自转）→ 上面那个 `encode_chassis_cmd()`（上行 0x04）；状态回读是固件下行 0x1F | 以前只能借 SHIFT 键，而固件对 SHIFT 是边沿翻转 —— **关不掉**；现在是显式 ON/OFF + 回读闭环 |
-| **EmergencyStop** | 行为在 `backend/safety.py`(OfficialSafety) 与 `manager.py:222 release_estop()`；但注册表里那个 `EmergencyStop` 模块**没有任何代码读它** | 急停本身是真有的，只是「界面那个模块条目」和它之间没接线 —— 界面上那个开关是装饰 |
+| **RobotLink** | 编码：`rm_client/backend/polar_link.py:617 encode_robot_cmd`(0x01)、`<br>`rm_client/backend/polar_link.py:656 encode_virtual_rc`(0x03 键位图)、`<br>`rm_client/backend/polar_link.py:698 encode_chassis_cmd`(0x04 自转+云台直控)；`<br>`成帧与写串口：`rm_client/backend/polar_transport.py:471 _write_after_intent_held`(分派)、`rm_client/backend/polar_transport.py:514 _frame_for`(0x01 成帧)、`rm_client/backend/polar_transport.py:505 _take_intent_locked`(取意图+死区)；`<br>自转开关联动：`rm_client/backend/manager.py:371 _spin_assert 落定（自转开关联动判定）` | 整条「客户端往车里发东西」的路都归它。松键时它会补发一次全零（`rm_client/backend/polar_transport.py:503 松键下降沿补发全零 0x03`），所以固件那边不会因为停发而冻在最后一帧 |
+| **SpinMode** / **AutoSpinOnHit** | `rm_client/auto_spin.py:43 ProjectileHitSpinController`（受击后限时开自转，判定在 `rm_client/auto_spin.py:75 update（受击后限时开自转的判定）`）→ 上面那个 `encode_chassis_cmd()`（上行 0x04）；状态回读是固件下行 0x1F | 以前只能借 SHIFT 键，而固件对 SHIFT 是边沿翻转 —— **关不掉**；现在是显式 ON/OFF + 回读闭环 |
+| **EmergencyStop** | 行为在 `backend/safety.py`(OfficialSafety) 与 `rm_client/backend/manager.py:2070 release_estop`；但注册表里那个 `EmergencyStop` 模块**没有任何代码读它** | 急停本身是真有的，只是「界面那个模块条目」和它之间没接线 —— 界面上那个开关是装饰 |
 
 ### 看数据这条线
 
@@ -160,7 +167,7 @@
 | **CameraFeed** / **TongjiVisionBridge** / **Armor3DESP** | `backend/video_backend.py` + `ui/polar/mixins/video_backend_mixin.py`；3D 线框在 `renderers/esp_wireframe.py` | 走本地视觉这一路，跟队内 0x5A 无关，不插 USB 线也能用 |
 | **MQTTLink** / **UDPVideo** | `backend/mqtt_backend.py` / `backend/video_backend.py` | 界面上有「自动连接 / 重组」这类开关，但**刻意没接**（接上会让官方场景自己去抢端口），理由写在 `tools/SETTINGS_GAPS.md` |
 | **SerialBridge** | `backend/serial_backend.py`（官方裁判串口那一路） | 与队内 0x5A 是两条互相独立的串口链路，互不代管 |
-| **HeroLob** | 26 个设置项，主要被 `ui/polar/mixins/` 引用 | 英雄投石那套界面参数；**注意**它和固件里的「英雄兵种」是两回事，固件侧不接这些参数 |
+| **HeroLob** | 26 个设置项（数出来的，不是手写的），主要被 `ui/polar/mixins/` 引用 | 英雄投石那套界面参数；**注意**它和固件里的「英雄兵种」是两回事，固件侧不接这些参数 |
 
 ### 和这次 DT7 适配直接相关的那一条
 

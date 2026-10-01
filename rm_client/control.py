@@ -45,6 +45,29 @@ BINDABLE_KEY_NAMES = (
     "None",
 )
 
+# --- 心跳节奏表 --------------------------------------------------------------
+# 调用方（polar_app.on_tick）的节拍是 `max(4, round(1000/hz))` 毫秒的**整数量化**，
+# 再叠一层 0.92 容差的外层门控：它每拍都肯给我们，可它给的时刻落在 12.267ms 的
+# 栅格上，与名义的 13.333ms 对不齐。旧门控写的是"距上一帧 >= 13.333ms 才发"，
+# 于是每一次 12.3ms 的间隙都被判太密而整拍丢掉 —— 丢掉的还不是"这一拍"，
+# 而是被外层门控连同它的时戳一起作废的那一拍（polar_app 先更新
+# _last_control_tick_time 再回调这里）。量化误差因此**累加**而不是平均掉：
+# 60 秒长跑实测 60.72Hz / 47.42Hz / 52.13Hz，而同一时刻外层门控明明给到了
+# 71.50Hz / 62.70Hz / 68.97Hz。
+#
+# 现在改成**按名义节奏表**推进：deadline 每次只前进一个 interval，永远从上一格
+# deadline 往前推，不从"这一帧实际发出去的时刻"重算。落后就被记成落后，
+# 下一拍自动补回来，量化误差互相抵消而不是滚雪球。
+#
+# 两个闸不许省：
+#: 落后多少个周期还判定为"节奏表已失效"（线程被挂起 / 注入时钟跳变）—— 那种
+#: 情况要重新锚定，不许当成量化误差补一串洪峰出来。
+HEARTBEAT_CATCHUP_SPAN = 10.0
+#: 两帧之间的最小间隔 = interval × 本系数。只用来兜住"同一拍里连发"，
+#: 不是速率上限：外层门控保证相邻两次机会本来就 >= 12.267ms（> 0.6×13.333ms），
+#: 所以正常路径上它永远不生效；真生效时也只允许 100Hz 的一口气补发。
+HEARTBEAT_MIN_SPACING = 0.6
+
 
 @dataclass
 class ChassisCommand:
@@ -285,9 +308,20 @@ class KeyboardControlBridge:
         self.mid_button_down = False
         self.seq = 0
         self.last_command: ChassisCommand | None = None
-        self.last_payload: bytes = b""
+        #: 最近一帧的审计快照，**按需**编码（见 last_payload 属性）。
+        #: 不再每帧无条件 asdict()+json.dumps()：实测那一步 5.5us/帧
+        #: （占 send_from_state 的 60%），而全仓库只有测试断言读它。
+        self._last_payload_command: ChassisCommand | None = None
         self.last_error = ""
         self.last_send_at = 0.0
+        #: 心跳节奏表（见模块顶部注释）：下一帧的**名义**到期时刻，以及它按
+        #: 哪个 interval 推的。两者都不是发送闸门，闸门只有 _send_due() 一处。
+        self._next_send_at: float | None = None
+        self._pacing_interval = 0.0
+        #: 最近一次 tick() 用的钟。整条桥只认这一把：set_key()/release_all() 这些
+        #: 不经 tick 的发送也用它落戳，于是"门控比较的时刻"和"落戳的时刻"
+        #: 永远来自同一个时源。注入时钟的测试与真实运行都不再出现两把钟打架。
+        self._tick_now: float | None = None
         self.heartbeat_hz = 75.0
         # Active input remains 75 Hz. While an operator-authorized match is
         # idle, send a bounded 4 Hz neutral frame for the robot watchdog.
@@ -297,8 +331,13 @@ class KeyboardControlBridge:
     def set_bind(self, slot: str, key_name: str) -> bool:
         """改绑一个协议槽。失败时返回 False 且不改变现有状态。
 
-        不允许两个槽位绑到同一个物理键（会造成一键双动作）；也不允许
-        把槽位绑成 "None" 以外的重复值。绑成 "None" 表示该槽不接物理键。
+        不允许两个槽位绑到同一个物理键（会造成一键双动作）。但"占用"只算
+        **别人显式挑过的那一次**：一个槽还停在出厂的"槽名=键名"同义绑定上时，
+        它并没有占住那个物理键 —— 否则 W<->D 这种"把两个键对调"永远配不出来
+        （旧实现里"释放旧占用"那一段被上面的拒绝分支完全挡住，是死代码：
+        三次 set_bind 全部返回 False）。这种同义让位会把对方置成 "None"，
+        该槽从此不接任何物理键，**别的槽仍然一个都动不了**。
+        绑成 "None" 表示该槽不接物理键。
         """
 
         slot = str(slot).upper()
@@ -310,12 +349,12 @@ class KeyboardControlBridge:
         if candidate != "None":
             lowered = candidate.lower()
             for other, bound in self.binds.items():
-                if other != slot and str(bound).lower() == lowered:
-                    return False  # 已被别的槽占用
-            # 物理键名与默认槽名相同时，仍要先把旧的同名绑定释放，避免两个槽同时响应
-            for other in list(self.binds):
-                if other != slot and str(self.binds[other]).lower() == lowered:
-                    self.binds[other] = DEFAULT_CONTROL_BINDS[other]
+                if other == slot or str(bound).lower() != lowered:
+                    continue
+                if str(bound) != DEFAULT_CONTROL_BINDS.get(other):
+                    return False  # 已被别的槽显式占用
+                # 还停在出厂同义绑定：让出来，避免两个槽同时响应同一个物理键
+                self.binds[other] = "None"
         self.binds[slot] = candidate or "None"
         return True
 
@@ -399,13 +438,15 @@ class KeyboardControlBridge:
         """急停已走专用零帧后清除普通发送重试。"""
         self._dirty = False
 
-    def send_from_state(self, state: RobotState, registry: ModuleRegistry) -> ChassisCommand:
+    def send_from_state(self, state: RobotState, registry: ModuleRegistry,
+                        now: float | None = None) -> ChassisCommand:
         command = self.build_command(state, registry)
-        self.send_command(command)
+        self.send_command(command, now=now)
         return command
 
     def tick(self, state: RobotState, registry: ModuleRegistry, now: float | None = None) -> ChassisCommand | None:
         now = time.perf_counter() if now is None else float(now)
+        self._tick_now = now
         active = (
             any(self.key_state.values())
             or self.left_button_down
@@ -425,9 +466,43 @@ class KeyboardControlBridge:
             return None
         interval = (1.0 / self.heartbeat_hz
                     if (active or self._dirty or must_flush) else self.idle_zero_interval_s)
-        if now - self.last_send_at < interval:
+        if not self._send_due(now, interval):
             return None
-        return self.send_from_state(state, registry)
+        # now 往下一路传：门控、落戳、节奏表必须用**同一把钟**。以前
+        # send_command 自己取模块级 time.perf_counter()，注入时钟的 tick() 在
+        # 另一把钟上被比较，差值恒为负 —— 整条桥会永久停发（240 次 tick 只发 0 次）。
+        return self.send_from_state(state, registry, now=now)
+
+    def _send_due(self, now: float, interval: float) -> bool:
+        """心跳的唯一发送闸门：按**名义节奏表**判到期，不按"距上一帧多久"。
+
+        两者在理想时刻等价，在整数量化的调用栅格上不等价：旧判据每遇到一次
+        12.3ms 的间隙就整拍作废，而外层门控的时戳已经先被推进了 —— 那一拍
+        永久损失，量化误差越跑越远。改判"这一拍对应的名义 deadline 到了没有"，
+        迟到就记成迟到，下一拍自动补齐。
+        """
+        if interval != self._pacing_interval or self._next_send_at is None:
+            # 节奏在 4Hz 空闲零帧与 75Hz 活跃心跳之间切换（或者第一次跑）：
+            # 上一套 deadline 不再成立，从上次发送重新锚定。
+            self._pacing_interval = interval
+            self._next_send_at = self.last_send_at + interval
+        if now < self._next_send_at:
+            return False
+        return (now - self.last_send_at) >= interval * HEARTBEAT_MIN_SPACING
+
+    def _mark_sent(self, now: float) -> None:
+        """记一次真实发送：落时间戳，并让节奏表前进**一格**。
+
+        前进的是 deadline，不是"实际发送时刻 + interval" —— 这正是量化误差
+        能互相抵消的那一处。落后超过 HEARTBEAT_CATCHUP_SPAN 格（线程挂起、
+        注入时钟跳变）就当节奏表作废、重新锚定，不许补一串洪峰。
+        """
+        self.last_send_at = now
+        base = self._next_send_at
+        interval = self._pacing_interval or (1.0 / self.heartbeat_hz)
+        if base is None or now - base > interval * HEARTBEAT_CATCHUP_SPAN:
+            base = now
+        self._next_send_at = base + interval
 
     def _idle_zero_authorized(self) -> bool:
         """Avoid denied heartbeat/log spam while the fail-closed gate is locked."""
@@ -627,12 +702,28 @@ class KeyboardControlBridge:
             self.cc_last_error = str(exc)
             return
         self.cc_last_error = "" if ok else str(why)
-    def send_command(self, command: ChassisCommand) -> None:
+    @property
+    def last_payload(self) -> bytes:
+        """最近一帧的 JSON 审计快照（按需编码，读到的字节与旧实现逐位相同）。
+
+        原来是 send_command 里一句无条件的 ``command.to_payload()``：
+        asdict() + json.dumps() 实测 5.5-7.4us/帧，cProfile 里 _asdict_inner
+        一帧被调 19 次、占总时间 46%，而全仓库只有两处测试断言读这个属性。
+        热路径上没有任何消费者，所以改成惰性求值。
+        """
+        command = self._last_payload_command
+        return b"" if command is None else command.to_payload()
+
+    def send_command(self, command: ChassisCommand, now: float | None = None) -> None:
         self.last_command = command
-        self.last_payload = command.to_payload()
+        self._last_payload_command = command
         self.last_error = ""
-        now = time.perf_counter()
-        self.last_send_at = now
+        if now is None:
+            # 落戳用 tick() 的那把钟；tick() 从没跑过才退回模块级 perf_counter。
+            # 以前这里无条件 time.perf_counter()，于是注入时钟的 tick() 拿一把
+            # 钟去比一把差了几分钟的钟，差值恒为负 —— 整条桥永久停发。
+            now = time.perf_counter() if self._tick_now is None else self._tick_now
+        self._mark_sent(float(now))
         # 无线键鼠出口放在最前面，且不受下面的 mock 短路影响：
         # 它是独立的一条上行路（0x0311），开关就是它的开关。
         # 键鼠来源互斥：《2026 通信协议》2.2.1 明确"同时仅能通过一个来源生成发送给
@@ -646,18 +737,24 @@ class KeyboardControlBridge:
         ) if on]
         self.km_source_conflict = ("键鼠来源只能有一个，当前同时开着："
                                    + "、".join(km_live)) if len(km_live) > 1 else ""
-        if not self.km_source_conflict:
-            self._send_radio_km(command)
-        # 自定义控制器出口同理：它是"经官方选手端进 DT7"的独立一条路，
-        # 既不受 KMC 成败影响，也不受 0x5A / 图传链路状态影响。
-        if not self.km_source_conflict:
-            self._send_custom_controller(command)
-        # 直连 DT7：键位图可以复用 command.keyboard_value（位序已被厂商 KeyBoard 枚举
-        # 核实，见 README 19.1）；但鼠标这里是**增量**，与 0x0306 那条的绝对像素
-        # 语义不同，两条路的鼠标字段不许互相借用。
         # C 路被限流挡下时，鼠标增量要滚存到下一帧（见 _consume_relative_motion）。
+        # 这一位每帧无条件清零：它描述的是"**这一帧**的 C 路结果"，不是上一帧的。
         self._dt7_keep_motion = False
-        if not self.km_source_conflict:
+        if self.km_source_conflict:
+            # 冲突时下面三条出口一个都不走，等于"全部出口都没开"。于是
+            # dt7_release_pending 永远等不到落地的那帧，心跳被它钉死在
+            # 75Hz 空转（实测 3.1 秒 225 次 vs 解除后 1 次）。这里必须按
+            # "出口没开"同义清掉：冲突期间线上一个字节都不写，清不清 pending
+            # 对车完全等价，而不清就把整条回路烧在这儿空转。
+            self.dt7_release_pending = False
+        else:
+            self._send_radio_km(command)
+            # 自定义控制器出口同理：它是"经官方选手端进 DT7"的独立一条路，
+            # 既不受 KMC 成败影响，也不受 0x5A / 图传链路状态影响。
+            self._send_custom_controller(command)
+            # 直连 DT7：键位图可以复用 command.keyboard_value（位序已被厂商 KeyBoard 枚举
+            # 核实，见 README 19.1）；但鼠标这里是**增量**，与 0x0306 那条的绝对像素
+            # 语义不同，两条路的鼠标字段不许互相借用。
             self._send_direct_dt7(command)
         if self.mock_output:
             self._dirty = False

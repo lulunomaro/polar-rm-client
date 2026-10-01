@@ -13,6 +13,26 @@ from .armor_vehicle import MultiArmorPrediction
 ARMOR_NAMES = ("sentry", "one", "two", "three", "four", "five", "outpost", "base", "not_armor")
 ARMOR_COLORS = ("blue", "red", "extinguish", "purple")
 
+# 漏检保持窗口（秒）——**实测值，不是设计目标值**。
+#
+# 早先这里写的是"超过 300ms 仍会安全清空"，那是错的：真实类驱动实测（25ms/帧
+# 提交，首帧一个亮灯蓝装甲、之后一直漏检）在 **310 帧 / 8.03 秒** 才清空。
+# 300ms 的来源是 `LocalTargetSelector._hold_limits()` 的 (0.55s, 6 帧) /
+# (0.70s, 8 帧)，但保持分支每帧都调用 `keep_alive()`，把这两个上限一直续命，
+# 所以它们**从来不是**真正的清空条件。
+#
+# 真正的清空条件只有一个：`_LocalLossLightProbe.sample_loss()` 里"距上次真检测
+# 超过 HOLD_MAX_SECONDS 就 reset()"这一条。它同时也是灭灯探针自己的陈旧门槛，
+# 两个语义共用一个计时器 —— 这就是注释长期对不上的根因：看代码的人按注释去
+# `LocalTargetSelector` 里找 300ms，而真正的开关在探针里。
+#
+# 现在把它提成模块常量，让"8 秒"这个事实上限对读代码的人显式可见，并让
+# 注释、测试和执行者三处指向同一个名字。
+#
+# 注意：**不要**为了"名副其实"把它改成 0.3。这会改变画面上 ESP/自瞄预测面的
+# 消失时机（可见行为），而本轮改动的红线是不动视觉。
+HOLD_MAX_SECONDS = 8.0
+
 
 def _sigmoid(value: float) -> float:
     return 1.0 / (1.0 + math.exp(-value)) if value >= 0 else math.exp(value) / (1.0 + math.exp(value))
@@ -353,7 +373,7 @@ class _LocalLossLightProbe:
     def sample_loss(self, bgr: Any, width: int, height: int, sequence: int) -> dict[str, Any] | None:
         if self.target_id < 0 or len(self.points) != 4 or self.last_center is None:
             return None
-        if time.perf_counter() - self.last_seen_at > 8.0:
+        if time.perf_counter() - self.last_seen_at > HOLD_MAX_SECONDS:
             self.reset()
             return None
         strength = TongjiYoloV5._sample_light_strength(bgr, self.points)
@@ -387,10 +407,23 @@ class LocalAlignedVision:
         self.last_error = ""
         self.inference_fps = 0.0
         self.latency_ms = 0.0
+        # --- 时延分段遥测（read_latency() 一次性读完） ------------------------
+        # 早先只有一个 latency_ms，它只覆盖 detect()：CamSubmit→推理开始前的
+        # 排队时延被 submit() 丢掉 CapturedFrame.timestamp_ns 直接消失，后面
+        # select() + MultiArmorPrediction.build()（内含 4 点序 × 2 求解器
+        # = 8 次 solvePnP，实测 1.29 ms/帧）也整段落在计时器外面。于是这个
+        # 数字既不等于帧龄、也不等于推理耗时，而全仓库没有任何一处读它。
+        #
+        # 现在四段分开记，latency_ms 本身改成"本帧推理线程总占用"（检测+几何），
+        # 语义与名字对齐；inference_fps 仍是纯检测速率，语义不变。
+        self.detect_latency_ms = 0.0      # detector.detect() 单段
+        self.geometry_latency_ms = 0.0    # sample_loss + select + PnP 预测段
+        self.queue_latency_ms = 0.0       # submit() → 推理线程取走这一帧
+        self.frame_age_ms = -1.0          # 摄像头打戳 → 推理开始；-1 = 调用方未提供
         self._detector: TongjiYoloV5 | None = None
         self._thread: threading.Thread | None = None
         self._lock = threading.Lock()
-        self._pending: tuple[int, int, int, Any] | None = None
+        self._pending: tuple[int, int, int, int, Any, float, int | None] | None = None
         self._latest: tuple[int, int, int, int, list[dict[str, Any]], float, float, dict[str, Any] | None] | None = None
         self._prediction = MultiArmorPrediction()
         self._target_selector = LocalTargetSelector()
@@ -455,12 +488,35 @@ class LocalAlignedVision:
             with self._lock:
                 self._pending = None
 
-    def submit(self, sequence: int, width: int, height: int, bgr: Any) -> None:
+    def submit(self, sequence: int, width: int, height: int, bgr: Any, *, captured_at_ns: int | None = None) -> None:
+        """排队一帧。
+
+        ``captured_at_ns`` 是 :class:`~rm_client.vision.CapturedFrame` 的
+        ``timestamp_ns``（摄像头出帧时的墙钟）。**可选**：生产调用方
+        ``video_backend_mixin.on_captured_camera_frame`` 目前只传 4 个位置参数
+        （该文件在视觉冻结范围内，不能改），所以线上 ``frame_age_ms`` 仍是 -1。
+        即便如此，``queue_latency_ms``（submit → 推理线程取帧）仍可测，
+        而摄像头回调到 submit 之间是同步调用、耗时可忽略，端到端口径只差这一小段。
+
+        无论是否提供，本方法都会记录 ``time.perf_counter()``，所以排队时延本身
+        不再像以前那样被丢在地板上。
+        """
         if not self.running:
             return
         with self._lock:
-            self._pending = (sequence, width, height, bgr.copy())
+            self._pending = (sequence, width, height, bgr.copy(), time.perf_counter(), captured_at_ns)
         self._pending_event.set()
+
+    def read_latency(self) -> dict[str, float]:
+        """一次读完四段时延。存在的意义：以前这四个数字谁也读不到。"""
+        return {
+            "detect_ms": self.detect_latency_ms,
+            "geometry_ms": self.geometry_latency_ms,
+            "queue_ms": self.queue_latency_ms,
+            "frame_age_ms": self.frame_age_ms,
+            "latency_ms": self.latency_ms,
+            "inference_fps": self.inference_fps,
+        }
 
     def latest(self, timeout_ms: float = 350.0) -> tuple[int, int, int, int, list[dict[str, Any]], float, float, dict[str, Any] | None] | None:
         with self._lock:
@@ -487,10 +543,17 @@ class LocalAlignedVision:
                     self._pending = None
                 if pending is None:
                     continue
-                sequence, width, height, bgr = pending
+                sequence, width, height, bgr, submitted_at, captured_at_ns = pending
                 started = time.perf_counter()
+                # 排队时延：submit() → 推理线程真正开始处理这一帧。
+                # 以前 submit() 只存 (sequence,w,h,bgr)，帧在队列里躺多久无从得知。
+                queue_ms = max(0.0, started - submitted_at) * 1000.0
+                frame_age_ms = -1.0
+                if captured_at_ns:
+                    frame_age_ms = max(0.0, (time.time_ns() - captured_at_ns) / 1e6)
                 detections = self._detector.detect(bgr)
-                elapsed = max(0.0001, time.perf_counter() - started)
+                detected_at = time.perf_counter()
+                elapsed = max(0.0001, detected_at - started)
                 payload: list[dict[str, Any]] = []
                 loss_evidence: dict[str, Any] | None = None
                 pending_loss = self._loss_probe.sample_loss(bgr, width, height, sequence) if not detections else None
@@ -551,7 +614,11 @@ class LocalAlignedVision:
                     self._held_payload = []
                     self._prediction.reset()
                 if not payload:
-                    # 短暂漏检不让整车预测面瞬间消失；超过 300ms 仍会安全清空。
+                    # 短暂漏检不让整车预测面瞬间消失。本分支**没有独立计时器**：
+                    # 清空由 HOLD_MAX_SECONDS(8.0s) 强制——它住在
+                    # _LocalLossLightProbe.sample_loss() 的陈旧门槛里，探针一
+                    # reset()，pending_loss 就是 None，keep_visible 变 False，
+                    # _held_payload 随之清空。真实类驱动实测 310 帧 / 8.03 秒。
                     loss_evidence = pending_loss or self._loss_probe.sample_loss(bgr, width, height, sequence)
                     if keep_visible and self._held_payload:
                         payload = [dict(item) for item in self._held_payload]
@@ -571,7 +638,20 @@ class LocalAlignedVision:
                     else:
                         self._held_payload = []
                 self.inference_fps = 1.0 / elapsed
-                self.latency_ms = elapsed * 1000.0
+                # geometry_ms = detect() 之后到发布之前的全部几何段：
+                # sample_loss() + selector.select() + _prediction.build()（8 次
+                # solvePnP）。以前这段整块落在 latency_ms 的计时器外面。
+                geometry_ms = max(0.0, (time.perf_counter() - detected_at) * 1000.0)
+                self.detect_latency_ms = elapsed * 1000.0
+                self.geometry_latency_ms = geometry_ms
+                self.queue_latency_ms = queue_ms
+                self.frame_age_ms = frame_age_ms
+                # latency_ms 现在 = 本帧推理线程总占用（检测 + 几何），与名字对齐。
+                # 消费方只有 video_backend_mixin → VisionResult.latency_ms →
+                # RobotState.vision_latency_ms，而后者全仓库无人读取（实测 grep
+                # 仅 2 处命中：model.py 的字段声明 + 那一行赋值），所以口径修正
+                # 不会改动任何画面。inference_fps 仍是纯检测速率，未改。
+                self.latency_ms = self.detect_latency_ms + geometry_ms
                 with self._lock:
                     self._latest = (time.time_ns(), sequence, width, height, payload, self.inference_fps, self.latency_ms, loss_evidence)
         except Exception as error:

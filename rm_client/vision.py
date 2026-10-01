@@ -14,6 +14,8 @@ from .model import RobotState
 from .tongji_bridge import TongjiPacket
 
 
+# PLVR 桥接协议常量。**只有** TongjiVisionBridge 使用，而该类在生产路径上从不
+# start()（见它的类文档）。tests/smoke_test.py 仍在验证这套帧格式，保留。
 PROTOCOL_MAGIC = b"PLVR"
 PROTOCOL_VERSION = 1
 PACKET_HEADER = struct.Struct("!4sHHIQI")
@@ -464,7 +466,36 @@ class CameraCaptureWorker:
 
 
 class TongjiVisionBridge:
-    """与 WSL/Ubuntu 同济桥接进程通信的最新帧优先 TCP 客户端。"""
+    """与 WSL/Ubuntu 同济桥接进程通信的最新帧优先 TCP 客户端。
+
+    ⚠ **生产路径上的死代码**（本轮实测结论，勿以为它在跑）
+    ------------------------------------------------------
+    * 类体 136 行 + 一整套 ``PLVR`` 二进制 TCP 帧格式（模块级
+      ``PROTOCOL_MAGIC/VERSION/PACKET_HEADER/PACKET_FRAME/PACKET_RESULT``）
+      + ``submit_bgr()`` 的整条 JPEG 编码链。
+    * 全仓库构造点只有一处：``rm_client/ui/polar_app.py:443``
+      ``self.tongji_bridge = TongjiVisionBridge()``。**从未调用 ``start()``** ——
+      关闭期 ``polar_app.py:3216`` 与 ``video_backend_mixin.refresh_vision_runtime``
+      都只 ``stop()``，而 ``running`` 永远是 False。
+    * ``submit_bgr()``（唯一的 JPEG 编码入口）**零调用方**，连 smoke_test 都不用，
+      它只走 ``submit_jpeg()``。
+    * 唯一调用方是 ``tests/smoke_test.py`` 的 ``test_tongji_bridge_protocol()``。
+
+    实测运行成本为 0：构造它新增 **0 个线程、0 个 socket**（``start()`` 才建线程）。
+
+    为什么还留着
+    ------------
+    删不掉。``rm_client/ui/polar_app.py`` 在 ``rm_client/ui/**`` 里，属于**视觉
+    冻结范围**：它在模块顶层 import 本类（第 96 行的 import 列表里）、在构造期
+    实例化（第 443 行）、在关闭期 ``stop()``（第 3216 行）。删类会让冻结文件的
+    import 直接炸，而本轮禁止改动冻结文件。真正删除需要先解冻 ``polar_app.py``
+    与 ``video_backend_mixin.py``，属于跨组决策。
+
+    本轮能做的都做了：把"死"这件事连同证据写进代码，并加测试钉住它**保持死**
+    （构造不产生任何线程/socket），这样哪天有人不小心在生产路径接上它，会被测试
+    抓到而不是悄悄多出一个线程。TODO(视觉组)：解冻后连同 PLVR 常量与
+    ``submit_bgr`` 一并删除。
+    """
 
     def __init__(self, host: str = "127.0.0.1", port: int = 18301) -> None:
         self.host = host

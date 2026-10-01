@@ -9,11 +9,21 @@
   2) 每个模块名的出现位置来自全仓 grep（排除中英翻译表）；
   3) "读哪些数据段"由该模块代码附近出现的**段字段名**统计得出，
      段字段名来自 `polar_protocol.json`（协议唯一真源）与 `polar_bridge.py`；
-  4) 每行都附 file:line，任何人可以点开核。
+  4) 每行都附 file:line，任何人可以点开核。第 4 节那些"带行号"的锚点
+     也是**现查**的（`locate()`），不是写死的字符串。
 
 诚实边界：窗口式统计会有串味（相邻模块共用一段代码时字段会被双方都记到）。
 所以表里给的是"证据计数"而不是"结论"，列名也刻意这么写。真要判某个模块，
 点它第一条证据去看代码。
+
+两种用法
+--------
+    python tools/module_backend_map.py            # 重写 MODULE_BACKEND_MAP.md
+    python tools/module_backend_map.py --check    # 只比对，不写；过期时 exit 1
+
+为什么要有 --check：这份产物一旦过期，读者根本看不出它过期了（旧行号照样
+能点开、点开是另一段代码），所以"过期"必须变成一条能红的机器判据，
+而不是靠人记得重跑。tests/docs_and_tests_test.py 就是调它的。
 """
 
 from __future__ import annotations
@@ -160,7 +170,77 @@ def _cat_counts(modules) -> "Counter[str]":
     return _C(m.category for m in modules)
 
 
-def main() -> int:
+# ---------------------------------------------------------------- 行号锚点
+#: 下面这张表是第 4 节里那些"给人点开核对"的锚点。
+#: **只写"去哪找"，不写"在第几行"**：行号在生成时现查（`locate`），
+#: 查不到就把「未找到」原样写进文档，绝不沿用上一版的旧数字。
+#: 实测代价：写死版有 9 个行号（polar_link 3 个、polar_transport 3 个、
+#: manager 2 个、auto_spin 1 个），其中 3 个已经漂到无关代码
+#: （`manager.py:222` 落在 MQTT 端口回退提示上、`polar_transport.py:487`
+#: 落在 `gimbal_yaw_rad=...` 上），而**重跑脚本修不好**它们——那是字符串字面量。
+#: 三元组 = (仓库相对路径, 在源码里现找的那一行原文, 文档里显示的符号名)。
+ANCHORS = {
+    "robot_cmd": ("rm_client/backend/polar_link.py", "def encode_robot_cmd(", "encode_robot_cmd"),
+    "virtual_rc": ("rm_client/backend/polar_link.py", "def encode_virtual_rc(", "encode_virtual_rc"),
+    "chassis_cmd": ("rm_client/backend/polar_link.py", "def encode_chassis_cmd(", "encode_chassis_cmd"),
+    "tx_pump": ("rm_client/backend/polar_transport.py", "def _write_after_intent_held(",
+                "_write_after_intent_held"),
+    "tx_frame": ("rm_client/backend/polar_transport.py", "def _frame_for(", "_frame_for"),
+    "tx_intent": ("rm_client/backend/polar_transport.py", "def _take_intent_locked(",
+                  "_take_intent_locked"),
+    "tx_release_zero": ("rm_client/backend/polar_transport.py",
+                        "self._write(self._zero_virtual_rc_frame())",
+                        "松键下降沿补发全零 0x03"),
+    "spin_switch": ("rm_client/backend/manager.py", "self._spin_assert = cmd",
+                    "_spin_assert 落定（自转开关联动判定）"),
+    "estop": ("rm_client/backend/manager.py", "def release_estop(", "release_estop"),
+    "spin_controller": ("rm_client/auto_spin.py", "class ProjectileHitSpinController:",
+                        "ProjectileHitSpinController"),
+    "spin_update": ("rm_client/auto_spin.py", "def update(", "update（受击后限时开自转的判定）"),
+}
+
+_SOURCE_CACHE: dict[str, list[str]] = {}
+
+
+def locate(key: str) -> str:
+    """把锚点名解析成 `文件:行号 符号名`，供第 4 节拼表格用。
+
+    匹配规则：`needle` 按**去掉缩进后的前缀**匹配整行（所以
+    `def _frame_for(` 能命中签名换行写的长定义行）。
+
+    返回值的三种形态：
+      * `rm_client/backend/polar_link.py:617 encode_robot_cmd` —— 找到了
+      * `rm_client/backend/polar_link.py:未找到(def encode_robot_cmd()`
+        —— 文件在但符号没了（改名/删除），把这条明写进文档，逼人去改
+      * `rm_client/xxx.py:缺失` —— 文件本身不在了
+
+    为什么"查不到"要显式写出来：错的行号比没有行号更坑——它能点开，
+    读者会以为核对过了。
+    """
+    rel, needle, label = ANCHORS[key]
+    path = ROOT / rel
+    if not path.exists():
+        return f"{rel}:缺失（{label}）"
+    lines = _SOURCE_CACHE.setdefault(
+        rel, path.read_text(encoding="utf-8", errors="replace").splitlines())
+    probe = needle.strip()
+    for i, line in enumerate(lines, 1):
+        if line.strip().startswith(probe):
+            return f"{rel}:{i} {label}"
+    return f"{rel}:未找到({needle.strip()} → {label})"
+
+
+def anchors() -> dict[str, str]:
+    return {key: locate(key) for key in ANCHORS}
+
+
+def render() -> str:
+    """产出第 1–4 节的 Markdown 文本（纯函数：不碰磁盘、不读时间戳）。
+
+    抽出来是为了让 `tests/docs_and_tests_test.py` 能在不写文件的前提下
+    拿产物做逐字节比对 —— 写文件再读回来会让"生成时那一刻的树"和
+    "比对时那一刻的树"之间产生竞态。
+    """
     registry = build_default_registry()
     modules = registry.modules
     files = py_files()
@@ -201,7 +281,12 @@ def main() -> int:
     a = out.append
     a("# 模块 ↔ 后端实现 对照（通俗版，脚本生成）")
     a("")
-    a("> 生成命令：`python tools/module_backend_map.py`（本文件即其输出，改代码后重跑即可）")
+    a("> 生成命令：`python tools/module_backend_map.py`（本文件即其输出）"
+      "　过期自检：`python tools/module_backend_map.py --check`（exit 1 = 该重跑了）")
+    a("> ")
+    a("> **改了 `rm_client/` 下任何一个文件都要重跑**：这张表是数出来的，"
+      "代码一动证据就变，而过期的行号照样能点开、只是点到了别的函数——"
+      "没人看得出它过期了，所以它由 `--check` / `tests/docs_and_tests_test.py` 把关。")
     a("> ")
     a("> **怎么读**：一行 = 一个模块。`附近出现的段字段`=模块名附近 8 行内数到的段字段（**弱证据，只用来指路**，见第 4 节）")
     a("> `其它通路`=官方裁判 / MQTT / 本地视觉 / 串口这几条非段通路；`上行`=它会不会往车里发东西；`主要落点`=可直接点开核对的文件")
@@ -279,28 +364,46 @@ def main() -> int:
         a("")
         a("先交代被整文件丢掉的「清单文件」（它们只列名字、不含实现）：")
         for d in dropped:
-            a(f"- `{d}`")
+            a(f"- {d}")
     a("")
     a(f"1. 统计窗口只有上下各 {WINDOW} 行、段字段要命中 >= {MIN_SEG} 次才写表 —— 取向是「宁可少写也不要写错」，"
        "所以**空列不代表这个模块一定没读该段**，只代表附近没数到；相邻模块共用绘制代码时仍可能互相记到；")
     a("2. 通用字段名（如 `energy`、`heat`）在多个段里都有，出现次数会被各段都记一份；")
     a("3. `—` 不等于\"这个模块一定没用\"，只等于\"在它自己那几行代码附近没找到这类关键字\"；")
     a("4. 真要改某个模块，先看第 1 列模块名在 `polar_app.py` / `ui/` 里的实现，别看这张表。")
+    a("")
     # ---------------- 5. 人写的重点模块对照 ----------------
     # 机器只能数名字，说不出"这个模块的数据其实从哪个函数进来"。
-    # 这一节是逐条核过代码写的（带 file:line）。表格单元格里要换行只能用 <br>，
+    # 这一节是逐条核过代码写的。表格单元格里要换行只能用 <br>，
     # 直接放换行符会把整行 Markdown 表格打断。
-    a("## 4. 重点模块：数据到底从哪个函数进来（人写的，带行号）")
+    # **行号不写死**：下面每一个 `A[...]` 都在生成时现查（`anchors()`），
+    # 写死的那一版已经漂了 3 处而重跑脚本修不掉——因为它是字符串字面量。
+    A = anchors()
+    hero_lob = registry.get("HeroLob")
+    hero_lob_settings = len(hero_lob.settings) if hero_lob is not None else "?"
+    a("## 4. 重点模块：数据到底从哪个函数进来（人写的，行号生成时现查）")
     a("")
     a("第 1 节是机器数出来的，只会指路；这一节是逐条核过代码写的。要改哪个模块，先看这里。")
+    a("")
+    a("> 每一处行号都由 `locate()` 在**生成这一刻**现查 `rm_client/` 源码得到，")
+    a("> 脚本里只写「去哪找」（文件 + 那一行原文），不写死行号。")
+    a("> 真出现 `未找到` / `缺失` 就是符号被改名或文件被删了，**不要**沿用上一版的旧数字。")
     a("")
     a("### 开车 / 控车这条线（队内 0x5A 上行）")
     a("")
     a("| 模块 | 后端实现在哪 | 说人话 |")
     a("|---|---|---|")
-    a("| **RobotLink** | 编码：`backend/polar_link.py:597 encode_robot_cmd`(0x01)、`<br>:636 encode_virtual_rc`(0x03 键位图)、`<br>:678 encode_chassis_cmd`(0x04 自转+云台直控)；`<br>成帧与串口：`backend/polar_transport.py:487 / :506 / :513`；`<br>开关判定：`backend/manager.py:371` | 整条「客户端往车里发东西」的路都归它。松键时它会补发一次全零（`:513`），所以固件那边不会因为停发而冻在最后一帧 |")
-    a("| **SpinMode** / **AutoSpinOnHit** | `auto_spin.py:44`（受击后限时开自转）→ 上面那个 `encode_chassis_cmd()`（上行 0x04）；状态回读是固件下行 0x1F | 以前只能借 SHIFT 键，而固件对 SHIFT 是边沿翻转 —— **关不掉**；现在是显式 ON/OFF + 回读闭环 |")
-    a("| **EmergencyStop** | 行为在 `backend/safety.py`(OfficialSafety) 与 `manager.py:222 release_estop()`；但注册表里那个 `EmergencyStop` 模块**没有任何代码读它** | 急停本身是真有的，只是「界面那个模块条目」和它之间没接线 —— 界面上那个开关是装饰 |")
+    a(f"| **RobotLink** | 编码：`{A['robot_cmd']}`(0x01)、`<br>`{A['virtual_rc']}`(0x03 键位图)、"
+      f"`<br>`{A['chassis_cmd']}`(0x04 自转+云台直控)；`<br>`"
+      f"成帧与写串口：`{A['tx_pump']}`(分派)、`{A['tx_frame']}`(0x01 成帧)、`{A['tx_intent']}`(取意图+死区)；"
+      f"`<br>自转开关联动：`{A['spin_switch']}` | 整条「客户端往车里发东西」的路都归它。"
+      f"松键时它会补发一次全零（`{A['tx_release_zero']}`），所以固件那边不会因为停发而冻在最后一帧 |")
+    a(f"| **SpinMode** / **AutoSpinOnHit** | `{A['spin_controller']}`（受击后限时开自转，判定在 `{A['spin_update']}`）"
+      f"→ 上面那个 `encode_chassis_cmd()`（上行 0x04）；状态回读是固件下行 0x1F | "
+      "以前只能借 SHIFT 键，而固件对 SHIFT 是边沿翻转 —— **关不掉**；现在是显式 ON/OFF + 回读闭环 |")
+    a(f"| **EmergencyStop** | 行为在 `backend/safety.py`(OfficialSafety) 与 `{A['estop']}`；"
+      "但注册表里那个 `EmergencyStop` 模块**没有任何代码读它** | "
+      "急停本身是真有的，只是「界面那个模块条目」和它之间没接线 —— 界面上那个开关是装饰 |")
     a("")
     a("### 看数据这条线")
     a("")
@@ -311,7 +414,7 @@ def main() -> int:
     a("| **CameraFeed** / **TongjiVisionBridge** / **Armor3DESP** | `backend/video_backend.py` + `ui/polar/mixins/video_backend_mixin.py`；3D 线框在 `renderers/esp_wireframe.py` | 走本地视觉这一路，跟队内 0x5A 无关，不插 USB 线也能用 |")
     a("| **MQTTLink** / **UDPVideo** | `backend/mqtt_backend.py` / `backend/video_backend.py` | 界面上有「自动连接 / 重组」这类开关，但**刻意没接**（接上会让官方场景自己去抢端口），理由写在 `tools/SETTINGS_GAPS.md` |")
     a("| **SerialBridge** | `backend/serial_backend.py`（官方裁判串口那一路） | 与队内 0x5A 是两条互相独立的串口链路，互不代管 |")
-    a("| **HeroLob** | 26 个设置项，主要被 `ui/polar/mixins/` 引用 | 英雄投石那套界面参数；**注意**它和固件里的「英雄兵种」是两回事，固件侧不接这些参数 |")
+    a(f"| **HeroLob** | {hero_lob_settings} 个设置项（数出来的，不是手写的），主要被 `ui/polar/mixins/` 引用 | 英雄投石那套界面参数；**注意**它和固件里的「英雄兵种」是两回事，固件侧不接这些参数 |")
     a("")
     a("### 和这次 DT7 适配直接相关的那一条")
     a("")
@@ -326,10 +429,28 @@ def main() -> int:
     a("`--capture`（需 `pip install hidapi`）能把报文直接读出来。细节见 `tools/firmware/host_bridge/RC_LINKS.md` 第 7 节。")
     a("")
     text = "\n".join(out) + "\n"
-    (ROOT / "MODULE_BACKEND_MAP.md").write_text(text, encoding="utf-8")
-    print(f"写出 {ROOT/'MODULE_BACKEND_MAP.md'}，{len(text)} 字符，模块 {len(modules)} 个")
-    for m, h, seg, chan, up, where in rows[:6]:
-        print(" ", m.name, "| seg", seg.most_common(3), "| chan", chan, "| up", up)
+    return text
+
+
+def main() -> int:
+    """写文件模式；`--check` 只比对不写（过期时 exit 1）。"""
+    text = render()
+    target = ROOT / "MODULE_BACKEND_MAP.md"
+    check_only = "--check" in sys.argv[1:]
+    on_disk = target.read_text(encoding="utf-8") if target.exists() else ""
+    if check_only:
+        if on_disk == text:
+            print(f"[OK] {target.name} 与生成器输出一致（{len(text)} 字符）")
+            return 0
+        print(f"[STALE] {target.name} 与生成器输出不一致："
+              f"盘上 {len(on_disk)} 字符 / 生成 {len(text)} 字符。"
+              f"改过 rm_client/ 就重跑 python tools/module_backend_map.py")
+        diff = [i for i, (x, y) in enumerate(zip(on_disk.splitlines(), text.splitlines()), 1)
+                if x != y]
+        print(f"        首个不同的行：{diff[:8] if diff else '（行数不同）'}")
+        return 1
+    target.write_text(text, encoding="utf-8")
+    print(f"写出 {target}，{len(text)} 字符，模块 {len(build_default_registry().modules)} 个")
     return 0
 
 

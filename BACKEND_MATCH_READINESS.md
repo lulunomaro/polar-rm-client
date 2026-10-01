@@ -1,13 +1,42 @@
 # 后端比赛实战就绪审计
 
-审计日期：2026-08-14
-分支：`deepseekv4flash后端`
+审计日期：2026-08-14（**2026-10-01 做过一次全文对账**，见下方"对账记录"）
+分支：`deepseekv4flash后端`（审计当时的分支；本轮对账在 `perf/modular-rust`）
 
 ## 结论
 
 **NOT READY FOR REAL MATCH**
 
 本轮已经修复可由桌面代码证明的 P0/P1 缺陷，但真车、裁判系统、正式图传发射端和队内机器人固件尚未形成现场闭环。`rm_client.backend.readiness.audit_backend()` 继续 fail-closed；缺少任一现场证据时绝不会报告 READY。
+
+## 2026-10-01 对账记录（本文自身的可信度）
+
+这份审计写于 2026-08-14，主体结论（NOT READY）不变，但**正文里有几处已经与代码对不上**，
+照着做会浪费时间。本轮逐条核过并改掉的：
+
+| 原文 | 问题 | 现在 |
+|---|---|---|
+| 「新场景 TeamBench（启动页第 4 项 / 快捷键 `4`）」 | `TeamBench` 早已删除，本文"架构定位"一节自己就写了"已彻底删除"——同一篇里自相矛盾 | 标为作废并说明 `RobotLink` 现在是普通模块 |
+| 「TeamBench 场景下 `allow_mqtt_publish=False`…」 | 同上，是被删掉的旧做法 | 标为作废，指向"架构定位"一节 |
+| 「启动页第 4 项（或按 `4`）选队内台架/实车（TeamBench）」 | 启动页根本没有第 4 项，照做选不到 | 改成三个场景任选其一（键 1/2/3） |
+| 「验证见 `tests/team_bench_entry_check.py` 第 5 节」 | 该文件在本仓库 git 历史里**从未存在** | 换成三个真实存在的测试与函数名 |
+| 「共 357 项断言」 | 已过期且无法复核 | 2026-10-01 实测 **432 项通过**（81+184+73+51+43），并写明复核命令 |
+| 「verify_all 从 33 组涨到 34 组，全部 GO」 | 清单已涨到 54 组；"全部 GO"是 2026-09-03 的结论 | 改成实测组数，并注明本轮没跑 verify_all、不给 GO/NO-GO |
+| 「确认 `Allow Drive` 为开（由场景写入）」 | 与本文"架构定位"那张表现状相反（现在由模块设置项决定，切场景不覆写） | 改成"由模块自己的设置项决定" |
+| 「拆掉全部**六个**场景耦合点」 | 紧接着的表里是七行 | 改成七个 |
+
+仍然待确认 / 未修（不要当已解决）：
+
+- **本文其它段落里引用的固件行号**（`usb_task.c:692-694`、`chassis_omni.c:171-217` 等）
+  本轮**没有重新核对** —— 那些行号指向的是**外部固件仓库**（StandardRobotpp `master` @ `2722e0d`），
+  本地没有那份工作树，无法验。"2026-09-03 电控侧收口"那一节里写的
+  `162/162 编译单元 0 error 0 warning` 同理，是提交说明记载，本轮未复核。
+- `tools/verify_all.py` 与 `tools/build_release.ps1` 的注册清单都有漏项
+  （本轮开工时实测：`tests/` 下 39 个 .py，verify_all 只注册 26 个、
+  build_release 只注册 14 个；之后别的组还在加测试，实时数字看
+  `python tests/docs_and_tests_test.py` 打的 `[INFO]` 行），
+  清单化与防倒退闸门见 `tests/docs_and_tests_test.py`；补注册要改这两个文件，
+  不在本轮可改范围内。
 
 ## 2026-08-12 已修复
 
@@ -59,7 +88,7 @@
 - **真工具链**：ARMCC 5.06 命令行与 uVision 5.43.1 各编过一遍，162/162 编译单元
   0 error 0 warning；挡出 hex 的只剩 MDK-Lite 32KB 授权上限（L6050U）。
   dt7 与 et08a 两种配置都编过，`--rc` 来回切不会污染工作树。
-- **离线回归**：`tools/verify_all.py --firmware` 从 33 组涨到 **34 组，全部 GO**。
+- **离线回归**：`tools/verify_all.py --firmware` 从 33 组涨到 **34 组，全部 GO**（这一句记的是 2026-09-03 的状态；2026-10-01 重新数了一遍清单，已涨到 **54 组** = 26 个 Python 套件 + 26 个 C 编译/行为校验 + 1 个孤儿数审计 + 1 个固件准备自检。逐组 GO 需要真跑一次 `python tools/verify_all.py`，**本轮没有跑**，故不给 GO/NO-GO 结论）。
 
 仍然只有硬件能证明的事：DT7 与 DR16 对频后的摇杆方向与中值、`s[0]` 三档实际行为、
 客户端与驾驶员同时按键时的手感、以及 0x1E/0x1F 回读在真车上的时序。
@@ -72,7 +101,7 @@
 驾驶与机器人本体遥测来自它自己的 USB（0x5A）。挂在单一场景下等于
 **选了大疆官方就开不了车**。
 
-现在已拆掉全部**六个**场景耦合点（后两个是拆完前四个后，由集成测试补暴露出来的）：
+现在已拆掉全部**七个**场景耦合点（后三个是拆完前四个后，由集成测试补暴露出来的；2026-10-01 对账时数了下表头，这句原先写的是"六个"，但表里明明是七行）：
 
 | 位置 | 旧行为 | 现行为 |
 |---|---|---|
@@ -106,8 +135,18 @@
 驾驶仍由五道独立闸门把关，一道都不能省：`Allow Drive` → `Client Chassis Drive` →
 `module.enabled` → 未被急停 → `bridge.active`（**必须真的收到过机器人段才允许发驾驶指令**，
 没接机器人时不活跃是正确的 fail-closed）。验证见
-`tests/team_bench_entry_check.py` 第 5 节（逐项拆闸门，并证明官方场景下
-`_retry_polar_connect` 真的执行到了连接）。
+`tests/polar_integration_test.py::test_drive_works_in_official_scenario`（官方场景下
+逐项拆闸门并跑完整回环）、`tests/polar_integration_test.py::test_unpatched_robot`
+（链路不活跃时禁止驾驶）与 `tests/polar_bridge_test.py::test_manager_gate_requires_three_switches`
+（manager 侧三开关的判定）。
+
+> ⚠️ 本段原先写的是 `tests/team_bench_entry_check.py` 第 5 节 —— 那个文件
+> **在本仓库的 git 历史里从来不存在**（`git log --diff-filter=A -- tests/team_bench_entry_check.py`
+> 无输出），照着找的人只会浪费一轮。2026-10-01 对账时改成上面这三个真实文件。
+> 原句里"证明 `_retry_polar_connect` 真的执行到了连接"这半句仍然成立：那个方法
+> 还在 `rm_client/backend/manager.py`，由 manager 的 tick 调用，
+> `test_drive_works_in_official_scenario` 里的断言"官方场景下链路能自动连上"
+> （`polar_drive_active is True`）就是它的结果。
 
 ## 仍阻止实战签字的现场项
 
@@ -142,8 +181,14 @@
 - `rm_client/backend/polar_transport.py`：串口收发、本地看门狗、急停/退出前归零突发帧、时间戳单调契约。
 - `rm_client/backend/polar_bridge.py`：段→HUD 映射、云台控制仲裁、指令-实测交叉校验。
 - `rm_client/serial_ports.py`：COM 口动态探测与 `Auto` 选择（只认可带 VID/PID 的 USB 设备）。
-- 新场景 `TeamBench`（启动页第 4 项 / 快捷键 `4`）；`RobotLink` 模块；HUD `LNK/DRV/GIM/MOT` 芯片与诊断行。
-- 验证：`tests/polar_link_test.py`、`tests/polar_bridge_test.py`、`tests/polar_startup_test.py`、`tests/polar_integration_test.py`、`tests/polar_selftest_test.py` 共 357 项断言；`api_freeze_test` 与基线零差异；`smoke_test` 通过。
+- ~~新场景 `TeamBench`（启动页第 4 项 / 快捷键 `4`）~~ **已作废**：`TeamBench` 场景在
+  2026-09 前后被**整个删掉**了，启动页是三个场景（见上文"架构定位"一节）。
+  留下的是 `RobotLink` 模块与 HUD `LNK/DRV/GIM/MOT` 芯片与诊断行 —— 这两样不受影响。
+  （删除前本条写的是一个已经不存在的场景入口，与上文"已彻底删除"那段直接打架，
+  而且照着做的人在启动页根本找不到那一项。2026-10-01 对账时划掉。）
+- 验证：`tests/polar_link_test.py`、`tests/polar_bridge_test.py`、`tests/polar_startup_test.py`、`tests/polar_integration_test.py`、`tests/polar_selftest_test.py` —— **2026-10-01 实测 432 项通过**（81 + 184 + 73 + 51 + 43，命令是逐个跑 `python tests/<name>.py` 数 `[PASS]` 行）。
+  本文原先写的"共 357 项断言"已经过期，且无法从文中复核，故改成实测值 + 复核命令；
+  `api_freeze_test` 与基线零差异；`smoke_test` 通过（2026-10-01：72 个测试函数全部被调用）。
 - 上述四个 polar 测试与 `api_freeze_test` 已加入 `tools/build_release.ps1` 的发布门禁（`Invoke-RequiredTest` 使用显式清单、不会自动发现测试，以前 `api_freeze_test` 也不在清单里）。
 - `tests/polar_integration_test.py` 用 Python 复刻了 StandardRobot++ 上位机接口的行为语义（虚拟机器人），跑完整回环：连接 → HUD 转真 → 按 W 机器人收到 1.5 m/s → 0x1E 回读 → MOT 变 OK → F12 全零 → 拔线判不活跃。它同时跑“**已补底盘消费者**”和“**未补（当前 master 真实行为）”两种机器人，后者必须报 `NO_MOTION → STUCK` 而不是假装正常。
 
@@ -151,7 +196,12 @@
 
 两条链路**结构不兼容**，不是配置差异：官方裁判帧 SOF `0xA5`、帧头 5 字节、`len` 为 u16、`cmd_id` 为 u16 且在帧体内；队内帧 SOF `0x5A`、帧头 4 字节、`len` 为 u8、段 id 为 u8 且在帧头内、数据段前置 `u32 time_stamp`。CRC8/CRC16 算法两者逐位相同，因此复用同一实现。
 
-`TeamBench` 场景下 `allow_mqtt_publish=False`，官方上行保持 mock；驾驶能力位 `allow_polar_drive` 仅该场景为真。两者不会同时争抢控制。
+> **曾经**是这样：专属场景 `TeamBench` 下 `allow_mqtt_publish=False`（官方上行保持 mock），
+> 驾驶能力位 `allow_polar_drive` 仅该场景为真，两条链路因此不同时争抢控制。
+> **现在这条描述已作废** —— `TeamBench` 场景已删除，0x5A 链路是普通模块
+> `RobotLink`，官方场景与队内链路**本来就并行**（血量/经济走裁判 MQTT，
+> 驾驶与本体遥测走 0x5A），见上文"架构定位"。写在这里是为了不让人误以为
+> "两条链路要靠切场景来互斥"，那正是被删掉的做法。
 
 ## 阻止“操控车辆”真正生效的固件侧阻塞项
 
@@ -231,8 +281,8 @@ python main.py --polar-selftest --polar-enable-drive --polar-confirm-motion
 ### GUI 启动流程
 
 1. 双击 `启动.bat`。若提示 `.venv` 不可用，按屏上给出的两条命令为可用解释器装一次依赖后重跑。
-2. 启动页第 4 项（或按 `4`）选 **队内台架/实车（TeamBench）**，再选赛制。
-3. 打开 ClickGUI（右 Shift / F8）→ System → **RobotLink**：`Port` 选 `Auto` 或显式 COM 号；确认 `Allow Drive` 为开（由场景写入）。
+2. 启动页选场景（`OfficialEvent` / `CampusSimulation` / `LabDebug` 三个里的任意一个，键 `1`/`2`/`3`；**没有第 4 项**），再选赛制。选哪个都行 —— RobotLink 是普通模块，不靠场景开关。
+3. 打开 ClickGUI（右 Shift / F8）→ System → **RobotLink**：`Port` 选 `Auto` 或显式 COM 号；确认 `Allow Drive` 为开（**由模块自己的设置项决定，切场景不再覆写它** —— 本条原先写的是"由场景写入"，与上面那张表里 `manager._configure_polar_link` 的现状正好相反，2026-10-01 对账时改正）。
 4. 插上机器人 USB。HUD 右上 `RMIndicatorsHud` 的 **`LNK` 变绿**、底行显示 `ROBOT COMxx · N seg`。连不上时底行会是琥珀色 `LINK OFF · <状态码>`，悬停看中文原因与已探测到的端口清单。
 5. 开驾驶：勾 `Client Chassis Drive` → `DRV` 变绿。
    驾驶键是**可改绑**的：ClickGUI → RobotLink → `Bind W/S/A/D …`（默认等于历史物理键）。

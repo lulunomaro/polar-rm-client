@@ -171,7 +171,15 @@ class OfficialMatchFeed:
         self.last_kill_data_at = 0.0
         self.last_official_event_at = 0.0
         self._robot_health: list[int] = []
-        self._seen: dict[tuple[str, int, int], float] = {}
+        # (kind, victim_id, killer_id) -> (时间戳, killer_id)
+        # killer_id 随记录一起存，是为了做"双来源合并"时判断双方是否都知道
+        # 击杀者（见 _dedupe 的副键说明）。
+        self._seen: dict[tuple[Any, ...], tuple[float, int]] = {}
+        # RobotInjuryStat 是**累计 1 Hz** 报文（backend/manager.py:1781 原文
+        # "RobotInjuryStat is a cumulative 1 Hz report"）。None = 还没有基线，
+        # 首个样本只建基线，绝不当作一次新击杀 —— 与 manager 的
+        # ``injury_stats_initialized`` 同一条取向。
+        self._injury_kill_damage: int | None = None
 
     def is_fresh(self, timeout_s: float = 2.5) -> bool:
         return self.last_message_at > 0.0 and time.perf_counter() - self.last_message_at <= timeout_s
@@ -245,10 +253,28 @@ class OfficialMatchFeed:
                 events.extend(self._health_transitions(health, alliance, now))
                 updates["official_robot_health"] = health
         elif name == "RobotInjuryStat":
-            killer_id = _field_int(fields, 10)
-            server_kill_damage = _field_int(fields, 9)
-            if server_kill_damage > 0:
-                events.append(CombatEvent("death", "referee", True, now, killer_id=killer_id, detail="server_kill"))
+            # 字段 9（server_kill_damage）是**本局累计**伤害，每秒重发同一个
+            # 累计值。原来的写法是 `server_kill_damage > 0`，等于拿累计量当边沿：
+            # 只要本局打死过一次，客户端就会在每次去重窗口（2.0 s）过期后
+            # 重放一条 death，直到重连。实测累计值恒为 500 的 1 Hz 报文，
+            # 9 秒内产出 5 条 death。
+            #
+            # 现在按**增量**判边沿：累计值变大才是一次新的服务端确认击杀。
+            # * 首个样本（None 基线）只建基线，不发事件 —— 中途连上时累计值
+            #   本来就可能非 0，把它当击杀就是凭空多算一次自己的死。
+            # * 累计值回退（复活 / 重连后计数器清零）视为重建基线，同样静默，
+            #   与 manager.py:1762 的 counters_monotonic 同一处理。
+            # * 报文缺字段 9（截断 / 协议差异）时完全不碰基线。否则一次坏帧
+            #   会把基线打成 0，下一帧正常报文就变成"巨额新增"，伪造一条击杀。
+            if 9 in fields:
+                server_kill_damage = max(0, _field_int(fields, 9))
+                baseline = self._injury_kill_damage
+                self._injury_kill_damage = server_kill_damage
+                if baseline is not None and server_kill_damage > baseline:
+                    events.append(CombatEvent(
+                        "death", "referee", True, now,
+                        killer_id=_field_int(fields, 10), detail="server_kill",
+                    ))
         elif name == "RobotStaticStatus":
             robot_id = _field_int(fields, 4)
             alive_state = _field_int(fields, 3)
@@ -366,14 +392,37 @@ class OfficialMatchFeed:
         )]
 
     def _dedupe(self, events: Iterable[CombatEvent]) -> list[CombatEvent]:
+        """折叠同一次击杀的多来源副本。
+
+        主键仍是 ``(kind, victim_id, killer_id)``，语义完全不变。问题在于
+        **同一次击杀会有三个裁判来源**：``GlobalUnitStatus`` 血量归零、
+        ``RobotStaticStatus`` alive_state=2、以及 ``Event`` topic。前两个
+        拿不到击杀者（killer_id=0），只有 ``Event`` 有，于是主键必然不同 ——
+        实测一次击杀产出 2 条 CombatEvent（相隔 250 ms）。
+
+        副键 ``(kind, victim_id)`` 只在**至少一方不知道 killer_id**时合并：
+        血量/存活两个来源没有击杀者信息，它们补上的 0 是"缺失"而不是
+        "另一个人"，理应被 Event topic 那条覆盖掉。反过来，两个来源都给出
+        非 0 且**不同**的 killer_id 时一律放行 —— 那确实是两次不同的记录。
+
+        副键同样受 2.0 s 去重窗口约束，所以跨窗口的新击杀不会被误吞。
+        """
         now = time.perf_counter()
-        self._seen = {key: timestamp for key, timestamp in self._seen.items() if now - timestamp < 2.0}
+        self._seen = {
+            key: entry for key, entry in self._seen.items() if now - entry[0] < 2.0
+        }
         accepted: list[CombatEvent] = []
         for event in events:
             key = (event.kind, event.victim_id, event.killer_id)
             if key in self._seen:
                 continue
-            self._seen[key] = now
+            if event.victim_id:
+                sibling = self._seen.get((event.kind, event.victim_id))
+                if sibling is not None and (sibling[1] == 0 or event.killer_id == 0):
+                    continue
+            self._seen[key] = (now, event.killer_id)
+            if event.victim_id:
+                self._seen.setdefault((event.kind, event.victim_id), (now, event.killer_id))
             accepted.append(event)
         return accepted
 
@@ -418,6 +467,12 @@ class VisionKillDetector:
     MISS_MIN_FRAMES = 4
     MISS_MIN_DURATION = 0.28
     LIT_MIN_HISTORY = 0.15
+    # 亮灯过久再丢检就不做 miss-kill（设计稿里的"偏遮挡"取舍）。注意：这一条
+    # 目前**只**由下面 LOSS_PROBE_DARK 路径的下界 LIT_MIN_HISTORY 起作用，
+    # 常量本身在活代码里没有引用点（原本唯一的引用在已删除的裸丢检块里）。
+    # 保留它是因为 设计稿_vs_rm_client_击杀特效实现对照.txt:117 把它列为可调
+    # 参数；要真正启用需要在 LOSS_PROBE_DARK 确认前加 lit_age 上界，那是
+    # 行为变更，不在本次范围内。
     MISS_MAX_AFTER_LIT = 2.5
     # 曝光：暂停累计，不清零
     EXPOSURE_DELTA = 0.28
@@ -486,8 +541,8 @@ class VisionKillDetector:
             "HYSTERESIS": 3,
             "EXPOSURE_HOLD": 4,
             "DIM_TRACKED": 5,
-            "MISS_TRACKED": 5,
-            "MISS_EDGE_GUARD": 5,
+            # MISS_UNSTABLE 仍然是**活**的：它由下面 LOSS_* 主路径里的
+            # Balanced 稳定性闸发出。死掉的只有 MISS_TRACKED / MISS_EDGE_GUARD。
             "MISS_UNSTABLE": 5,
             "LOSS_PROBE_DARK": 5,
             "LOSS_NEEDS_DIM_HISTORY": 5,
@@ -712,33 +767,27 @@ class VisionKillDetector:
 
             if sensitivity == "Match Reliable":
                 continue
-            if not track.seen_this_frame:
-                if exposure_hold:
-                    self._set_status("EXPOSURE_HOLD")
-                    continue
-                if not vision_frame_advanced:
-                    self._set_status("WAITING_FRESH_FRAMES")
-                    continue
-                if not track.last_in_safe_area:
-                    self._set_status("MISS_EDGE_GUARD")
-                    continue
-                if sensitivity == "Balanced" and track.stable_frames < self.BALANCED_MIN_STABLE_FRAMES:
-                    self._set_status("MISS_UNSTABLE")
-                    continue
-                if track.miss_start <= 0.0:
-                    track.miss_start = now
-                track.miss_frames += 1
-                self._set_status("MISS_TRACKED")
-                miss_ok = (
-                    track.miss_frames >= self.MISS_MIN_FRAMES
-                    and now - track.miss_start >= self.MISS_MIN_DURATION
-                )
-                if miss_ok and lit_age <= self.MISS_MAX_AFTER_LIT:
-                    events.append(self._emit(track, now=now, detail="vision_confirmed_miss_after_lit"))
-            else:
-                # 本帧见过则清空 miss（灭灯/dim 进度保留）
-                track.miss_start = 0.0
-                track.miss_frames = 0
+            # 走到这里必然 track.seen_this_frame 为真：上面那个
+            # `if not track.seen_this_frame:` 块内每条路径都以 continue 收尾。
+            # 本帧见过则清空 miss（灭灯/dim 进度保留）。
+            #
+            # 这里原来还挂着一个同样以 `if not track.seen_this_frame:` 开头的
+            # "裸丢检" 块（产出 MISS_TRACKED / vision_confirmed_miss_after_lit，
+            # 以及只在死块里出现过的 MISS_EDGE_GUARD）。它是加
+            # _LocalLossLightProbe 之前的旧一代实现，被上面那条带 probe_dark /
+            # moving_fast / near_edge / stable_frames 四道闸的 LOSS_* 路径取代
+            # 后忘记删除，从而**永远不可达**（sys.settrace 跨 960 组场景实测
+            # 从未执行；tests/combat_events_test.py 用 23760 组场景的逐位摘要
+            # 证明删除前后输出完全一致）。因此
+            # README_战果判定与阵营.md:33 举例的 MISS_TRACKED 状态和
+            # vision_confirmed_miss_after_lit 事件从来不可能出现。
+            #
+            # 这里选择**删除而不是改可达**：把旧块接回去等于让"目标只是走出
+            # 画面 / 被遮挡 / 并没有变暗"重新被判成击杀确认，在一个专门防幻影
+            # 击杀的系统里是安全倒退。现在生效的是 LOSS_PROBE_DARK ->
+            # vision_confirmed_dark_loss_probe。文档示例待同步（见交付报告）。
+            track.miss_start = 0.0
+            track.miss_frames = 0
         return events
 
     def process(

@@ -8,8 +8,10 @@
 
 from __future__ import annotations
 
+import atexit
 import threading
 import time
+import weakref
 from collections import deque
 from typing import Any, Callable
 
@@ -22,6 +24,155 @@ from .protocol import (
     topic_message_name,
 )
 from .safety import OfficialSafety
+
+
+class _HookDispatch:
+    """进程内唯一的 event hook 分发线程。
+
+    为什么要有它
+    ------------
+    ``_emit_event`` 挂在 60/75Hz 的控制拍上：``publish_result`` 在
+    OfficialEvent 的 75Hz KMC 上一秒 75 次。生产环境的 hook 是
+    ``manager._log_backend_event`` → ``field_log.emit``，也就是**同步落盘**。
+    实测 hook 本身 140µs/次，于是 75Hz 就是 10.6 ms/s 的阻塞磁盘 I/O 正好
+    打在 Qt 主线程上；referee_rx 洪泛时更糟。
+
+    这里把"排队"和"调用 hook"拆开：调用方只付一次 ``deque.append``
+    （实测 1.1µs → 1.3µs），真正的 hook 调用（落盘）由这条后台线程做。
+    顺序严格保持（FIFO、单线程投递）。
+
+    不丢事件
+    --------
+    每个 backend 一个**有界**队列（``queue_max`` 条，默认 8192 ≈ 75Hz 下
+    109 秒的积压）。队列满时事件被拒收，
+    并**显式**记账：``dropped_events`` 加一、``last_error`` 当场写明、下一次
+    成功投递之后补发一条 ``mqtt_event_dropped`` 记录，让证据链自己标出那段
+    空洞。绝不静默丢弃，也绝不因为队列满而反过来阻塞 75Hz 控制拍 —— 宁可
+    明确报错，也不能把一次日志拥塞变成一次控制拍卡顿。
+    """
+
+    def __init__(self, queue_max: int = 8192) -> None:
+        self.queue_max = max(64, int(queue_max))
+        self._cv = threading.Condition(threading.Lock())
+        # 纯 list + weakref：WeakKeyDictionary 的 GC 回调可能在遍历中途改字典。
+        self._sinks: list[weakref.ref] = []
+        self._inflight = 0
+        self._thread: threading.Thread | None = None
+        self._closed = False
+        self.delivered = 0
+        self.dropped = 0
+
+    # ------------------------------------------------------------------
+    def register(self, sink: Any) -> deque:
+        ref = weakref.ref(sink)
+        with self._cv:
+            if ref not in self._sinks:
+                self._sinks.append(ref)
+            self._start_locked()
+        return sink._event_queue
+
+    def _start_locked(self) -> None:
+        if self._thread is not None or self._closed:
+            return
+        thread = threading.Thread(
+            target=self._run, name="mqtt-event-hook", daemon=True
+        )
+        self._thread = thread
+        thread.start()
+
+    def submit(self, sink: Any, queue: deque, item: tuple[str, dict[str, Any]]) -> bool:
+        """排队成功返回 True；队列满/已关闭返回 False（由调用方显式记账）。"""
+        with self._cv:
+            if self._closed:
+                return False
+            if len(queue) >= self.queue_max:
+                self.dropped += 1
+                return False
+            if not queue:
+                # 只在"空 -> 非空"沿上唤醒：持续负载下 notify 频率降到 0，
+                # 否则每次 notify 都要把 GIL 让给后台线程，反而更贵。
+                self._cv.notify()
+            queue.append(item)
+            return True
+
+    def flush(self, sink: Any, timeout: float = 2.0) -> bool:
+        deadline = time.monotonic() + max(0.0, float(timeout))
+        with self._cv:
+            while (sink._event_queue or self._inflight) and time.monotonic() < deadline:
+                self._cv.wait(0.02)
+            return not (sink._event_queue or self._inflight)
+
+    # ------------------------------------------------------------------
+    def _live_sinks_locked(self) -> list[Any]:
+        """列出还活着的 sink。**调用方必须已持有 ``self._cv``**。
+
+        ``self._cv`` 用的是非重入Lock，_run() 是在持锁状态下调进来的，所以
+        这里绝不能自己再加锁。
+        """
+        live = []
+        dead = False
+        for ref in self._sinks:
+            sink = ref()
+            if sink is None:
+                dead = True
+            else:
+                live.append(sink)
+        if dead:
+            self._sinks = [weakref.ref(sink) for sink in live]
+        return live
+
+    def all_sinks(self) -> list[Any]:
+        with self._cv:
+            return self._live_sinks_locked()
+
+    def _run(self) -> None:
+        while True:
+            with self._cv:
+                sinks = self._live_sinks_locked()
+                while not any(sink._event_queue for sink in sinks) and not self._closed:
+                    self._cv.wait(0.2)
+                    sinks = self._live_sinks_locked()
+                batch: list[tuple[Any, tuple[str, dict[str, Any]]]] = []
+                for sink in sinks:
+                    queue = sink._event_queue
+                    while queue and len(batch) < 512:
+                        batch.append((sink, queue.popleft()))
+                if not batch and self._closed:
+                    return
+                self._inflight += len(batch)
+            ok = 0
+            for sink, item in batch:
+                if sink._deliver_event(*item):
+                    ok += 1
+            with self._cv:
+                self._inflight -= len(batch)
+                self.delivered += ok
+                self._cv.notify_all()
+
+    def shutdown(self) -> None:  # pragma: no cover - 解释器退出路径
+        with self._cv:
+            self._closed = True
+            self._cv.notify_all()
+
+
+_HOOK_DISPATCH = _HookDispatch()
+
+
+def _flush_hook_dispatch() -> None:  # pragma: no cover - 解释器退出路径
+    """退出前把每个 backend 的队列排空。
+
+    ``stop()`` 已经会 flush，但进程被 Ctrl+C / 强杀时不一定走到那里。
+    证据链宁可多等零点几秒，也不能在最后一刻丢掉 mqtt_disconnect 这类
+    最关键的收尾记录。
+    """
+    for sink in _HOOK_DISPATCH.all_sinks():
+        try:
+            sink.flush_events(timeout=0.5)
+        except Exception:
+            pass
+
+
+atexit.register(_flush_hook_dispatch)
 
 
 class RmMqttBackend(OfficialMqttBridge):
@@ -57,6 +208,66 @@ class RmMqttBackend(OfficialMqttBridge):
         self._on_connect_hook: Callable[[], None] | None = None
         self.event_hook: Callable[[str, dict[str, Any]], None] | None = None
         self.disconnected_at = time.perf_counter()
+        #: 没进 event hook（= 没进 field_log）的后端事件数。正常情况恒为 0。
+        self.dropped_events = 0
+        self._reported_drops = 0
+        self._event_queue: deque[tuple[str, dict[str, Any]]] = deque()
+        _HOOK_DISPATCH.register(self)
+
+    # ------------------------------------------------------------------
+    # event hook 分发（有序、有界、显式记账）
+    # ------------------------------------------------------------------
+    def _emit_event(self, event: str, **payload: Any) -> None:
+        hook = self.event_hook
+        if hook is None:
+            return
+        item = (str(event), payload)
+        if _HOOK_DISPATCH.submit(self, self._event_queue, item):
+            return
+        # 队列满 / 分发线程已关。显式记账，绝不静默丢，也绝不阻塞控制拍。
+        if self._dispatch_alive():
+            self.dropped_events += 1
+            self.last_error = (
+                f"MQTT 事件队列已满（{_HOOK_DISPATCH.queue_max} 条），"
+                f"本次 {event} 未进日志；累计 {self.dropped_events} 条"
+            )
+            return
+        # 分发线程不在了（进程收尾）：退回同步投递，一步都不丢。
+        self._deliver_event(*item)
+
+    def _dispatch_alive(self) -> bool:
+        thread = _HOOK_DISPATCH._thread
+        return thread is not None and thread.is_alive()
+
+    def _deliver_event(self, event: str, payload: dict[str, Any]) -> bool:
+        hook = self.event_hook
+        ok = True
+        if hook is not None:
+            try:
+                hook(event, **payload)
+            except Exception:
+                ok = False
+        dropped = self.dropped_events - self._reported_drops
+        if dropped > 0:
+            self._reported_drops = self.dropped_events
+            if hook is not None:
+                try:
+                    hook(
+                        "mqtt_event_dropped",
+                        dropped=dropped,
+                        reason="hook_queue_overflow",
+                        total_dropped=self.dropped_events,
+                    )
+                except Exception:
+                    pass
+        return ok
+
+    def flush_events(self, timeout: float = 2.0) -> bool:
+        """等后台分发线程把队列排空（关停、测试、诊断用）。"""
+        return _HOOK_DISPATCH.flush(self, timeout)
+
+    def events_pending(self) -> int:
+        return len(self._event_queue)
 
     # ------------------------------------------------------------------
     # 生命周期
@@ -132,6 +343,9 @@ class RmMqttBackend(OfficialMqttBridge):
         with self._received_lock:
             self._received_messages.clear()
         self._emit_event("mqtt_disconnect", reason="stop")
+        # 关停必须把队列排空，否则最后几条（尤其是 mqtt_disconnect）就停在
+        # 内存里没了。正常情况下这一步是微秒级；超时也只是一次有界等待。
+        self.flush_events(timeout=0.5)
 
     def set_address(self, host: str, port: int) -> bool:
         """改 broker 地址。已经连着就断开重连，返回是否真的换了。
@@ -413,13 +627,8 @@ class RmMqttBackend(OfficialMqttBridge):
             "connected_at": self.connected_at,
             "disconnected_at": self.disconnected_at,
             "last_error": self.last_error,
+            # 诊断证据链的自检字段：非 0 就说明有事件没进 field_log。
+            "dropped_events": self.dropped_events,
+            "events_pending": len(self._event_queue),
+            "event_queue_max": _HOOK_DISPATCH.queue_max,
         }
-
-    def _emit_event(self, event: str, **payload: Any) -> None:
-        hook = self.event_hook
-        if hook is None:
-            return
-        try:
-            hook(event, **payload)
-        except Exception:
-            pass

@@ -225,7 +225,24 @@ def build_tongji_packet(
 
 
 class TongjiVisionReceiver:
-    """后台 UDP 接收器，只发布最新一包，防止视觉结果积压。"""
+    """后台 UDP 接收器，只发布最新一包，防止视觉结果积压。
+
+    重试策略
+    --------
+    ``refresh_vision_runtime`` 在 **60 Hz** 的 UI tick 里调用 :meth:`start`。
+    端口被占用（或填了非法端口）时，早先的实现没有任何退避：线程起来、
+    ``bind()`` 抛 OSError、线程退出，下一 tick 再来一个 —— 实测 1.04 秒内生成
+    **60 个线程**（57.5 个/秒），会永久重建下去。
+
+    现在与 :class:`~rm_client.vision.CameraCaptureWorker`、``LocalAlignedVision``
+    用同一套有界指数退避：失败后 0.5s / 1s / 2s / 4s / 5s（封顶），同一次
+    失败窗口内 ``start()`` 直接返回，不建线程。绑定成功即清零计数。
+    """
+
+    # 与 CameraCaptureWorker._mark_capture_failure 同一条曲线（0.5s 起、5s 封顶）。
+    RETRY_BASE_SECONDS = 0.5
+    RETRY_MAX_SECONDS = 5.0
+    RETRY_MAX_EXPONENT = 4
 
     def __init__(self, port: int = DEFAULT_PORT) -> None:
         self.port = port
@@ -236,6 +253,8 @@ class TongjiVisionReceiver:
         self.packets_received = 0
         self.invalid_packets = 0
         self.parse_errors = 0
+        self.open_failures = 0
+        self.retry_after = 0.0
         self._latest: TongjiPacket | None = None
         self._lock = threading.Lock()
         self._thread: threading.Thread | None = None
@@ -243,12 +262,22 @@ class TongjiVisionReceiver:
 
     def configure(self, port: int) -> None:
         port = int(port)
-        if self.port != port and self.running:
-            self.stop()
+        if self.port != port:
+            if self.running:
+                self.stop()
+            # 换端口 = 换一台机器，换机器就清掉旧端口攒下的退避，
+            # 否则用户改完端口还要干等最多 5 秒才听得到新端口。
+            self.open_failures = 0
+            self.retry_after = 0.0
         self.port = port
 
     def start(self) -> None:
         if self.running:
+            return
+        if self._thread is not None and self._thread.is_alive():
+            return
+        if time.perf_counter() < self.retry_after:
+            # 退避窗口内：不建线程。这是 60 Hz tick 下的唯一刹车。
             return
         self.running = True
         self._thread = threading.Thread(target=self._run, name="polar-tongji-udp", daemon=True)
@@ -275,13 +304,28 @@ class TongjiVisionReceiver:
             return None
         return packet
 
+    def _mark_open_failure(self, message: str) -> None:
+        """绑定期失败的有界指数退避（与 CameraCaptureWorker 同一条曲线）。"""
+        self.last_error = message
+        self.open_failures += 1
+        delay = min(
+            self.RETRY_MAX_SECONDS,
+            self.RETRY_BASE_SECONDS * (2 ** min(self.RETRY_MAX_EXPONENT, self.open_failures - 1)),
+        )
+        self.retry_after = time.perf_counter() + delay
+
     def _run(self) -> None:
+        bound = False
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.bind(("0.0.0.0", self.port))
             sock.settimeout(0.20)
             self._socket = sock
+            # 端口真的拿到了：清零失败计数，下一次 start() 不会被旧退避挡住。
+            self.open_failures = 0
+            self.retry_after = 0.0
+            bound = True
             while self.running:
                 try:
                     data, _address = sock.recvfrom(512 * 1024)
@@ -303,9 +347,22 @@ class TongjiVisionReceiver:
                     self._latest = packet
                 self.last_received_ns = time.time_ns()
                 self.connected = True
-        except OSError as error:
-            self.last_error = str(error)
+        except (OSError, OverflowError) as error:
+            # OverflowError：端口号填了 70000 这类越界值时 bind() 抛的不是
+            # OSError。它和端口占用是同一类问题——起不来的接收器——所以同样
+            # 计入退避，否则越界端口同样会被 60 Hz tick 打成每 tick 一个线程。
             self.connected = False
+            if bound:
+                # 运行期故障（不是开不起来）：不占用启动退避配额。
+                self.last_error = str(error)
+            else:
+                self._mark_open_failure(str(error))
+        except Exception as error:  # noqa: BLE001 - 接收线程必须活着收下一包
+            self.connected = False
+            if not bound:
+                self._mark_open_failure(f"{type(error).__name__}: {error}")
+            else:
+                self.last_error = str(error)
         finally:
             if self._socket is not None:
                 try:
