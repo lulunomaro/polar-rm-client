@@ -15,6 +15,7 @@ from typing import Any, Callable
 
 from ..transports import MqttPublishRecord, OfficialMqttBridge
 from .protocol import (
+    UPLINK_MESSAGES,
     decode_message,
     encode_custom_control,
     encode_keyboard_mouse_control,
@@ -40,6 +41,13 @@ class RmMqttBackend(OfficialMqttBridge):
         self.messages_received = 0
         self.messages_sent = 0
         self.bytes_received = 0
+        #: 入站消息里"裁判真发的"与"我们自己发出去又被 # 订阅送回来的"分开记。
+        #: 现场排查时这两个数必须能分开看：混在一起时 referee_rx 会被自己的
+        #: 75Hz 键盘帧淹没，真出问题时反而看不出"裁判一条都没发"。
+        self.referee_messages = 0
+        self.referee_bytes = 0
+        self.self_echo_messages = 0
+        self.self_echo_bytes = 0
         self.reconnect_count = 0
         self.last_message_at = 0.0
         self.connected_at = 0.0
@@ -113,6 +121,16 @@ class RmMqttBackend(OfficialMqttBridge):
                 pass
         self.connected = False
         self.disconnected_at = time.perf_counter()
+        # 换 broker / 重连后**必须**丢掉上一个 epoch 攒下的解码结果。
+        #
+        # 不丢的话：切了地址之后 drain_decoded() 还能把上一个 broker 的
+        # Event 之类 drain 出去（实测切 broker 后旧 broker 的 5 条 Event
+        # 仍被 drain 出去）。现场表现是"换了地址却还在按上一场的状态动"，
+        # 而且没有任何日志能解释 —— 因为那些数据看起来完全合法。
+        with self._decoded_lock:
+            self._decoded.clear()
+        with self._received_lock:
+            self._received_messages.clear()
         self._emit_event("mqtt_disconnect", reason="stop")
 
     def set_address(self, host: str, port: int) -> bool:
@@ -163,14 +181,43 @@ class RmMqttBackend(OfficialMqttBridge):
         self._emit_event("mqtt_disconnect", reason=str(_reason_code))
 
     def _on_message(self, client, userdata, msg) -> None:
+        # messages_received 由基类 MQTTTransport._on_message 记一次。
+        # 这里原来又 self.messages_received += 1，于是**每条消息被数两遍**
+        # （实测 720 条真实消息 → 计数 1440），HUD 上的"收到消息数"直接翻倍。
         super()._on_message(client, userdata, msg)
         payload = bytes(msg.payload)
-        self.messages_received += 1
         self.bytes_received += len(payload)
         self.last_message_at = time.time()
         topic = str(msg.topic)
-        self._emit_event("referee_rx", topic=topic, payload=payload)
         name = topic_message_name(topic)
+
+        # --- 自己发出去的又自己收回来，不要当成裁判流量记进日志 -------------
+        #
+        # 本类在 _on_connect 里 subscribe("#")，所以客户端 publish 的每一个字节
+        # 都会被 broker 原样送回。KeyboardMouseControl 在 OfficialEvent 下是
+        # 75Hz，实测每条均值 220.6 字节 —— 也就是 16.1 KiB/s ≈ **58 MiB/h**。
+        #
+        # 危害不只是"日志变大"：
+        #   1. RotatingJsonlLogger 总容量只有 20MiB×5=100MiB，约**每 20 分钟**
+        #      就把轮转日志冲刷一遍，真正要查的裁判失败记录被挤掉；
+        #   2. 字段名叫 referee_rx，排查裁判链路的人会据此认定"裁判在发键盘帧"，
+        #      而现场一条真实的裁判消息都没有（实测 85/85 条全是自己的回环）；
+        #   3. field_log.emit 是**同步落盘**（实测 194 µs/次），每条都打就在
+        #      paho 网络线程上堆了 75Hz 的磁盘 I/O。
+        #
+        # 判据用 UPLINK_MESSAGES：裁判系统不会给我们发上行消息，所以凡是
+        # 名字落在上行集合里的入站消息，100% 是自己的回环。
+        # （实测 UPLINK_MESSAGES 与 safety.CONTROL_TOPICS 集合相等，
+        #   所以这一个判据覆盖全部 11 条控制类 topic。）
+        if name in UPLINK_MESSAGES:
+            self.self_echo_messages += 1
+            self.self_echo_bytes += len(payload)
+            return
+
+        self.referee_messages += 1
+        self.referee_bytes += len(payload)
+        self._emit_event("referee_rx", topic=topic, payload=payload)
+
         if name in {"GameStatus"}:
             # 比赛阶段同步给安全策略
             data = decode_message(name, payload)

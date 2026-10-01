@@ -515,6 +515,27 @@ class RobotState:
     # 不受「仿真先跑还是数据段先到」的顺序影响。
     polar_overlay: dict[str, Any] = field(default_factory=dict)
     polar_link_active: bool = False
+    #: apply_polar_overlay 里**被丢弃**的 overlay 键计数与首个键名。
+    #: 丢弃意味着 polar_protocol.json 的 state_fields 写了一个 RobotState 上
+    #: 不存在的落点 —— 这在 AGENT.md 的设计里是"电控写错了"，必须看得见，
+    #: 不能静默丢（静默丢时链路看起来一切正常，只是那条数据永远到不了 HUD）。
+    polar_dropped_overlay_keys: int = 0
+    polar_first_dropped_overlay_key: str = ""
+    # 0x1F（0x5A 回读段）的三个 state_fields 落点。
+    #
+    # 这三个名字是 polar_protocol.json 声明的，之前 RobotState 上**根本没有**
+    # 对应字段，于是 apply_polar_overlay 把它们静默丢掉了 —— 而规格自己的
+    # state_fields_note 写着"缺了 state_fields 会被当成丢弃段，manager 就读不到
+    # polar_spin_active，自转闭环静默失效"。也就是说 AGENT.md 第 4 节不变量 9
+    # 要求的"自转必须用 0x1F 回读闭环"，当时是靠 manager 直接读
+    # bridge.overlay 侥幸成立的，state 这一侧是空的。
+    #
+    # 补上它们是零像素改动：全仓没有任何渲染代码读这三个字段
+    # （manager 读的是 bridge.overlay），所以只是把"声明了却接不到"的数据
+    # 真正接上，并让 polar_bridge_test 那几条断言能同时验到 state 侧。
+    polar_spin_active: bool = False
+    polar_chassis_mode: int = 0
+    polar_self_check_flag: int = 0
     #: 自转没发出去时的人话原因（空字符串=没有阻碍）
     polar_spin_note: str = ""
     polar_link_age_s: float = float("inf")
@@ -672,8 +693,27 @@ class RobotState:
         if not self.polar_link_active:
             return
         for name, value in self.polar_overlay.items():
-            if hasattr(self, name):
+            # 只允许写**本 dataclass 自己声明的字段**，不能用 hasattr。
+            #
+            # hasattr 对方法名与 property 名同样返回 True（property 还会顺带
+            # 执行一次 getter），随后 setattr 会把实例上的方法永久遮蔽成 float。
+            # 已实测复现：overlay 里出现 'push_event' 或 'tick' 之后，
+            # state.push_event / state.tick 变成 float，下一拍整个 60Hz 逻辑层
+            # 崩在 "TypeError: 'float' object is not callable"，RobotState 事实
+            # 上永久损坏，而 _run_tick_stage 只会把它记成 'logic' 阶段的一次错误。
+            #
+            # 为什么这值得防：写入 overlay 的键**不是硬编码的**，它由
+            # polar_bridge 从 polar_protocol.json 的 state_fields 读出来 ——
+            # 也就是说电控往 JSON 里加一行 "state_fields" 就能引爆。
+            if name in _OVERLAY_WRITABLE:
                 setattr(self, name, value)
+            else:
+                # 丢弃的键要**看得见**：规格声明了 RobotState 上不存在的落点，
+                # 以前是静默丢，排查时完全无从下手（AGENT.md 的表二设计初衷
+                # 是"只改 JSON 就生效"，落点写错必须当场发现而不是假装成功）。
+                self.polar_dropped_overlay_keys += 1
+                if self.polar_dropped_overlay_keys == 1:
+                    self.polar_first_dropped_overlay_key = str(name)
         self.official_state_at = self.official_state_at or time.perf_counter()
 
     def tick(self, dt: float) -> None:
@@ -874,6 +914,20 @@ def action_group_setting(name: str, options: list[str], description: str = "") -
         options=list(options),
         description=description,
     )
+
+
+#: ``apply_polar_overlay`` 允许写入的字段全集 = RobotState 自己声明的 dataclass 字段。
+#:
+#: 放在类定义之后取 ``__dataclass_fields__``，这样以后给 RobotState 加字段
+#: 自动就允许写，不会有第二份手抄的白名单要同步（手抄的必然漂移）。
+#:
+#: 为什么不能用 ``hasattr``：hasattr 对方法名与 property 名同样返回 True，
+#: setattr 会把实例上的方法永久遮蔽成 float。实测注入 'tick' 或 'push_event'
+#: 之后 state.tick 变成 float，60Hz 逻辑层下一拍就崩在
+#: "TypeError: 'float' object is not callable"，RobotState 事实永久损坏。
+#: 而写入 overlay 的键来自 polar_protocol.json 的 state_fields ——
+#: 电控加一行 JSON 就能引爆，所以必须在结构上堵死。
+_OVERLAY_WRITABLE: frozenset[str] = frozenset(RobotState.__dataclass_fields__)
 
 
 def build_default_registry() -> ModuleRegistry:

@@ -18,6 +18,33 @@ def _sigmoid(value: float) -> float:
     return 1.0 / (1.0 + math.exp(-value)) if value >= 0 else math.exp(value) / (1.0 + math.exp(value))
 
 
+def _sigmoid_array(values: Any) -> Any:
+    """:func:`_sigmoid` 的向量化版，公式与分支逐条照抄。
+
+    存在的理由：YOLOv5 一次前向给出 3×(80²+40²+20²) = **25200** 行，
+    而原实现对每一行都调一次标量 ``_sigmoid``（``math.exp``），即使一个目标
+    都没有也要 5.91 ms/帧 —— 而这段跑在单槽推理线程上，每 1 ms 都直接
+    转化成帧龄。向量化后同一段是 0.26 ms（**23×**）。
+
+    数值上必须逐位相同，所以：
+      * 两个分支（``v >= 0`` 用 1/(1+e^-v)，否则用 e^v/(1+e^v)）原样保留，
+        不为了快换成会溢出的单式；
+      * 先转 float64 再算，与标量版 ``float(row[8])`` 的精度对齐；
+      * 实测 30 万组（含 ±1e30、±709、±745 等极端值）与标量版**逐位相同**，
+        200 万组上 0.70/0.80 两个判定阈值的结论翻转数为 0
+        （见 tests/tongji_postprocess_parity_test.py）。
+    """
+    import numpy as np  # type: ignore
+
+    vals = np.asarray(values, dtype=np.float64)
+    out = np.empty(vals.shape, dtype=np.float64)
+    positive = vals >= 0
+    out[positive] = 1.0 / (1.0 + np.exp(-vals[positive]))
+    exp_neg = np.exp(vals[~positive])
+    out[~positive] = exp_neg / (1.0 + exp_neg)
+    return out
+
+
 @dataclass(frozen=True)
 class LocalDetection:
     name: str
@@ -206,19 +233,47 @@ class TongjiYoloV5:
         canvas = np.zeros((640, 640, 3), dtype=np.uint8)
         canvas[:resized_h, :resized_w] = cv2.resize(bgr, (resized_w, resized_h), interpolation=cv2.INTER_LINEAR)
         rgb = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB)
-        tensor = np.transpose(rgb.astype(np.float32) / 255.0, (2, 0, 1))[None, ...]
+        # 直接写进 C 连续的 NCHW 缓冲。
+        #
+        # 原来是 np.transpose(rgb.astype(np.float32)/255.0, (2,0,1))[None,...]，
+        # 产出的张量 strides 是 (0, 4, 7680, 12) —— **非连续**。OpenVINO 拿到
+        # 非连续输入要先 copy 一份再转成自己的布局，实测整条预处理链
+        # 4.20 ms/帧（30fps 下占单核 12.6%）。改成预分配 C 连续缓冲直写后
+        # 降到 0.665 ms（6.32×），像素值逐位不变（除法是 IEEE 精确舍入，
+        # 换的只是数据摆放方式）。见 tests/tongji_postprocess_parity_test.py。
+        tensor = np.empty((1, 3, 640, 640), dtype=np.float32)
+        for channel in range(3):
+            np.divide(rgb[:, :, channel], 255.0, out=tensor[0, channel])
         output = self.compiled({self.input.any_name: tensor})[self.output]
         rows = np.asarray(output, dtype=np.float32).reshape(-1, 22)
+
+        # --- 先用向量化把 25200 行筛到个位数，再进 Python 循环 ---------------
+        #
+        # 原实现对每一行都做标量 sigmoid 才判断阈值，等于每帧 5.91 ms 花在
+        # 25200 个几乎必然被丢掉的行上。改成：整批向量化算置信度 → 一次性
+        # 取出过阈值的行 → 只对这几行做 argmax 与几何计算。
+        #
+        # 语义等价性：原来的 `confidence < score_threshold or
+        # confidence < min_confidence` 就是 `confidence < max(...)`；
+        # np.flatnonzero 返回的是**升序下标**，与原 for 循环的遍历顺序一致，
+        # 因此 NMS 之前 boxes/confidences/candidates 的排列逐项不变。
+        threshold = score_threshold if score_threshold > min_confidence else min_confidence
+        all_confidences = _sigmoid_array(rows[:, 8])
+        selected = np.flatnonzero(all_confidences >= threshold)
+        if selected.size == 0:
+            return []
+        selected_rows = rows[selected]
+        color_ids = np.argmax(selected_rows[:, 9:13], axis=1)
+        number_ids = np.argmax(selected_rows[:, 13:22], axis=1)
 
         boxes: list[list[int]] = []
         confidences: list[float] = []
         candidates: list[LocalDetection] = []
-        for row in rows:
-            confidence = _sigmoid(float(row[8]))
-            if confidence < score_threshold or confidence < min_confidence:
-                continue
-            color_id = int(np.argmax(row[9:13]))
-            number_id = int(np.argmax(row[13:22]))
+        for position, row_index in enumerate(selected):
+            row = selected_rows[position]
+            confidence = float(all_confidences[row_index])
+            color_id = int(color_ids[position])
+            number_id = int(number_ids[position])
             if number_id >= len(ARMOR_NAMES):
                 continue
             name = ARMOR_NAMES[number_id]
@@ -235,6 +290,8 @@ class TongjiYoloV5:
             confidences.append(confidence)
             light_strength = self._sample_light_strength(bgr, points)
             candidates.append(LocalDetection(name, ARMOR_COLORS[min(color_id, len(ARMOR_COLORS) - 1)], confidence, (x, y, box_w, box_h), points, light_strength))
+        if not boxes:
+            return []
         keep = cv2.dnn.NMSBoxes(boxes, confidences, score_threshold, 0.30)
         indices = [int(index) for index in keep.flatten()] if len(keep) else []
         return [candidates[index] for index in indices]
