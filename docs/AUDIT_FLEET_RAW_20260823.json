@@ -1,0 +1,362 @@
+workflow "rmclient-audit-fleet" completed (27 agents).
+Return value:
+{
+  "succeeded": 27,
+  "total": 27,
+  "by_domain": [
+    {
+      "key": "model-tick",
+      "summary": "model.py 存在且为 1971 行，与任务书描述一致（brief 说约 1887 行，实际 1971 行；RobotState.tick 在 679-809 行，131 行）。但任务书的核心前提「RobotState.tick() 240Hz 热路径」经实测证伪：生产入口 main.py:134 → polar_app:main() → on_tick，tick 被 `logic_interval = 1.0/60.0` 闸门（polar_app.py:839,851）限制为 60 Hz，240 Hz 只驱动 QTimer 与 self.update()。更关键的是 model.py:682 的早退 `if not self.mock_simulation_enabled or self.official_state_active: return`，而 mock_simulation_enabled 仅在 LabDebug 场景为真（manager.py:192 `config.key == \"LabDebug\"`，三种场景中占一种）——这 131 行主体在 OfficialEvent/CampusSimulation 下每次只花 0.115 µs 就返回。实测完整主体 9.82 µs/tick，60 Hz 下仅占单核 0.059%，不构成瓶颈。开销归属与任务书的假设相反：AST 统计 tick() 内 int() 调用 50 次、max() 29 次、sin 19 次、cos 9 次；分块实测 50×int()+29×max() = 2.598 µs（占 8.687 µs 实测值的 30%），而全部三角函数仅 1.572 µs（18%）。受控时钟实测（2400 拍 @240Hz = 10 模拟秒）显示 38 个被跟踪输出中有 26 个变化 ≤12 次，属按墙钟秒分段常量，60 Hz 下 59/60 拍在写相同值；容器整表重建（4 个 list / 16 个 dict）占 1.720 µs（20%）。真正值得修的不是 sin/cos，而是三类：1 Hz 分段常量无谓重算、容器重建、以及两处静默丢数据的正确性问题——apply_polar_overlay 的 hasattr 守卫已实测可遮蔽方法（注入 'tick'/'push_event' 键后调用即抛 TypeError: 'float' object is not callable），以及 polar_protocol.json 段 31 声明的 3 个 polar_* 字段在 RobotState 上根本不存在、被静默丢弃。另发现 start_time 跨场景不重置（实测切场景后 stage_countdown_sec=188 而非 420）且被 vision.py 复用为自瞄相位原点。测试覆盖实测良好（smoke_test.py:1455、backend_protocol_test.py:895-925、polar_bridge_test.py:200-271），未发现覆盖缺口。",
+      "finding_count": 8,
+      "p0": 0,
+      "p1": 0,
+      "non_visual": 6,
+      "visual_blocked": 2
+    },
+    {
+      "key": "backend-manager",
+      "summary": "`rm_custom_client/rm_client/backend/manager.py` 确实存在且与描述相符：2345 行 / 120 122 字节 / 单个 `BackendManager` 类（58 个方法、51 个实例属性、420 处 self 属性读取），与任务书给的 117KB 是同一文件。热路径实测：`tick_polar_link`（375-938，564 行、140 个分支节点）在 0x5A 链路在线 + DT7/CC 出口全开 + 52 个 overlay 字段的实况配置下为 162–199 µs/次（中位 186.77 µs），由 `polar_app.py:851-894` 以 60 Hz 逻辑层驱动——不是 240 Hz，这一点与任务书描述不符，我按代码事实记录。cProfile 的 2000 次采样共 0.751 s，其中仅 `robot_roles._load_roles_from_spec` 一条链就占 0.288 s cumtime（38%），`dt7_link.load_profile`（每 tick 一次 Path.read_text + json.loads）占 0.211 s cumtime。逐项 A/B 实测：只缓存兵种表 186.77→114.55 µs（中位，−32%），只缓存 DT7 profile 186.77→94.46 µs（−49%），两者都做 186.77→41.74 µs（−78%，约 4.5 倍），折合 60 Hz 从 11.21 ms/s 降到 2.50 ms/s。另发现两个与性能无关但证据确凿的缺陷：`apply_updates`(1428-1433) 会静默丢弃 `tick_polar_link`(805-824) 刚写进 `state.backend_stats[\"polar_link\"]` 的 `\"motion\"` 键（运行验证 True→False），根因是同一段 20 行统计字典在 `stats()`(2255-2273) 里被复制了一份；`polar_transport.py:631-633` 是 `return` 之后的死代码，导致 `detected_ports` 恒为 `[]`。本次审计全程只读，未创建/修改/删除任何文件，未执行任何 git 写操作，未触碰任何视觉冻结面文件。",
+      "finding_count": 7,
+      "p0": 0,
+      "p1": 3,
+      "non_visual": 7,
+      "visual_blocked": 0
+    },
+    {
+      "key": "polar-link",
+      "summary": "rm_client/backend/polar_link.py 是 0x5A 队内链路的纯编解码层（716 行），它本身结构清晰、fail-closed 意图明确，模块被拆成\"常量/规格表 → 解码函数表 → PolarFrameCodec(decode_with_consumed + 3 个 encode)\"三层，没有发现真正的设计缺陷。但它的性能被一个它从 rm_client/protocol.py 借来的、逐位串行的 crc16() 完全支配：按固件 usb_task.c:51-82 的 SEND_DURATION_*（Debug/IMU/RobotStateInfo/JointState/RobotMotion 各 200Hz、Shoot/Rfid 100Hz、RobotStatus 50Hz、ChassisState 20Hz…）实测下行 1360 帧/秒、57,390 字节/秒，decode_with_consumed 消耗 33.4–37.9 ms/秒，其中 29.96 ms（90%）是 crc16；换成 256 项查表后立刻降到 7.76 ms/秒（4.30×），上下行合计把 polar-link 线程从约 4.1% 单核压到约 0.9% 单核，等价于把 240Hz GUI 线程每帧预算（4.167 ms）里的 GIL 抢占削掉约 29 ms/秒。必须明确纠正的是审计假设里的另外两项：取表开销与每帧分配**都不是**瓶颈——消除全部中间切片只多省 0.30 ms/秒（0.8%），struct 字符串派发只差 0.012 µs，_generic_outputs 的 list 拷贝 0.053 µs×20Hz，GC 开/关差异在噪声内，不要在这里花时间。真正需要动手的非性能问题只有一个，且已实测复现：decode_with_consumed 只做了一半 fail-closed，:567 的 _SEGMENT_FORMATS[segment_id] 与 :561 的 apply_spec_outputs 都在 try 之外，规格文件少一个条目就会抛 KeyError 逃出解码器、被 polar_transport._loop 捕获后 break 杀死线程，再被 manager._retry_polar_connect 每 2 秒重连拉起，形成\"开串口→读 5ms→崩→关串口\"的无限重连抖动且遥测全灭，这直接违反类 docstring :482-484 的\"绝不抛出打断接收线程\"承诺。本域不触碰任何视觉元素：polar_link.py 与 protocol.py 均不在视觉冻结清单内，全部修复均为字节等价或纯控制流改动。",
+      "finding_count": 5,
+      "p0": 0,
+      "p1": 2,
+      "non_visual": 5,
+      "visual_blocked": 0
+    },
+    {
+      "key": "polar-transport",
+      "summary": "审计对象 `rm_client/backend/polar_transport.py` 确实存在（643 行，分支 perf/modular-rust，无未提交改动）。该文件是 0x5A 队内链路的收发线程 + 本地看门狗 + 归零的全部实现，配套 `rm_client/backend/serial_stream.py`（99 行）提供串口/TCP 统一字节流入口，`polar_link.py` 提供纯编解码。共 6 条有实测证据的缺陷：1 条 P0（`stats()` 第 631-633 行是不可达死代码，`detected_ports` 永远是 `[]`，HUD tooltip 恒显「已探测到：无」）、1 条 P0（`_write` 无互斥，`stop()` 的归零突发与链路线程的 `_pump_tx` 在 TCP 模式下会 `sendall` 交织，实测出现 polar-link/MainThread 两线程同时处于一次 49 字节 write 的 begin..end 之间，0x5A 帧会被撕裂）、3 条 P1（归零不变量在 `_loop` 崩溃或 `connected=False` 时静默退化为空操作——实测 0 帧落线；`_loop` 异常退出后 `last_error_code` 残留、串口句柄不关、`start()` 重连时旧句柄泄漏；`_pump_tx` 跨阻塞串口写持有 `_intent_lock`，实测 240Hz tick 线程的 `submit()` p99 被压到 5.99ms）、2 条 P2（短写被容忍且仍报 connected/HUD 显示 OK；`_loop` 把 `_drain_rx()` 之前的陈旧 `now` 交给看门狗，实测中位陈旧 20.2ms，导致本地看门狗实际是 180ms 而非声明的 200ms，且 send_hz>50 完全不可达——50/75/100 三档实测都是 108 writes/s）。性能方面并非瓶颈：`stats()` 每帧 5.00us，240Hz 下仅占单核 0.12%；真正需要注意的反倒是 `describe_ports()` 单次 2632us，若有人「顺手把死代码接回去」而不加缓存，会在 240Hz tick 里烧掉 632 ms/s（63% 单核）——这正是建议 TTL 缓存而非直连的原因。测试覆盖上没有 `tests/polar_transport_test.py`，`polar_link_test.py` 只覆盖编解码与时间戳回绕，线程/看门狗/归零路径没有任何并发用例。备注：审计期间工作树出现一个非本审计产生的未跟踪文件 `baseline_verify_all.txt`（6574 字节），我未做任何写操作，也未删除它。",
+      "finding_count": 8,
+      "p0": 2,
+      "p1": 3,
+      "non_visual": 5,
+      "visual_blocked": 3
+    },
+    {
+      "key": "polar-bridge",
+      "summary": "polar_bridge.py 存在且与描述一致（734 行，4 个类：PolarStateBridge 129-358、PolarMotionVerifier 379-559、GimbalAuthority 578-583、PolarControlArbiter 586-734）。最关键的实测结论是：本次审计被要求聚焦的「每帧写入量」和「专用 handler 与通用解码分支开销」经测量均不构成瓶颈——manager.py:409-414 每拍复制 54 键 overlay 并做 54 次 hasattr+setattr 共 4.234 µs，而该 stage 挂在 60 Hz 逻辑门（polar_app.py:851-896）上，即每壁钟秒仅 0.254 ms（单核 0.025%）；分派本身 `_HANDLERS.get()` 仅 0.052 µs，最重的专用处理器 0x0A 为 1.55 µs、通用路径 0x1F 为 0.76 µs，通用路径反而更便宜；串口线程侧全链路 decode+apply 在 1500 段/秒（47 KiB/s）下为 33.6 ms/秒（单核 3.4%）。真正的问题全在正确性上：最严重的是 polar_transport.py:612 的 return 之后还有两条不可达语句，使 `stats()[\"detected_ports\"]` 恒为 []（我把 describe_ports 打成 4 个口仍然拿到 []），以及 link 断开后 48 个 polar 标量永久残留在 RobotState 上（实测 current_health=777、chassis_yaw=70.703 原样保留），直接违反 manager.py:944-945 与 AGENT.md:147 自己写下的不变量；此外 54 个 overlay 键中有 19 个在 model.py 之外无任何生产读取点，0x03 解出的 drive_ready 被算出、写进状态却从不参与 manager.py:599-608 的驾驶门控。",
+      "finding_count": 8,
+      "p0": 0,
+      "p1": 2,
+      "non_visual": 6,
+      "visual_blocked": 2
+    },
+    {
+      "key": "mqtt-backend",
+      "summary": "rm_client/backend/mqtt_backend.py 实为 378 行、单个类 RmMqttBackend（与\"大文件\"的描述不符，但结构清晰），继承链为 RmMqttBackend → OfficialMqttBridge → MQTTTransport（均在 rm_client/transports.py），依赖 backend/protocol.py（手写 protobuf wire 编解码）与 backend/safety.py（OfficialSafety 门控）；manager.py:159 把 event_hook 接到 _log_backend_event → backend/field_log.py 的 RotatingJsonlLogger。收发两条路都实测过：发送侧 publish_topic 本身只要 1.0 µs，但挂上生产 event_hook 后是 212.3 µs/次（99.5% 是同步落盘），OfficialEvent 的 75 Hz KMC 一秒就是 15.9 ms 的阻塞文件 I/O 打在 Qt 主线程上；接收侧每条下行消息成本 241.1 µs（其中 236.7 µs 是 mkdir+stat+open/write/close），发生在 paho 单网络线程。功能层面查出两个可复现的硬缺陷：messages_received 每条消息被基类和子类各加一次（实测 720 条真实消息 → 计数 1440），以及 stop()/set_address() 不清空 _decoded/_received_messages（实测切 broker 后旧 broker 的 5 条 Event 仍被 drain 出去）。另外确认 backend/protocol.py 的 decode_fields 与 combat_events.py 的 decode_proto_fields 是 40 行逐字相同的重复实现（200 组随机 payload 输出完全一致），同一条消息被解码两次并同时保留原始与解码两份拷贝（满载 tracemalloc 实测 776.5 KiB）。全部建议落点（mqtt_backend.py / transports.py / field_log.py / protocol.py / combat_events.py / tests）经 tools/visual_freeze_manifest.json 逐项校验均不在 400 个视觉冻结文件内，故 10 条建议里只有 F2 会（间接地、经由消除误报的淘汰特效）改变像素，无一条需要改绘制/布局/颜色/字体/动画参数。",
+      "finding_count": 10,
+      "p0": 0,
+      "p1": 2,
+      "non_visual": 9,
+      "visual_blocked": 1
+    },
+    {
+      "key": "official-protocol",
+      "summary": "任务描述与我被指派的文件不符，必须先说明事实：仓库里有两个 protocol.py。rm_client/backend/protocol.py（834 行，我被指派的文件）是**纯 MQTT/protobuf wire 编解码器**，全文件没有 CRC8、没有 CRC16、没有任何 0xA5 帧结构——它编码 11 条上行消息、解码 25 条下行消息。描述中\"0xA5 裁判帧编解码 + CRC8/CRC16 表驱动 vs 逐位\"的真实代码在**同级的 rm_client/protocol.py（135 行）**：RefereeFrameCodec + 逐位 crc8/crc16，被三个模块共享导入（serial_backend.py:17、cc_link.py:58、polar_link.py:26）。我按\"每条发现必须有真实证据\"的原则，把两者都审计了：CRC 的实测成本集中在那 135 行文件里，而被指派的 protobuf 文件本身**不是性能问题**——实测 decode_message 单条 3.5–30.0 µs，运行在 paho 网络线程而非 240Hz 渲染线程上，编码侧 75Hz 闸门下 encode_keyboard_mouse_control 仅占单核 0.036%。核心结论：CRC 是逐位实现且在 0x5A 队内链路上占整帧解码成本的 **88%**（160B SEG_DEBUG 帧 100.00µs 中 88.30µs 是 CRC），表驱动实测快 6–14 倍。我实测后**主动否决了 4 个看似成立但站不住的说法**（见 evidence 说明），因为无法证实：frozenset 重建在 CPython 中返回同一对象（`frozenset(f) is f` → True）实际零成本；`setdefault(field,[])` 实测 0.099µs 反而比 get-guard 的 0.107µs 更快；`_packed` 里的 `bytes(value)` 对 bytes 入参不产生拷贝；截断的 GameStatus 把安全阶段重置为 \"0\" 是 fail-closed（\"0\" ∉ FIGHTING_STAGES={\"4\",\"MATCH\"}）而非 fail-open。两个 protocol.py 均不在视觉冻结清单内，所有修复 touches_visual 均为 false。仓库工作树我未改动（git status 仅有 harness 自带的 3 个未跟踪文件，__pycache__ 已被 .gitignore:11 忽略）。",
+      "finding_count": 4,
+      "p0": 0,
+      "p1": 1,
+      "non_visual": 4,
+      "visual_blocked": 0
+    },
+    {
+      "key": "control-loop",
+      "summary": "rm_client/control.py 共 702 行、约 34KB，是单一 KeyboardControlBridge 类加若干纯函数自检判据，全部逻辑集中在单个类内，无子模块拆分，但内部职责（采集 / 归一化 / 三条出口编排 / 限流 / 自检判据）混在一个类里。本次审计最硬的结论是**名义 75Hz 的控制回路在任何配置下都跑不到 75Hz**：实测 60 秒长跑（假时钟、±0.8ms 抖动）下有效上行帧率只有 60.96Hz（默认 144Hz HUD）、52.12Hz（240Hz HUD）、47.27Hz（165Hz HUD）、62.51Hz（120Hz HUD），而且把 HUD 从 144 调到 240 反而让控制回路更慢；根因是 polar_app.py:844 的 0.92 容差外层门控与 control.py:426-428 的严格内层门控叠加，而 QTimer 间隔是 max(4, round(1000/hz)) 的整数量化，导致 heartbeat_hz=75.0 这个常量在任何设置下都从未真正生效。性能方面，send_from_state 实测 11.06µs（mock，无出口）到 15.33µs（KMC+直连DT7），其中 to_payload() 的 asdict()+json.dumps 占 7.36µs/帧（cProfile 显示 _asdict_inner 被调用 19 次/帧，占总时间 46%），而产物 last_payload 在整个仓库里只有一条测试断言在读。此外确认了三个可复现缺陷：km_source_conflict 状态下 dt7_release_pending 永不清除导致心跳被钉在 72.6Hz 空转（实测 3.1 秒内 225 次 vs 冲突解除后 1 次）；tick(now=) 的注入时钟被 send_command 用模块级 time.perf_counter() 覆盖，不同源时整条桥会永久只发一帧（实测 240 次 tick 只发 1 次）；set_bind 的\"释放旧占用\"分支是经执行验证的死代码，导致 W↔D 这类按键交换永远无法配置（实测三次 set_bind 全部返回 False）。未发现任何视觉相关改动需求，所有建议均落在 control.py 内，不触碰冻结面。",
+      "finding_count": 7,
+      "p0": 0,
+      "p1": 1,
+      "non_visual": 7,
+      "visual_blocked": 0
+    },
+    {
+      "key": "transports",
+      "summary": "`rm_client/transports.py` 存在且与描述相符(446 行,只读审计,未改动任何文件)。它是全部真实后端(video_backend / mqtt_backend / serial_backend)的唯一基类层,同时还留着 4 个生产环境里已无实例的类(CameraFeed、MQTTTransport、VideoPipeline、SerialBridgeStub —— 唯一实例化点在 `rm_client/app.py`,而该 Tk 入口的 `main()` 强制转发 polar_app,仓库自己的 handoff 文档第 94 行已把它标为死代码)。我实测推翻了三条\"看起来像问题\"的猜测:`push_packet` 2.476 µs/包(≈40 万包/秒,相对 ~1.1 万包/秒的码流有 30 倍余量,不是热点);`recvfrom(65535)` 相对 2048 只差 1%;UDP 也不是\"没有重连\"(`refresh_vision_runtime` 在 60Hz 调 `set_active_video_source`,端口占用时会持续重试)。真正被实测坐实的是另外五条:默认 `SO_RCVBUF` 只有 65536 字节(本机实测)而帧解码内联在收包线程上,导致 1080p 丢包 4.5%~11.2%、4K 丢包 73.5%(把缓冲区提到 4 MiB 可把 1080p 打到 0%,但 4K 仍 74.2%,说明结构性修复必须把解码挪出收包线程);`stop()` 的 0.6 秒 join 超时会遗留孤儿线程(实测 0.602 s 返回时线程仍活着,再来一次 `start()` 就有 2 个 udp-video 线程抢同一个 socket 和同一个无锁 FrameAssembler);收包时丢弃来源地址(`packet, _addr = ...`),同网段任意主机用 1482 个垃圾报文就能把 RSS 从 17.9 MiB 顶到 77.8 MiB 并挤掉真实在途帧;0xA5 串口链路掉线后 600 个 tick 仍不恢复且 `drain_frames()` 全仓零调用;端口被官方客户端占用时 60Hz 重试要烧掉约 23% 单核。视觉冻结清单(rm_client/ui/**、video_backend.py 等)我一条都没有建议改动,F1/F5 的修复都放在未被冻结的 transports.py 与 manager.py 里。",
+      "finding_count": 10,
+      "p0": 0,
+      "p1": 5,
+      "non_visual": 10,
+      "visual_blocked": 0
+    },
+    {
+      "key": "dt7-link",
+      "summary": "重要事实修正：本域被描述为\"大疆 DT7 遥控器 HID 读写：读线程、报告解析、丢包\"，但 rm_client/backend/dt7_link.py 里**没有任何读线程、没有 HID、没有运行期报告解析**。该模块 665 行，是一个**只写的** DJI USB Virtual COM（VID_FFF0&PID_0008）帧生成器：唯一 I/O 是 `serial.Serial(...).write(22B)`，全仓 grep `in_waiting|.read(` 在 rm_client/ 下**没有任何一处读 DT7 口**。报告解析函数 `decode_dt7_frame()`（dt7_link.py:358）在 rm_client/ 运行期**零调用**，只有 tools/dt7_link/dt7_frame_diff.py:110 与 dt7_wireless_selftest.py:301 用（离线抓包核对）。真正的运行期\"读/回读\"路径是另一条链路：C 板 0x5A 调试段里的 `km_key`，经 polar_bridge → manager.tick_polar_link → control.radio_km_robot_key，被 UI 自检以 40ms QTimer 轮询。因此\"丢包\"在本域的真实形态是**发送侧限流丢弃**（dropped_rate）与**写口失败**，而不是 HID 报告丢失。实测基线：send() 全 mock 路径 18.7µs/帧、build_frame 12.1µs（其中位运算 CRC16 9.6µs）、_gate 1.6µs、load_profile 55.2µs——编解码本身完全不是瓶颈，**真正的开销与缺陷全在 I/O 边界与状态记账上**。共 10 条 findings，其中 3 条 P1/P2 级会直接误导现场判断（限流被当成错误上报、中键污染线上状态记账、写失败路径无退避导致 25Hz open/close 抖动），全部有可复现的实测数字。",
+      "finding_count": 10,
+      "p0": 0,
+      "p1": 2,
+      "non_visual": 8,
+      "visual_blocked": 2
+    },
+    {
+      "key": "vision-pipeline",
+      "summary": "三个重点文件全部存在且与描述一致：vision.py 623 行、tongji_yolo.py 530 行、tongji_bridge.py 345 行。AI 推理路径的瓶颈不在模型本身，而在两处与模型无关的纯 Python 开销：TongjiYoloV5.detect 的后处理用纯 Python 逐行扫描 YOLOv5 全部 25200 个 anchor（3×(80²+40²+20²)），实测即使零命中也要 5.7–8.5 ms/帧，向量化后降到 0.07–0.22 ms 且输出逐项相同；预处理把 640×640×3 float32 张量以非连续 strides (0,4,7680,12) 交给 OpenVINO，实测预处理链 4.20 ms/帧（30fps 下占单核 12.6%），改成预分配 C 连续 NCHW 直写后降到 0.665 ms（6.32×，max abs diff = 0.000e+00）。两者合计约 9.7 ms/帧纯浪费，全部发生在单槽 `_pending` 的推理线程上，每毫秒都直接转化为帧龄。正确性方面最严重的一条是丢帧保持窗口：代码注释（tongji_yolo.py:497）声称「超过 300ms 仍会安全清空」，用真实类驱动实测保持 319 帧 ≈ 7.98 秒。健壮性方面 TongjiVisionReceiver 是三个视觉 worker 中唯一没有退避的，bind 失败时实测 1.04 秒内生成 60 个 Thread，而 refresh_vision_runtime 以 60 Hz 调用 start()，会永久每秒重建 60 个线程。维护性方面 vision.py:466-599 的 TongjiVisionBridge（134 行 + 一整套 PLVR 二进制 TCP 协议 + JPEG 编码）在生产路径上是死代码——全仓库只实例化（polar_app.py:443）然后只 stop()，从未 start()，唯一调用方是 smoke_test。延迟遥测则既错又无人读：submit() 丢弃了 CapturedFrame.timestamp_ns 使排队时延不可测，latency_ms 只覆盖 detect() 而漏掉后续 8 次 solvePnP 的几何段，且 state.vision_latency_ms / vision_inference_fps 在全仓库无任何读者。共 9 条发现，全部有实测数字或可复现的代码证据。",
+      "finding_count": 9,
+      "p0": 1,
+      "p1": 2,
+      "non_visual": 8,
+      "visual_blocked": 1
+    },
+    {
+      "key": "startup-imports",
+      "summary": "在 warm `__pycache__`、5–7 次进程中位数下实测：`python -c pass` 29.8 ms → `import PySide6.QtWidgets` 148.6 ms → `import rm_client.ui.polar_app` 399.0 ms（整进程）。Qt 之后剩下的 230.81 ms 自有 import 里，最大一块不是业务代码而是 Python 的类构造机器：108 个 `@dataclass` 装饰耗 75.15 ms、234 个 `Enum` 类构造耗 20.03 ms，合计 95.18 ms（占 41%）；其次是 `rm_client.backend/__init__.py` 的急加载把整条后端栈拉进启动路径，单独计 48.64 ms（min 45.63 / max 51.24），而 `BackendManager` 直到 `polar_app.py:395` 的 `__init__` 才实例化。91 个一方模块的静态 import 图里只有 1 个真实模块级环（`rm_client.backend` ↔ `rm_client.backend.manager`），由 `manager.py:23-25` 的 `from . import X` 打在半初始化父包上造成，只靠 CPython ≥3.7 的子模块回退侥幸成立。`main.py` 本身是干净的：replay/selftest/preflight 三路分发已经正确惰性化（Qt 完全不参与），其顶层 `argparse`/`json` 实测被 PySide6 的 shibokensupport 与 `backend.manager` 顺带加载，额外成本≈0。已核查但**不是**问题：`RuntimePaths.discover()+ensure_writable_dirs()+seed_default_config()` 在 `main.py:118` 与 `polar_app.py:373-375` 各跑一遍，总共只有 0.80 ms；openvino / cv2 / numpy / serial / pyserial 全部已是函数内惰性 import；`polar/`·`renderers/`·`mixins/` 三个 `__init__` 的急切 re-export 因 polar_app 本来就把它们全导完，净收益≈0；`polar_app.py` 尾部 `from .polar.app_entry import main` 造成的潜在环已被 app_entry 内的函数级延迟 import 正确规避。全程只读，未创建/修改/删除任何文件（结束时 `tools/visual_freeze_guard.py --check` 仍报 400 个冻结文件逐字节未变、exit 0）。",
+      "finding_count": 7,
+      "p0": 0,
+      "p1": 2,
+      "non_visual": 7,
+      "visual_blocked": 0
+    },
+    {
+      "key": "config-store",
+      "summary": "三个重点文件都存在且与描述一致：config_store.py 264 行、runtime_paths.py 184 行、scenarios.py 176 行。整体状况是「语义正确但写路径偏贵」：原子写、版本闸门、场景覆盖旧配置、mode 选项白名单、number 范围钳位都在，但唯一一条落盘路径把同步 fsync 放在了 240 Hz 渲染线程上。实测注册表 59 模块 / 387 setting，单份 profile 序列化后 18,511 B；`export_client_config` 只要 0.029 ms，`json.dumps(indent=2)` 0.281 ms，而同机把同样 18,557 字节写盘并 FlushFileBuffers（即 `os.fsync` 在 Windows 上的映射）中位 4.167 ms（50 次采样），比不 fsync 的 2.519 ms 多 1.65 ms —— 一次自动保存冲刷 ≈ 4.2 ms I/O + 0.41 ms CPU ≈ 4.6 ms，而渲染 QTimer 预算是 240 Hz 目标下 4.17 ms、144 Hz 默认下 6.94 ms，且去抖只有 0.25 s（按住滑块 = 4 次/秒的阻塞）。读路径也有三处未缓存的配置重读：`configs/dt7_profile.json` 每 60 Hz 逻辑拍重读（中位 38.3 µs / p99 48.9 µs），`configs/cc_key_usage.json` 每 75 Hz 控制拍重读（中位 33.9 µs），而 27,778 B 的 `polar_protocol.json` 反而由 `polar_spec.get_spec` 正确缓存了。正确性上有五个已复现的洞：`import_file` 用裸 `shutil.copyfile`（全模块唯一非原子写）、`profile_names()` 返回未清洗的 stem 而 `current_profile()` 会清洗、30 个 `action` 设置被序列化后又经无校验的 `else` 分支写回（1,512 B / 8.2% 死负载）、`bool` 恢复把 JSON 字符串 \"false\" 变 True、`number` 恢复忽略 `step`（137.77 保持 137.77 直到用户碰一下滑块才被改成 140）。路径层 `runtime_paths()` 这个单例访问器有 0 个调用点，7 处各自 `discover()`，启动时 `ensure_writable_dirs()` 被跑两遍（共 14 次注定失败的 mkdir）。诚实声明一条测量限制：本会话无法端到端测 `ClientConfigStore.save()`——`tempfile.mkstemp` 走 `os.open(..., O_EXCL)` 被 DSH workspace-write 沙箱拒绝（报 sandbox: file access denied），所以 4.167 ms 来自同机同 %TEMP% 卷上用 .NET 跑的等价「写 18,557 B + FlushFileBuffers」序列，不是 Python 路径直测。",
+      "finding_count": 10,
+      "p0": 0,
+      "p1": 1,
+      "non_visual": 10,
+      "visual_blocked": 0
+    },
+    {
+      "key": "economy",
+      "summary": "rm_client/economy.py 存在且与描述一致（668 行，纯 Python，不在 tools/visual_freeze_manifest.json 的 400 个冻结文件里，可改）。它同时承担四件事：不可变数据模型（EconomyContext/EconomyOffer/EconomyRequest/EconomyTransaction）、商品矩阵推导 available_actions()、手写 protobuf 编码器、以及唯一的交易状态机 EconomyCommandBridge。链路是「UI mixin（冻结）→ economy.py → MqttBackend.publish_topic → OfficialSafety.can_publish → 裁判系统」。**先纠正任务前提：代码里根本不存在 600ms 轮询**——0.60 s 是长按确认阈值（README_经济操作与裁判链路.md:11，economy_mixin.py:424/1440），不是轮询周期；真实轮询是 QTimer 最高 240Hz 驱动的 on_tick → economy_bridge.update，我实测它极其便宜（空闲 0.084 µs/次、pending 0.33 µs/次，240Hz 下约 0.008% CPU），**不值得优化**。真正贵的是渲染路径：每帧调用 available_actions() 两次，实测 7.94–18.50 µs/次。最严重的不是性能而是三个可复现的状态机缺陷：submit() 没有在途准入控制（可发出两帧完全相同的 QoS1 CommonCommand → 重复扣款，而这条不变量目前只由冻结的 UI 层 economy_mixin.py:370-373 兜底，恰好是 economy.py:613 自己声称要保护的那条）、update() 是单槽观察者（被顶替的交易永远停在 pending、5 秒超时提示永不触发）、以及 _apply_mock 里 state.economy_managed=True 是一次性闩锁（我用真实 RobotState 复现：一笔 mock 交易后 60 秒 3600 次 tick，金币与弹量一字不动）。另有两处跨层问题：BackendManager.publish_air_support 把 AirSupportCommand 归类到 core_kmc 能力（MATCH_ARMED 下会 fail-open），以及 submit() 把所有传输拒绝压成同一句话「MQTT 请求未发送」，丢掉 safety.py 已经算好的真实拒绝原因。",
+      "finding_count": 8,
+      "p0": 0,
+      "p1": 1,
+      "non_visual": 6,
+      "visual_blocked": 2
+    },
+    {
+      "key": "combat-events",
+      "summary": "rm_client/combat_events.py（867 行）承担两件互不相干的事：OfficialMatchFeed（第 164–358 行）把官方 MQTT protobuf 归一化成 RobotState 更新 + CombatEvent，VisionKillDetector（第 384–867 行）是纯 Python 的视觉击杀时序状态机。combat_hud.py 只有 259 行、纯展示层数学（approachJar/approachBar/ghostFollow），我通读后没有找到任何可以在不碰冻结绘制的前提下报告的缺陷，因此本次审计的可改面事实上只有 combat_events.py。静态与运行时取证发现 3 个可证实的 P1 正确性缺陷：(1) consume() 第 215 行 `fields.get(11) or fields.get(6)` 的字段 6 回退取到的是 protocol.py:313 定义的 enemy_base_health 而非机器人血量，实测会凭空产生一条 victim 101 的裁判淘汰事件并把 `state.official_robot_health` 写成 `[0]`（下游 manager.py:1218 用 `[:10]` 切这张表）；(2) 第 230 行用累计量 `server_kill_damage > 0` 当边沿，而 manager.py:1798 明写该报文是「累计 1 Hz」，实测 death 事件每 2 秒重放一次直到重连；(3) 第 353 行去重键 `(kind, victim_id, killer_id)` 无法合并同一次击杀的 GlobalUnitStatus 血量归零与 Event topic 两条来源，实测 250 ms 内产出两条 CombatEvent。另有一个 P2：_finalize_tracks 第 693–721 行是结构性死代码——638 行的 `if not track.seen_this_frame:` 块内每条路径都以 continue 收尾，sys.settrace 跨 5760 组场景组合实测 696–719 从未执行，导致 README_战果判定与阵营.md:33 对外承诺的 `MISS_TRACKED` 状态和 `vision_confirmed_miss_after_lit` 事件永远不可能出现。性能侧不是瓶颈：consume() 单条 3–8.6 µs、process() 10 块装甲 32.9 µs（60 Hz 合计约 2 ms/s，约占单核 0.2%），我仍给出 3 条有实测数字的 P3（重复 protobuf 解码、_set_status 每帧重建 22 项优先级字典、_update_geometry 每帧构造两个临时列表）。已核实并主动排除两个看似成立但经交叉验证不成立的怀疑：own_count=min(5,...) 的 7v7 误分类（BACKEND_MATCH_READINESS.md:15 明确规定 robot_health 按 5+5/角色 1/2/3/4/7 映射，与 _HEALTH_ROLE_ORDER 一致）；以及 combat_hud.py 的任何改动建议（该文件属视觉冻结面）。本次为只读审计，未创建/修改/删除任何文件，git diff 为空。",
+      "finding_count": 8,
+      "p0": 0,
+      "p1": 4,
+      "non_visual": 5,
+      "visual_blocked": 3
+    },
+    {
+      "key": "backend-modularity",
+      "summary": "rm_client/backend/ 共 18 个 Python 模块、约 8.5k 行。AST 实测依赖图无环，分层大体正确：极链 0x5A 走 polar_spec → polar_link → {polar_bridge, polar_transport} → manager，官方 0xA5 走 protocol → mqtt_backend → manager，manager 是唯一汇聚点（单类 58 个方法、2346 行）。问题不在拓扑而在边界纪律与重复：manager.py 的 tick_polar_link 是 564 行、承担约 20 项职责的『神方法』，是 polar_app.py 那次拆分在后端侧的遗漏；polar_link 诊断快照的 20 行字典字面量在 manager.py 内被写了两遍且已经漂移（tick 版多一个 motion 键）；polar_transport.stats() 有一处自打出生就存在的死代码，使 detected_ports 永远为空，UI tooltip 恒显示『无』，而守卫该行为的测试恰好只断言键存在因而空转。最刺眼的一条是 manager.py 与 polar_bridge.py 的职责划分：polar_bridge 持有全部纯逻辑（状态桥、仲裁、动作校验），manager 却把自转状态机（_update_spin_command）与人类可读原因（spin_block_reason）留在自己体内，而同一状态机的另一半在 polar_transport.set_spin_command 里，跨了两个模块。另有一条 P1 功能失效与一组实测开销数字（get_setting 6.6 µs/tick、快照块 7.15 µs/tick，240 Hz 下均不足单核 0.4%，已如实标注为非性能瓶颈）：串口打开策略在包内有 4 份互不复用的实现，其中 cc_link 每帧开关一次串口而 dt7_link 已有正确实现。注：任务描述中 polar_app.py 约 4257 行，实测为 4477 行；polar_spec.py 与 readiness.py 字节数相同但内容完全不同，不存在重复文件。",
+      "finding_count": 9,
+      "p0": 0,
+      "p1": 3,
+      "non_visual": 8,
+      "visual_blocked": 1
+    },
+    {
+      "key": "cross-deps",
+      "summary": "用 AST 静态解析了 rm_client 包全部 91 个 .py 加 main.py，共 92 个模块、248 条内部 import 边（其中 226 条模块级、23 条函数内延迟、1 条两者皆有），45 个模块是零内部依赖的叶子。结论比预期乐观：真正的导入期循环依赖只有 1 个——rm_client/backend/__init__.py:7 与 backend/manager.py:23-25 构成的 SCC（另一个 app_entry↔polar_app 的环靠函数内延迟 import 打断，是有意设计且已在 docstring 说明）。依赖方向整体是自洽的 UI → backend → model，扇入最高的 model.py（15 个导入方、1971 行）只向下依赖 match_modes/robot_profiles/scenarios/serial_ports，serial_ports 也已把 pyserial 延迟到函数内，因此 domain 层没有被硬件库污染。最严重的问题不是循环，而是拆分遗留的死耦合：polar_app.py（实际 4477 行，非任务描述的 4257）有 60 条出边为全包最高，却含 55 个从未被引用的 import 绑定、其中 5 行整行全死；polar/mixins/__init__.py 和 polar/renderers/__init__.py 各自只 re-export 6 个模块中的 1 个，面包约定互相矛盾；video_backend_mixin.py:884/888 直接调用后端私有静态方法 BackendManager._economy_signature；domain 核心 model.py:691 在 RobotState.tick 里反向 import 视觉冻结模块 combat_hud。必须先说明的一点：tools/visual_freeze_guard.py 对 rm_client/ui/** 做逐字节 SHA-256 冻结（当前 --check 通过，400 文件），因此 5 条落在 ui/ 下的修复虽然不改变任何像素，仍会触发守卫失败，需要人工显式 --update 并附理由。性能方面没有任何可摘的果子：manager.py:630/724 两处热路径延迟 import 实测仅 0.116µs 与 0.153µs，60Hz 下约 16µs/s（占 13.33ms 预算的 0.0016%），我把它写成\"别去优化\"的反向结论而非性能缺陷。",
+      "finding_count": 9,
+      "p0": 0,
+      "p1": 3,
+      "non_visual": 9,
+      "visual_blocked": 0
+    },
+    {
+      "key": "tests",
+      "summary": "tests/ 有 32 个 .py 套件共 15,601 行，1052 个 check() 调用点 + 1151 个裸 assert（约 2200 个断言点），外加 21 张视觉基线 PNG 与一份 1123 成员的 api_freeze 快照。守视觉的只有三样：400 文件的 SHA-256 冻结清单（未入库）、PolarRMWindow 成员面快照（只能抓增删改名，抓不到\"还在但画得不一样\"）、以及 21 张从不被读取比对的基线 PNG；守后端的主力是 polar_* 六个套件（实测 polar_link 81 / polar_bridge 183 / polar_integration 51 / polar_selftest 43 项通过）。结构上有三个硬伤：smoke_test.py 有 9 个测试函数自初始提交起从未被调用（其中 8 个是 VisionKillDetector 击杀判定分支、1 个是 GL pixel-store 状态还原回归）；verify_all 注册 26 个套件、build_release 只注册 14 个，两者都漏；以及 23 份逐字相同的 check() 加 52 对近似重复的桩方法，全仓无 conftest/pytest/CI。注意：本机 .venv 指向已失效的 codex runtime，sandbox 又禁止写 TEMP 下的文件，因此 backend_protocol_test / field_candidate_test / polar_startup_test / settings_doc_consistency_test / smoke_test 在本次审计中无法完整跑通（分别卡在缺 cv2、缺 ffmpeg、WinError 5），下文引用的失败输出均为实测而非推断，并已在对应条目中标明。",
+      "finding_count": 12,
+      "p0": 2,
+      "p1": 4,
+      "non_visual": 12,
+      "visual_blocked": 0
+    },
+    {
+      "key": "build-release",
+      "summary": "发布链路是单文件的：tools/build_release.ps1（509 行）负责 hash 锁定输入 → git archive 取不可变 commit → 14 个测试门禁 + 桌面 WGL 预检 → tools/POLAR-RM.spec 跑 PyInstaller 6.21 one-folder → 拼 bin/resources/defaults/user_data 骨架 → 写 BUILD_MANIFEST.json + .sha256 → 剥光 PATH 跑 portable preflight → 断言 user_data/field_evidence 为空 → ZipFile 打包。设计本身相当严谨（git 可复现、ffmpeg/壁纸三重 SHA256 锁定、manifest 完整性校验、运行时状态零污染断言都在），主要问题出在**可复现性和证据准确性**上：仓库零 CI（无 .github/、无 yml/yaml、无 pre-commit/tox/nox、无 git hooks），全部 14 个门禁只存在于需要人手触发的 PowerShell 里；而唯一能诊断环境的检查 build_release.ps1:243 只做 Test-Path，实测当前 `.venv` 的 python.exe 与 pyinstaller.exe 都在磁盘上但解释器已死（exit 103 \"No Python at ...\"），于是那句准确的 \"Build environment missing. Install requirements-build.txt\" 永远不可达，构建改为死在 :231 并抛出误导的 \"polar protocol spec is not usable\"。依赖体积方面实测现场包 766.9 MB 未压缩 / 305.4 MB 压缩，其中 openvino 独占 211.4 MB（占压缩包 22.7%），而全仓库只有 tongji_yolo.py:183 一处懒加载引用它——spec 无条件 collect_all(\"openvino\") 与 requirements-core.txt 自己的\"openvino 不该进首发路径\"判断直接矛盾。证据链上，manifest 的 dependencies 记的是构建机 pip freeze（26 项，其中 onnxruntime/fonttools/pypdf/cryptography 根本不在包内），tests 块是 6 个写死的 \"PASS\" 字面量，14 个真实门禁里有 8 个不留痕迹，protocol_version 写死成官方 0xA5 的 1.3.1 而 0x5A 规格版本完全没记录。另外说明：任务描述里的 `tools/build_release.ps1` 确实存在（28923 字节），但 `release/` 下的 8 个 zip 合计 1.85 GB 且全部被 .gitignore 忽略（git ls-files release 返回空），是纯本地产物。",
+      "finding_count": 9,
+      "p0": 0,
+      "p1": 4,
+      "non_visual": 9,
+      "visual_blocked": 0
+    },
+    {
+      "key": "safety-invariants",
+      "summary": "10 条不变量里 6 条（1 fire 恒 0、2/8 键位分层、6 0x03 授权闸、7 云台出口互斥、9 自转走 0x04 的三条规则、10 拨杆旁路）有真实代码强制点加具名回归断言；不变量 4（bridge.active 闸门）在 manager.py:599-608 与 844-850 双重生效，也有测试钉住。真正出问题的是不变量 5 与不变量 3：不变量 5 的 stop() 分支既不发 0x03 归零帧、又没锁住发送线程，实测在默认 50Hz 下 75/150 次、100Hz 下 110/150 次 stop() 的最后一帧是非零 0x01（vx=1.5），而 manager.py:464/479/516 三处运行期改口/改波特/换链路模式都走这条路；该分支在整个仓库里 0 条测试。不变量 3 的 roll_detected 只被上报给 HUD 看板，从未触发任何 fail-closed，而 docstring 明确承诺“停止驾驶”；PolarTimestamp(floor=) 在生产里也没有任何调用点，“跨重启续接”是未接线的能力。此外发现 0x1F 里的 chassis_mode 被解出来又丢掉，不变量 10 只能靠人肉排查；以及 stats() 里两行不可达代码让一个 HUD 字段永远为空、对应测试因此永远绿。全程只读，未创建、修改或删除任何文件。",
+      "finding_count": 10,
+      "p0": 1,
+      "p1": 3,
+      "non_visual": 8,
+      "visual_blocked": 2
+    },
+    {
+      "key": "concurrency",
+      "summary": "全项目共 12 处 thread 创建点（AST 全量枚举），全部 daemon=True，另有 1 个 ThreadPoolExecutor 与 paho 内部线程，无线程泄漏；锁约 14 把，绝大多数作用域正确，且不存在锁顺序反转（唯一多锁共处的 polar_transport 里 _rx_lock 与 PolarTimestamp._lock 从不嵌套）。真正的风险集中在 GUI 单线程：polar_app.on_tick 同时驱动 144 Hz 渲染、60 Hz 逻辑 stage 与 75 Hz 控制子 tick，而后端生命周期（stop/重启/急停）全在这一条线程上。实测三组数字：field_log.emit 单次 194 µs（mkdir 81 + stat 35 + open/write/close 98），在 75 Hz 的 paho 网络线程争用下 GUI 侧 p99 达 527 µs、峰值 903 µs；resolve_ffmpeg_executable() 每次 2.70 ms（其中 shutil.which 占 2.43 ms），却在每次解码器重启时于 GUI tick 内重跑；TongjiYoloWorker.submit 的整帧 BGR 拷贝实测 960×540 每帧 324.9 µs。最严重的一条是 0x5A 队内链路：_pump_tx 持 _intent_lock 跨越阻塞串口写，实测让 GUI 线程的 trigger_estop() 阻塞 51.0 ms，而 open_serial 配置的是 write_timeout=0.2 s、最坏 4 次写即约 800 ms，与 AGENT.md 不可协商不变量第 5 条直接冲突；并已实测复现 stop() 期间出现 2 个并发 stream.write 者（45.3 ms 内 14 次写）。",
+      "finding_count": 9,
+      "p0": 1,
+      "p1": 4,
+      "non_visual": 9,
+      "visual_blocked": 0
+    },
+    {
+      "key": "memory-caches",
+      "summary": "审计范围是 `rm_client/**/*.py` 中全部长期存活的容器（self.X = {} / dict() / list() / set() / deque()）。AST 扫描在 47 个文件里共定位到 110 处实例级容器声明，加上模块级可变状态与类级共享缓存，逐一核对了写入点、淘汰点与上限。结论是：这个仓库的缓存纪律总体相当好——真正危险的「无上限 dict」不多。本次报出 8 条，其中 P1 只有 1 条（`clickgui_gpu._shaped_layouts`：每条记录钉住一个开了 `setCacheEnabled(True)` 的 `QTextLayout`，唯一兄弟上限 `_shaped_texts` 的 2048 截断不会传播给它，全仓唯一的释放点只在 `release()` 整体拆解里）；2 条 P2 是「有上限但上限太大」（`_vignettes` 最多 5 张全屏 ARGB32，4K 下约 158 MB；`_map_round_cache` 最多 8 张地图面板 RGBA8888，2x 下 70–132 MB）与「按量化矩形做 key 且只在切视频源时清理」的 `liquid_glass.light_state/light_time`；其余是 P3 的小泄漏与一处 id() 缓存键隐患。明确验证为有界、不需要动的包括：text_metrics 三缓存（8192 清空 / 4096 弹最旧）、`_fluorescent_circle_cache`（48 FIFO）、`map_display_cache`（24）、`ClickGuiLayerCache`（capacity=40 LRU）、`MinecraftBitmapFont`（cache_limit=320）、`fps_samples`(90)/`_field_frame_times_ms`(720)/`video_backend._frame_times`(120)、`economy.history`(32)、`match_chat.messages`(200)/`sent_history`(100)、`transports`/`serial_backend`/`polar_transport`/`mqtt_backend` 的 maxlen deque、`combat_events._seen`(2s 窗口)与 `_tracks`(TRACK_TTL=8s)、`kill_fx._sightings`/`_hit_pulses`（时间窗裁剪）、`OfficialSafety._publish_at`（按 topic）、`video_backend._stderr_chunks`（无 maxlen 但按 `STDERR_LIMIT` 字节预算弹出）。另有一个被证伪并排除的候选：`jello_clickgui._elided_name_cache` 的 key 含 `round(panel.width()/scale, 2)`，看似随窗口尺寸漂移，但 743-750 行显示 `panel.width() = 200*layout.scale*child_scale` 而传入的 `scale = layout.scale*child_scale`，两者相除恒为 200.0，实测不可漂移，故不计为发现。两点环境说明：其一，`docs/REFACTOR_BLUEPRINT.md` 的行号确实过时但偏差不大（polar_app.py 现为 4257 行，与任务描述一致；tactical_map.py 2461、clickgui_gpu.py 1692、model.py 1887），方法分组与冻结面清单仍然有效。其二，`clickgui_builders_mixin.py`、`renderers/dynamic_island.py`、`renderers/startup_scene.py` 三个文件带 UTF-8 BOM，标准 `ast.parse` 直接 SyntaxError，我是用 `encoding='utf-8-sig'` 读的；运行时 Python 导入不受影响，所以这只是分析工具的坑而非项目缺陷，但任何基于 `ast.parse(open(f).read())` 的门禁脚本都会误报这三个文件。全程只读：未创建、修改、删除任何文件，未执行 git 写操作，所有临时脚本都落在 `$env:TEMP`。",
+      "finding_count": 8,
+      "p0": 0,
+      "p1": 1,
+      "non_visual": 8,
+      "visual_blocked": 0
+    },
+    {
+      "key": "docs-consistency",
+      "summary": "MODULE_BACKEND_MAP 的生成器 `tools/module_backend_map.py` 仍然可以运行，但仓库里提交的产物已经过期：我把 `Path.write_text` 置空后重跑（全程零磁盘写入），得到 12,230 字符 vs 仓库里的 12,186 字符，4 行表格已变——RobotLink 设置项 29→44、主要落点从 `backend/polar_transport.py` 漂到 `ui/polar/mixins/config_actions_mixin.py`，MQTTLink 落点新增 `backend/manager.py`，EconomyPanel/ProjectileShop 的 MQTT 计数 x6→x4。更关键的是**没有任何测试、verify_all 分组或 CI 引用它**，全仓只有 AGENT.md:17-18 和 README.md:94-95 两处口头叮嘱。同一份文档 §4 里 9 个硬编码 file:line 有 3 个已漂到无关代码（`manager.py:222 release_estop()` 实际在 :2087，:222 现在是 MQTT 端口回退提示；`manager.py:371` 是 `self._spin_assert = cmd`；`polar_transport.py:487/506/513` 分别是 `gimbal_yaw_rad=...`/`with self._intent_lock:`/空行，真正成帧函数在 :514），而这些数字是生成器里的字符串字面量，重跑也修不好。BACKEND_MATCH_READINESS.md 存在硬矛盾：第 92 行说「`TeamBench` 已彻底删除」，第 145、154、234、235 行却仍在教人「启动页第 4 项 / 按 `4` 选 TeamBench」「`allow_polar_drive` 仅该场景为真」「`Allow Drive` 由场景写入」——实际 `SCENARIOS` keys 是 `['OfficialEvent','CampusSimulation','LabDebug']`，`tests/polar_startup_test.py:481` 明确断言 `\"TeamBench\" not in SCENARIOS`。CHANGELOG.md 全文 26 行、停在 2026-08-16，此后有 88 个提交、205 个新增文件、260 个改动文件（整个 DT7/0x5A/车端桥子体系）无记录。README.md 相对最健康（30 个模块名里 29 个对得上），但 :172 写了一个注册表里不存在的 `RobotTargetHUD`（真名 `CombatTargetHUD`）。另有两处次要问题：`tools/MODULE_BACKEND_MAP.md` 是同名但内容完全不同的手写旧稿（104 行，无生成器横幅、无 DT7、引用的 `backend/tongji_bridge.py` 不存在），以及 `tools/SETTINGS_GAPS.md:3` 的「372 个设置项」实际已是 387。共 13 条 finding，全部 touches_visual=false，未创建、修改或删除任何文件。",
+      "finding_count": 13,
+      "p0": 0,
+      "p1": 5,
+      "non_visual": 13,
+      "visual_blocked": 0
+    },
+    {
+      "key": "rust-crate-map",
+      "summary": "backend/ 共 18 个模块、5526 行（manager.py 2345 行是唯一超过 1500 行的文件，其次是冻结的 video_backend.py 874 行）；加上 model.py 1971 行与 control.py 702 行，本域共约 8200 行。整体依赖方向是可切的：protocol.py（0xA5+CRC）→ polar_link.py（0x5A codec）→ polar_transport/serial_stream（传输）→ manager.py（编排）→ control.py/model.py（状态），唯一反向边是 robot_roles.py:156 在函数体内 `from rm_client.backend import polar_spec`，与 manager.py:21 `from .. import robot_roles` 构成运行期循环。数据面非常适合搬 Rust：model.py 的 Module/Setting 是纯数据（AST 验证零 lambda、零嵌套 def、零 setattr、零 globals/exec），backend/protocol.py 是 36 消息/25 解码器/11 编码器的手写 protobuf，safety.py 261 行零 I/O 零依赖 —— 三者都能做成无依赖叶子 crate。真正挡路的只有两处：model.py:691 在 60Hz 热路径上函数体内导入**视觉冻结文件** combat_hud.py，使数据核心无法独立成 crate；以及 manager.py:375-938 的 563 行 tick_polar_link 同时做配置拉取、链路 IO、三道闸门裁决和遥测快照，且在函数体内两次 `from ..control import ...`（L630/L724），在 Rust 里会直接变成编译期环依赖。另外发现一处可证伪的实缺陷：polar_transport.py:631-633 是 return 之后的死代码，导致 `stats()[\"detected_ports\"]` 永远是 `[]`，而 UI 消费点 module_list.py:1353 因此恒显「无」，现有测试 polar_bridge_test.py:838 只断言 key 存在故未捕获。性能上本域没有紧急项 —— 实测 32 字节 0x5A 帧的纯 Python CRC8+CRC16 为 15.22 µs，100Hz 下约 1.5 ms/s；RobotState.tick 每帧重建 23 个 dict 字面量实测仅 0.91 µs；二者都不是瓶颈，价值在于它们是字节精确、可表驱动测试的天然 crate 边界。",
+      "finding_count": 13,
+      "p0": 2,
+      "p1": 6,
+      "non_visual": 12,
+      "visual_blocked": 1
+    },
+    {
+      "key": "rust-protocol",
+      "summary": "协议层是「三族帧 + 三套 CRC + 一份半生效 JSON 规格」的形态。0x5A 队内链路(polar_link.py, 716 行)与 0xA5 官方链路(rm_client/protocol.py, 135 行)共用同一对逐位实现的 crc8/crc16，参数为 CRC-8/MAXIM(poly 0x8C, init 0xFF)与 CRC-16/X-25(poly 0x8408, init 0xFFFF)，dt7_link.py 另带第三组 CRC 初值(rc_check 0x77/0x1862、video 0x77/0x3692)。polar_protocol.json 共 882 行、15 个下行段、4 个上行段，但仓库里没有任何 JSON Schema 文件，校验全部是 polar_spec.py 里约 300 行手写 Python，且 uplink 一半完全没有 struct 校验。实测抓到 1 个会让「按 JSON 生成 Rust 编解码器」直接发错帧的规格错误(上行 0x01 的 struct 多一个 float)、1 个 5.45x 的解码性能瓶颈(逐位 CRC 占 0x5A 解码 82% CPU，2000 帧/s 时吃掉 656 ms/s 一个核)、1 个会让 0xA5 解码器被 5 字节假帧头永久卡死的健壮性缺陷(实测吞掉后续 6505 字节/100 帧、零恢复)、1 个「整份 uplink 规格是装饰品」的架构问题，以及规格校验器的位域越界漏检(4 类静默错误值全部实测复现)。反过来，实测证明 dict[str,Any] 落库与 per-frame struct.calcsize 合计仅 0.7us/帧(占 4%)，Rust 化时不值得优先动它们。任务描述里提到的「protocol JSON schema」文件不存在；另需注意 `rm_client/protocol.py` 与 `rm_client/backend/protocol.py` 同名但毫无关系(后者是 MQTT protobuf 侧)。",
+      "finding_count": 8,
+      "p0": 1,
+      "p1": 3,
+      "non_visual": 8,
+      "visual_blocked": 0
+    },
+    {
+      "key": "rust-interop",
+      "summary": "仓库里没有任何 Rust，也不曾有过：git log --all --diff-filter=A -- \"*.rs\" \"Cargo.toml\" \"*.toml\" 返回空，git grep -IiE \"cargo|maturin|rustc\" 在全部跟踪文件中零命中；全仓库仅有的 8 处 \"Rust\" 字样都是把外部项目当文档引用（mqtt_backend.py:1、native_viewer_telemetry.py:97,103,149、THIRD_PARTY_NOTICES.md:35）。当前分支 perf/modular-rust 的 166 个提交全是中文的 0x5A 协议/DT7/链路工作，分支名与内容不符。核对本域被点名的文件：main.py 存在（136 行入口分发器），rm_client/app.py 也存在（591 行 Tk 遗留 GUI，main() 在 :651-657 转调 GPU 客户端）——两者都与任务描述有出入，已按实测更正。对最显然的 Rust 目标（协议编解码）做了实测：decode_with_consumed 在真实 14 段规格上 13.93 µs/帧，50/75/180 fps 下仅占单核 0.07%/0.10%/0.25%，且跑在 polar-link 守护线程（polar_transport.py:292）而非 GUI 线程——即便 115200 波特打满也只有 0.73% 单核，不足以支撑重写。真正的瓶颈在打包链：发布脚本只认已损坏的 .venv（pyvenv.cfg 指向已删除的解释器），冻包 20 个 .pyd 全是 cp312 而开发用 .venv-polar 是 3.13.15，且 _internal/ 下的原生模块完全逃过 preflight 完整性闸门。GUI 边界已被机械固化（visual_freeze_manifest.json 冻结 400 个文件，rm_client/ui/ 下 42 个），故 Rust 的合理落点是 main.py 之前的无 GUI 启动段而非渲染层。",
+      "finding_count": 8,
+      "p0": 1,
+      "p1": 4,
+      "non_visual": 8,
+      "visual_blocked": 0
+    },
+    {
+      "key": "error-logging",
+      "summary": "对 rm_custom_client（分支 perf/modular-rust）的 error-logging 域做了全仓 AST 级审计，结论与直觉相反的一点是：项目源码里一个裸 `except:` 都没有。排除 tmp_*/.venv/release/assets 后共 366 个 except handler，其中 0 个裸 except、188 个 `except Exception:`、287 个静默吞异常（pass/continue）；全部 17 个裸 except 都在 tmp_pyinstaller_smoke/ 下的 cv2/openvino/tensorflow 三方包里，不属于本项目代码（rm_client/ 内为 267 个 handler、228 个静默）。真正的问题不是「到处裸 except」，而是**在安全关键路径上做了大量刻意的静默吞异常**，以及**诊断链路自身缺少可观测性**——最要命的是 field_log 的 referee_rx 事件在真实日志里 100% 是客户端自己发出去的 KeyboardMouseControl 回环（实测 85/85 条、18753 字节、零条真实裁判 topic），因为 mqtt_backend.py:151 用 subscribe(\"#\") 把自己 publish 的 topic 也订了回来，而 _on_message 对每条入站消息无条件先 emit(\"referee_rx\") 再解码过滤。按 75Hz、实测均长 220.6 字节算，这是约 16.1 KiB/s ≈ 58 MiB/h 的日志洪泛，而 RotatingJsonlLogger 总容量只有 20MiB×5=100MiB，约每 20 分钟就把轮转日志冲刷一遍，把真正要查的失败记录挤掉。另有 transports.py:201-217 的 UDPVideoReceiver._run 是 try/finally 没有 except，回调抛异常会静默杀死收流线程且 last_error 保留陈旧值，manager.py:1185 还会自动重启它形成无日志死循环；全仓没有 sys.excepthook / threading.excepthook，而 tools/POLAR-RM.spec 是 console=False，出货构建里 stderr 不存在，这些线程死亡在现场完全不可见。相比之下 control.py、dt7_link.py、polar_app._run_tick_stage 的错误处理质量明显更高（显式区分各出口错误、不让一个出口的失败污染另一个的 last_error、按 1Hz 节流上报），所以问题高度集中而非全局性。",
+      "finding_count": 8,
+      "p0": 0,
+      "p1": 3,
+      "non_visual": 8,
+      "visual_blocked": 0
+    }
+  ],
+  "all_findings": [
+    {
+      "category": "performance",
+      "effort": "S",
+      "evidence": "polar_app.py:839-868:\n    logic_interval = 1.0 / 60.0\n    if now - self._last_logic_time >= logic_interval * 0.92:\n        logic_dt = max(0.001, min(0.05, now - self._last_logic_time))\n        ...\n        self.state.tick(logic_dt)\n240 Hz 是 render_fps_cap = 240.0（polar_app.py:548）驱动的 QTimer，只喂 self.update()（polar_app.py:917-918）；on_tick 每拍都跑，但 state.tick() 被 60 Hz 闸拦住，240 拍里只有 1 拍进入 tick 主体。\nmodel.py:682-683 二次短路:\n    if not self.mock_simulation_enabled or self.official_state_active:\n        return\nmanager.py:192: self.state.mock_simulation_enabled = config.key == \"LabDebug\"；scenarios.SCENARIO_MODES = ['OfficialEvent','CampusSimulation','LabDebug']。\n实测（200k 次/档，CPython 3.13.15，本机）：完整 tick 主体 9.820 µs/tick；official_state_active=True 的早退路径 0.1148 µs/tick（85 倍差）。",
+      "file": "rm_client/model.py",
+      "line": 679,
+      "problem": "审计任务书把本函数描述为「240Hz 热路径」，实测不成立：它是 60 Hz 且仅在 LabDebug 桌面仿真场景执行的 9.8 µs 路径。在 OfficialEvent/CampusSimulation 两个真实场景下，tick 主体第一行就早退（0.11 µs）。据此，任何针对 sin/cos 或时间计算的「240Hz 优化」都是无效投入，应把预算移给真正 240 Hz 的渲染层。这是需要被纠正的前提，而非缺陷本身。",
+      "proposed_fix": "不要为 tick() 做 240Hz 优化。正确动作：(1) 在 model.py:679 的 docstring 里写死「60 Hz 逻辑层 / 仅 LabDebug / 早退路径 ~0.1 µs」，防止后续按错误前提优化；(2) 把 F2（1 Hz 子闸）与 F3（容器原地更新，合计可省 ~4.3 µs/tick，占 44%）作为本函数唯一值得做的两项改动；(3) 若未来真的出现 >60 Hz 的 model 需求，正确的做法是提高 logic_interval 闸而不是动 tick 内部——先复测。",
+      "risk": "low",
+      "severity": "P2",
+      "symbol": "RobotState.tick",
+      "title": "任务书的「240Hz 热路径」前提与实测不符：tick 实为 60 Hz 闸门、且仅 LabDebug 场景执行，代价 9.8 µs",
+      "touches_visual": false,
+      "domain": "model-tick (rm_client/model.py — RobotState.tick / apply_polar_overlay / HUD 访问器)"
+    },
+    {
+      "category": "performance",
+      "effort": "S",
+      "evidence": "受控时钟实测（每拍强制 s.start_time = time.perf_counter() - i/hz，避免微秒级空转导致 elapsed 不前进；先前未控时钟的版本全部报 0/480，已作废）：\n  600 拍 @60Hz = 10 模拟秒 -> 26/38 个字段变化 <=12 次\n  2400 拍 @240Hz = 10 模拟秒 -> 同样 26/38（与 tick 率无关，符合 1 Hz 常量类）\nLOW 样例: tech_level 0/2400, energy_rune_phase 0/2400, encryption_level 0/2400, projectile_shop_state 0/2400, gimbal_power 1/2400, small_buff 1/2400, friction_wheel 2/2400, projectile_allowance_17mm 3/2400, stage_countdown_sec 9/2400, buff_rows 10/2400。\n产生这些值的源码全是 int(elapsed) 取模（model.py:718-726, 730, 732, 742-744, 737-738, 797-801），例如:\n    self.small_buff = int(elapsed) % 13 < 7\n    self.tech_level = 1 + (int(elapsed / 38) % 3)\n    self.stage_countdown_sec = max(0, duration - int(elapsed) % (duration + 1))\n    self.buff_rows = [{\"name\":\"Cooldown\",\"active\":self.small_buff,\"remaining\":max(0,26-int(elapsed)%27)}, ...]   # 3 dict\nAST 统计 tick() 内调用次数: int() x50, max() x29, math.sin() x19, math.cos() x9。\n分块实测（合计 8.687 µs 的一次完整 tick）: 50x int()+29x max() = 2.598 µs (30%)；trig 块(707-741) = 1.006 us；地图/血条 trig(757-807) = 0.566 us。即 sin/cos 只占 ~18%，int/max 才是最大头。",
+      "file": "rm_client/model.py",
+      "line": 718,
+      "problem": "tick() 主体里约 26 个字段的取值只是 int(elapsed) 的函数，在同一个自然秒内是常量，却被 60 Hz 无条件重算。实测 26/38 个被跟踪输出在 10 秒内只变化 <=12 次，且该比例与 tick 率无关（60 Hz 与 240 Hz 结果一致），证明它们确实是 1 Hz 分段常量。这意味着 60 次里有 59 次在写完全相同的值。开销归属实测：50 次 int() + 29 次 max() 合计 2.598 µs，占单次 tick(8.687 µs) 的 30%，是全函数最大单项，超过 sin/cos(约 1.6 µs, 18%)。",
+      "proposed_fix": "在 tick() 开头缓存秒边界，仅在跨越时重算 1 Hz 类字段:\n    sec = int(elapsed)\n    if sec != self._mock_last_second:\n        self._mock_last_second = sec\n        # 现有 718-726 / 730 / 732 / 737-738 / 742-744 / 797-801 原样搬入\n必须留在每拍路径（不得下沉）的字段：current_heat（走 _mock_heat_sim，内部按 dt 积分，实测 6/600 变化但由 dt 驱动）、chassis_yaw_deg / gimbal_yaw_deg / relative_yaw_deg（正弦连续）、target_distance_m / energy_target_distance_m / map_robots（正弦连续）、以及 808 行 `if int(elapsed) % 19 == 0: self.push_event(...)` 的边沿判定（push_event 自带 812 行去重，可安全下沉到 1 Hz 闸内，行为不变）。落地后应重跑分块测量确认单 tick 降到 ~6 µs 量级。",
+      "risk": "low",
+      "severity": "P2",
+      "symbol": "RobotState.tick (1 Hz 分段常量字段块 718-744, 797-801)",
+      "title": "26/38 个 tick 输出按墙钟秒分段常量，却每拍重算；int()/max() 钳位才是最大单项开销（占 30%，非 sin/cos 的 18%）",
+      "touches_visual": false,
+      "domain": "model-tick (rm_client/model.py — RobotState.tick / apply_polar_overlay / HUD 访问器)"
+    },
+    {
+      "category": "performance",
+      "effort": "M",
+      "evidence": "AST 列出 tick() 内 6 处 list 字面量赋值: self.buff_rows(797,3项) / self.robot_rows(802,4项) / self.map_robots(757,5项) / self.map_markers(764,2项) / self.map_robots(784,7项) / self.map_markers(793,2项) —— 每拍走其中一支，合计新建 1 个 list + 16 个 dict。\nmodel.py:784-792 每次整表重建:\n    self.map_robots = [\n        {\"id\": 1, \"team\": \"ally\", \"name\": \"Hero\", \"x\": 5.2 + 0.8*math.sin(elapsed*0.15), \"y\": 3.4, \"hp\": 720, \"max\": 800, \"highlight\": False},\n        ... 7 行 ...\n    ]\n分块实测: map_robots 7 dict = 1.064 us；markers+buff_rows+robot_rows(9 dict) = 0.656 us；合计 1.720 us / 8.687 us = 19.8%。另: 防御性拷贝 list(state.map_robots) 仅 0.085 us（tactical_map.py:997），不是瓶颈。\n所有消费者都是每帧重读，没有依赖对象身份的: tactical_map.py:997/1698/1735、module_list.py:1044、esp_wireframe.py:216。\n现有测试按值快照，重构后仍通过: tests/backend_protocol_test.py:895-896 `rows_before = [dict(row) for row in state.robot_rows]`。",
+      "file": "rm_client/model.py",
+      "line": 784,
+      "problem": "tick() 每拍把 4 个容器整体重新绑定，内含 16 个新 dict，实测占单次 tick 的 20%。其中 map_robots 连续变化（x 坐标含正弦，实测 2400/2400 拍全变），确实需要更新，但整表重建 7 个 dict 并不必要——只有 4 个 x 字段在动。副作用是所有下游拿到的是每拍都换新的 list 对象，任何跨拍持有引用的代码看到的是快照而非活对象。",
+      "proposed_fix": "把重建改为首次分配 + 后续原地更新：在 _mock_heat_sim 同一处惰性初始化 _mock_containers = {robot_rows, map_robots, map_markers, buff_rows}（按 754-757 分支给不同的静态行），随后每拍只写变化的 key（map_robots 的 x、highlight；robot_rows 的 hp）。行数与维度固定（3v3=5、7v7=7、buff=3、rows=4），所以原地更新不会引入长度漂移。\n需要注意的别名语义变化（这是本条风险为 medium 的唯一原因）：manager.py:1546 的 `state.map_markers = [*state.map_markers[-15:], marker]` 是「列表变长」场景，惰性初始化必须允许该路径整表替换，此时直接退回重建即可。落地前请确认 tests/backend_protocol_test.py:899-907 的 official 闸门断言与 MapClick 跨 tick 存活断言（:923-924）仍然全绿。",
+      "risk": "medium",
+      "severity": "P2",
+      "symbol": "RobotState.tick — self.map_robots / self.map_markers / self.buff_rows / self.robot_rows 整体重建",
+      "title": "4 个 list 容器每拍整表重建（16 个 dict / 1.72 µs = 20% 单次 tick），而 map_robots 每拍只有 4 个 x 字段在变",
+      "touches_visual": false,
+      "domain": "model-tick (rm_client/model.py — RobotState.tick / apply_polar_overlay / HUD 访问器)"
+    },
+    {
+      "category": "correctness",
+      "effort": "S",
+      "evidence": "model.py:674-676:\n    for name, value in self.polar_overlay.items():\n        if hasattr(self, name):\n            setattr(self, name, value)\nhasattr 对实例上的方法与 property 同样返回 True（property 还会真的执行一次 getter）。实测（对 RobotState() 直接构造 overlay）:\n    hasattr(s,'push_event') = True / hasattr(s,'tick') = True / hasattr(s,'effective_capacitor_percent') = True\n    polar_overlay={'push_event':12345.0} -> apply_polar_overlay() -> s.push_event == 12345.0\n      -> s.push_event('x') 抛 TypeError: 'float' object is not callable\n    polar_overlay={'tick':1.0} -> apply_polar_overlay() -> s.tick(0.016) 抛 TypeError: 'float' object is not callable\n触发面是数据驱动的，不是硬编码常量: polar_bridge.py:109-126 `_spec_state_fields()` 从 polar_protocol.json 读 `state_fields`，:202-216 按 mapping 逐个 `self.overlay[target] = value`；overlay 的 docstring 明确写着「电控新增一个下行段只需在 JSON 里写 \"state_fields\": {\"解码字段名\": \"polar_xxx\"}，不必改 Python」（polar_bridge.py:110-114）。也就是说任何人往 JSON 里加一行 state_fields 就能撞上方法名。\n现状是潜在的而非已发生的: 该 JSON 当前只声明 3 个映射且都不与属性名冲突（见下一条）。tests/polar_bridge_test.py:249-257 只测了「完全未知的键被忽略」，没有覆盖「键命中方法名」。\n开销本身不是问题: 34 键实测 2.636 us/call，60 Hz 下 0.016% 单核。",
+      "file": "rm_client/model.py",
+      "line": 675,
+      "problem": "overlay 回写用 hasattr 做存在性检查。hasattr 对方法名和 property 名同样返回 True（property 还会顺带执行一次 getter），随后 setattr 会把实例上的方法/属性永久遮蔽成 float。我已实测复现：注入键 'push_event' 或 'tick' 后，state.push_event / state.tick 立刻变成 float，再调用即抛 TypeError: 'float' object is not callable——60 Hz 逻辑层会在下一拍整个崩掉，_run_tick_stage 只能把它记成 'logic' 阶段的 tick 错误，RobotState 事实上永久损坏。当前尚未被触发（overlay 键目前都是字符串字面量且不撞名），但写入 overlay 的通用路径由 polar_protocol.json 驱动，属于「改一行 JSON 即可引爆」，属于结构性脆弱。",
+      "proposed_fix": "把守卫从 hasattr 换成 dataclass 字段白名单，一行改动即可从结构上消灭这类遮蔽:\n    _OVERLAY_WRITABLE = frozenset(RobotState.__dataclass_fields__)   # 模块级常量\n    ...\n    if name in _OVERLAY_WRITABLE:\n        setattr(self, name, value)\n这同时满足 AGENT.md §4 第 1 条（只写 polar_* 字段）的精神，且比 hasattr 更严。建议同时把被丢弃的键计数到 self.polar_dropped_overlay_keys（manager.py:410 附近已有 polar_dropped_segments 的同类记账），让 F5 的静默丢字段变得可观测。回归断言建议加进 tests/polar_bridge_test.py: 注入 'tick'/'push_event' 键后 state.tick 与 state.push_event 仍可调用。",
+      "risk": "low",
+      "severity": "P2",
+      "symbol": "RobotState.apply_polar_overlay",
+      "title": "apply_polar_overlay 的 hasattr 守卫会接受方法名与 property 名并永久遮蔽它们（已复现 tick/push_event 被打成 float）",
+      "touches_visual": false,
+      "domain": "model-tick (rm_client/model.py — RobotState.tick / apply_polar_overlay / HUD 访问器)"
+    },
+    {
+      "category": "correctness",
+      "effort": "S",
+      "evidence": "规格实际加载成功（polar_spec.get_spec().ok = True），其 segment_state_fields 为:\n    {31: {'spin_active': 'polar_spin_active', 'chassis_mode_code': 'polar_chassis_mode', 'self_check_flag': 'polar_self_check_flag'}}\n把其中 3 个 state_name 与 RobotState 的 238 个 dataclass 字段、property、method 三类求交集: 三个集合的交集**全部为空**；「不是 RobotState 任何属性」的名字恰为这 3 个:\n    ['polar_chassis_mode', 'polar_self_check_flag', 'polar_spin_active']\n即 0x1F 段的三个 state_fields 被 polar_bridge 正常解码进 overlay（并计入 polar_segments_received），却在 model.py:675 的 hasattr 处全部静默丢弃。\n没有用户可见故障，但有一处靠巧合兜住: 自转回读在 manager.py:853-855 直接读 bridge.overlay，绕过了 state:\n    spin_reported = bridge.overlay.get(\"polar_spin_active\")\n    if spin_reported is None: spin_reported = bridge.overlay.get(\"spin_active\")\nAGENT.md §4 不变量 9 明确要求「自转只能走上行 0x04，且必须用 0x1F 回读闭环」——这条闭环目前成立，但成立的原因是 manager 读了 bridge 而非 state，state 上的对应字段根本不存在。另外两个键（polar_chassis_mode / polar_self_check_flag）在全仓无任何读取方（grep 仅命中定义处），是纯粹的数据丢失。",
+      "file": "rm_client/model.py",
+      "line": 675,
+      "problem": "polar_protocol.json 为 0x1F 段声明了 3 个 state_fields 映射，目标名都是 polar_* 前缀（符合 AGENT.md 硬规矩 1），但 RobotState 上根本没有这三个字段。值在 bridge 侧被正确解码、计入 polar_segments_received，然后被 apply_polar_overlay 的 hasattr 守卫静默丢弃——无日志、无计数器、无任何诊断。规格作者以为这三项已接入 RobotState。",
+      "proposed_fix": "二选一并写进测试：(A) 在 RobotState 的队内链路字段区（建议紧邻 model.py:566-571 的 polar_reported_robot_id / polar_warning_* 之后）补三个字段 `polar_spin_active: bool = False`、`polar_chassis_mode: int = 0`、`polar_self_check_flag: int = 0`——符合 AGENT.md §3「只改 JSON 即可加下行段」的设计意图，也让 manager.py:853 将来可以改读 state 而不必碰 bridge 内部结构；或 (B) 若这两项确定不展示，就从 polar_protocol.json 删掉这两个 state_fields 映射并加一条规格校验断言「state_name 必须存在于 RobotState 字段表」，让规格错误在 tools/ 校验期就红，而不是在车上静默。两种方案都不改变任何画面（当前无消费者）。",
+      "risk": "low",
+      "severity": "P3",
+      "symbol": "RobotState.apply_polar_overlay + polar_protocol.json segment 31 state_fields",
+      "title": "规格声明的 3 个 polar_* state_fields 在 RobotState 上没有落点，被 hasattr 静默丢弃",
+      "touches_visual": false,
+      "domain": "model-tick (rm_client/model.py — RobotState.tick / apply_polar_overlay / HUD 访问器)"
+    },
+    {
+      "category": "correctness",
+      "effort": "M",
+      "evidence": "manager.py:940-943 docstring 与调用:\n    def _reset_state_for_scenario(self, state):\n        \"\"\"Discard data from the previous transport epoch before reconnecting.\"\"\"\n        self._clear_mock_frontend_state(state)\n该函数重置约 30 个字段（960-993: official_state_active/official_state_at/official_robot_health/polar_overlay/robot_statics/injury_stats...），**没有 start_time**。全仓 start_time 的写入只有 3 处: model.py:468 (default_factory=time.perf_counter)、persistence_mixin.py:130 (seed_match_state)、model.py:684 (读取)。\n实测（构造 RobotState，start_time 设为 3600 秒前，执行 _reset_state_for_scenario 后再进 LabDebug tick）:\n    after _reset_state_for_scenario: start_time still 3600 s in the past\n    -> stage_countdown_sec = 188   (全新 LabDebug 应为 420)\n    -> stage_elapsed_sec  = 232   (应为 0)\n    -> tech_level         = 2     (elapsed<38 时应为 1)\n同时 start_time 是 vision 的相位原点（与 model 共享，两个不相干的子系统）:\n    vision.py:611  now = time.perf_counter() - state.start_time\n    vision.py:619  now = time.perf_counter() - state.start_time\n即 demo 倒计时/科技等级与 mock 自瞄框位置被同一个字段绑在一起；start_time 只有 seed_match_state（persistence_mixin.py:130）这一条复位路径，即只有换赛制时才复位，切场景不复位。",
+      "file": "rm_client/model.py",
+      "line": 468,
+      "problem": "start_time 是 tick() 的相位原点，同时又被 vision.py 当作 mock 自瞄框的相位原点——两个不相干的子系统共用一个时钟。而 manager._reset_state_for_scenario 的 docstring 明写「Discard data from the previous transport epoch before reconnecting」并重置了约 30 个字段，唯独漏掉 start_time。实测：客户端开着 1 小时后切进 LabDebug，演示倒计时从 188 秒起跳而不是 420，stage_elapsed_sec=232 而不是 0，tech_level 已经是 2。演示数据跨 epoch 泄漏，与该函数存在的目的直接矛盾。",
+      "proposed_fix": "本条 touches_visual=true，任何修复都会动像素，必须显式决策而非顺手改。两个方向：\n(A) 若「切场景后演示重新开始」是期望行为——在 _reset_state_for_scenario 末尾加 state.start_time = time.perf_counter()。代价：mock 自瞄框相位跳变（vision.py:611/619 与 tick 共用该原点），属一次性可见跳帧，需按视觉变更走评审。\n(B) 若演示连续运行是期望行为（更可能，因为 elapsed 驱动正弦动画、跳变会打断观感）——则把该字段从跨 epoch 泄漏名单里正式排除，并拆分时钟职责：给 tick() 单独的 `mock_epoch`（构造时与 start_time 同值播种，保证行为逐位不变），vision 继续用 start_time。这样两条时间线解耦，且 tick 的修复不再牵动自瞄框。\n建议先由产品侧确认期望，再选 (A) 或 (B)。无论哪种，都应在 model.py:468 的字段注释里写明「tick 与 vision 共用，改动前先看 vision.py:611」。",
+      "risk": "medium",
+      "severity": "P2",
+      "symbol": "RobotState.start_time (声明 468) / RobotState.tick:684 / _reset_state_for_scenario",
+      "title": "start_time 是未被 _reset_state_for_scenario 清理的跨 epoch 时钟，还被 vision.py 复用为自瞄框相位原点",
+      "touches_visual": true,
+      "domain": "model-tick (rm_client/model.py — RobotState.tick / apply_polar_overlay / HUD 访问器)"
+    },
+    {
+      "category": "correctness",
+      "effort": "S",
+      "evidence": "model.py:735-740（两处独立的 economy_managed 闸）:\n    if not self.economy_managed:\n        self.remaining_ammo = max(0, int(ammo_capacity - (self.stage_elapsed_sec * 0.18) % max(1, min(80, ammo_capacity))))\n    ...\n    if not self.economy_managed:\n        self.remaining_economy = max(0, int(260 + 80 * math.sin(elapsed * 0.16)))\n全仓对 economy_managed 的写入只有 1 处 economy.py:646 `state.economy_managed = True`（在 _apply_mock 里，每次 mock 购买都执行），无任何复位路径；字段默认值为 model.py:351 False。\n实测（同一 RobotState，对比 t=0 与 t=40s 的取值）:\n    economy_managed=False   t=0:(180, 260)   t=40s:(172, 269)   animated=True\n    economy_managed=True    t=0:(172, 269)   t=40s:(172, 269)   animated=False\n即在 LabDebug 里操作员完成第一次经济交易后，弹药数与经济数就永久冻结在成交值，而其余所有演示字段（热量、能量、距离、延迟…）仍在动。测试侧无覆盖: tests/ 中匹配 economy_managed 的用例为 0。",
+      "file": "rm_client/model.py",
+      "line": 735,
+      "problem": "economy_managed 是单向闩锁：默认 False，economy.py 在第一次 mock 购买时置 True，全仓没有任何地方把它写回 False。一旦为 True，tick() 就不再更新 remaining_ammo 与 remaining_economy。这可能是「经济系统接管该字段」的有意设计，但接管的粒度是整场会话：操作员在 LabDebug 经济岛买过一次东西之后，弹药数和经济数就永久冻结在成交那一刻的值，而同屏其他所有演示字段仍在动。这与 tick() 其余部分「持续正弦演示」的设计明显不对称，也没有测试覆盖这个分支。",
+      "proposed_fix": "本条 touches_visual=true。先确认意图再动手：\n(A) 若「接管后应由 economy.py 持续拥有」是设计意图——那么问题只是缺少文档与测试：给 model.py:351 字段加注释说明这是单向闩锁，在 _apply_mock 旁注明「接管后 tick 不再写这两个字段」，并补一个断言 economy_managed=True 时 tick 保持 remaining_ammo/remaining_economy 不变的回归用例。改动零像素。\n(B) 若期望是「接管只对本次事务生效」——在 economy_bridge.update 返回非 pending 事务后复位 economy_managed=False。但这会让两个数字在演示里重新开始跳变，属可见变更，必须走视觉评审。\n不建议在未确认意图前直接改。",
+      "risk": "medium",
+      "severity": "P2",
+      "symbol": "RobotState.economy_managed (声明 351) + tick:735,739",
+      "title": "economy_managed 是单向闩锁：LabDebug 里第一次经济交易后，弹药数与经济数永久停止动画",
+      "touches_visual": true,
+      "domain": "model-tick (rm_client/model.py — RobotState.tick / apply_polar_overlay / HUD 访问器)"
+    },
+    {
+      "category": "maintainability",
+      "effort": "S",
+      "evidence": "model.py:690-701:\n    if getattr(self, \"_mock_heat_sim\", None) is None:\n        from .combat_hud import MockHeatStageS
+… [truncated: 515930 more characters]
+[status: completed, 27 agents]

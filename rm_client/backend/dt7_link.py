@@ -231,7 +231,53 @@ def _clamp_mouse(values: dict, prof: dict) -> tuple[dict, list]:
     return out, clipped
 
 
+#: ``load_profile`` 的结果缓存，键是 (路径, mtime_ns, 字节数)。
+#:
+#: 为什么值得缓存：``manager.tick_polar_link`` 在 60Hz 逻辑拍上调用它，
+#: 也就是**每秒 60 次把 profile 从磁盘读一遍再 json.loads 一遍**。
+#: 实测 44.25 µs/次 = 2.66 ms/秒纯 I/O，而且是在渲染线程同一条拍上。
+#:
+#: 为什么用 (mtime, size) 而不是时间戳间隔或"只读一次"：
+#: 电控和操作员确实会在场边改这个文件（界面里有改 profile 的入口），
+#: 缓存必须能立刻看见改动。stat 一次约 1~2 µs，比 read_text + json.loads
+#: 的 44 µs 便宜一个数量级，同时保留"改完立刻生效"的现场手感。
+_PROFILE_CACHE: dict[str, object] = {"key": None, "prof": None}
+
+
+def _profile_stat_key(fp: Path) -> tuple[str, int, int] | None:
+    """取用于缓存判定的文件指纹；文件不存在/取不到 stat 就返回 None（不缓存）。"""
+    try:
+        st = fp.stat()
+    except OSError:
+        return None
+    return (str(fp), st.st_mtime_ns, st.st_size)
+
+
 def load_profile(path: str | None = None) -> dict:
+    """读 profile（带 stat 指纹缓存）。
+
+    **配置有问题不再静默退回默认**：错误带在 ``_profile_error`` 里，
+    让上层能显示到人眼看得见的地方（现场最怕"开着、没反应、没原因"）。
+
+    返回的是**新 dict**，调用方随便改都不会污染缓存；内层
+    ``payload_fields`` 列表同样每次新建。
+    """
+    fp = Path(path) if path else PROFILE_FILE
+    key = _profile_stat_key(fp)
+    if key is not None and _PROFILE_CACHE["key"] == key:
+        cached = _PROFILE_CACHE["prof"]
+        prof = dict(cached)  # type: ignore[arg-type]
+        prof["payload_fields"] = list(cached["payload_fields"])  # type: ignore[index]
+        return prof
+
+    prof = _load_profile_uncached(path)
+    if key is not None:
+        _PROFILE_CACHE["key"] = key
+        _PROFILE_CACHE["prof"] = {**prof, "payload_fields": list(prof["payload_fields"])}
+    return prof
+
+
+def _load_profile_uncached(path: str | None = None) -> dict:
     """读 profile。**配置有问题不再静默退回默认**：错误带在 ``_profile_error`` 里，
     让上层能显示到人眼看得见的地方（现场最怕"开着、没反应、没原因"）。"""
     prof = dict(DEFAULT_PROFILE)

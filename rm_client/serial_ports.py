@@ -138,6 +138,38 @@ def describe_ports(limit: int = 6) -> list[str]:
     return lines
 
 
+#: ``describe_ports_cached`` 的缓存：(到期时刻, 结果)。模块级单槽。
+_PORT_DESCRIBE_CACHE: dict[str, object] = {"at": 0.0, "limit": None, "value": []}
+
+
+def describe_ports_cached(limit: int = 6, ttl_s: float = 2.0) -> list[str]:
+    """带 TTL 的 :func:`describe_ports`，供**每帧都会调到**的调用方使用。
+
+    为什么需要它：``describe_ports`` 会走一遍 ``list_serial_ports()``（枚举
+    全部端口 + 读 USB 描述串），本机实测 **2.63 ms/次**。而
+    ``PolarLinkTransport.stats()`` 在 60Hz 逻辑拍上被调用 —— 直接接上去
+    就是 158 ms/秒、约 15% 的单核，而它填的只是一个 HUD tooltip 里
+    "已探测到：COMx" 那一行。
+
+    TTL 为什么是 2 秒：拔插一个串口后最多 2 秒出现在列表里，对操作员是
+    察觉不到的；而 2 秒 TTL 把成本摊到 1.3 ms/秒（0.13% 单核）。
+
+    **不要用这个去驱动行为**（比如"Auto 该连哪个口"）—— 那条链路必须永远
+    读真值，见 :func:`resolve_port`。缓存只配给"给人看的清单"。
+    """
+    import time
+
+    now = time.monotonic()
+    cache = _PORT_DESCRIBE_CACHE
+    if cache["limit"] == limit and now - float(cache["at"]) < ttl_s:  # type: ignore[arg-type]
+        return list(cache["value"])  # type: ignore[arg-type]
+    value = describe_ports(limit)
+    cache["at"] = now
+    cache["limit"] = limit
+    cache["value"] = value
+    return list(value)
+
+
 # ---------------------------------------------------------------------------
 # DT7 遥控器那条 DJI USB Virtual COM
 # ---------------------------------------------------------------------------

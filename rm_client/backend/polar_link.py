@@ -564,7 +564,27 @@ class PolarFrameCodec:
                 self.stats.frames_ok += 1
                 continue
 
-            spec = _SEGMENT_FORMATS[segment_id]
+            # 必须用 .get()，不能用 []。
+            #
+            # 这两张表的来源不同：_SEGMENT_DECODERS 是**写死在代码里**的专用
+            # 解码器（:433），_SEGMENT_FORMATS 则会被 _apply_spec() 整个清空
+            # 换成 polar_protocol.json 里的规格（:217-218）。所以完全可能出现
+            # "某段有专用解码器、但规格里没有它的 struct" —— 只要电控把那一段
+            # 从 JSON 里删掉或改名（而这正是本项目设计的正常改法）就会命中。
+            #
+            # 之前这里写的是 _SEGMENT_FORMATS[segment_id]，KeyError 直接逃出
+            # decode_with_consumed，被 polar_transport._loop 捕获后 break 打死
+            # 接收线程，再被 manager 的重连每 2 秒拉起来 —— 现场表现是
+            # "开串口 → 读 5ms → 崩 → 关串口"无限抖动且遥测全灭，
+            # 违背本类 docstring 第 482-484 行"绝不抛出打断接收线程"的承诺。
+            spec = _SEGMENT_FORMATS.get(segment_id)
+            if spec is None:
+                # 有专用解码器却没规格：算"规格不认识它"，按未知段安全跳过。
+                self.stats.unknown_segments += 1
+                self.stats.last_error = (
+                    f"段 0x{segment_id:02X} 有解码器但规格里没有它的格式串，已跳过"
+                )
+                continue
             expected_body = struct.calcsize(spec)
             if len(body) != expected_body:
                 self.stats.length_errors += 1

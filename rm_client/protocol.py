@@ -77,27 +77,62 @@ class RefereeFrameCodec:
         return value
 
 
-def crc8(data: bytes) -> int:
-    crc = CRC8_INIT
-    for byte in data:
-        crc ^= byte
+def _build_crc8_table() -> tuple[int, ...]:
+    """CRC-8/MAXIM：poly 0x8C（反射式），init 0xFF。
+
+    表项 = 把字节 i 送进 8 轮逐位反射算法(init=0) 的结果。
+    这里刻意用与 :func:`ref_crc8` 同形的 8 轮写法，而不是
+    `table[i] = table[i-1] >> 1 ^ poly` 的递推捷径 —— 两者在反射式下
+    并不等价，递推捷径会算出一张全错的表（实测 crc8(b"\\x00") 直接返回 0）。
+    一次性 256×8 轮的开销在 import 时付清，之后每字节只查一次表。
+    """
+    table = []
+    for i in range(256):
+        crc = i
         for _ in range(8):
-            if crc & 0x01:
-                crc = ((crc >> 1) ^ 0x8C) & 0xFF
-            else:
-                crc = (crc >> 1) & 0xFF
+            crc = ((crc >> 1) ^ 0x8C) & 0xFF if crc & 0x01 else (crc >> 1) & 0xFF
+        table.append(crc)
+    return tuple(table)
+
+
+def _build_crc16_table() -> tuple[int, ...]:
+    """CRC-16/X-25：poly 0x8408（反射式），init 0xFFFF。同 _build_crc8_table 的理由。"""
+    table = []
+    for i in range(256):
+        crc = i
+        for _ in range(8):
+            crc = ((crc >> 1) ^ 0x8408) & 0xFFFF if crc & 0x0001 else (crc >> 1) & 0xFFFF
+        table.append(crc)
+    return tuple(table)
+
+
+_CRC8_TABLE = _build_crc8_table()
+_CRC16_TABLE = _build_crc16_table()
+
+
+def crc8(data: bytes) -> int:
+    """CRC-8/MAXIM 校验和。
+
+    查表实现：逐字节一次查表 + 一次移位，替代原先每字节 8 次位判断。
+    与逐位实现逐位等价（tests/protocol_crc_test.py 有穷举回归断言）。
+    接受任意可索引的 bytes-like（bytes / bytearray / memoryview）。
+    """
+    crc = CRC8_INIT
+    table = _CRC8_TABLE
+    for byte in data:
+        crc = table[(crc ^ byte) & 0xFF] ^ (crc >> 8)
     return crc & 0xFF
 
 
 def crc16(data: bytes) -> int:
+    """CRC-16/X-25 校验和。
+
+    查表实现，与逐位实现逐位等价。接受任意可索引的 bytes-like。
+    """
     crc = CRC16_INIT
+    table = _CRC16_TABLE
     for byte in data:
-        crc ^= byte
-        for _ in range(8):
-            if crc & 0x0001:
-                crc = ((crc >> 1) ^ 0x8408) & 0xFFFF
-            else:
-                crc = (crc >> 1) & 0xFFFF
+        crc = table[(crc ^ byte) & 0xFF] ^ (crc >> 8)
     return crc & 0xFFFF
 
 

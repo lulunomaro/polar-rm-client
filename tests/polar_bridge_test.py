@@ -35,6 +35,7 @@ from rm_client.backend.polar_bridge import (  # noqa: E402
 )
 from rm_client.backend.polar_transport import PolarDriveIntent, PolarLinkTransport  # noqa: E402
 from rm_client.model import RobotState, build_default_registry  # noqa: E402
+from rm_client import serial_ports  # noqa: E402
 
 FAILED: list[str] = []
 FIRE_OFFSET = 4 + 4 + 36
@@ -835,7 +836,36 @@ def test_estop_and_diagnostics_without_tick() -> None:
     check("诊断快照已写入 backend_stats", isinstance(snapshot, dict), str(type(snapshot)))
     check("快照含已收段计数", snapshot and snapshot["segment_counts"].get("0x1D") == 1, str(snapshot and snapshot.get("segment_counts")))
     check("快照含解码错误计数", snapshot and "crc16_errors" in snapshot["decode"])
-    check("快照含现场探测到的端口清单", snapshot and "detected_ports" in snapshot)
+    # 断言的**内容**而不是 key 的存在：原来的写法只查 `"detected_ports" in snapshot`，
+    # 而它当时是 PolarLinkStats 的默认字段（恒为 []），真正去探测的 describe_ports()
+    # 写在 return 之后成了死代码 —— 于是这条断言一直绿，HUD 上"已探测到"却永远
+    # 显示"无"。这里改成打桩：探测函数被调用 → 内容必须反映桩的返回值。
+    _orig_describe = serial_ports.describe_ports
+    _describe_calls = {"n": 0}
+
+    def _counting_describe(limit: int = 6) -> list[str]:
+        _describe_calls["n"] += 1
+        return [f"COM{index} [USB 0000:0000] 桩口" for index in range(limit)]
+
+    serial_ports.describe_ports = _counting_describe
+    serial_ports._PORT_DESCRIBE_CACHE["at"] = -1e9  # 强制 TTL 失效，确保走到桩
+    try:
+        manager.tick_polar_link(state, registry, FakeControl())
+    finally:
+        serial_ports.describe_ports = _orig_describe
+        serial_ports._PORT_DESCRIBE_CACHE["at"] = -1e9
+    probed = state.backend_stats.get("polar_link", {}).get("detected_ports")
+    check(
+        "快照里的端口清单是真探测出来的（不是恒空的默认字段）",
+        isinstance(probed, list) and len(probed) == 6 and probed[0].startswith("COM0"),
+        f"got {probed!r}",
+    )
+    manager.tick_polar_link(state, registry, FakeControl())  # 恢复真探测
+    check(
+        "探测函数不会被每帧重复调用（TTL 生效）",
+        _describe_calls["n"] < 3,
+        f"一帧内调了 {_describe_calls['n']} 次 describe_ports",
+    )
     # HUD 字体（Poppins）无 CJK 字形：行内状态必须是纯 ASCII，否则车上看到一堆方块
     manager.polar.port = "Stub"
     manager.polar.start()

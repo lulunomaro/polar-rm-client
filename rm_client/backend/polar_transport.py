@@ -24,7 +24,7 @@ from collections import deque
 from dataclasses import asdict, dataclass, field
 from typing import Any, Callable
 
-from ..serial_ports import describe_ports, resolve_port as resolve_polar_port
+from ..serial_ports import describe_ports_cached, resolve_port as resolve_polar_port
 from .polar_link import (
     MAX_RETAINED_BYTES,
     SPIN_CMD_NONE,
@@ -609,6 +609,16 @@ class PolarLinkTransport:
 
     def stats(self) -> dict[str, Any]:
         # 注意：本 dataclass 带 slots=True，没 __dict__，必须走 asdict()
+        #
+        # ``detected_ports`` 曾经是**填不上的**：它只是 PolarLinkStats 的一个
+        # 字段，默认 factory=list，所以 asdict 出来的字典里永远有 key（这也是
+        # tests/polar_bridge_test.py 那条"快照含现场探测到的端口清单"一直是绿的
+        # 原因——它只断言 key 在，从没断言过内容），而真正去探测的
+        # ``describe_ports()`` 写在 return 之后，成了死代码。结果 HUD 上
+        # "已探测到：" 那一行永远显示"无"，操作员插了 DT7 也看不见。
+        #
+        # 现在把它接进构造器。必须用 TTL 版而不是裸的 describe_ports()：
+        # stats() 在 60Hz 逻辑拍上，裸调用实测 2.63 ms/次 = 15% 单核。
         return asdict(
             PolarLinkStats(
                 connected=self.connected,
@@ -626,11 +636,9 @@ class PolarLinkTransport:
                 last_segment_at=self.last_segment_at,
                 last_error=self.last_error,
                 link_age_s=self.link_age_s,
+                detected_ports=describe_ports_cached(),
             )
         )
-        # 把现场探测到的口一并上报，HUD/预检能直接告诉操作员该选哪个
-        data["detected_ports"] = describe_ports()
-        return data
 
 
 __all__ = [
