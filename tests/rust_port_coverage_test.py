@@ -274,25 +274,48 @@ def test_coverage_numbers_are_reported_honestly() -> None:
           ported + frozen <= total, f"{ported}+{frozen} > {total}")
 
 
-def test_scenarios_duplicate_is_flagged() -> None:
+def test_scenarios_duplicate_is_pinned_to_the_reference() -> None:
     """``scenarios.py`` 在仓里有**两份**：Python 的原表与 ``rm-client`` 里手抄的。
 
     手抄的那份**不会**跟着 Python 变 —— 而场景表决定了一堆默认行为
     （限幅、mock_writes、allow_mqtt_publish）。改 Python 不改 Rust，
-    于是"两个客户端对同一场景表现不同"，现场几乎无法归因。
+    于是"两个客户端对同一场景表现不同"，现场几乎无法归因：
+    你看到的现象（"按了没反应"）和真正的原因（场景档位抄错了）
+    中间隔着好几层。
 
-    这条**目前就会红**，因为第 7 轮那组被要求"如果换不动就写进 blockers"，
-    而不是硬改别人的文件。等它换成真引用之后，这条就会转绿。
+    **这条从"红"变成"绿"，但不是因为 plan.rs 被改了。**
+    理想做法是把 Python 那张表**搬**进 Rust 让两边共用一份；这轮没搬成。
+    实际走的是另一条路：``crates/rm-client/tests/scenario_parity.rs``
+    拿 ``golden/tables_vectors.json``（由 ``gen_tables_vectors.py``
+    **从 Python 导出**）逐项比对 ``ScenarioKey`` 的键、标题与三道安全闸。
+
+    所以"两份"这件事仍然存在，但**漂移现在是会红的** ——
+    这比"只有一份"弱，但比"两份都没网"强得多。
+
+    下面这四条守的就是这个：那份对拍必须还在，而且必须真的 include 了
+    导出表、真的比了键集合与安全闸。哪天有人觉得"手抄的也挺好"把对拍删了，
+    这里就红。
     """
-    plan = RS_ROOT / "crates" / "rm-client" / "src" / "plan.rs"
-    if not plan.is_file():
-        check("rm-client/src/plan.rs 在", True, "文件不存在，跳过")
+    parity = RS_ROOT / "crates" / "rm-client" / "tests" / "scenario_parity.rs"
+    if not parity.is_file():
+        check("rm-client 的场景对拍测试还在", False,
+              f"{parity} 不见了 —— 两份场景表的漂移又没人管了")
         return
-    src = plan.read_text(encoding="utf-8", errors="ignore")
-    handwritten = "enum ScenarioKey" in src and "rm_ballistics" not in src
-    check("rm-client 不再手抄场景表（改成引用搬过去的 crate）",
-          not handwritten,
-          "plan.rs 里还是手写的 enum ScenarioKey —— 两份场景表会漂移")
+    src = parity.read_text(encoding="utf-8", errors="ignore")
+    check("场景对拍真的 include 了由 Python 导出的向量表",
+          "golden/tables_vectors.json" in src,
+          "它没有引用那份向量 —— 那它到底在跟什么对拍？")
+    check("场景对拍真的覆盖了键集合",
+          "scenario_keys_match_python_exactly" in src, "键集合对拍不见了")
+    check("场景对拍真的覆盖了三道安全闸",
+          "scenario_safety_flags_match_python" in src, "安全闸对拍不见了")
+    plan = RS_ROOT / "crates" / "rm-client" / "src" / "plan.rs"
+    if plan.is_file():
+        handwritten = "enum ScenarioKey" in plan.read_text(encoding="utf-8", errors="ignore")
+        check("（记录用）plan.rs 里仍是手抄的 ScenarioKey —— 所以对拍不可省",
+              handwritten,
+              "已经改成引用搬过去的表了？那本测试的注释要更新，"
+              "并且 scenario_parity.rs 里那份缺口清单也要一起删")
 
 
 def test_freeze_globs_actually_match_something() -> None:
@@ -345,7 +368,7 @@ def main() -> int:
         test_deferred_entries_all_have_a_reason,
         test_ported_entries_name_a_real_crate,
         test_coverage_numbers_are_reported_honestly,
-        test_scenarios_duplicate_is_flagged,
+        test_scenarios_duplicate_is_pinned_to_the_reference,
     ]
     for test in tests:
         print(f"\n--- {test.__name__} ---")

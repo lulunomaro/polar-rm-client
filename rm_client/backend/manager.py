@@ -1433,381 +1433,452 @@ class BackendManager:
         return {k: v for k, v in data.items() if k != "__present__"}
 
     def _apply_one(self, state: RobotState, name: str, data: dict[str, Any]) -> None:
-        present = frozenset(data.get("__present__", ()))
+        """把裁判下行的一条模块状态落到 RobotState 上。
+
+        前奏（经济签名快照）与尾声（经济确认）是**全局逻辑**，不属于任何一个
+        模块，所以留在这个函数里；每个模块自己的字段映射拆成了
+        ``_apply_<模块名>`` 私有方法，由模块级常量 ``_APPLY_ONE_DISPATCH``
+        按模块名索引。
+
+        原来的 25 分支 if/elif 链是**互斥**的等值判断（一条消息只命中一个），
+        且没有任何分支读另一个分支在本调用里写下的字段（``robot_id`` /
+        ``official_robot_bullets`` 这类跨分支读取都发生在**不同消息**之间，
+        顺序由解码队列决定，与链上的先后无关）。所以"分支之间有没有顺序依赖"
+        的答案是：链内没有，只有"前奏 → 分支 → 尾声"这三段是有序的。
+
+        处理函数返回 bool：True = 继续走尾声，False = 提前结束。
+        唯一返回 False 的是 ``_apply_custom_byte_block`` —— 未被选中的原生流
+        必须当场停下，连经济确认都不做（原实现里那句裸 ``return`` 就是这个意思，
+        拆开后如果写成普通的 ``return``，它只会退出处理函数，尾声会被补跑）。
+        """
         economy_before = self._economy_signature(state)
-        if name == "GameStatus":
-            state.current_round = int(data.get("current_round", state.current_round))
-            state.total_rounds = int(data.get("total_rounds", state.total_rounds))
-            state.red_score = int(data.get("red_score", state.red_score))
-            state.blue_score = int(data.get("blue_score", state.blue_score))
-            stage = int(data.get("current_stage", 0))
-            state.current_stage = _STAGE_STR.get(stage, str(stage))
-            self.safety.update_stage(stage)
-            if state.current_stage != self._last_logged_stage:
-                self._last_logged_stage = state.current_stage
-                self.field_log.emit(
-                    "match_stage",
-                    raw_stage=stage,
-                    stage=state.current_stage,
-                    round=state.current_round,
-                )
-            state.stage_countdown_sec = max(0, int(data.get("stage_countdown_sec", state.stage_countdown_sec)))
-            state.stage_elapsed_sec = max(0, int(data.get("stage_elapsed_sec", state.stage_elapsed_sec)))
-        elif name == "GlobalUnitStatus":
-            state.base_health = int(data.get("base_health", state.base_health))
-            state.base_status = str(data.get("base_status", state.base_status))
-            state.base_shield = int(data.get("base_shield", state.base_shield))
-            state.outpost_health = int(data.get("outpost_health", state.outpost_health))
-            state.outpost_status = str(data.get("outpost_status", state.outpost_status))
-            state.enemy_base_health = int(data.get("enemy_base_health", state.enemy_base_health))
-            state.enemy_base_status = str(data.get("enemy_base_status", state.enemy_base_status))
-            state.enemy_base_shield = int(data.get("enemy_base_shield", state.enemy_base_shield))
-            state.enemy_outpost_health = int(data.get("enemy_outpost_health", state.enemy_outpost_health))
-            state.enemy_outpost_status = str(data.get("enemy_outpost_status", state.enemy_outpost_status))
-            health = [int(v) for v in data.get("robot_health", ()) if isinstance(v, int)]
-            if health:
-                state.official_robot_health = health
-            if 12 in present or "robot_bullets" in data:
-                bullets = [int(v) for v in data.get("robot_bullets", ()) if isinstance(v, int)]
-                state.official_robot_bullets = bullets
-                state.backend_stats["robot_bullets"] = list(bullets)
-                self._sync_local_projectile_allowance(state)
-        elif name == "GlobalLogisticsStatus":
-            state.remaining_economy = int(data.get("remaining_economy", state.remaining_economy))
-            state.total_economy_obtained = int(data.get("total_economy_obtained", state.total_economy_obtained))
-            state.tech_level = int(data.get("tech_level", state.tech_level))
-            state.encryption_level = int(data.get("encryption_level", state.encryption_level))
-        elif name == "RobotStaticStatus":
-            if 4 in present and data["robot_id"]:
-                state.robot_id = int(data["robot_id"])
-                state.robot_statics[state.robot_id] = self._clean(data)
-                self._sync_local_projectile_allowance(state)
-            if 8 in present and data["level"]:
-                state.level = int(data["level"])
-            if 9 in present and data["max_health"]:
-                state.max_health = int(data["max_health"])
-                state.current_health = min(state.current_health, state.max_health)
-            if 10 in present and data["max_heat"]:
-                state.max_heat = float(data["max_heat"])
-            if 11 in present and data["heat_cooldown_rate"]:
-                state.heat_cooldown_rate = float(data["heat_cooldown_rate"])
-            if 12 in present and data["max_power"]:
-                state.power_limit = int(data["max_power"])
-            # 缓冲能量上限属于 RobotStaticStatus（协议字段 13），不在动态报文里。
-            # 上一版把它误写进 RobotDynamicStatus 分支，那里根本没这个键，
-            # data.get 永远回退到现值 —— 看着接上了，实际一行都不生效。
-            # 不写它，effective_capacitor_percent 只能按默认上限 100 算比例。
-            if 13 in present and data["max_buffer_energy"]:
-                state.max_buffer_energy = int(data["max_buffer_energy"])
-            if 6 in present:
-                state.performance_sync["shooter"] = int(data["performance_system_shooter"])
-            if 7 in present:
-                state.performance_sync["chassis"] = int(data["performance_system_chassis"])
-        elif name == "RobotDynamicStatus":
-            state.robot_dynamics[state.robot_id] = self._clean(data)
-            state.current_health = int(data.get("current_health", state.current_health))
-            state.current_heat = float(data.get("current_heat", state.current_heat))
-            state.current_chassis_energy = int(data.get("current_chassis_energy", state.current_chassis_energy))
-            state.current_buffer_energy = int(data.get("current_buffer_energy", state.current_buffer_energy))
-            state.total_projectiles_fired = int(data.get("total_projectiles_fired", state.total_projectiles_fired))
-            state.remaining_ammo = int(data.get("remaining_ammo", state.remaining_ammo))
-            state.out_of_combat = bool(data.get("is_out_of_combat", state.out_of_combat))
-            state.can_remote_heal = bool(data.get("can_remote_heal", state.can_remote_heal))
-            state.can_remote_ammo = bool(data.get("can_remote_ammo", state.can_remote_ammo))
-        elif name == "RobotModuleStatus":
-            clean = self._clean(data)
-            state.robot_module_status = {k: int(v) for k, v in clean.items()}
-            state.robot_modules[state.robot_id] = clean
-        elif name == "RobotPosition":
-            self._upsert_positions(state, data)
-        elif name == "Buff":
-            self._upsert_buff(state, data)
-        elif name == "PenaltyInfo":
-            self._upsert_penalty(state, data)
-        elif name == "RobotPathPlanInfo":
-            state.path_plan = self._clean(data)
-        elif name == "MapClickInfo":
-            clean = self._clean(data)
-            marker = {
-                "label": chr(int(clean.get("ascii", 0))) if 32 <= int(clean.get("ascii", 0)) <= 126 else "MARK",
-                "x": float(clean.get("map_x", 0.0)),
-                "y": float(clean.get("map_y", 0.0)),
-                "kind": "attack" if int(clean.get("type", 0)) == 1 else "marker",
-                "pulse": True,
-                **clean,
-            }
-            state.map_markers = [*state.map_markers[-15:], marker]
-        elif name == "RadarInfoToClient":
-            state.radar_detections = [dict(r) for r in data.get("robots", ())]
-            state.radar_detections_at = time.perf_counter()
-        elif name == "TechCoreMotionStateSync":
-            state.tech_core = self._clean(data)
-        elif name == "RobotPerformanceSelectionSync":
-            clean = self._clean(data)
-            state.performance_sync = {k: int(v) for k, v in clean.items()}
-        elif name == "DeployModeStatusSync":
-            next_status = 1 if int(data.get("status", 0)) else 0
-            if next_status != int(state.deploy_mode):
-                state.deploy_status_revision += 1
-            state.deploy_mode = next_status
-            state.deploy_status_at = time.perf_counter()
-            if bool(next_status) != self._hero_native_override:
-                self._hero_native_override = bool(next_status)
-                if self._hero_native_override:
-                    self.set_active_video_source("Native 0x0310", _hero_transition=True)
-                else:
-                    self.set_active_video_source(
-                        self._normal_video_source or self.config.connection.video_source,
-                        _hero_transition=True,
-                    )
-                self.field_log.emit(
-                    "hero_video_source",
-                    deployed=bool(next_status),
-                    active_source=self._active_video_source,
-                )
-        elif name == "RuneStatusSync":
-            state.rune_status = self._clean(data)
-            state.energy_rune_phase = _RUNE_PHASE.get(int(data.get("rune_status", 1)), "INACTIVE")
-            state.energy_rune_progress = int(float(data.get("average_rings", 0)) * 100)
-        elif name == "SentryStatusSync":
-            state.sentry_status = self._clean(data)
-        elif name == "DartSelectTargetStatusSync":
-            state.dart_status = self._clean(data)
-        elif name == "SentryCtrlResult":
-            state.sentry_ctrl_result = self._clean(data)
-        elif name == "AirSupportStatusSync":
-            state.air_support_active = int(data.get("airsupport_status", 0)) == 1
-            state.air_support_free_time_sec = int(data.get("left_time", 0))
-            state.air_support_cost_coins = int(data.get("cost_coins", 0))
-        elif name == "GlobalSpecialMechanism":
-            ids = [int(v) for v in data.get("mechanism_id", ())]
-            times = [int(v) for v in data.get("mechanism_time_sec", ())]
-            state.special_mechanisms = [
-                {"mechanism_id": i, "time_sec": t}
-                for i, t in zip(ids, times)
-            ]
-        elif name == "Event":
-            state.backend_stats["last_event"] = {
-                "event_id": int(data.get("event_id", 0)),
-                "param": data.get("param", ""),
-            }
-        elif name == "CustomByteBlock":
-            block = bytes(data.get("data", b""))
-            state.backend_stats["last_custom_block"] = {
-                "len": len(block),
-            }
-            telemetry = parse_vehicle_telemetry(block)
-            if telemetry is not None:
-                previous_sequence = int(state.native_telemetry_frame_seq)
-                status_upper = telemetry.status_text.upper()
-                # Treat a short backward jump as a producer restart/replay,
-                # but do not invalidate calibration at the natural uint32
-                # wrap from 0xffffffff to zero.
-                sequence_restarted = bool(
-                    previous_sequence > 0
-                    and telemetry.frame_seq < previous_sequence
-                    and (previous_sequence - telemetry.frame_seq) < 0x80000000
-                )
-                localisation_reset = bool(
-                    sequence_restarted
-                    or any(
-                        marker in status_upper
-                        for marker in (
-                            "LOCALIZATION LOST",
-                            "LOCALISATION LOST",
-                            "RELOCALIZING",
-                            "RELOCALISING",
-                            "POSE RESET",
-                            "MAP RESET",
-                        )
-                    )
-                )
-                state.native_telemetry_at = time.perf_counter()
-                state.native_telemetry_unix_ms = telemetry.unix_ms
-                state.native_telemetry_frame_seq = telemetry.frame_seq
-                state.native_camera_online = telemetry.camera_online
-                state.native_gimbal_online = telemetry.gimbal_online
-                state.native_gimbal_mode = telemetry.gimbal_mode_name
-                state.native_bullet_count = telemetry.bullet_count
-                state.native_bullet_speed = telemetry.bullet_speed
-                state.native_yaw_deg = telemetry.yaw
-                state.native_yaw_velocity = telemetry.yaw_vel
-                state.native_pitch_deg = telemetry.pitch
-                state.native_pitch_velocity = telemetry.pitch_vel
-                state.native_quaternion = telemetry.quaternion
-                state.native_status_text = telemetry.status_text
-                if localisation_reset:
-                    state.hero_lob_relocalization_valid = False
-                    state.hero_lob_armed = False
-                    state.hero_lob_status = "BLOCKED: relocalization invalidated by telemetry reset"
-                state.backend_stats["native_telemetry"] = {
-                    "version": telemetry.version,
-                    "frame_seq": telemetry.frame_seq,
-                    "camera_online": telemetry.camera_online,
-                    "gimbal_online": telemetry.gimbal_online,
-                    "gimbal_mode": telemetry.gimbal_mode_name,
-                    "bullet_speed": telemetry.bullet_speed,
-                    "status": telemetry.status_text,
-                }
+        handler = _APPLY_ONE_DISPATCH.get(name)
+        if handler is not None and handler(self, state, data):
+            # Economy confirmation is driven by an actual relevant field change,
+            # not by the arrival count of unrelated team messages.  This prevents
+            # a teammate's purchase from acknowledging our pending request.
+            if self._economy_signature(state) != economy_before:
+                state.economy_status_revision = int(state.economy_status_revision) + 1
+                state.economy_command_status = ""
+
+    def _apply_game_status(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.current_round = int(data.get("current_round", state.current_round))
+        state.total_rounds = int(data.get("total_rounds", state.total_rounds))
+        state.red_score = int(data.get("red_score", state.red_score))
+        state.blue_score = int(data.get("blue_score", state.blue_score))
+        stage = int(data.get("current_stage", 0))
+        state.current_stage = _STAGE_STR.get(stage, str(stage))
+        self.safety.update_stage(stage)
+        if state.current_stage != self._last_logged_stage:
+            self._last_logged_stage = state.current_stage
+            self.field_log.emit(
+                "match_stage",
+                raw_stage=stage,
+                stage=state.current_stage,
+                round=state.current_round,
+            )
+        state.stage_countdown_sec = max(0, int(data.get("stage_countdown_sec", state.stage_countdown_sec)))
+        state.stage_elapsed_sec = max(0, int(data.get("stage_elapsed_sec", state.stage_elapsed_sec)))
+        return True
+
+    def _apply_global_unit_status(self, state: RobotState, data: dict[str, Any]) -> bool:
+        present = frozenset(data.get("__present__", ()))
+        state.base_health = int(data.get("base_health", state.base_health))
+        state.base_status = str(data.get("base_status", state.base_status))
+        state.base_shield = int(data.get("base_shield", state.base_shield))
+        state.outpost_health = int(data.get("outpost_health", state.outpost_health))
+        state.outpost_status = str(data.get("outpost_status", state.outpost_status))
+        state.enemy_base_health = int(data.get("enemy_base_health", state.enemy_base_health))
+        state.enemy_base_status = str(data.get("enemy_base_status", state.enemy_base_status))
+        state.enemy_base_shield = int(data.get("enemy_base_shield", state.enemy_base_shield))
+        state.enemy_outpost_health = int(data.get("enemy_outpost_health", state.enemy_outpost_health))
+        state.enemy_outpost_status = str(data.get("enemy_outpost_status", state.enemy_outpost_status))
+        health = [int(v) for v in data.get("robot_health", ()) if isinstance(v, int)]
+        if health:
+            state.official_robot_health = health
+        if 12 in present or "robot_bullets" in data:
+            bullets = [int(v) for v in data.get("robot_bullets", ()) if isinstance(v, int)]
+            state.official_robot_bullets = bullets
+            state.backend_stats["robot_bullets"] = list(bullets)
+            self._sync_local_projectile_allowance(state)
+        return True
+
+    def _apply_global_logistics_status(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.remaining_economy = int(data.get("remaining_economy", state.remaining_economy))
+        state.total_economy_obtained = int(data.get("total_economy_obtained", state.total_economy_obtained))
+        state.tech_level = int(data.get("tech_level", state.tech_level))
+        state.encryption_level = int(data.get("encryption_level", state.encryption_level))
+        return True
+
+    def _apply_robot_static_status(self, state: RobotState, data: dict[str, Any]) -> bool:
+        present = frozenset(data.get("__present__", ()))
+        if 4 in present and data["robot_id"]:
+            state.robot_id = int(data["robot_id"])
+            state.robot_statics[state.robot_id] = self._clean(data)
+            self._sync_local_projectile_allowance(state)
+        if 8 in present and data["level"]:
+            state.level = int(data["level"])
+        if 9 in present and data["max_health"]:
+            state.max_health = int(data["max_health"])
+            state.current_health = min(state.current_health, state.max_health)
+        if 10 in present and data["max_heat"]:
+            state.max_heat = float(data["max_heat"])
+        if 11 in present and data["heat_cooldown_rate"]:
+            state.heat_cooldown_rate = float(data["heat_cooldown_rate"])
+        if 12 in present and data["max_power"]:
+            state.power_limit = int(data["max_power"])
+        # 缓冲能量上限属于 RobotStaticStatus（协议字段 13），不在动态报文里。
+        # 上一版把它误写进 RobotDynamicStatus 分支，那里根本没这个键，
+        # data.get 永远回退到现值 —— 看着接上了，实际一行都不生效。
+        # 不写它，effective_capacitor_percent 只能按默认上限 100 算比例。
+        if 13 in present and data["max_buffer_energy"]:
+            state.max_buffer_energy = int(data["max_buffer_energy"])
+        if 6 in present:
+            state.performance_sync["shooter"] = int(data["performance_system_shooter"])
+        if 7 in present:
+            state.performance_sync["chassis"] = int(data["performance_system_chassis"])
+        return True
+
+    def _apply_robot_dynamic_status(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.robot_dynamics[state.robot_id] = self._clean(data)
+        state.current_health = int(data.get("current_health", state.current_health))
+        state.current_heat = float(data.get("current_heat", state.current_heat))
+        state.current_chassis_energy = int(data.get("current_chassis_energy", state.current_chassis_energy))
+        state.current_buffer_energy = int(data.get("current_buffer_energy", state.current_buffer_energy))
+        state.total_projectiles_fired = int(data.get("total_projectiles_fired", state.total_projectiles_fired))
+        state.remaining_ammo = int(data.get("remaining_ammo", state.remaining_ammo))
+        state.out_of_combat = bool(data.get("is_out_of_combat", state.out_of_combat))
+        state.can_remote_heal = bool(data.get("can_remote_heal", state.can_remote_heal))
+        state.can_remote_ammo = bool(data.get("can_remote_ammo", state.can_remote_ammo))
+        return True
+
+    def _apply_robot_module_status(self, state: RobotState, data: dict[str, Any]) -> bool:
+        clean = self._clean(data)
+        state.robot_module_status = {k: int(v) for k, v in clean.items()}
+        state.robot_modules[state.robot_id] = clean
+        return True
+
+    def _apply_robot_position(self, state: RobotState, data: dict[str, Any]) -> bool:
+        self._upsert_positions(state, data)
+        return True
+
+    def _apply_buff(self, state: RobotState, data: dict[str, Any]) -> bool:
+        self._upsert_buff(state, data)
+        return True
+
+    def _apply_penalty_info(self, state: RobotState, data: dict[str, Any]) -> bool:
+        self._upsert_penalty(state, data)
+        return True
+
+    def _apply_robot_path_plan_info(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.path_plan = self._clean(data)
+        return True
+
+    def _apply_map_click_info(self, state: RobotState, data: dict[str, Any]) -> bool:
+        clean = self._clean(data)
+        marker = {
+            "label": chr(int(clean.get("ascii", 0))) if 32 <= int(clean.get("ascii", 0)) <= 126 else "MARK",
+            "x": float(clean.get("map_x", 0.0)),
+            "y": float(clean.get("map_y", 0.0)),
+            "kind": "attack" if int(clean.get("type", 0)) == 1 else "marker",
+            "pulse": True,
+            **clean,
+        }
+        state.map_markers = [*state.map_markers[-15:], marker]
+        return True
+
+    def _apply_radar_info_to_client(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.radar_detections = [dict(r) for r in data.get("robots", ())]
+        state.radar_detections_at = time.perf_counter()
+        return True
+
+    def _apply_tech_core_motion_state_sync(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.tech_core = self._clean(data)
+        return True
+
+    def _apply_robot_performance_selection_sync(self, state: RobotState, data: dict[str, Any]) -> bool:
+        clean = self._clean(data)
+        state.performance_sync = {k: int(v) for k, v in clean.items()}
+        return True
+
+    def _apply_deploy_mode_status_sync(self, state: RobotState, data: dict[str, Any]) -> bool:
+        next_status = 1 if int(data.get("status", 0)) else 0
+        if next_status != int(state.deploy_mode):
+            state.deploy_status_revision += 1
+        state.deploy_mode = next_status
+        state.deploy_status_at = time.perf_counter()
+        if bool(next_status) != self._hero_native_override:
+            self._hero_native_override = bool(next_status)
+            if self._hero_native_override:
+                self.set_active_video_source("Native 0x0310", _hero_transition=True)
             else:
-                video_chunk = parse_video_0310_chunk(block)
-                if video_chunk is not None:
-                    native_selected = self._active_video_source in {
-                        "native", "native 0x0310", "0x0310",
-                    } or int(getattr(state, "deploy_mode", 0)) == 1
-                    if not native_selected:
-                        # An unselected Native stream must not wake ffmpeg or
-                        # retain a partial recovery epoch in the background.
-                        # Selecting Native later waits for fresh SPS/PPS/IDR.
-                        self._native_0310_last_sequence = None
-                        self._native_0310_blocked_until_sps = True
-                        self._native_recovery.reset()
-                        return
-                    # 0x0310 原生 H.264 流：不保留无限增长的历史码流。
-                    # reset 或向前序号缺口后停止喂流，直到下一个 Annex-B
-                    # SPS；这与 rm-native-viewer 的正式链路恢复策略一致，
-                    # 也避免在 UI tick 内同步 stop/restart ffmpeg。重复/迟到
-                    # 分块直接丢弃，防止同一 payload 破坏 NAL 边界。
-                    modulus = max(1, int(video_chunk.sequence_modulus))
-                    sequence = int(video_chunk.sequence) % modulus
-                    accept_payload = True
-                    if video_chunk.reset:
-                        self._native_0310_bytes_since_reset = 0
-                        self._native_0310_last_sequence = None
-                        self._native_0310_blocked_until_sps = True
-                        self._native_failure_epoch_handled = False
-                        self._native_recovery.reset()
-                    elif self._native_0310_last_sequence is not None:
-                        expected = (self._native_0310_last_sequence + 1) % modulus
-                        distance = (sequence - expected) % modulus
-                        if distance:
-                            if distance < modulus // 2:
-                                self._native_0310_dropped_chunks += distance
-                                self._native_0310_blocked_until_sps = True
-                                self._native_failure_epoch_handled = False
-                                self._native_recovery.reset()
-                            else:
-                                self._native_0310_out_of_order_chunks += 1
-                                accept_payload = False
+                self.set_active_video_source(
+                    self._normal_video_source or self.config.connection.video_source,
+                    _hero_transition=True,
+                )
+            self.field_log.emit(
+                "hero_video_source",
+                deployed=bool(next_status),
+                active_source=self._active_video_source,
+            )
+        return True
 
-                    wrote = False
-                    payload_to_write = b""
-                    if accept_payload:
-                        self._native_0310_bytes_since_reset += len(video_chunk.payload)
-                        self._native_0310_last_sequence = sequence
-                        if (
-                            self._native_0310_decoder_started_once
-                            and not self.native_decoder.available
-                        ):
-                            # A crashed decoder has lost its SPS/PPS parser
-                            # state even if transport sequence is continuous.
-                            self._native_0310_blocked_until_sps = True
-                            if not self._native_failure_epoch_handled:
-                                self._native_recovery.reset()
-                        payload_to_write = self._native_recovery.feed(video_chunk.payload) or b""
-                        self._native_0310_blocked_until_sps = self._native_recovery.blocked
-                        if not payload_to_write:
-                            self._native_0310_recovery_dropped_chunks += 1
+    def _apply_rune_status_sync(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.rune_status = self._clean(data)
+        state.energy_rune_phase = _RUNE_PHASE.get(int(data.get("rune_status", 1)), "INACTIVE")
+        state.energy_rune_progress = int(float(data.get("average_rings", 0)) * 100)
+        return True
 
-                    if payload_to_write:
-                        if not self.native_decoder.available:
-                            if self._native_0310_decoder_started_once:
-                                self._native_0310_decoder_restarts += 1
-                            started = self.native_decoder.start()
-                            self._native_0310_decoder_started_once = bool(
-                                self._native_0310_decoder_started_once or started
-                            )
-                            if started:
-                                self._native_failure_epoch_handled = False
-                        if self.native_decoder.available:
-                            wrote = self.native_decoder.write(payload_to_write)
-                            if not wrote:
-                                # Yield briefly to the dedicated stdin writer.
-                                # The MQTT callback remains bounded (<10 ms),
-                                # while a synthetic burst cannot overflow a
-                                # queue that is sized for live 0x0310 cadence.
-                                deadline = time.perf_counter() + 0.010
-                                while not wrote and time.perf_counter() < deadline:
-                                    time.sleep(0.0005)
-                                    wrote = self.native_decoder.write(payload_to_write)
-                        if not wrote:
-                            # A full/non-running decoder queue is equivalent to
-                            # a transport gap.  Resume only from a future SPS.
+    def _apply_sentry_status_sync(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.sentry_status = self._clean(data)
+        return True
+
+    def _apply_dart_select_target_status_sync(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.dart_status = self._clean(data)
+        return True
+
+    def _apply_sentry_ctrl_result(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.sentry_ctrl_result = self._clean(data)
+        return True
+
+    def _apply_air_support_status_sync(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.air_support_active = int(data.get("airsupport_status", 0)) == 1
+        state.air_support_free_time_sec = int(data.get("left_time", 0))
+        state.air_support_cost_coins = int(data.get("cost_coins", 0))
+        return True
+
+    def _apply_global_special_mechanism(self, state: RobotState, data: dict[str, Any]) -> bool:
+        ids = [int(v) for v in data.get("mechanism_id", ())]
+        times = [int(v) for v in data.get("mechanism_time_sec", ())]
+        state.special_mechanisms = [
+            {"mechanism_id": i, "time_sec": t}
+            for i, t in zip(ids, times)
+        ]
+        return True
+
+    def _apply_event(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.backend_stats["last_event"] = {
+            "event_id": int(data.get("event_id", 0)),
+            "param": data.get("param", ""),
+        }
+        return True
+
+    def _apply_custom_byte_block(self, state: RobotState, data: dict[str, Any]) -> bool:
+        block = bytes(data.get("data", b""))
+        state.backend_stats["last_custom_block"] = {
+            "len": len(block),
+        }
+        telemetry = parse_vehicle_telemetry(block)
+        if telemetry is not None:
+            previous_sequence = int(state.native_telemetry_frame_seq)
+            status_upper = telemetry.status_text.upper()
+            # Treat a short backward jump as a producer restart/replay,
+            # but do not invalidate calibration at the natural uint32
+            # wrap from 0xffffffff to zero.
+            sequence_restarted = bool(
+                previous_sequence > 0
+                and telemetry.frame_seq < previous_sequence
+                and (previous_sequence - telemetry.frame_seq) < 0x80000000
+            )
+            localisation_reset = bool(
+                sequence_restarted
+                or any(
+                    marker in status_upper
+                    for marker in (
+                        "LOCALIZATION LOST",
+                        "LOCALISATION LOST",
+                        "RELOCALIZING",
+                        "RELOCALISING",
+                        "POSE RESET",
+                        "MAP RESET",
+                    )
+                )
+            )
+            state.native_telemetry_at = time.perf_counter()
+            state.native_telemetry_unix_ms = telemetry.unix_ms
+            state.native_telemetry_frame_seq = telemetry.frame_seq
+            state.native_camera_online = telemetry.camera_online
+            state.native_gimbal_online = telemetry.gimbal_online
+            state.native_gimbal_mode = telemetry.gimbal_mode_name
+            state.native_bullet_count = telemetry.bullet_count
+            state.native_bullet_speed = telemetry.bullet_speed
+            state.native_yaw_deg = telemetry.yaw
+            state.native_yaw_velocity = telemetry.yaw_vel
+            state.native_pitch_deg = telemetry.pitch
+            state.native_pitch_velocity = telemetry.pitch_vel
+            state.native_quaternion = telemetry.quaternion
+            state.native_status_text = telemetry.status_text
+            if localisation_reset:
+                state.hero_lob_relocalization_valid = False
+                state.hero_lob_armed = False
+                state.hero_lob_status = "BLOCKED: relocalization invalidated by telemetry reset"
+            state.backend_stats["native_telemetry"] = {
+                "version": telemetry.version,
+                "frame_seq": telemetry.frame_seq,
+                "camera_online": telemetry.camera_online,
+                "gimbal_online": telemetry.gimbal_online,
+                "gimbal_mode": telemetry.gimbal_mode_name,
+                "bullet_speed": telemetry.bullet_speed,
+                "status": telemetry.status_text,
+            }
+        else:
+            video_chunk = parse_video_0310_chunk(block)
+            if video_chunk is not None:
+                native_selected = self._active_video_source in {
+                    "native", "native 0x0310", "0x0310",
+                } or int(getattr(state, "deploy_mode", 0)) == 1
+                if not native_selected:
+                    # An unselected Native stream must not wake ffmpeg or
+                    # retain a partial recovery epoch in the background.
+                    # Selecting Native later waits for fresh SPS/PPS/IDR.
+                    self._native_0310_last_sequence = None
+                    self._native_0310_blocked_until_sps = True
+                    self._native_recovery.reset()
+                    # False = 连尾声都不走，与重构前那条裸 `return` 等价。
+                    return False
+                # 0x0310 原生 H.264 流：不保留无限增长的历史码流。
+                # reset 或向前序号缺口后停止喂流，直到下一个 Annex-B
+                # SPS；这与 rm-native-viewer 的正式链路恢复策略一致，
+                # 也避免在 UI tick 内同步 stop/restart ffmpeg。重复/迟到
+                # 分块直接丢弃，防止同一 payload 破坏 NAL 边界。
+                modulus = max(1, int(video_chunk.sequence_modulus))
+                sequence = int(video_chunk.sequence) % modulus
+                accept_payload = True
+                if video_chunk.reset:
+                    self._native_0310_bytes_since_reset = 0
+                    self._native_0310_last_sequence = None
+                    self._native_0310_blocked_until_sps = True
+                    self._native_failure_epoch_handled = False
+                    self._native_recovery.reset()
+                elif self._native_0310_last_sequence is not None:
+                    expected = (self._native_0310_last_sequence + 1) % modulus
+                    distance = (sequence - expected) % modulus
+                    if distance:
+                        if distance < modulus // 2:
+                            self._native_0310_dropped_chunks += distance
                             self._native_0310_blocked_until_sps = True
                             self._native_failure_epoch_handled = False
                             self._native_recovery.reset()
-                    state.backend_stats["native_video_0310"] = {
-                        "sequence": sequence,
-                        "reset": video_chunk.reset,
-                        "payload_len": len(video_chunk.payload),
-                        "bytes_since_reset": self._native_0310_bytes_since_reset,
-                        "dropped_chunks": self._native_0310_dropped_chunks,
-                        "out_of_order_chunks": self._native_0310_out_of_order_chunks,
-                        "recovery_dropped_chunks": self._native_0310_recovery_dropped_chunks,
-                        "blocked_until_sps": self._native_0310_blocked_until_sps,
-                        "decoder_restarts": self._native_0310_decoder_restarts,
-                        "payload_accepted": bool(payload_to_write),
-                        "payload_input_len": len(video_chunk.payload),
-                        "payload_decoder_len": len(payload_to_write),
-                        "payload_written": wrote,
-                        "payload_queued": wrote,
-                        "decoder_input_queue": self.native_decoder.input_queue_depth(),
-                        "decoder_input_dropped": self.native_decoder.input_chunks_dropped,
-                        "decoder_ready": self.native_decoder.available,
-                        "decoded_frames": self.native_decoder.frames_decoded,
-                    }
-                    # The decoder thread advances independently after this
-                    # message snapshot; stats() is the authoritative live
-                    # source for decoded-frame counters.
-        elif name == "RobotInjuryStat":
-            clean = self._clean(data)
-            killer_id = int(data.get("killer_id", 0))
-            state.injury_stats[killer_id] = clean
-            small_total = max(0, int(data.get("small_projectile_damage", 0)))
-            large_total = max(0, int(data.get("large_projectile_damage", 0)))
-            if state.injury_stats_initialized:
-                # Cumulative counters can reset after respawn/reconnect.  A
-                # backwards jump establishes a new baseline and must never be
-                # interpreted as an enormous fresh hit.
-                counters_monotonic = bool(
-                    small_total >= state.projectile_damage_small_total
-                    and large_total >= state.projectile_damage_large_total
-                )
-                if counters_monotonic:
-                    small_delta = small_total - state.projectile_damage_small_total
-                    large_delta = large_total - state.projectile_damage_large_total
-                    damage_delta = small_delta + large_delta
-                    if damage_delta > 0:
-                        state.projectile_hit_revision += 1
-                        state.last_projectile_hit_at = time.perf_counter()
-                        state.last_projectile_damage_delta = damage_delta
-                        state.last_projectile_kind = (
-                            "17mm+42mm"
-                            if small_delta > 0 and large_delta > 0
-                            else ("42mm" if large_delta > 0 else "17mm")
-                        )
-                        state.last_projectile_killer_id = killer_id
-            else:
-                # RobotInjuryStat is a cumulative 1 Hz report.  Never trigger
-                # an automatic action from the first sample after startup.
-                state.injury_stats_initialized = True
-            state.projectile_damage_small_total = small_total
-            state.projectile_damage_large_total = large_total
-        elif name == "RobotRespawnStatus":
-            state.respawn_pending = bool(data.get("is_pending_respawn", state.respawn_pending))
-            total = max(1, int(data.get("total_respawn_progress", 1)))
-            current = int(data.get("current_respawn_progress", 0))
-            state.respawn_progress = min(1.0, current / total)
-            state.respawn_can_free = bool(data.get("can_free_respawn", state.respawn_can_free))
-            state.respawn_gold_cost = int(data.get("gold_cost_for_respawn", state.respawn_gold_cost))
-            state.respawn_can_pay = bool(data.get("can_pay_for_respawn", state.respawn_can_pay))
+                        else:
+                            self._native_0310_out_of_order_chunks += 1
+                            accept_payload = False
 
-        # Economy confirmation is driven by an actual relevant field change,
-        # not by the arrival count of unrelated team messages.  This prevents
-        # a teammate's purchase from acknowledging our pending request.
-        if self._economy_signature(state) != economy_before:
-            state.economy_status_revision = int(state.economy_status_revision) + 1
-            state.economy_command_status = ""
+                wrote = False
+                payload_to_write = b""
+                if accept_payload:
+                    self._native_0310_bytes_since_reset += len(video_chunk.payload)
+                    self._native_0310_last_sequence = sequence
+                    if (
+                        self._native_0310_decoder_started_once
+                        and not self.native_decoder.available
+                    ):
+                        # A crashed decoder has lost its SPS/PPS parser
+                        # state even if transport sequence is continuous.
+                        self._native_0310_blocked_until_sps = True
+                        if not self._native_failure_epoch_handled:
+                            self._native_recovery.reset()
+                    payload_to_write = self._native_recovery.feed(video_chunk.payload) or b""
+                    self._native_0310_blocked_until_sps = self._native_recovery.blocked
+                    if not payload_to_write:
+                        self._native_0310_recovery_dropped_chunks += 1
+
+                if payload_to_write:
+                    if not self.native_decoder.available:
+                        if self._native_0310_decoder_started_once:
+                            self._native_0310_decoder_restarts += 1
+                        started = self.native_decoder.start()
+                        self._native_0310_decoder_started_once = bool(
+                            self._native_0310_decoder_started_once or started
+                        )
+                        if started:
+                            self._native_failure_epoch_handled = False
+                    if self.native_decoder.available:
+                        wrote = self.native_decoder.write(payload_to_write)
+                        if not wrote:
+                            # Yield briefly to the dedicated stdin writer.
+                            # The MQTT callback remains bounded (<10 ms),
+                            # while a synthetic burst cannot overflow a
+                            # queue that is sized for live 0x0310 cadence.
+                            deadline = time.perf_counter() + 0.010
+                            while not wrote and time.perf_counter() < deadline:
+                                time.sleep(0.0005)
+                                wrote = self.native_decoder.write(payload_to_write)
+                    if not wrote:
+                        # A full/non-running decoder queue is equivalent to
+                        # a transport gap.  Resume only from a future SPS.
+                        self._native_0310_blocked_until_sps = True
+                        self._native_failure_epoch_handled = False
+                        self._native_recovery.reset()
+                state.backend_stats["native_video_0310"] = {
+                    "sequence": sequence,
+                    "reset": video_chunk.reset,
+                    "payload_len": len(video_chunk.payload),
+                    "bytes_since_reset": self._native_0310_bytes_since_reset,
+                    "dropped_chunks": self._native_0310_dropped_chunks,
+                    "out_of_order_chunks": self._native_0310_out_of_order_chunks,
+                    "recovery_dropped_chunks": self._native_0310_recovery_dropped_chunks,
+                    "blocked_until_sps": self._native_0310_blocked_until_sps,
+                    "decoder_restarts": self._native_0310_decoder_restarts,
+                    "payload_accepted": bool(payload_to_write),
+                    "payload_input_len": len(video_chunk.payload),
+                    "payload_decoder_len": len(payload_to_write),
+                    "payload_written": wrote,
+                    "payload_queued": wrote,
+                    "decoder_input_queue": self.native_decoder.input_queue_depth(),
+                    "decoder_input_dropped": self.native_decoder.input_chunks_dropped,
+                    "decoder_ready": self.native_decoder.available,
+                    "decoded_frames": self.native_decoder.frames_decoded,
+                }
+                # The decoder thread advances independently after this
+                # message snapshot; stats() is the authoritative live
+                # source for decoded-frame counters.
+        return True
+
+    def _apply_robot_injury_stat(self, state: RobotState, data: dict[str, Any]) -> bool:
+        clean = self._clean(data)
+        killer_id = int(data.get("killer_id", 0))
+        state.injury_stats[killer_id] = clean
+        small_total = max(0, int(data.get("small_projectile_damage", 0)))
+        large_total = max(0, int(data.get("large_projectile_damage", 0)))
+        if state.injury_stats_initialized:
+            # Cumulative counters can reset after respawn/reconnect.  A
+            # backwards jump establishes a new baseline and must never be
+            # interpreted as an enormous fresh hit.
+            counters_monotonic = bool(
+                small_total >= state.projectile_damage_small_total
+                and large_total >= state.projectile_damage_large_total
+            )
+            if counters_monotonic:
+                small_delta = small_total - state.projectile_damage_small_total
+                large_delta = large_total - state.projectile_damage_large_total
+                damage_delta = small_delta + large_delta
+                if damage_delta > 0:
+                    state.projectile_hit_revision += 1
+                    state.last_projectile_hit_at = time.perf_counter()
+                    state.last_projectile_damage_delta = damage_delta
+                    state.last_projectile_kind = (
+                        "17mm+42mm"
+                        if small_delta > 0 and large_delta > 0
+                        else ("42mm" if large_delta > 0 else "17mm")
+                    )
+                    state.last_projectile_killer_id = killer_id
+        else:
+            # RobotInjuryStat is a cumulative 1 Hz report.  Never trigger
+            # an automatic action from the first sample after startup.
+            state.injury_stats_initialized = True
+        state.projectile_damage_small_total = small_total
+        state.projectile_damage_large_total = large_total
+        return True
+
+    def _apply_robot_respawn_status(self, state: RobotState, data: dict[str, Any]) -> bool:
+        state.respawn_pending = bool(data.get("is_pending_respawn", state.respawn_pending))
+        total = max(1, int(data.get("total_respawn_progress", 1)))
+        current = int(data.get("current_respawn_progress", 0))
+        state.respawn_progress = min(1.0, current / total)
+        state.respawn_can_free = bool(data.get("can_free_respawn", state.respawn_can_free))
+        state.respawn_gold_cost = int(data.get("gold_cost_for_respawn", state.respawn_gold_cost))
+        state.respawn_can_pay = bool(data.get("can_pay_for_respawn", state.respawn_can_pay))
+        return True
 
     @staticmethod
     def _economy_signature(state: RobotState) -> tuple[Any, ...]:
@@ -2348,6 +2419,48 @@ class BackendManager:
             },
         }
 
+
+#: ``_apply_one`` 的分发表：裁判下行模块名 -> 处理函数。
+#:
+#: 提成模块级常量（而不是留在 ``_apply_one`` 里那条 376 行的 if/elif 链）
+#: 有三个理由：
+#: 1. 25 个分支彼此**互斥**（一条消息只命中一个等值判断），且逐条核对过：
+#:    没有任何分支读另一个分支在**同一次调用**里写下的字段 —— ``robot_id``
+#:    / ``official_robot_bullets`` 这类跨分支读取都发生在**不同消息**之间，
+#:    先后由解码队列决定，与链上顺序无关。所以表项顺序不承载语义
+#:    （``tests/apply_one_dispatch_test.py`` 用置乱顺序跑一遍把这件事钉住）。
+#: 2. 加一个模块 = 加一个方法 + 一行表项，不必回到 376 行的函数里找位置。
+#: 3. 每个分支能单独喂数据单测，不用先读完整条链。
+#:
+#: 键与裁判下行报文的模块名逐字相同。值是**未绑定方法**，由 ``_apply_one``
+#: 传 ``self`` 调用；返回值 True = 继续走经济确认尾声（见 ``_apply_one`` 文档）。
+_APPLY_ONE_DISPATCH: dict[str, Callable[["BackendManager", RobotState, dict[str, Any]], bool]] = {
+    "GameStatus": BackendManager._apply_game_status,
+    "GlobalUnitStatus": BackendManager._apply_global_unit_status,
+    "GlobalLogisticsStatus": BackendManager._apply_global_logistics_status,
+    "RobotStaticStatus": BackendManager._apply_robot_static_status,
+    "RobotDynamicStatus": BackendManager._apply_robot_dynamic_status,
+    "RobotModuleStatus": BackendManager._apply_robot_module_status,
+    "RobotPosition": BackendManager._apply_robot_position,
+    "Buff": BackendManager._apply_buff,
+    "PenaltyInfo": BackendManager._apply_penalty_info,
+    "RobotPathPlanInfo": BackendManager._apply_robot_path_plan_info,
+    "MapClickInfo": BackendManager._apply_map_click_info,
+    "RadarInfoToClient": BackendManager._apply_radar_info_to_client,
+    "TechCoreMotionStateSync": BackendManager._apply_tech_core_motion_state_sync,
+    "RobotPerformanceSelectionSync": BackendManager._apply_robot_performance_selection_sync,
+    "DeployModeStatusSync": BackendManager._apply_deploy_mode_status_sync,
+    "RuneStatusSync": BackendManager._apply_rune_status_sync,
+    "SentryStatusSync": BackendManager._apply_sentry_status_sync,
+    "DartSelectTargetStatusSync": BackendManager._apply_dart_select_target_status_sync,
+    "SentryCtrlResult": BackendManager._apply_sentry_ctrl_result,
+    "AirSupportStatusSync": BackendManager._apply_air_support_status_sync,
+    "GlobalSpecialMechanism": BackendManager._apply_global_special_mechanism,
+    "Event": BackendManager._apply_event,
+    "CustomByteBlock": BackendManager._apply_custom_byte_block,
+    "RobotInjuryStat": BackendManager._apply_robot_injury_stat,
+    "RobotRespawnStatus": BackendManager._apply_robot_respawn_status,
+}
 
 
 def spin_block_reason(*, allow_spin: bool, link_active: bool, estop: bool,

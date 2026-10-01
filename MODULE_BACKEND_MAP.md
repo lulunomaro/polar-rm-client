@@ -156,7 +156,7 @@
 |---|---|---|
 | **RobotLink** | 编码：`rm_client/backend/polar_link.py:617 encode_robot_cmd`(0x01)、`<br>`rm_client/backend/polar_link.py:656 encode_virtual_rc`(0x03 键位图)、`<br>`rm_client/backend/polar_link.py:698 encode_chassis_cmd`(0x04 自转+云台直控)；`<br>`成帧与写串口：`rm_client/backend/polar_transport.py:471 _write_after_intent_held`(分派)、`rm_client/backend/polar_transport.py:514 _frame_for`(0x01 成帧)、`rm_client/backend/polar_transport.py:505 _take_intent_locked`(取意图+死区)；`<br>自转开关联动：`rm_client/backend/manager.py:406 _spin_assert 落定（自转开关联动判定）` | 整条「客户端往车里发东西」的路都归它。松键时它会补发一次全零（`rm_client/backend/polar_transport.py:503 松键下降沿补发全零 0x03`），所以固件那边不会因为停发而冻在最后一帧 |
 | **SpinMode** / **AutoSpinOnHit** | `rm_client/auto_spin.py:42 ProjectileHitSpinController`（受击后限时开自转，判定在 `rm_client/auto_spin.py:74 update（受击后限时开自转的判定）`）→ 上面那个 `encode_chassis_cmd()`（上行 0x04）；状态回读是固件下行 0x1F | 以前只能借 SHIFT 键，而固件对 SHIFT 是边沿翻转 —— **关不掉**；现在是显式 ON/OFF + 回读闭环 |
-| **EmergencyStop** | 行为在 `backend/safety.py`(OfficialSafety) 与 `rm_client/backend/manager.py:2080 release_estop`；但注册表里那个 `EmergencyStop` 模块**没有任何代码读它** | 急停本身是真有的，只是「界面那个模块条目」和它之间没接线 —— 界面上那个开关是装饰 |
+| **EmergencyStop** | 行为在 `backend/safety.py`(OfficialSafety) 与 `rm_client/backend/manager.py:2151 release_estop`；但注册表里那个 `EmergencyStop` 模块**没有任何代码读它** | 急停本身是真有的，只是「界面那个模块条目」和它之间没接线 —— 界面上那个开关是装饰 |
 
 ### 看数据这条线
 
