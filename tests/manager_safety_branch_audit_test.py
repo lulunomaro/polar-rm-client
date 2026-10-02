@@ -118,13 +118,22 @@ def test_sync_mqtt_link_illegal_port() -> None:
     **同一个**坏值做 ``int(port_setting.value or 0)``，于是 ValueError 从
     ``sync_mqtt_link`` 抛出去。
     现场症状（``polar_app.py:887`` 每拍都调它，且被 :920 ``_run_tick_stage``
-    接住）：操作员在 MQTTLink 的 Port 里打错一个字之后，``mqtt.link`` 这一拍
-    每 16 ms 失败一次，``backend_stats["ui_tick"]["last_error"]`` 永远钉在
-    ``mqtt.link: ValueError: ...``，broker 地址**再也不会跟着设置项变**。
+    接住）：操作员在 MQTTLink 的 Port 里打错一个字之后，每 16 ms 记一次
+    ``ValueError``，``backend_stats["ui_tick"]["last_error"]`` 永远钉在那儿。
 
-    这里断言的是**实测事实**（ValueError 而非 UnboundLocalError —— 删掉
-    :251 的 except 会让 ``want_port`` 从未绑定，抛的是 UnboundLocalError），
-    因此这一条能真正杀掉那个变异。修这个 bug 是另一件事，见交付报告。
+    ⚠ **第 12 轮已修掉这个缺陷，本文件的断言随之改写。**
+
+    原来钉的是"抛 ValueError、且设置项**没有**被回写"—— 那时是实测事实，
+    但它是**错的**。`manager.py:263` 对 `:250` 已经接住过的同一个坏值
+    又 `int()` 了一次，于是异常从 `sync_mqtt_link` 冲出去。
+
+    注意 agent 交付报告里写的"broker 地址再也不会跟着设置项变"**实测不成立**：
+    `set_address` 在 :259、异常**之前**就跑完了，坏掉的是
+    "回写设置项"（:263-264）与"留一句提示"（:265）。
+
+    现在断言的是修好之后的行为：不抛、提示给出来、设置项被回写、
+    `mqtt.last_error` 真的拿到那句提示。这一族另有
+    ``tests/mqtt_link_bad_port_test.py``（13 项，含负向证明）覆盖。
     """
     with manager_and_state("LabDebug") as (mgr, _):
         registry = build_default_registry()
@@ -132,19 +141,26 @@ def test_sync_mqtt_link_illegal_port() -> None:
         good = (mgr.mqtt.host, mgr.mqtt.port)
         module.get_setting("Port").value = "not-a-number"
         raised: BaseException | None = None
+        note = ""
         try:
-            mgr.sync_mqtt_link(registry)
+            note = mgr.sync_mqtt_link(registry)
         except BaseException as exc:                                  # noqa: BLE001
             raised = exc
-        check("MQTT Port 填非数字：抛的是 ValueError（不是删掉 except 后的 UnboundLocalError）",
-              type(raised) is ValueError,
-              f"{type(raised).__name__}: {raised}")
+        check("MQTT Port 填非数字：**不抛异常**（第 12 轮修掉了 manager.py:263 的重复 int()）",
+              raised is None,
+              f"仍然抛 {type(raised).__name__}: {raised}")
+        check("MQTT Port 填非数字：提示里说清了非法并沿用旧端口",
+              "非法" in note and str(good[1]) in note,
+              f"note={note!r}")
         check("MQTT Port 填非数字：有效地址没被动过",
               (mgr.mqtt.host, mgr.mqtt.port) == good,
               f"{mgr.mqtt.host}:{mgr.mqtt.port}")
-        check("MQTT Port 填非数字：设置项没有被改写（异常发生在回写之前）",
-              module.get_setting("Port").value == "not-a-number",
+        check("MQTT Port 填非数字：设置项被回写成真正在用的端口（UI 不骗人）",
+              str(module.get_setting("Port").value) == str(good[1]),
               repr(module.get_setting("Port").value))
+        check("MQTT Port 填非数字：mqtt.last_error 真的拿到了那句提示",
+              "非法" in mgr.mqtt.last_error,
+              f"last_error={mgr.mqtt.last_error!r}")
 
 
 def test_sync_mqtt_link_note_concatenation() -> None:

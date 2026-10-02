@@ -260,7 +260,21 @@ class BackendManager:
         # 设置项永远等于真正在用的地址：UI 不骗人
         if str(host_setting.value) != self.mqtt.host:
             host_setting.value = str(self.mqtt.host)
-        if int(port_setting.value or 0) != int(self.mqtt.port):
+        #
+        # 端口这一行刻意用 `str(...)` 比较，与上面主机那一行同款，**而不是**
+        # `int(port_setting.value or 0) != int(self.mqtt.port)`。
+        #
+        # 原因是上面 `:250` 已经把 `int(port_setting.value)` 的 ValueError 接住、
+        # 退回上一个可用端口了；如果这里再 `int()` **同一个**坏值，异常会从
+        # `sync_mqtt_link` 抛出去 —— 而这个函数是 UI 每拍（60 Hz）调的，
+        # 于是操作员在 MQTTLink 的 Port 里打错一个字之后，
+        # 每 16 ms 记一次 ValueError，`backend_stats["ui_tick"]["last_error"]`
+        # 被永久钉住，**而且 `self.mqtt.last_error` 永远设不上**，
+        # 那句"端口非法，沿用 N"的现场提示就再也不会出现。
+        #
+        # （broker 地址本身**不受影响**：`set_address` 在上面 :259 已经跑完。
+        #  坏掉的是"回写设置项"与"留一句提示"，不是连不上 broker。）
+        if str(port_setting.value) != str(int(self.mqtt.port)):
             port_setting.value = int(self.mqtt.port)
         self.mqtt.last_error = note
         if changed:
