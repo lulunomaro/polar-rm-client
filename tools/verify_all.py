@@ -80,7 +80,11 @@ PYTHON_SUITES = (
     "encode_invariant_attack_test",  # 攻编码路径：fire 恒 0、禁位不上线（不只查常量）
     "zero_frame_and_diagnostics_test",
     "rust_port_coverage_test",
-    "tick_polar_link_branches_test",  # 60Hz 主泵 111 个决策点；补 54 个零覆盖分支（变异验证挖出来的）  # 48 个 Python 模块逐个有交代：新模块忘了登记就红  # 断流归零（stop/下降沿全零）+ s[0] 诊断提示（变异验证挖出来的三处零覆盖）
+    "tick_polar_link_branches_test",
+    "control_untested_branches_test",  # control.py 144 个决策点里 27 个从未走到（含 DT7 粘键误报那条）
+    "model_state_branches_test",  # model.py RobotState 45 个决策点里 32 个从未走到（71.1%）
+    "config_store_branch_audit_test",  # config_store + serial_ports 128 个分支型决策点里 39 个从未走到
+    "spin_calib_matchmode_branches_test",  # auto_spin + calibration + match_modes 同款审计  # 60Hz 主泵 111 个决策点；补 54 个零覆盖分支（变异验证挖出来的）  # 48 个 Python 模块逐个有交代：新模块忘了登记就红  # 断流归零（stop/下降沿全零）+ s[0] 诊断提示（变异验证挖出来的三处零覆盖）
     "apply_one_dispatch_test",  # _apply_one 分发表契约 + 变异验证挖出来的 15 个零覆盖分支
 )
 

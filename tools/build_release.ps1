@@ -418,6 +418,10 @@ print('polar spec OK: %d segments, %d roles, %d warnings'
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\zero_frame_and_diagnostics_test.py") "zero_frame_and_diagnostics" 180 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\rust_port_coverage_test.py") "rust_port_coverage" 180 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\tick_polar_link_branches_test.py") "tick_polar_link_branches" 240 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\control_untested_branches_test.py") "control_untested_branches" 240 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\model_state_branches_test.py") "model_state_branches" 240 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\config_store_branch_audit_test.py") "config_store_branch_audit" 240 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\spin_calib_matchmode_branches_test.py") "spin_calib_matchmode_branches" 300 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\apply_one_dispatch_test.py") "apply_one_dispatch" 180 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\udp_transport_test.py") "udp_transport" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\field_candidate_test.py") "field_candidate" 240 $testLogRoot
