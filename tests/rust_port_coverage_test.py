@@ -118,9 +118,28 @@ FROZEN: dict[str, str] = {
 #: 但**没有被冻结**，所以"暂不搬"是**取舍**，不是"不许动"。
 DEFERRED: dict[str, str] = {
 
+    "vision.py": "与视觉强相关但**未被冻结**：取舍，不是禁令。判据要靠假设备搭一套",
+    "tongji_yolo.py": "与视觉强相关但**未被冻结**：取舍。含 cv2 与 numpy 推理链路",
+    "tongji_bridge.py": "与视觉强相关但**未被冻结**：取舍。含 socket/threading",
+    "ui_audio.py": "与视觉强相关但**未被冻结**：取舍。输出是声音不是画面",
+    "app.py": "主窗口装配：UI 全在冻结区，搬了也没有意义；只可能搬编排层",
+    "backend/manager.py": "组合根：已由 rm-client 承担判据，但这一层还混着大量编排，待拆",
+    "backend/codec_selftest.py": "编解码自检：要真 ffmpeg 才能验，本机装不了",
 
-
-
+    # ---- 以下几项是第 15 轮之前**忘了更新**的 ----
+    #
+    # 这一段留着当记录：第 12 轮我给 `PORTED` 加了"'待搬/在搬'字样直接红"的断言，
+    # 以为那就能挡住状态漂移。**它挡不住本轮这种。**
+    # 原因是那两条断言只查 `PORTED` —— 而漂移发生在 `DEFERRED` 里：
+    # 这些条目写着"第 12 轮在搬"，可它们**已经搬完了**（rm-calibration /
+    # rm-ports / rm-config / rm-logstore 都已经落地并对拍过），
+    # 分类却还停在"还没搬"。于是**"已搬"这个事实只存在于我的脑子里**，
+    # 表说的仍然是 28，实际已经是 34。
+    #
+    # 教训与第 12 轮那次一样：**表会骗人，而它骗人的方式每次都不一样。**
+    # 上一轮骗的是"已搬的忘了改备注"，这一轮骗的是"已搬的忘了改分类"。
+    # 所以补的守卫不是"查某一张表"，而是**查磁盘与表是否一致**：
+    # 见下面 `every_crate_on_disk_is_registered_somewhere`。
 
     "auto_spin.py": "第 12 轮在搬（rm-calibration）：判定逻辑早已做进 rm-control，这里只搬编排",
     "config_store.py": "配置落盘：含 atexit / 并发写 / 原子替换，判据都在 Python 侧，待搬",
@@ -140,6 +159,40 @@ DEFERRED: dict[str, str] = {
     "backend/readiness.py": "就绪度聚合：纯逻辑但与 UI 呈现耦合，待拆",
     "backend/codec_selftest.py": "编解码自检：要真 ffmpeg 才能验，本机装不了",
 }
+
+# 第 15 轮新增：这些**已经搬完了**，从 ``DEFERRED`` 挪到 ``PORTED``。
+#: 每条都注明是哪个 crate 在消费它，以及"搬的是什么"（不是"整个文件"）。
+PORTED_IN_R15: dict[str, str] = {
+    "auto_spin.py": "rm-calibration：编排层（判定早已在 rm-control 对拍过）",
+    "calibration.py": "rm-calibration：档案解析/校验（cv2 那半不搬）",
+    "runtime_paths.py": "rm-ports::paths：路径发现与清单校验",
+    "serial_ports.py": "rm-ports::ports：描述串解析/打分/排序，**不碰真设备**",
+    "config_store.py": "rm-config：存读 + 原子写 + 异步写盘状态机 + 迁移（线程未搬）",
+    "backend/field_log.py": "rm-logstore：轮转写盘 + 队列状态机 + 回放（写盘线程未搬）",
+    "backend/readiness.py": "rm-readiness：28 条闸门聚合（打包格式刻意没搬）",
+    "backend/qualification.py": "rm-readiness：证据组装/签署（打包格式刻意没搬）",
+}
+
+# 第 14/15 轮新增的**传输层** crate。
+#:
+#: 它们**不能**进 ``PORTED`` —— 那张表的键是 **Python 模块名**，
+#: 而且有一条断言查"每个键都是磁盘上真实存在的模块"。
+#: 所以另立一张表：值是说明，键是 crate 名。
+#:
+#: 为什么要单列：``rm-serial`` / ``rm-mqtt`` 对应的是
+#: ``polar_link.py`` / ``mqtt_backend.py`` 这**两个模块的传输那一半**，
+#: 而那两个模块的判据已经分别挂在 ``PORTED`` 的其它条目上了。
+#: 不单列的后果很具体：**新增 crate 忘了登记 nobody 会发现** ——
+#: 这正是下面 ``every_crate_on_disk_is_registered_somewhere`` 抓到的第一批漏项。
+CRATE_NOTES: dict[str, str] = {
+    "rm-serial": "polar_link.py + serial_ports.py 的**真串口那一半**"
+                 "（0x5A 编解码/收发/限频/看门狗/归零停机）",
+    "rm-mqtt": "mqtt_backend.py 的传输与裁判解码那一半"
+               "（MQTT 出口 + 0xA5 RobotStatus/GameStatus + 自回声分账）",
+}
+for _name, _why in PORTED_IN_R15.items():
+    DEFERRED.pop(_name, None)
+    PORTED.setdefault(_name, _why)
 
 
 # ===========================================================================
@@ -324,6 +377,76 @@ def test_scenarios_duplicate_is_pinned_to_the_reference() -> None:
               "并且 scenario_parity.rs 里那份缺口清单也要一起删")
 
 
+def test_every_crate_on_disk_is_registered_somewhere() -> None:
+    """磁盘上每个 crate 都得在这张表里**留下痕迹**。
+
+    # 为什么加这条
+
+    这张表骗过我两次，**而且两次骗的方式不同**：
+
+    * **第 12 轮**：``rm-economy`` / ``rm-combat`` / ``rm-ballistics`` 落地了，
+      表里还写着"第 7 轮在搬"。那次我加的守卫是
+      "``PORTED`` 里若有'待搬/在搬'字样直接红" ——
+      它确实能抓到那一类。
+    * **第 15 轮**：``rm-calibration`` / ``rm-ports`` / ``rm-config`` /
+      ``rm-logstore`` 都落地并对拍过了，表里却还把它们分类成
+      **"还没搬"**。上面那条守卫**完全没响** ——
+      因为漂移发生在 ``DEFERRED``，不是 ``PORTED``。
+
+    所以**只查某一张表里的措辞是不够的**：分类本身会漂。
+    真正稳定的判据是**磁盘与表是否一致**。
+
+    # 判定口径
+
+    允许"没痕迹"的只有一类：**纯支撑 crate**
+    （``rm-client`` 是组合根，``rm-protocol`` 等是底层）——
+    它们不对应任何单个 Python 模块，是 Rust 侧自己的分层。
+    其余任何 crate 都必须在 ``PORTED`` 的说明里出现过。
+
+    一条 crate 名既不在 ``PORTED`` 的说明里、也不在豁免名单里 ⇒ 红。
+    """
+
+    crates_dir = RS_ROOT / "crates"
+    if not crates_dir.is_dir():
+        check("找得到 rmclient-rs 的 crates 目录（否则本条静默跳过）", False,
+              f"{crates_dir} 不存在 —— 那这条断言等于没跑")
+        return
+
+    on_disk = {p.name for p in crates_dir.iterdir() if p.is_dir()}
+    # 纯支撑层：不对应单个 Python 模块，是 Rust 侧自己的分层。
+    exempt = {
+        "rm-client",     # 组合根二进制
+        "rm-link",       # PolarStateBridge + 仲裁器
+        "rm-transport",  # 传输层
+        "rm-control",    # 75Hz 回路
+        "rm-safety",     # 安全闸
+        "rm-state",      # 状态容器
+        "rm-spec",       # 规格加载
+    }
+    blob = " || ".join(PORTED.values()) + " || " + " || ".join(CRATE_NOTES.values())
+    # 判定要查**两种**痕迹：``CRATE_NOTES`` 的**键**（传输层 crate 靠它登记）
+    # 与 ``PORTED`` 说明正文里提到的 crate 名（纯逻辑 crate 靠它登记）。
+    #
+    # 第一版只查了 blob，于是刚补的 ``CRATE_NOTES`` 自己没算进去 ——
+    # 守卫立刻把它刚登记的两条报成"没登记"。**加了守卫之后要看着它跑一遍**，
+    # 否则你不知道自己写的守卫查的是不是你以为的那张表。
+    missing = sorted(
+        name for name in on_disk
+        if name not in exempt and name not in CRATE_NOTES and name not in blob
+    )
+    check(f"磁盘上 {len(on_disk)} 个 crate，每一个都能在 PORTED/CRATE_NOTES 说明里找到对应",
+          not missing,
+          "这些 crate 没有对应条目：" + ", ".join(missing)
+          + " —— 新增 crate 时忘了写它对应哪个 Python 模块")
+
+    # 反向：``CRATE_NOTES`` 里提到、但磁盘上没有的 crate（写错了 / 已改名）。
+    # 表会骗人的方式之一就是"引用了一个不存在的东西"。
+    stale = sorted(n for n in CRATE_NOTES if n not in on_disk)
+    check("CRATE_NOTES 里没有磁盘上不存在的 crate", not stale,
+          "提到了不存在的：" + ", ".join(stale)
+          + " —— crate 改名或写错了，表会开始骗人")
+
+
 def test_freeze_globs_actually_match_something() -> None:
     """冻结清单里**每一条都得真的匹配到文件**。
 
@@ -371,6 +494,7 @@ def main() -> int:
         test_tables_do_not_overlap,
         test_frozen_table_matches_the_actual_guard,
         test_freeze_globs_actually_match_something,
+        test_every_crate_on_disk_is_registered_somewhere,
         test_deferred_entries_all_have_a_reason,
         test_ported_entries_name_a_real_crate,
         test_coverage_numbers_are_reported_honestly,
