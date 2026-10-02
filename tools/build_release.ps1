@@ -421,6 +421,7 @@ print('polar spec OK: %d segments, %d roles, %d warnings'
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\mqtt_link_bad_port_test.py") "mqtt_link_bad_port" 180 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\mqtt_backend_branches_audit_test.py") "mqtt_backend_branches_audit" 300 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\polar_spec_bad_input_test.py") "polar_spec_bad_input" 240 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\mqtt_dispatch_liveness_test.py") "mqtt_dispatch_liveness" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\field_log_branches_audit_test.py") "field_log_branches_audit" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\manager_safety_branch_audit_test.py") "manager_safety_branch_audit" 300 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\polar_link_bridge_branches_test.py") "polar_link_bridge_branches" 300 $testLogRoot

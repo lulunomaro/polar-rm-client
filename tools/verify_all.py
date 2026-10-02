@@ -83,7 +83,8 @@ PYTHON_SUITES = (
     "mock_output_gate_fragility_test",
     "mqtt_link_bad_port_test",
     "mqtt_backend_branches_audit_test",  # 75 个决策点，审计前 32 条零覆盖（自回声分账/通用解码）
-    "polar_spec_bad_input_test",  # 69 个决策点，坏规格输入；规格坏了会静默回退内置表  # MQTT 端口写坏时 sync_mqtt_link 不该抛 —— 已修的缺陷
+    "polar_spec_bad_input_test",
+    "mqtt_dispatch_liveness_test",  # 把 6 条"挂死型"检出变成带标签的活性断言（不是靠 sleep）  # 69 个决策点，坏规格输入；规格坏了会静默回退内置表  # MQTT 端口写坏时 sync_mqtt_link 不该抛 —— 已修的缺陷
     "field_log_branches_audit_test",  # field_log 74 个决策点里 31 条改坏了没人发现
     "manager_safety_branch_audit_test",  # manager.py tick 之外的部分 + safety.py
     "polar_link_bridge_branches_test",  # polar_link 52 + polar_bridge 83 个决策点，260 变异 118 存活  # 守住"写入端收敛成 bool"这个前提 —— 闸门朝 fail-open 方向坏
