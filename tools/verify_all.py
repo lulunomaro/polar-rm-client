@@ -80,6 +80,7 @@ PYTHON_SUITES = (
     "encode_invariant_attack_test",  # 攻编码路径：fire 恒 0、禁位不上线（不只查常量）
     "zero_frame_and_diagnostics_test",
     "rust_port_coverage_test",
+    "mock_output_gate_fragility_test",  # 守住"写入端收敛成 bool"这个前提 —— 闸门朝 fail-open 方向坏
     "tick_polar_link_branches_test",
     "control_untested_branches_test",  # control.py 144 个决策点里 27 个从未走到（含 DT7 粘键误报那条）
     "model_state_branches_test",  # model.py RobotState 45 个决策点里 32 个从未走到（71.1%）
