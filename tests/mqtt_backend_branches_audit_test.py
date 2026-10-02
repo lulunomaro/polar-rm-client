@@ -959,6 +959,51 @@ def test_stop_survives_a_broken_client() -> None:
           events)
 
 
+def test_stop_survives_a_publish_that_raises() -> None:
+    """`stop()` 里那条 `{"online":false}` **发不出去**时，仍要收拾干净。
+
+    # 为什么单列一条
+
+    第 17 轮复核第 14 轮的变异结果时发现：`stop()` 里有**三个**字节完全一样的
+    `except Exception:`，而第 14 轮那个变异注入器用
+    `str.replace(raw, new, 1)` 做**文本首次出现**替换、没有按行号定位 ——
+    于是这一行**从来没被真正改过**，它"已覆盖"是假的。
+
+    复核 agent 给出���现场原因很具体：`FakeClient(wait_exc=True)` 只让
+    `disconnect` / `loop_stop` 抛，**`publish` 不抛** ——
+    所以全仓库没有任何一处让 `stop()` 里的 `client.publish` 抛异常，
+    那一行的 handler 不可达。
+
+    这条把它变成可达：让 `publish` 抛，断言**后面三步照走**。
+    """
+    print("\n[31] stop() 容忍 publish 抛异常（online:false 发不出去）")
+    b = RmMqttBackend()
+    client = FakeClient(publish_exc=RuntimeError("publish boom"), wait_exc=True)
+    b.client = client
+    b._started = True
+    b._decoded.append(("t", "n", {}, 0.0))
+    b._received_messages.append(("t", b"p", 0.0))
+    events: list = []
+    b.event_hook = lambda n, **pl: events.append((n, pl))
+    try:
+        b.stop()
+        b.flush_events(timeout=3.0)
+        raised = ""
+    except Exception as exc:  # noqa: BLE001
+        raised = repr(exc)
+    check("publish 抛异常时 stop 也没抛", raised == "", raised)
+    check("离线那条根本没发出去（所以下面那句 connected 是干净的 False）",
+          client.published == [], client.published)
+    check("解码缓存照样清了", len(b._decoded) == 0, list(b._decoded))
+    check("收包缓存照样清了", len(b._received_messages) == 0, list(b._received_messages))
+    check("connected 置 False", b.connected is False, b.connected)
+    check("仍然落了 mqtt_disconnect", ("mqtt_disconnect", {"reason": "stop"}) in events,
+          events)
+    check("disconnect / loop_stop 仍然被调过（publish 抛异常不许把后面两步吃掉）",
+          client.disconnect_calls == 1 and client.loop_stop_calls == 1,
+          f"disconnect={client.disconnect_calls} loop_stop={client.loop_stop_calls}")
+
+
 def test_stop_waits_for_qos1_when_available() -> None:
     """`if callable(waiter)`：只有返回对象真的有 wait_for_publish 才等它。
 
@@ -1297,6 +1342,7 @@ def main() -> int:
     test_custom_control_length_bound()
     test_stop_clears_the_previous_epoch()
     test_stop_survives_a_broken_client()
+    test_stop_survives_a_publish_that_raises()
     test_stop_waits_for_qos1_when_available()
     test_stop_without_client()
     test_stop_without_publishing_status()

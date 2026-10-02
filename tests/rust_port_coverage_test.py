@@ -189,6 +189,11 @@ CRATE_NOTES: dict[str, str] = {
                  "（0x5A 编解码/收发/限频/看门狗/归零停机）",
     "rm-mqtt": "mqtt_backend.py 的传输与裁判解码那一半"
                "（MQTT 出口 + 0xA5 RobotStatus/GameStatus + 自回声分账）",
+    # 第 17 轮：用户给了"**能保证视觉效果不变就动**"的有条件许可，
+    # 这批是满足条件的。`tongji_yolo.py`（cv2/numpy 推理，真动像素）与
+    # `app.py`（UI 全在冻结区）**不满足**，所以仍然不在这里。
+    "rm-audio": "ui_audio.py：音频输出（**与视觉零耦合**，这批里最安全的）",
+    "rm-vision": "vision.py：判定与数值，**不碰像素**",
 }
 #: 已定的产品决策（**用户拍板**，不是我能自己改的）。
 #:
