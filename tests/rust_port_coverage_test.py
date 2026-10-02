@@ -82,7 +82,13 @@ PORTED: dict[str, str] = {
     "model.py": "rm-state（Setting / Module / ModuleRegistry / RobotState）",
     "control.py": "rm-control（75Hz 回路 / 自检评估器）",
     "transports.py": "rm-transport（FrameAssembler / UDP 收包）",
-    "scenarios.py": "rm-client::plan::ScenarioKey（**这一条是手抄的，见最后一条断言**）",
+    "scenarios.py": "rm-client::plan::ScenarioKey（**手抄的，但已由 scenario_parity.rs 逐项对拍钉住**）",
+    "robot_profiles.py": "rm-ballistics（消费 golden/tables_vectors.json 的 robot_profiles 段，**不手抄**）",
+    "economy.py": "rm-economy（2,750 组向量）：报价矩阵 + QoS1 重复扣款准入 + 事务结算",
+    "combat_events.py": "rm-combat（6,355 条观测）：累计量增量才是边沿",
+    "match_chat.py": "rm-combat：战况播报文案逐字比对",
+    "hero_lob.py": "rm-ballistics：抛物线解算（纯 math）",
+    "armor_vehicle.py": "rm-ballistics：只搬不依赖 cv2 的数学那半（cv2 那一半不搬）",
     "replay.py": "rm-client（--replay-field-log）",
     "settings_access.py": "rm-state::value + 各 crate 自己的读取器",
     "preflight.py": "rm-client（只搬了参数解析与出口；预检执行仍留在 Python）",
@@ -111,23 +117,23 @@ FROZEN: dict[str, str] = {
 #: ``app.py`` 都在这里而**不在** ``FROZEN`` 里 —— 它们确实与视觉强相关，
 #: 但**没有被冻结**，所以"暂不搬"是**取舍**，不是"不许动"。
 DEFERRED: dict[str, str] = {
-    "economy.py": "第 7 轮在搬（rm-economy）：经济准入判错会表现为扣扳机没反应或超功率烧底盘",
-    "combat_events.py": "第 7 轮在搬（rm-combat）：累计量增量才是边沿，此前出过一个真 bug",
-    "match_chat.py": "第 7 轮在搬（rm-combat）：战况播报文案要逐字一致",
-    "hero_lob.py": "第 7 轮在搬（rm-ballistics）：抛物线解算，纯 math",
-    "armor_vehicle.py": "第 7 轮在搬（rm-ballistics）：只搬不依赖 cv2 的数学那半",
-    "auto_spin.py": "第 3 轮已把判定逻辑的向量做进 rm-control；本模块是薄编排层，待接",
+
+
+
+
+
+    "auto_spin.py": "第 12 轮在搬（rm-calibration）：判定逻辑早已做进 rm-control，这里只搬编排",
     "config_store.py": "配置落盘：含 atexit / 并发写 / 原子替换，判据都在 Python 侧，待搬",
-    "calibration.py": "自瞄标定：与视觉强耦合，待拆出纯计算部分再搬",
+    "calibration.py": "第 12 轮在搬（rm-calibration）",
     "vision.py": "与视觉强相关但**未被冻结**：取舍，不是禁令。判据要靠假设备搭一套",
     "tongji_yolo.py": "与视觉强相关但**未被冻结**：取舍。含 cv2 与 numpy 推理链路",
     "tongji_bridge.py": "与视觉强相关但**未被冻结**：取舍。含 socket/threading",
     "ui_audio.py": "与视觉强相关但**未被冻结**：取舍。输出是声音不是画面",
     "app.py": "主窗口装配：UI 全在冻结区，搬了也没有意义；只可能搬编排层",
-    "match_modes.py": "赛制模式表：纯数据，随场景表一起搬更合适",
-    "robot_profiles.py": "机器人档案表：纯数据，随场景表一起搬更合适",
-    "runtime_paths.py": "运行期路径解析：os 语义重、收益低，且纯本地路径",
-    "serial_ports.py": "串口枚举：pyserial 重，且**不该**在测试里碰真设备",
+    "match_modes.py": "赛制模式表：已随 tables_vectors 导出，但 rm-client 尚未消费，待接",
+
+    "runtime_paths.py": "第 12 轮在搬（rm-ports）",
+    "serial_ports.py": "第 12 轮在搬（rm-ports）：只搬解析与排序，**不碰真设备**",
     "backend/manager.py": "组合根：已由 rm-client 承担判据，但这一层还混着大量编排，待拆",
     "backend/field_log.py": "现场日志：异步写盘 + 回放，判据在 Python 侧，待搬",
     "backend/qualification.py": "资格赛证据管理：与导出打包面耦合，待搬",
