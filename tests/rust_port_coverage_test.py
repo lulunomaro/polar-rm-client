@@ -118,14 +118,14 @@ FROZEN: dict[str, str] = {
 #: 但**没有被冻结**，所以"暂不搬"是**取舍**，不是"不许动"。
 DEFERRED: dict[str, str] = {
 
-    "vision.py": "与视觉强相关但**未被冻结**：取舍，不是禁令。判据要靠假设备搭一套",
+    # ⚠ 这七条**原来写了两遍**（一份在下面那段历史记录之前、一份在之后），
+    # 而 **Python 的 dict 字面量只保留最后一次出现** —— 于是前半份是**死代码**：
+    # 改它不报错、不告警、也毫无效果。
+    # 守卫是 `test_no_table_has_a_duplicated_key`，它读 AST 而不是运行时 dict
+    # （运行时的 dict 恰恰是骗人的那个东西）。
+
     "tongji_yolo.py": "与视觉强相关但**未被冻结**：取舍。含 cv2 与 numpy 推理链路",
     "tongji_bridge.py": "与视觉强相关但**未被冻结**：取舍。含 socket/threading",
-    "ui_audio.py": "与视觉强相关但**未被冻结**：取舍。输出是声音不是画面",
-    "app.py": "主窗口装配：UI 全在冻结区，搬了也没有意义；只可能搬编排层",
-    "backend/manager.py": "组合根：已由 rm-client 承担判据，但这一层还混着大量编排，待拆",
-    "backend/codec_selftest.py": "编解码自检：要真 ffmpeg 才能验，本机装不了",
-
     # ---- 以下几项是第 15 轮之前**忘了更新**的 ----
     #
     # 这一段留着当记录：第 12 轮我给 `PORTED` 加了"'待搬/在搬'字样直接红"的断言，
@@ -145,9 +145,6 @@ DEFERRED: dict[str, str] = {
     "config_store.py": "配置落盘：含 atexit / 并发写 / 原子替换，判据都在 Python 侧，待搬",
     "calibration.py": "第 12 轮在搬（rm-calibration）",
     "vision.py": "与视觉强相关但**未被冻结**：取舍，不是禁令。判据要靠假设备搭一套",
-    "tongji_yolo.py": "与视觉强相关但**未被冻结**：取舍。含 cv2 与 numpy 推理链路",
-    "tongji_bridge.py": "与视觉强相关但**未被冻结**：取舍。含 socket/threading",
-    "ui_audio.py": "与视觉强相关但**未被冻结**：取舍。输出是声音不是画面",
     "app.py": "主窗口装配：UI 全在冻结区，搬了也没有意义；只可能搬编排层",
     "match_modes.py": "赛制模式表：已随 tables_vectors 导出，但 rm-client 尚未消费，待接",
 
@@ -171,6 +168,16 @@ PORTED_IN_R15: dict[str, str] = {
     "backend/field_log.py": "rm-logstore：轮转写盘 + 队列状态机 + 回放（写盘线程未搬）",
     "backend/readiness.py": "rm-readiness：28 条闸门聚合（打包格式刻意没搬）",
     "backend/qualification.py": "rm-readiness：证据组装/签署（打包格式刻意没搬）",
+    # ---- 第 17 轮：用户给了"**能保证视觉效果不变就动**"的有条件许可 ----
+    #
+    # 这两条**原来挂在 DEFERRED**，写着"判据要靠假设备搭一套"。
+    # 第 17 轮那套假设备（黄金向量 + 逐位对拍）**已经建好并证过了**，
+    # 所以分类该跟着走 —— 表没跟上，方向还是**乐观**的那种漂移：
+    # 表说"还没搬"，实际"搬了、还证过"。
+    # 守卫是 `test_a_ported_crate_means_its_module_is_not_still_deferred`。
+    "vision.py": "rm-vision：观测/快照/桥接协议/摄像头策略，**一帧像素都不产生**。"
+                 "cv2 推理那一半（tongji_yolo.py）不满足条件，仍在 DEFERRED",
+    "ui_audio.py": "rm-audio：音效判定 + 音频池状态机 + 导入，**与视觉零耦合**",
 }
 
 # 第 14/15 轮新增的**传输层** crate。
@@ -536,6 +543,117 @@ def test_freeze_globs_actually_match_something() -> None:
             print(f"        也许搬到了：{path.relative_to(ROOT)}")
 
 
+def test_no_table_has_a_duplicated_key() -> None:
+    """任何一张表里都**不许**有重复的键。
+
+    # 这条守卫是被一个真实的、静默的缺陷逼出来的
+
+    第 21 轮查分类漂移时，``DEFERRED`` 里看到两组**一模一样的条目**：
+
+    ````python
+    DEFERRED: dict[str, str] = {
+        "vision.py": "...取舍，不是禁令。判据要靠假设备搭一套",   # L121
+        ...
+        "vision.py": "...取舍，不是禁令。判据要靠假设备搭一套",   # L147
+        "backend/manager.py": "...",                              # L126
+        ...
+        "backend/manager.py": "...",                              # L156
+    }
+    ````
+
+    **Python 的 dict 字面量只保留最后一次出现** —— 于是 L121-127 那七条
+    是**死代码**：改它们不会有任何效果，而且**不报错、不告警**。
+
+    这跟之前栽过的几次是同一个家族：**表会骗人，而它骗人的方式是新的**。
+    上一轮骗的是"分类漂移"，这一轮还多一种：**同一条写两遍，后一条默默吃掉前一条**。
+
+    所以判定口径是**读源码的 AST**，不读运行时的 dict ——
+    运行时的 dict 恰恰是骗人的那个东西。
+    """
+    import ast
+
+    source = Path(__file__).read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    wanted = {"PORTED", "PORTED_IN_R15", "FROZEN", "DEFERRED",
+              "CRATE_NOTES", "DECIDED"}
+
+    seen_any = False
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.AnnAssign | ast.Assign):
+            continue
+        if isinstance(node, ast.AnnAssign):
+            target, value = node.target, node.value
+        else:
+            if not node.targets or not isinstance(node.targets[0], ast.Name):
+                continue
+            target, value = node.targets[0], node.value
+        if not isinstance(target, ast.Name) or target.id not in wanted:
+            continue
+        if not isinstance(value, ast.Dict):
+            continue
+        seen_any = True
+        keys: list[str] = []
+        for key in value.keys:
+            if isinstance(key, ast.Constant) and isinstance(key.value, str):
+                keys.append(key.value)
+        repeated = sorted({k for k in keys if keys.count(k) > 1})
+        check(
+            f"{target.id} 里没有重复的键",
+            not repeated,
+            f"重复 {len(repeated)} 条：{repeated} —— "
+            f"dict 字面量只保留最后一次出现，所以前一遍是**死代码**："
+            f"改它不报错、不告警、也没有任何效果",
+        )
+
+    check("至少读到了一张表的 AST", seen_any, "一张表都没读到 —— 守卫等于没跑")
+
+
+def test_a_ported_crate_means_its_module_is_not_still_deferred() -> None:
+    """``CRATE_NOTES`` 点名的 Python 模块，**不许**还挂在 ``DEFERRED`` 上。
+
+    # 为什么加这条
+
+    第 17 轮落地了 ``rm-audio`` / ``rm-vision`` 两个 crate，
+    它们写进了 ``CRATE_NOTES``（守卫查磁盘与表一致，**没响** ——
+    因为 disk-vs-table 一致是真的）。
+
+    但 ``vision.py`` / ``ui_audio.py`` 在 ``DEFERRED`` 里**原封不动**，
+    还写着"取舍，不是禁令。判据要靠假设备搭一套" ——
+    而假设备那套判据**第 17 轮就建好了**（黄金向量 + 逐位对拍）。
+
+    于是又是一次漂移，而且方向是**乐观**：表说"还没搬"，
+    实际"搬了、还证过"。汇报口径会说"暂不搬 8 个"，
+    而真实数字是 6 个。
+
+    # 判定口径
+
+    ``CRATE_NOTES`` 的值里出现的、**磁盘上真实存在**的 Python 模块名，
+    必须已经不在 ``DEFERRED`` 里。
+    """
+    import re
+
+    deferred_keys = set(DEFERRED)
+    # PORTED 的键 + PORTED_IN_R15 的键 = 已经搬走的
+    ported = set(PORTED) | set(PORTED_IN_R15)
+    check("PORTED_IN_R15 的条目确实已从 DEFERRED 移走",
+          not (set(PORTED_IN_R15) & deferred_keys),
+          f"同时出现在两张表：{sorted(set(PORTED_IN_R15) & deferred_keys)}")
+
+    pattern = re.compile(r"[\w/]+\.py")
+    for crate, note in sorted(CRATE_NOTES.items()):
+        for named in sorted(set(pattern.findall(note))):
+            if named not in deferred_keys:
+                continue  # 已经不在 DEFERRED 里 —— 这正是我们要的
+            check(
+                f"crate {crate} 消费的 {named} 不该还在 DEFERRED 里",
+                False,
+                f"{named} 被 {crate} 消费，却在 DEFERRED 里写着"
+                f"「{DEFERRED[named]}」—— 那是第 17 轮之前的口径，"
+                f"判据建好之后没回来改分类",
+            )
+            break  # 只报一次，继续报会刷屏
+
+
 def main() -> int:
     tests = [
         test_every_module_is_classified,
@@ -548,6 +666,8 @@ def main() -> int:
         test_ported_entries_name_a_real_crate,
         test_coverage_numbers_are_reported_honestly,
         test_scenarios_duplicate_is_pinned_to_the_reference,
+        test_no_table_has_a_duplicated_key,
+        test_a_ported_crate_means_its_module_is_not_still_deferred,
     ]
     for test in tests:
         print(f"\n--- {test.__name__} ---")
