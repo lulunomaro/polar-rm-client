@@ -190,6 +190,26 @@ CRATE_NOTES: dict[str, str] = {
     "rm-mqtt": "mqtt_backend.py 的传输与裁判解码那一半"
                "（MQTT 出口 + 0xA5 RobotStatus/GameStatus + 自回声分账）",
 }
+#: 已定的产品决策（**用户拍板**，不是我能自己改的）。
+#:
+#: 记在这里是因为它是一条**长期悬着**的分叉：Python 与 Rust 都**不加** DT7 闸门。
+#: 依据是 Python 的 ``_send_direct_dt7`` 本来就没有 ``OfficialSafety`` ——
+#: 只给一边加会让两个客户端**对同一输入反应不同**，
+#: 而"以 Python 为准"是本仓所有对拍的前提。
+#:
+#: 风险照实记着：**DT7 这条路没有任何许可校验**。
+#: 真要收口，正确做法是**两个客户端同时加同一道闸**，
+#: 而不是只给 Rust 加 —— 后者会破坏上面那条前提。
+DECIDED: dict[str, str] = {
+    "DT7 出口安全闸": "**不加**（用户第 16 轮拍板）：Python 侧本来也没有，"
+                       "只给一边加会让两个客户端对同一输入反应不同。"
+                       "风险：DT7 无任何许可校验，已知并接受。",
+    "视觉取舍那 5 个模块": "**可以搬，条件是能保证视觉效果不变**（用户第 16 轮）。"
+                          "保证机制：Python 参照实现逐字节不动 + 黄金向量对拍 + "
+                          "Rust 侧不碰任何像素。`tongji_yolo.py`（cv2/numpy 推理）"
+                          "与 `app.py`（UI 全在冻结区）不满足这个条件，本轮不搬。",
+}
+
 for _name, _why in PORTED_IN_R15.items():
     DEFERRED.pop(_name, None)
     PORTED.setdefault(_name, _why)
@@ -377,6 +397,29 @@ def test_scenarios_duplicate_is_pinned_to_the_reference() -> None:
               "并且 scenario_parity.rs 里那份缺口清单也要一起删")
 
 
+def test_every_product_decision_is_written_down() -> None:
+    """已定的产品决策必须留在代码里，不能只活在对话里。
+
+    DT7 那条悬了好几轮：每次我都在报告末尾问一遍，用户每次都没当场答，
+    于是我一直按"暂不决定"处理。**一个没有落点的决策会一直漂** ——
+    下一个人接手时既看不到问题，也看不到理由。
+
+    所以把拍板结果写进代码：值就是"用户第几轮拍的 + 依据 + 风险"。
+    风险那一段是**故意留着的** —— 只写"不加"不写"所以 DT7 没有许可校验"，
+    下一个人会以为这是个安全的现状。
+    """
+    check("有 DECIDED 这张表", bool(DECIDED), "空的 —— 拍板结果没落进代码")
+    check("DT7 出口的决策被记下来了", "DT7" in " ".join(DECIDED),
+          "DT7 这条决策不见了")
+    dt7 = next((v for k, v in DECIDED.items() if "DT7" in k), "")
+    check("DT7 那条同时记了依据**和**风险",
+          "不加" in dt7 and ("风险" in dt7 or "无任何许可校验" in dt7),
+          f"只写了决定、没写风险：{dt7[:70]}")
+    check("视觉取舍那条记了'保证不变'的条件",
+          any("保证" in v for v in DECIDED.values()),
+          "用户给的是有条件的许可，条件必须跟着记下来，否则会被当成无条件")
+
+
 def test_every_crate_on_disk_is_registered_somewhere() -> None:
     """磁盘上每个 crate 都得在这张表里**留下痕迹**。
 
@@ -494,6 +537,7 @@ def main() -> int:
         test_tables_do_not_overlap,
         test_frozen_table_matches_the_actual_guard,
         test_freeze_globs_actually_match_something,
+        test_every_product_decision_is_written_down,
         test_every_crate_on_disk_is_registered_somewhere,
         test_deferred_entries_all_have_a_reason,
         test_ported_entries_name_a_real_crate,
