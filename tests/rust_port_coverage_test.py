@@ -143,7 +143,7 @@ DEFERRED: dict[str, str] = {
     "config_store.py": "配置落盘：含 atexit / 并发写 / 原子替换，判据都在 Python 侧，待搬",
     "vision.py": "与视觉强相关但**未被冻结**：取舍，不是禁令。判据要靠假设备搭一套",
     "app.py": "主窗口装配：UI 全在冻结区，搬了也没有意义；只可能搬编排层",
-    "match_modes.py": "赛制模式表：已随 tables_vectors 导出，但 rm-client 尚未消费，待接",
+    "match_modes.py": "红线留下（非待办）：整个文件就是**视觉配置** —— `asset_path`、场地热区坐标、`default_right_display` / `default_map_size` / `default_module_list_style`。搬它不能帮 rm-client 的控制链，而要消费它就得先接管渲染默认值——**那正好是红线禁的那一段**",
     "backend/manager.py": "组合根：已由 rm-client 承担判据，但这一层还混着大量编排，待拆",
     "backend/field_log.py": "现场日志：异步写盘 + 回放，判据在 Python 侧，待搬",
     "backend/qualification.py": "资格赛证据管理：与导出打包面耦合，待搬",
@@ -615,14 +615,44 @@ def test_a_deferred_entry_does_not_claim_to_be_porting_a_crate_that_already_exis
     **且它提到的那个 crate 目录真实存在**，就是漂移 —— 红。
     """
     import re as _re
-    root = pathlib.Path(__file__).resolve().parents[1]
-    crates = {p.name for p in (root.parent / "rmclient-rs" / "crates").glob("*") if p.is_dir()}
+    root = Path(__file__).resolve().parents[1]
+    crate_dir = root.parent / "rmclient-rs" / "crates"
+    crates = {q.name for q in crate_dir.glob("*") if q.is_dir()} if crate_dir.is_dir() else set()
     drifted = []
     for name, why in DEFERRED.items():
         for token in _re.findall(r"rm-[a-z][a-z0-9_-]*", why):
             if "在搬" in why and token in crates:
                 drifted.append(f"{name} 声称在搬 {token}，而 crates/{token}/ 已存在")
     assert not drifted, "分类漂移（DEFERRED 里声称在搬的 crate 已经落地）：\n  " + "\n  ".join(drifted)
+
+
+def test_a_visual_adjacent_deferred_entry_must_name_the_red_line_not_a_pending_task() -> None:
+    """**第 39 轮加的** —— “因为红线所以不搬”与“暂未搬”是两件完全不同的事。
+
+    原来 `match_modes.py` 的说明是“已随 tables_vectors 导出，但 rm-client
+    尚未消费，待接”——这句话说的是**尚未开始**。
+
+    但它整个文件就是**视觉配置**：`asset_path`、场地热区坐标、
+    `default_right_display` / `default_map_size` / `default_module_list_style`。
+    搬它不能帮 rm-client 的控制链，而要**消费**它就得先接管
+    渲染默认值——那正好是红线禁的那一段。
+
+    把“永远不搬”写成“待接”、等于**留下一个会被完成的工作**。
+
+    判据：说明里出现视觉词的 `DEFERRED` 条目，必须同时写明**红线**。
+    """
+    import re as _re
+    visual = _re.compile(r"asset|\u70ed区|\u5730图|\u663e\u793a|\u6e32\u67d3|UI|\u89c6觉|display|layout|map")
+    bad = []
+    for name, why in DEFERRED.items():
+        if visual.search(why) and "红线" not in why and "冻结" not in why:
+            bad.append(f"{name}: {why[:60]}")
+    assert not bad, (
+        "\u8fd9些 `DEFERRED` 条目说的是**视觉**配置，"
+        "却没有写明红线决定\u2014\u2014"
+        "读的人会当它是**待办**，而不是**永远不办**\n  "
+        + "\n  ".join(bad)
+    )
 
 def test_a_ported_crate_means_its_module_is_not_still_deferred() -> None:
     """``CRATE_NOTES`` 点名的 Python 模块，**不许**还挂在 ``DEFERRED`` 上。
@@ -671,20 +701,26 @@ def test_a_ported_crate_means_its_module_is_not_still_deferred() -> None:
 
 
 def main() -> int:
+    # 第 39 轮改掉手写清单。
+    #
+    # 之前这里是**手写的测试函数列表**。后来加的守卫一个都没进来——
+    # **它们根本没跑过，却看着像是"all pass"。**
+    #
+    # 很具体的失败：我加守卫后跑了一遍，看到"全部通过（31 项）"
+    # 就算了守卫生效——**没有对项数”**。而项数本来就没变。
+    #
+    # 所以改成**自动发现**：只收集模块层的 `test_*`。
+    # 手写清单的真正回报是“它不会共享一份清单”——
+    # 但它的价格是**每次加守卫都可能静默地没跑**，而这种失败看不出来。
+    import inspect as _inspect
     tests = [
-        test_every_module_is_classified,
-        test_tables_do_not_overlap,
-        test_frozen_table_matches_the_actual_guard,
-        test_freeze_globs_actually_match_something,
-        test_every_product_decision_is_written_down,
-        test_every_crate_on_disk_is_registered_somewhere,
-        test_deferred_entries_all_have_a_reason,
-        test_ported_entries_name_a_real_crate,
-        test_coverage_numbers_are_reported_honestly,
-        test_scenarios_duplicate_is_pinned_to_the_reference,
-        test_no_table_has_a_duplicated_key,
-        test_a_ported_crate_means_its_module_is_not_still_deferred,
+        _obj
+        for _name, _obj in sorted(globals().items())
+        if _name.startswith("test_")
+        and callable(_obj)
+        and _inspect.getmodule(_obj) is _inspect.getmodule(main)
     ]
+    assert tests, "一条 `test_*` 都没有 —— 探针本身出错了"
     for test in tests:
         print(f"\n--- {test.__name__} ---")
         try:
