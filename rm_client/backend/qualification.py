@@ -4,10 +4,15 @@ Evidence lives beside the portable application and is authenticated with a
 per-installation HMAC key.  It is not a substitute for physical supervision;
 it prevents ordinary config edits or accidental corruption from unlocking
 control and keeps every authorization bound to build and firmware identities.
+
+Evidence writes go through :func:`_replace_with_retry` below: a bare
+``os.replace`` loses a qualification record outright whenever an antivirus
+scan, backup agent or sync client happens to hold the file open.
 """
 
 from __future__ import annotations
 
+import errno
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 import hashlib
@@ -59,6 +64,41 @@ PRM1_TESTS = frozenset(
     }
 )
 
+
+
+# 第 104 轮：证据写入的有界退避。与 `config_store` 里那份同殐，但**故意不导入那个模块**。
+#
+# 为什么不直接用 `config_store._replace_with_retry`：那个模块在**模块级**
+# `atexit.register(_flush_at_exit)`。**从别处 import 它会顺带把那个钩子装上** ——
+# 于是一个跟配置保存毫无关系的进程，退出时也要去跑一遍配置的排队落盘。
+# **「import 一个函数」不等于「只拿到那个函数」。**
+#
+# 这里的重复是有意的：证据链的可靠性优先于去重复。
+_REPLACE_RETRY_DELAYS: tuple[float, ...] = (
+    0.0, 0.0005, 0.001, 0.002, 0.004, 0.008, 0.016, 0.032, 0.064,
+)
+_REPLACE_RETRY_ERRORS = frozenset({errno.EACCES, errno.EPERM, errno.EBUSY})
+
+
+def _replace_with_retry(temp_path: Path, path: Path) -> None:
+    """``os.replace`` + 有界退避重试，总退避上限 127.5 ms。
+
+    钉子的是 ``winerror 5``（拒绝访问）与 ``32``（文件被占用）。
+    非这两类的错误**不重试**，立即抛出。
+    """
+    for delay in _REPLACE_RETRY_DELAYS:
+        try:
+            os.replace(temp_path, path)
+            return
+        except OSError as exc:
+            retryable = (
+                getattr(exc, "winerror", None) in (5, 32)
+                or exc.errno in _REPLACE_RETRY_ERRORS
+            )
+            if not retryable:
+                raise
+            time.sleep(delay)
+    os.replace(temp_path, path)
 
 class TestStatus(str, Enum):
     NOT_RUN = "NOT_RUN"
@@ -292,7 +332,22 @@ class QualificationEvidenceStore:
                 handle.write("\n")
                 handle.flush()
                 os.fsync(handle.fileno())
-            os.replace(temp_name, path)
+            # 第 104 轮：原来这里是**裸 `os.replace`**——单次尝试，不重试。
+            #
+            # 而 `config_store._replace_with_retry` 会对 `winerror 5/32`
+            # （文件被别的进程占住）与 `EACCES/EPERM/EBUSY` 做**有界退避**，总上限 127.5 ms。
+            #
+            # **后果是实质的**：只要有一个正在扫描的杀软 / 备份程序 / 同步盘
+            # 开着这个证据文件，**一次现场资格签字就直接丢掉**——而配置写入能靠退避撑过去。
+            # **证据写不进去 = 这次资格作废**，它比配置更需要这份重试。
+            #
+            # ⚠ **为什么在这里重试，而不是 import `config_store` 的那份**：
+            # `config_store` 在模块级 `atexit.register(_flush_at_exit)`，
+            # **从别处 import 它会顺带把那个钩子装上**——
+            # 于是一个跟配置保存毫无关系的进程，退出时也会去跑一遍配置的排队落盘。
+            # 「import 一个函数」不等于「只拿到那个函数」。
+            # 两份的逻辑相同，**留着重复也强过让证据链依赖一个不相关的退出钩子**。
+            _replace_with_retry(Path(temp_name), path)
         finally:
             try:
                 Path(temp_name).unlink(missing_ok=True)
