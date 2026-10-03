@@ -74,6 +74,10 @@ FROZEN_GLOBS: tuple[str, ...] = (
 )
 
 # 永远不冻结的目录（避免把临时产物/解释器缓存算进基线）
+# 第 84 轮：受保护文件数的下限。当前 400。
+# 增只会变大；**减少一个都应当为事故报错**。
+MIN_PROTECTED_FILES = 400
+
 EXCLUDED_DIR_PARTS = frozenset(
     {"__pycache__", ".git", ".venv", ".venv-polar", "node_modules", "release", "build", "dist"}
 )
@@ -174,6 +178,26 @@ def check() -> int:
     for rel in sorted(set(recorded) & set(current)):
         if recorded[rel] != current[rel]:
             problems.append(f"  [修改] {rel}  ← 视觉红线！内容已变")
+
+    # 第 84 轮：**空盘不能与“全部通过”印同一行绿字**。
+    #
+    # 原来只判 `if problems:`。冻结集空了 + manifest 也空了 →
+    # `problems == []` → 打印一模一样的 OK、`return 0`。
+    # **空盘是最宷的状态**：它不会报错，只会不保护任何东西。
+    #
+    # 为什么用硬下限而不是比 manifest：有一条绕过就是
+    # 「收窄 glob → `--update` 重建基线」，**manifest 会一起缩小**。
+    # **只有一个不在被绕过的对象有用。**
+    if len(current) < MIN_PROTECTED_FILES:
+        print("[visual-freeze] 冻结集已缩小 —— 拒绝判定为通过：")
+        print(f"  当前 {len(current)} 个，下限 {MIN_PROTECTED_FILES} 个；manifest 记着 {len(recorded)} 个。")
+        print("  通常意味着有 glob 被改窄了。")
+        print("  空盘不会报错、只会不保护任何东西，所以它必须报错。")
+        return 1
+    if len(current) < len(recorded):
+        print("[visual-freeze] 冻结集比基线少文件 —— 拒绝判定为通过：")
+        print(f"  基线 {len(recorded)} 个，当前只有 {len(current)} 个。")
+        return 1
 
     if problems:
         print("[visual-freeze] 视觉红线被触碰，工作已停止：")
