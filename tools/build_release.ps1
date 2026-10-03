@@ -403,6 +403,8 @@ print('polar spec OK: %d segments, %d roles, %d warnings'
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\polar_selftest_test.py") "polar_selftest" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\polar_startup_test.py") "polar_startup" 240 $testLogRoot
         Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\api_freeze_test.py") "api_freeze" 180 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\safety_input_clear_hook_test.py") "safety_input_clear_hook" 180 $testLogRoot
+        Invoke-RequiredTest $python (Join-Path $sourceRoot "tests\tongji_frame_fault_test.py") "tongji_frame_fault" 180 $testLogRoot
         # ---- 2026-09 补登记 ----
         # 这几个 suite 之前在 tools/verify_all.py 里注册了、这里没有 ——
         # 于是"发布前跑一遍"这道闸门**从来没跑过它们**。
