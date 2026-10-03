@@ -97,6 +97,25 @@ PYTHON_SUITES = (
     "config_store_branch_audit_test",  # config_store + serial_ports 128 个分支型决策点里 39 个从未走到
     "spin_calib_matchmode_branches_test",  # auto_spin + calibration + match_modes 同款审计  # 60Hz 主泵 111 个决策点；补 54 个零覆盖分支（变异验证挖出来的）  # 48 个 Python 模块逐个有交代：新模块忘了登记就红  # 断流归零（stop/下降沿全零）+ s[0] 诊断提示（变异验证挖出来的三处零覆盖）
     "apply_one_dispatch_test",  # _apply_one 分发表契约 + 变异验证挖出来的 15 个零覆盖分支
+    # ── 第 107 轮：把三个此前**从未在门禁里跑过**的套件登记进来 ──────────────
+    #
+    # 一次变异审计量出：**4553 条断言里有 1114 条（24%）从不执行**，
+    # 因为下面这三个文件不在 PYTHON_SUITES 里。
+    #
+    # 最要命的是 `docs_and_tests_test`：**它正是钉住"新模块忘了登记就红"的那个守卫**，
+    # 而它自己没被登记 ⇒ **那个守卫从不运行**。
+    # 现在它跑了，77 项断言。
+    #
+    # `smoke_test` 是全仓最大的单个套件（1114 条断言，真窗口渲染 / HUD / 后端联动）。
+    # 它的退出码之前对门禁完全不可见。
+    #
+    # ⚠ 登记前逐个实测过（不是照抄名字）：三个都 exit=0 才登进来。
+    #    `docs_and_tests_test` 一开始是**红的** —— MODULE_BACKEND_MAP.md 过期，
+    #    因为第 98–101 轮改了 manager.py / polar_transport.py，文档里的行号锚点全漂了。
+    #    **先跑 `python tools/module_backend_map.py` 重新生成，再登记。**
+    "docs_and_tests_test",   # 文档与代码一致性 + 「每个模块都有交代」的登记守卫（77 项）
+    "smoke_test",            # 全仓最大的单套件：真窗口渲染、HUD、后端联动（1114 条断言）
+    "gpu_compositor_test",   # GPU 合成器路径（无 OpenGL 上下文时也会如实报告）
 )
 
 C_CHECKS = (

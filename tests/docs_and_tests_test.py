@@ -431,8 +431,7 @@ def _build_release_suites() -> set[str]:
 #: 一键重写（改了会打印改了什么）。
 KNOWN_UNREGISTERED = {
     "verify_all": (
-        "docs_and_tests_test.py", "field_candidate_test.py", "gpu_compositor_test.py",
-        "gpu_renderer_runtime_smoke.py", "smoke_test.py", "startup_gpu_runtime_smoke.py",
+        "field_candidate_test.py", "gpu_renderer_runtime_smoke.py", "startup_gpu_runtime_smoke.py",
         "transition_visual_check.py",
     ),
     "build_release": (
