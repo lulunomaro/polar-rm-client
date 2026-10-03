@@ -76,3 +76,18 @@ build/
 dist/
 *.spec.bak
 _pdf_extract.txt
+
+# 第 94 轮：门禁自己在工作树里拉的射存目录。
+#
+# 根因（实测）：**本机的 `tempfile.gettempdir()` 解析到仓库根目录**，
+# 而郣些套件用不带 `dir=` 的 `tempfile.mkdtemp()`，所以它们的射存目录
+# 落在**仓库里**。**已有 11 个这样的文件被跟踪，其中一个是我用 `git add -A` 误提交的。**
+#
+# 它们不是源码，不应进仓库；且它们会让 `git status` 永远不干净。
+mgr_safety_manifest_*/
+map_probe_*/
+polar_doc_*/
+polar_startup_userdata*/
+verify_all_*/
+verify_all_*/
+spec_bad_*/
