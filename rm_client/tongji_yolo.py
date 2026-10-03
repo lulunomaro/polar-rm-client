@@ -65,7 +65,15 @@ def _sigmoid_array(values: Any) -> Any:
     return out
 
 
+# 第 67 轮：连续多少帧上下错误，才升级成「整个推理线程退出」。
+# 一帧的错误撑得住（下一帧往往就是好的）；持续不好才算模型/设备真的坏了。
+# 不能是 1 —— 那会把原行为静默装回来。
+YOLO_FRAME_FAILURE_LIMIT = 3
+
 @dataclass(frozen=True)
+
+
+
 class LocalDetection:
     name: str
     color: str
@@ -530,130 +538,147 @@ class LocalAlignedVision:
             self._detector = TongjiYoloV5(self.model_path, self.device)
             self.active_device = self._detector.active_device
             while self.running and not stop_event.is_set():
-                # Waiting for a latest-frame notification avoids the previous
-                # 3 ms busy loop, which multiplied into 100+ hot threads when
-                # a camera was missing or several UI smoke windows were built.
-                if not pending_event.wait(0.25):
-                    continue
-                pending_event.clear()
-                if stop_event.is_set():
-                    break
-                with self._lock:
-                    pending = self._pending
-                    self._pending = None
-                if pending is None:
-                    continue
-                sequence, width, height, bgr, submitted_at, captured_at_ns = pending
-                started = time.perf_counter()
-                # 排队时延：submit() → 推理线程真正开始处理这一帧。
-                # 以前 submit() 只存 (sequence,w,h,bgr)，帧在队列里躺多久无从得知。
-                queue_ms = max(0.0, started - submitted_at) * 1000.0
-                frame_age_ms = -1.0
-                if captured_at_ns:
-                    frame_age_ms = max(0.0, (time.time_ns() - captured_at_ns) / 1e6)
-                detections = self._detector.detect(bgr)
-                detected_at = time.perf_counter()
-                elapsed = max(0.0001, detected_at - started)
-                payload: list[dict[str, Any]] = []
-                loss_evidence: dict[str, Any] | None = None
-                pending_loss = self._loss_probe.sample_loss(bgr, width, height, sequence) if not detections else None
-                keep_visible = bool(
-                    pending_loss
-                    and not pending_loss["probe_dark"]
-                    and not pending_loss["moving_fast"]
-                    and not pending_loss["near_edge"]
-                )
-                selected_info = self._target_selector.select(detections, width, height, keep_missing=keep_visible)
-                if selected_info is not None:
-                    selected_index, track_id = selected_info
-                    primary = detections[selected_index]
-                    self._loss_probe.update(primary, track_id)
-                    primary_payload = primary.payload(0, locked=True)
-                    primary_payload["id"] = track_id
-                    primary_payload["track_id"] = track_id
-                    primary_payload["target_id"] = track_id
-                    payload.append(primary_payload)
-                    for index, item in enumerate(detections):
-                        if index != selected_index:
-                            payload.append(item.payload(index, locked=False))
-                    is_big = primary.name in ("one", "base")
-                    plates = self._prediction.build(
-                        primary.points, width, height, is_big=is_big,
-                        armor_count=self.armor_count, radius_m=self.radius_m, horizon_s=self.horizon_s,
-                        target_key=track_id,
+                # 第 67 轮：这个 `except` 原来包着**整个 while 循环**（上面的 `try`）。
+                #
+                # 意思是：**一帧**里的任何异常 → 线程退出 + detector 拆掉 +
+                # `retry_after = now + 5.0` —— 而异常的来源是**数据相关**的，下一帧往往就是好的。
+                #
+                # 同一类错误第 66 轮已在 `polar_transport` 上修过：不能对**瞬态**误误进行命请的循环，
+                # 也不能对**持续**错误永远重试。所以：单帧误错记一笔继续，连续超上限才升级。
+                try:
+                    # Waiting for a latest-frame notification avoids the previous
+                    # 3 ms busy loop, which multiplied into 100+ hot threads when
+                    # a camera was missing or several UI smoke windows were built.
+                    if not pending_event.wait(0.25):
+                        continue
+                    pending_event.clear()
+                    if stop_event.is_set():
+                        break
+                    with self._lock:
+                        pending = self._pending
+                        self._pending = None
+                    if pending is None:
+                        continue
+                    sequence, width, height, bgr, submitted_at, captured_at_ns = pending
+                    started = time.perf_counter()
+                    # 排队时延：submit() → 推理线程真正开始处理这一帧。
+                    # 以前 submit() 只存 (sequence,w,h,bgr)，帧在队列里躺多久无从得知。
+                    queue_ms = max(0.0, started - submitted_at) * 1000.0
+                    frame_age_ms = -1.0
+                    if captured_at_ns:
+                        frame_age_ms = max(0.0, (time.time_ns() - captured_at_ns) / 1e6)
+                    detections = self._detector.detect(bgr)
+                    detected_at = time.perf_counter()
+                    elapsed = max(0.0001, detected_at - started)
+                    payload: list[dict[str, Any]] = []
+                    loss_evidence: dict[str, Any] | None = None
+                    pending_loss = self._loss_probe.sample_loss(bgr, width, height, sequence) if not detections else None
+                    keep_visible = bool(
+                        pending_loss
+                        and not pending_loss["probe_dark"]
+                        and not pending_loss["moving_fast"]
+                        and not pending_loss["near_edge"]
                     )
-                    if plates:
-                        for plate in plates:
-                            plate_payload = {
-                                "id": track_id if not plate.predicted else plate.plate_id,
-                                "target_id": track_id,
-                                "name": primary.name,
-                                "color": primary.color,
-                                "confidence": primary.confidence if not plate.predicted else primary.confidence * 0.68,
-                                "box": [min(point[0] for point in plate.points), min(point[1] for point in plate.points), max(point[0] for point in plate.points) - min(point[0] for point in plate.points), max(point[1] for point in plate.points) - min(point[1] for point in plate.points)],
-                                "points": [list(point) for point in plate.points],
-                                "back_points": [list(point) for point in plate.back_points],
-                                "predicted": plate.predicted,
-                                "plate_id": plate.plate_id,
-                                "distance_m": plate.distance_m,
-                                "depth_m": plate.depth_m,
-                                "yaw_rad": plate.yaw_rad,
-                                "locked": not plate.predicted,
-                                "light_strength": primary.light_strength,
-                                "light_state": "extinguished" if primary.color == "extinguish" else "lit",
-                            }
-                            if plate.predicted:
-                                payload.append(plate_payload)
-                            else:
-                                # 用滤波后的实体板替换原始角点，避免主板重复且让 Aim Face 也稳定。
-                                payload[0].update(plate_payload)
-                elif detections:
-                    # FOV 内无主目标：仍发布全部检测供 3D ESP，全部 unlocked。
-                    for index, item in enumerate(detections):
-                        payload.append(item.payload(index, locked=False))
-                    self._held_payload = []
-                    self._prediction.reset()
-                if not payload:
-                    # 短暂漏检不让整车预测面瞬间消失。本分支**没有独立计时器**：
-                    # 清空由 HOLD_MAX_SECONDS(8.0s) 强制——它住在
-                    # _LocalLossLightProbe.sample_loss() 的陈旧门槛里，探针一
-                    # reset()，pending_loss 就是 None，keep_visible 变 False，
-                    # _held_payload 随之清空。真实类驱动实测 310 帧 / 8.03 秒。
-                    loss_evidence = pending_loss or self._loss_probe.sample_loss(bgr, width, height, sequence)
-                    if keep_visible and self._held_payload:
-                        payload = [dict(item) for item in self._held_payload]
-                        payload[0]["light_strength"] = float(loss_evidence["light_strength"])
-                        payload[0]["held"] = True
-                        self._target_selector.keep_alive()
-                    else:
+                    selected_info = self._target_selector.select(detections, width, height, keep_missing=keep_visible)
+                    if selected_info is not None:
+                        selected_index, track_id = selected_info
+                        primary = detections[selected_index]
+                        self._loss_probe.update(primary, track_id)
+                        primary_payload = primary.payload(0, locked=True)
+                        primary_payload["id"] = track_id
+                        primary_payload["track_id"] = track_id
+                        primary_payload["target_id"] = track_id
+                        payload.append(primary_payload)
+                        for index, item in enumerate(detections):
+                            if index != selected_index:
+                                payload.append(item.payload(index, locked=False))
+                        is_big = primary.name in ("one", "base")
+                        plates = self._prediction.build(
+                            primary.points, width, height, is_big=is_big,
+                            armor_count=self.armor_count, radius_m=self.radius_m, horizon_s=self.horizon_s,
+                            target_key=track_id,
+                        )
+                        if plates:
+                            for plate in plates:
+                                plate_payload = {
+                                    "id": track_id if not plate.predicted else plate.plate_id,
+                                    "target_id": track_id,
+                                    "name": primary.name,
+                                    "color": primary.color,
+                                    "confidence": primary.confidence if not plate.predicted else primary.confidence * 0.68,
+                                    "box": [min(point[0] for point in plate.points), min(point[1] for point in plate.points), max(point[0] for point in plate.points) - min(point[0] for point in plate.points), max(point[1] for point in plate.points) - min(point[1] for point in plate.points)],
+                                    "points": [list(point) for point in plate.points],
+                                    "back_points": [list(point) for point in plate.back_points],
+                                    "predicted": plate.predicted,
+                                    "plate_id": plate.plate_id,
+                                    "distance_m": plate.distance_m,
+                                    "depth_m": plate.depth_m,
+                                    "yaw_rad": plate.yaw_rad,
+                                    "locked": not plate.predicted,
+                                    "light_strength": primary.light_strength,
+                                    "light_state": "extinguished" if primary.color == "extinguish" else "lit",
+                                }
+                                if plate.predicted:
+                                    payload.append(plate_payload)
+                                else:
+                                    # 用滤波后的实体板替换原始角点，避免主板重复且让 Aim Face 也稳定。
+                                    payload[0].update(plate_payload)
+                    elif detections:
+                        # FOV 内无主目标：仍发布全部检测供 3D ESP，全部 unlocked。
+                        for index, item in enumerate(detections):
+                            payload.append(item.payload(index, locked=False))
                         self._held_payload = []
                         self._prediction.reset()
-                if payload and selected_info is not None:
-                    if primary.color in ("red", "blue"):
-                        self._held_payload = [
-                            dict(item)
-                            for item in payload
-                            if int(item.get("target_id", item.get("id", -1))) == track_id
-                        ]
-                    else:
-                        self._held_payload = []
-                self.inference_fps = 1.0 / elapsed
-                # geometry_ms = detect() 之后到发布之前的全部几何段：
-                # sample_loss() + selector.select() + _prediction.build()（8 次
-                # solvePnP）。以前这段整块落在 latency_ms 的计时器外面。
-                geometry_ms = max(0.0, (time.perf_counter() - detected_at) * 1000.0)
-                self.detect_latency_ms = elapsed * 1000.0
-                self.geometry_latency_ms = geometry_ms
-                self.queue_latency_ms = queue_ms
-                self.frame_age_ms = frame_age_ms
-                # latency_ms 现在 = 本帧推理线程总占用（检测 + 几何），与名字对齐。
-                # 消费方只有 video_backend_mixin → VisionResult.latency_ms →
-                # RobotState.vision_latency_ms，而后者全仓库无人读取（实测 grep
-                # 仅 2 处命中：model.py 的字段声明 + 那一行赋值），所以口径修正
-                # 不会改动任何画面。inference_fps 仍是纯检测速率，未改。
-                self.latency_ms = self.detect_latency_ms + geometry_ms
-                with self._lock:
-                    self._latest = (time.time_ns(), sequence, width, height, payload, self.inference_fps, self.latency_ms, loss_evidence)
+                    if not payload:
+                        # 短暂漏检不让整车预测面瞬间消失。本分支**没有独立计时器**：
+                        # 清空由 HOLD_MAX_SECONDS(8.0s) 强制——它住在
+                        # _LocalLossLightProbe.sample_loss() 的陈旧门槛里，探针一
+                        # reset()，pending_loss 就是 None，keep_visible 变 False，
+                        # _held_payload 随之清空。真实类驱动实测 310 帧 / 8.03 秒。
+                        loss_evidence = pending_loss or self._loss_probe.sample_loss(bgr, width, height, sequence)
+                        if keep_visible and self._held_payload:
+                            payload = [dict(item) for item in self._held_payload]
+                            payload[0]["light_strength"] = float(loss_evidence["light_strength"])
+                            payload[0]["held"] = True
+                            self._target_selector.keep_alive()
+                        else:
+                            self._held_payload = []
+                            self._prediction.reset()
+                    if payload and selected_info is not None:
+                        if primary.color in ("red", "blue"):
+                            self._held_payload = [
+                                dict(item)
+                                for item in payload
+                                if int(item.get("target_id", item.get("id", -1))) == track_id
+                            ]
+                        else:
+                            self._held_payload = []
+                    self.inference_fps = 1.0 / elapsed
+                    # geometry_ms = detect() 之后到发布之前的全部几何段：
+                    # sample_loss() + selector.select() + _prediction.build()（8 次
+                    # solvePnP）。以前这段整块落在 latency_ms 的计时器外面。
+                    geometry_ms = max(0.0, (time.perf_counter() - detected_at) * 1000.0)
+                    self.detect_latency_ms = elapsed * 1000.0
+                    self.geometry_latency_ms = geometry_ms
+                    self.queue_latency_ms = queue_ms
+                    self.frame_age_ms = frame_age_ms
+                    # latency_ms 现在 = 本帧推理线程总占用（检测 + 几何），与名字对齐。
+                    # 消费方只有 video_backend_mixin → VisionResult.latency_ms →
+                    # RobotState.vision_latency_ms，而后者全仓库无人读取（实测 grep
+                    # 仅 2 处命中：model.py 的字段声明 + 那一行赋值），所以口径修正
+                    # 不会改动任何画面。inference_fps 仍是纯检测速率，未改。
+                    self.latency_ms = self.detect_latency_ms + geometry_ms
+                    with self._lock:
+                        self._latest = (time.time_ns(), sequence, width, height, payload, self.inference_fps, self.latency_ms, loss_evidence)
+                    # 这一帧走完了（没抛）—— **连续失败计数清零**。
+                    self._frame_failures = 0
+                except Exception as error:  # 单帧：记一笔就继续下一帧
+                    self._frame_failures = getattr(self, "_frame_failures", 0) + 1
+                    self.last_error = f"{type(error).__name__}: {error}"
+                    if self._frame_failures < YOLO_FRAME_FAILURE_LIMIT:
+                        continue
+                    # 连续到上限 → 这不是一帧的问题，是模型/设备真的坏了，升级成整线程退出。
+                    raise
         except Exception as error:
             self.last_error = str(error)
             self.active_device = "unavailable"
