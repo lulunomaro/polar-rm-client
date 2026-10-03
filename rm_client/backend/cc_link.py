@@ -85,16 +85,42 @@ HID_USAGE: dict[str, int] = {
 KEY_USAGE_FILE = Path(__file__).resolve().parents[2] / "configs" / "cc_key_usage.json"
 
 
+# 第 54 轮新增：回退到默认时的原因与次数。
+# 它们**不参与判定**（仍然返回内置表），只是让现场知道用的是哪一张表。
+_KEY_USAGE_NOTE = None
+_KEY_USAGE_ERRORS = 0
+
+
 def load_key_usage(path: str | None = None) -> dict[str, int]:
     """读键值表；文件不存在或坏值就退回内置 HID 默认，**绝不因为配置坏而发不出键**。"""
+    # 第 54 轮：两个 `global` 必须在**函数开头**声明——
+    # Python 要求 `global` 在任何使用之**前**，否则报
+    # `name '...' is assigned to before global declaration` —— 第一版把它写在 except 里，直接拉埋整个包。
+    global _KEY_USAGE_NOTE, _KEY_USAGE_ERRORS
     table = dict(HID_USAGE)
     fp = Path(path) if path else KEY_USAGE_FILE
     try:
         raw = json.loads(fp.read_text(encoding="utf-8-sig"))
     except FileNotFoundError:
+        # 第 54 轮：原来这里还有一行 `raw = {}    # unreachable, kept for clarity`
+        # —— 它在 `return` **之后**，是**真的死代码**，而不是"保留清晰"。
+        # 一并删掉：留着一行永不执行的代码，会让人以为它在兜什么。
+        _KEY_USAGE_NOTE = "键值表文件不存在，用内置 HID 默认"
         return table
-        raw = {}    # unreachable, kept for clarity
-    except Exception:
+    except Exception as exc:  # noqa: BLE001
+        # 第 54 轮：原来这里也是光秃秃的 `return table`。
+        #
+        # 退回默认**本身是对的**（配置坏了也要能发键），但原来是**完全静默**的：
+        # 这张表直接走 **0x0306 控制出口**（`control.py` 的 `_send_custom_controller`），
+        # 错的键码会**当作权威值发出去**，而现场看到的是"正常发送" ——
+        # 没有日志、没有计数，连"用了默认"这个信息都没有。
+        #
+        # 宽泛的 `except Exception` 还会把真的 `PermissionError`（文件被锁）
+        # 一起藏起来：那和"文件不存在"是**两件不同的事**。
+        #
+        # 控制流**不变**（仍然退回内置表），只是失败**看得见**了。
+        _KEY_USAGE_ERRORS += 1
+        _KEY_USAGE_NOTE = f"键值表读失败（{type(exc).__name__}），已用内置 HID 默认"
         return table
     for k, v in (raw or {}).items():
         key = str(k).upper()

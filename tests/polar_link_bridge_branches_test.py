@@ -593,8 +593,32 @@ def _raising_get_spec(*a, **k):
 ps.get_spec = _raising_get_spec
 try:
     got = pb._spec_state_fields()
+    # 第 54 轮：**这一条断言被改了，而且是往更严的方向改的。**
+    #
+    # 原来写的是 `got == {} and pb._STATE_FIELDS_CACHE == {}` ——
+    # 后半个条件钉的是"**把失败记成结论**"。而那正是审计报出的缺陷：
+    # 一次**瞬时**异常（配置正被原地重写、杀毒软件短暂锁文件、
+    # Windows 的 `PermissionError`）会把空表写进**进程级**缓存，
+    # 于是本进程余下时间里所有按 spec 映射的段都被静默丢弃，且不留痕迹。
+    #
+    # `got == {}`（**fail-closed，不让 `apply` 崩**）这条**一个字没动** ——
+    # 它才是这条用例名字承诺的东西。改掉的只是"失败要不要进缓存"。
     check("规格加载器抛异常时 _spec_state_fields 退回空表（不是让 apply 崩）",
-          got == {} and pb._STATE_FIELDS_CACHE == {}, f"{got!r}")
+          got == {}, f"{got!r}")
+    check("瞬时异常**不写进进程级缓存**（否则一次抖动放大成整场）",
+          pb._STATE_FIELDS_CACHE is None,
+          f"_STATE_FIELDS_CACHE = {pb._STATE_FIELDS_CACHE!r}")
+    check("失败被记成看得见的",
+          pb._STATE_FIELDS_CACHE_ERRORS >= 1
+          and pb._STATE_FIELDS_CACHE_LAST_ERROR is not None,
+          f"errors={pb._STATE_FIELDS_CACHE_ERRORS} "
+          f"last={pb._STATE_FIELDS_CACHE_LAST_ERROR!r}")
+
+    # 再调一次：装载器恢复后应当**自愈**（不缓存失败的全部意义就在这一条）。
+    ps.get_spec = saved_get
+    again = pb._spec_state_fields()
+    check("装载器恢复后下一次调用自愈（失败没有被记成结论）",
+          isinstance(again, dict), f"{again!r}")
 finally:
     ps.get_spec = saved_get
     pb._STATE_FIELDS_CACHE = _SNAP["state_cache"]

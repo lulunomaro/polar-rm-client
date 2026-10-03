@@ -730,8 +730,17 @@ class BackendManager:
                 if link is not None:
                     try:
                         link.close()
-                    except Exception:
-                        pass
+                    except Exception as exc:  # noqa: BLE001
+                        # 第 54 轮：原来是 `pass`。
+                        #
+                        # DJI VCOM 是**独占**端口。`close()` 失败 → 句柄泄漏，
+                        # 而下一行把旧对象**丢掉**，所以泄漏的句柄就**永远到了**。
+                        # 接下来新链接打开会失败，操作员看到的是「端口被占用」，
+                        # 而真因是**旧链接**，且**已无处可往**。
+                        #
+                        # 控制流**不变**（继续换链接），只是现场能看到。
+                        self.last_dt7_close_error = f"{type(exc).__name__}: {exc}"
+                        self.dt7_close_failures = getattr(self, "dt7_close_failures", 0) + 1
                 link = dt7_link.Dt7KeyMouseLink(port=port, profile=prof,
                                                 mock_output=not real_tx)
                 self._dt7_link = link

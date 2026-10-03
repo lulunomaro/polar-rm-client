@@ -104,6 +104,10 @@ def _finite(value: Any, default: float = 0.0) -> float:
 
 
 _STATE_FIELDS_CACHE: dict[int, dict[str, str]] | None = None
+# 第 54 轮新增：失败的次数与最后一次原因。
+# 它们**不参与判定**（仍然返回空表 = fail-closed），只是让它看得见。
+_STATE_FIELDS_CACHE_ERRORS = 0
+_STATE_FIELDS_CACHE_LAST_ERROR = None
 
 
 def _spec_state_fields() -> dict[int, dict[str, str]]:
@@ -121,8 +125,26 @@ def _spec_state_fields() -> dict[int, dict[str, str]]:
 
             loaded = polar_spec.get_spec()
             _STATE_FIELDS_CACHE = dict(loaded.segment_state_fields) if loaded.ok else {}
-        except Exception:
-            _STATE_FIELDS_CACHE = {}
+        except Exception as exc:  # noqa: BLE001
+            # 第 54 轮：原来这里也是 `_STATE_FIELDS_CACHE = {}` ——
+            # **一次瞬时异常就把空表写进进程级缓存**，之后每次调用都看见
+            # `is not None`、直接返回 `{}`，于是
+            # **本进程余下时间里所有按 spec 映射的段都被静默丢弃**，且不留痕迹。
+            #
+            # 瞬时异常真实存在：配置正被原地重写时的解码竞争、
+            # 杀毒软件短暂锁文件、Windows 上的 `PermissionError`。
+            # 把它们当成永久结论，是把**一次抖动放大成整场**。
+            #
+            # **所以失败不写进缓存** —— 保持 `None` 让下一次调用重试，
+            # 瞬时抖动会自愈。代价是"规格真的取不到"时每次都重试，
+            # 而 `get_spec()` 自己有缓存，这条代价是有界的。
+            #
+            # ⚠ 控制流**不变**：仍然返回空表（fail-closed，仍然丢弃段），
+            # 只是不再把它**记成结论**。
+            global _STATE_FIELDS_CACHE_ERRORS, _STATE_FIELDS_CACHE_LAST_ERROR
+            _STATE_FIELDS_CACHE_ERRORS += 1
+            _STATE_FIELDS_CACHE_LAST_ERROR = f"{type(exc).__name__}: {exc}"
+            return {}
     return _STATE_FIELDS_CACHE
 
 
