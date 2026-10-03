@@ -1580,7 +1580,38 @@ def test_liquid_glass_snapshot_stability() -> None:
         painter.end()
         return bytes(image.constBits())
 
-    assert render() == render()
+    # 第 92 轮：原来这里是 `assert render() == render()`。
+    #
+    # 那条断言**只有一半的用处**：它确实在测「渲染是确定的」（渲染器内部用
+    # `time.perf_counter()`，两次调用发生在不同时刻），**但它从不断言被比较的
+    # 东西本身有意义** —— 如果 `draw()` 什么都不画、返回一张纯色图，
+    # `render() == render()` **照样恒真**。
+    #
+    # **确定性检查必须先确认「有东西被确定地画出来了」。**
+    #
+    # ⚠ 判据不能写成 `len(set(像素)) > 1` —— **本轮实测过，那是不行的**：
+    # 只 `fill()` 不绘制的图，字节里**已经有 4 种取值**（填充色的四个通道 + 填充残留），
+    # 所以那个判据对空实现**照样通过**。真正区分开的是**与「只填充、
+    # 完全不画」那张基线图相比，有多少个字节变了**：
+    #
+    # | 情况 | 与基线不同的字节数 |
+    # |---|---|
+    # | 实际绘制 | **54,270** |
+    # | 空实现（只 fill） | **0** |
+    def baseline() -> bytes:
+        blank = QImage(320, 180, QImage.Format.Format_ARGB32_Premultiplied)
+        blank.fill(QColor("#101820"))
+        return bytes(blank.constBits())
+
+    first = render()
+    second = render()
+    assert first == second, "同一个渲染器两次渲染结果不同 —— 渲染不是确定的"
+    base = baseline()
+    touched = sum(1 for a, b in zip(first, base) if a != b)
+    assert touched > 1000, (
+        f"渲染只改动了 {touched} 个字节（实测真正绘制是 54270）—— "
+        "这张图基本等于什么都没画，确定性断言因此恒真，等于没测"
+    )
     renderer = LiquidGlassRenderer()
     renderer.update("hud", background, QRectF(0, 0, 320, 180))
     renderer.light_state[("hud", 1, 2, 3, 4)] = 1.0
@@ -1688,7 +1719,14 @@ def test_hud_liquid_glass_snapshot_stability() -> None:
         return bytes(image.constBits())
 
     try:
-        assert render() == render()
+        # 第 92 轮：同上一处 —— `render() == render()` 只测了确定性的一半，
+        # **从没断言被比较的东西不是常量**。这里同样补上"有意义"那一半。
+        first = render()
+        second = render()
+        assert first == second, "两次 HUD 液态玻璃渲染结果不同 —— 渲染不是确定的"
+        assert len(set(first)) > 1, (
+            "渲染结果是一张常量图（所有字节相同）—— 确定性断言恒真，等于没测"
+        )
     finally:
         window.close()
     app.processEvents()
