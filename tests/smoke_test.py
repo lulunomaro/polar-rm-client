@@ -1,4 +1,5 @@
 import os
+import importlib.util
 import math
 from pathlib import Path
 import socket
@@ -1119,10 +1120,24 @@ def test_tongji_local_yolo_demo() -> None:
     # The optional 60 MiB upstream demo is outside the immutable release
     # source. Keep that lab integration from leaking into release regression.
     if os.environ.get("POLAR_SKIP_EXTERNAL_INTEGRATION", "").lower() in ("1", "true", "yes"):
+        print("[SKIP] 同济 demo 集成：POLAR_SKIP_EXTERNAL_INTEGRATION 已设")
         return
     model = ROOT.parent / "同济自瞄" / "sp_vision_25" / "assets" / "yolov5.xml"
     demo = ROOT.parent / "同济自瞄" / "sp_vision_25" / "assets" / "demo" / "demo.avi"
     if not model.exists() or not demo.exists():
+        # 第 103 轮：原来这里是**静默 return**。`tools/test_spec_bundling.py` 自己都写了：
+        #   「装了就把 211 MB 塞进去，没装就静默跳过 —— 两种情况都不记录」。
+        # **跳过必须看得见，否则「没跑」与「跑了但没跑到底」无法区分。
+        print("[SKIP] 同济 demo 集成：资产不存在（%s / %s）" % (model, demo))
+        return
+    # 第 103 轮：**资产在、运行时不在**，也要跳过。
+    # openvino 实测独占 **211 MB**（压缩后发布包的 22.7%），
+    # `requirements-core.txt` 自己写着「openvino 体积大、只选用同济本地视觉时才需要」。
+    # 所以本来就存在「没装就报错」的可能性 —— **那不是产品缺陷，是可选依赖没装。**
+    # 装了就照常跑；没装就**说出来**。
+    if importlib.util.find_spec("openvino") is None:
+        print("[SKIP] 同济 demo 集成：本机没装 openvino（可选依赖，"
+              "requirements-core.txt 明说不进首发路径）")
         return
     import cv2
     from rm_client.tongji_yolo import TongjiYoloV5
