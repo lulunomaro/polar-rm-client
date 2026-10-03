@@ -190,6 +190,30 @@ def test_role_mismatch_is_reported() -> None:
     stats3 = manager.tick_polar_link(state, registry, Ctrl())
     check("未上报时不报不一致", not stats3.get("role_mismatch"), str(stats3.get("role_mismatch")))
 
+    # ---- 第 114 轮：上面那条只查了「不误报」，**没查限幅跟谁走** ----------
+    #
+    # 上面 `selected_id = 3`（步兵，1.5 m/s），而 `limits_for(0)` **也是 1.5** ——
+    # 也就是说对步兵来说，删掉 `role_id = reported_id or selected_id`
+    # 那个 `or` 之后**结果一模一样**，所以任何以步兵为题的用例都抓不住它。
+    # 这就是「or_drop 变异杀伤率 0%」的直接成因：**唯一的用例恰好落在
+    # 两条分支碰巧相等的那一侧。**
+    #
+    # 换英雄（`limits_for(1) = 2.0`）就分开了。
+    state.robot_id = 1
+    state.polar_reported_robot_id = 0
+    stats4 = manager.tick_polar_link(state, registry, Ctrl())
+    check(
+        "未上报时限幅跟**操作员选的英雄**走（2.0），而不是落回 role 0（1.5）",
+        abs(float(stats4.get("role_max_linear_mps", 0)) - 2.0) < 1e-9,
+        "拿到 {} —— `or` 那一半被删了？limits_for(0)={}，limits_for(1)={}".format(
+            stats4.get("role_max_linear_mps"),
+            roles.limits_for(0),
+            roles.limits_for(1),
+        ),
+    )
+    check("未上报时仍不误报（英雄这一侧同样）",
+          not stats4.get("role_mismatch"), str(stats4.get("role_mismatch")))
+
     try:
         manager.shutdown()
     except Exception:
