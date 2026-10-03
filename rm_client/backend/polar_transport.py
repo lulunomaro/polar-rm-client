@@ -46,6 +46,11 @@ DEADMAN_TIMEOUT_S = 0.20
 ZERO_BURST_S = 0.30
 
 
+
+# 第 66 轮：连续多少拍上下扇失败才算「链路真的断了」。
+# 短暂抖动（USB 插拔瞬态）撑得住；持续不好才篛，避免变成 4 ms 轮询循环。
+RX_TX_FAILURE_LIMIT = 3
+
 class PolarTimestamp:
     """严格递增的 u32 毫秒时间戳。
 
@@ -121,6 +126,8 @@ class PolarLinkStats:
     mock_writes: bool = True
     resolved_port: str = ""
     last_error_code: str = ""
+    # 第 66 轮：连续多少拍上下扇失败才算「链路真的断了」
+    _io_failures: int = 0
     detected_ports: list[str] = field(default_factory=list)
     port: str = "Stub"
     baud: int = 115200
@@ -402,16 +409,44 @@ class PolarLinkTransport:
             now = time.perf_counter()
             try:
                 self._drain_rx()
+                rx_failed = False
             except Exception as exc:
+                # 第 66 轮：原来这里是 `break`。
+                #
+                # **与同一个文件里的 `_write()` 矛盾**：
+                # `_write` 写失败时只记一笔、置 `connected = False`，**然后返回**，主循环欸存；
+                # 而这里的 `_drain_rx` / `_pump_tx` 一出错就 **break** —— 整条链路线程死掉。
+                #
+                # 而引起它的常见原因是 `self._serial.read(512)` 报错：
+                # **USB-CDC 被拔掉、传输中途断开** 都是瞬态的。
+                # 一次瞬态抖动就把死了整个链路，下面的重连路径每 2 秒才能试一次——
+                # 而且重连本身走的是 60 Hz 的 Qt 拍。
+                #
+                # 不能直接改成继续：设备真死了 `read()` 每拍都报错，
+                # 就变成一个 **4 ms 的轮询循环**。所以给一个**次数上限**：
+                # **短暂抖动撑得住，持续不好才篛。**
+                rx_failed = True
                 self.last_error = str(exc)
-                break
+                self.last_error_code = "RX_FAULT"
+                self.connected = False
             if now >= next_send:
                 next_send = now + interval
                 try:
                     self._pump_tx(now)
+                    tx_failed = False
                 except Exception as exc:
+                    tx_failed = True
                     self.last_error = str(exc)
+                    self.last_error_code = "TX_FAULT"
+                    self.connected = False
+            # 连续 N 拍不好才算“真的断了”。
+            # 中间恢复了就清零，所以这个计数只统计**连续**失败。
+            if rx_failed or tx_failed:
+                self._io_failures += 1
+                if self._io_failures >= RX_TX_FAILURE_LIMIT:
                     break
+            else:
+                self._io_failures = 0
             time.sleep(max(0.0, min(interval * 0.25, next_send - time.perf_counter())))
         self.connected = False
         self._running = False
