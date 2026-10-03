@@ -75,6 +75,21 @@ from rm_client.model import RobotState, build_default_registry      # noqa: E402
 FAILED: list[str] = []
 
 
+
+def _await_native_restart(mgr, timeout: float = 2.0) -> None:
+    """等 native 重启工作线程停下来（有上限）。
+
+    第 99 轮：`restart()` 从 60 Hz 拍上**同步**变成了工作线程。
+    下面这些断言断的是**退避的算术**，而退避只在重启**完成之后**才更新。
+
+    **这不是放水**：等到了就继续断——线程永远不返回、退避算错、
+    计数不对，**这些断言一样会红**。只是把「等到事件发生」补上了。
+    """
+    thread = getattr(mgr, "_native_restart_thread", None)
+    if thread is not None:
+        thread.join(timeout=max(0.0, float(timeout)))
+        check("重启工作线程在限期内停下来", not thread.is_alive(), "仍在运行")
+
 def check(name: str, ok: bool, detail: str = "") -> None:
     if not ok:
         FAILED.append(name)
@@ -329,6 +344,7 @@ def test_recover_video_decoders_crashed_epoch() -> None:
         mgr._native_next_restart_at = 0.0
         mgr._native_restart_backoff_s = 0.5
         mgr._recover_video_decoders()
+        _await_native_restart(mgr)
         check("解码器崩了（started_once + !available + 有流量 + 本轮未处理）：真的重启了一次",
               FakeDecoder.restart_calls == 1, str(FakeDecoder.restart_calls))
         check("重启成功：restarts 计数 +1 且 epoch 标记为已处理",
@@ -352,6 +368,7 @@ def test_recover_video_decoders_crashed_epoch() -> None:
         mgr._native_restart_backoff_s = 0.5
         before = time.perf_counter()
         mgr._recover_video_decoders()
+        _await_native_restart(mgr)
         check("重启失败：退避 0.5 -> 1.0（翻倍）",
               mgr._native_restart_backoff_s == 1.0, str(mgr._native_restart_backoff_s))
         check("重启失败：下次重启时间被推到未来",
@@ -367,6 +384,7 @@ def test_recover_video_decoders_crashed_epoch() -> None:
         mgr._native_next_restart_at = time.perf_counter() + 30.0
         mgr._native_failure_epoch_handled = False
         mgr._recover_video_decoders()
+        _await_native_restart(mgr)
         check("退避窗口内：一次都不再调用 restart（不会把 ffmpeg 打死）",
               FakeDecoder.restart_calls == 0, str(FakeDecoder.restart_calls))
 
@@ -384,6 +402,7 @@ def test_recover_video_decoders_crashed_epoch() -> None:
             mgr._native_failure_epoch_handled = False
             setattr(mgr, attr, value)
             mgr._recover_video_decoders()
+            _await_native_restart(mgr)
             check(f"不满足 crashed 条件（{label}）：不重启",
                   FakeDecoder.restart_calls == 0, str(FakeDecoder.restart_calls))
             setattr(mgr, attr, True if attr != "_native_failure_epoch_handled" else False)
@@ -399,6 +418,7 @@ def test_recover_video_decoders_crashed_epoch() -> None:
         mgr._native_0310_bytes_since_reset = 99
         mgr._native_failure_epoch_handled = False
         mgr._recover_video_decoders()
+        _await_native_restart(mgr)
         check("DeployModeStatusSync=1 独自就能选中 native 并触发恢复",
               FakeDecoder.restart_calls == 1, str(FakeDecoder.restart_calls))
 

@@ -14,6 +14,7 @@ from __future__ import annotations
 import logging
 import json
 import time
+import threading
 from typing import Any, Callable
 
 from ..model import RobotState
@@ -171,6 +172,9 @@ class BackendManager:
         self._native_0310_decoder_restarts = 0
         self._native_0310_decoder_started_once = False
         self._native_next_restart_at = 0.0
+        # 第 98–99 轮：native 解码器的阻塞重启跑在工作线程上。
+        self._native_restart_thread = None
+        self._native_last_health = {}
         self._native_restart_backoff_s = 0.5
         self._native_failure_epoch_handled = False
         self._apply_error_count = 0
@@ -1093,8 +1097,46 @@ class BackendManager:
         now = time.perf_counter()
         if now < self._native_next_restart_at:
             return
-        restarted = self.native_decoder.restart(clear_latest=True)
-        self._native_failure_epoch_handled = bool(restarted)
+        # 第 98–99 轮：`restart()` 整个 stop+start 原来是在 **60 Hz 拍上同步**跑的。
+        #
+        # 子代理在同类 h265 路径上**实测**：健康时 55–62 ms / 卡死时 **610 ms**，
+        # 而一拍只有 16.7 ms；退避是 0.5→5 秒，所以不健康时会**反复卡**。
+        # **同仓已有正确写法**：UDP 那边走 `_request_h265_restart()`，判定在调用方、
+        # **阻塞的重启丢给工作线程**。这里照搬那个形状。
+        #
+        # ⚠ **退避门限必须在这里就推后**：否则在重启还在跑的那几百毫秒里，
+        # **每一拍都会再开一个线程**。
+        self._native_last_health = dict(health)
+        self._native_next_restart_at = now + self._native_restart_backoff_s
+        if self._native_restart_thread is not None and self._native_restart_thread.is_alive():
+            return
+        self._native_restart_thread = threading.Thread(
+            target=self._native_restart_worker,
+            name="native-decoder-restart",
+            daemon=True,
+        )
+        self._native_restart_thread.start()
+
+    def _native_restart_worker(self) -> None:
+        """在**工作线程**里做 native 解码器的 stop+start。
+
+        判定逻辑留在 60 Hz 拍上（那里只读 health）；**只有阻塞的重启本身**在这里。
+
+        下面是原同步实现**逐字搬迁**的。包括一个容易丢的细节：
+        **翻倍只在失败时**——它原来的缩进就在 `else:` 里面，搬迁时很容易被挪到 `if/else` 之外。
+        `manager_safety_branch_audit_test` 的「重启成功：退避被复位成 0.5s」钉的就是它。"""
+        try:
+            restarted = bool(self.native_decoder.restart(clear_latest=True))
+        except Exception as exc:  # noqa: BLE001 — 诊断线程不应该把拍带崩
+            self._native_failure_epoch_handled = False
+            self.field_log.emit(
+                "decoder_restart",
+                source="native_0310",
+                restarted=False,
+                health={"error": f"{type(exc).__name__}: {exc}"},
+            )
+            return
+        self._native_failure_epoch_handled = restarted
         self._native_recovery.reset()
         self._native_0310_blocked_until_sps = True
         if restarted:
@@ -1103,13 +1145,17 @@ class BackendManager:
             self._native_restart_backoff_s = 0.5
             self._native_next_restart_at = 0.0
         else:
-            self._native_next_restart_at = now + self._native_restart_backoff_s
-            self._native_restart_backoff_s = min(5.0, self._native_restart_backoff_s * 2.0)
+            self._native_next_restart_at = (
+                time.perf_counter() + self._native_restart_backoff_s
+            )
+            self._native_restart_backoff_s = min(
+                5.0, self._native_restart_backoff_s * 2.0
+            )
         self.field_log.emit(
             "decoder_restart",
             source="native_0310",
             restarted=restarted,
-            health=health,
+            health=self._native_last_health,
         )
 
     def _build_commit(self) -> str:
