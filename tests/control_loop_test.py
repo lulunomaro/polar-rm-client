@@ -494,6 +494,43 @@ check("拒绝后 S 槽保持原绑定", swap.binds["S"] == "S", swap.binds["S"])
 check("拒绝后 S 槽也没有被悄悄改成 None", swap.binds["S"] != "None")
 check("reset_binds 之后全部回到出厂", swap.reset_binds() is None and swap.binds == DEFAULT_CONTROL_BINDS)
 
+print("\n=== 7b) set_bind 的两个 `or`：只有后半截是承重的 ===")
+# 第 117 轮加。一次 or_drop 普查（AST，92 个生产文件）把 control.py:346 / :358
+# 都列为真风险位置。**实测下来只有 :358 承重**，两处的分工与普查说的不一样：
+#
+#   L346: candidate = str(key_name or "None").strip()   <- 实测：等价，删掉抓不住
+#   L358: self.binds[slot] = candidate or "None"        <- 实测：承重，删掉必红
+#
+# ## 为什么 L346 删不掉也看不出来
+#
+# `str(key_name or "None").strip()` 与 `str(key_name).strip() or "None"` 只在两类输入上分叉：
+#
+#   key_name="   "  -> 原=""      变="None"
+#   key_name=0/[]/False -> 原="None" 变="0"/"[]"/"False"
+#
+# **第一类被 L358 的 `or` 吃掉了**（`"" or "None"` 与 `"None" or "None"` 同义），
+# 所以最终 `binds[slot]` 两边一模一样。
+# **第二类不在契约内** —— `set_bind` 的签名是 `key_name: str`。
+#
+# 所以这条断言是**替 L358 说的**，别当成「两个 `or` 都重要」。
+blank = KeyboardControlBridge(mock_output=True)
+check("纯空白键名被兜成 'None' 而不是空串（L358 那一半）",
+      blank.set_bind("W", "   ") is True and blank.binds["W"] == "None",
+      "set_bind=%s binds[W]=%r" % (blank.set_bind("W", "   "), blank.binds["W"]))
+check("空串键名被兜成 'None'",
+      blank.set_bind("A", "") is True and blank.binds["A"] == "None",
+      "binds[A]=%r" % (blank.binds["A"],))
+check("键名为 None 时被兜成 'None'",
+      blank.set_bind("S", None) is True and blank.binds["S"] == "None",
+      "binds[S]=%r" % (blank.binds["S"],))
+check("**两边都不是空串**：正常键名原样落库，没有被 'None' 吃掉",
+      blank.set_bind("D", "Up") is True and blank.binds["D"] == "Up",
+      "binds[D]=%r" % (blank.binds["D"],))
+check("空串与哨兵 'None' 在 binds 里**不是**同一句话 —— 兜底不能等于没兜",
+      "" not in set(blank.binds.values()),
+      "binds=%r" % (blank.binds,))
+blank.reset_binds()
+
 # 旧行为必须逐条保持
 old = KeyboardControlBridge(mock_output=True)
 check("旧规则1：改绑到新键名成功", old.set_bind("W", "Up") is True)

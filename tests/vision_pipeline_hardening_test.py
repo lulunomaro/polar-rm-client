@@ -481,8 +481,86 @@ def test_bridge_is_inert_on_the_production_path() -> None:
 
 # --- 主流程 --------------------------------------------------------------
 
+def test_primary_falls_back_to_the_first_detection() -> None:
+    """`VisionSnapshot.primary` 里那个 `or` 落到 `detections[0]` —— 删掉它就没有主目标了。
+
+    第 117 轮。一次 `or_drop` 普查（AST，92 个生产文件）把它列为真风险位置。
+    **本模块此前的变异杀伤率是 0%**，所以这条是给它补的第一条。
+
+    ```python
+    @property
+    def primary(self) -> ArmorObservation | None:
+        return self.result.aim_armor or next(iter(self.result.detections), None)
+    ```
+
+    ## 为什么删掉 `or` 会「看起来还能用」
+
+    因为两条路径给出的是**同一个 `ArmorObservation` 对象**（实测确认：
+    `aim_armor=None, detections=1 条` 时 `primary` 返回的正是那条 detection）。
+    **所以只有「`aim_armor` 为 None 而 detections 非空」这一种帧才会暴露差异** ——
+    而那恰恰是**没有明确瞄准目标、但画面里有目标**的那种帧，
+    也是最常见的那种。
+
+    ## 一个前提必须先钉住
+
+    `ArmorObservation` **没有** `__bool__` / `__len__`（实测：`False / False`），
+    所以它非 None 时恒为真，`or` **只可能在 `aim_armor is None` 时触发**。
+    **这条前提若哪天变了（给 `ArmorObservation` 加了 `__len__`），
+    下面的语义就全变了** —— 所以第一件事就是把前提也断言一遍。
+    """
+    from rm_client.vision import ArmorObservation, VisionResult, VisionSnapshot
+
+    check(
+        "前提：ArmorObservation 没有 __bool__ / __len__（恒为真）",
+        not hasattr(ArmorObservation, "__bool__") and not hasattr(ArmorObservation, "__len__"),
+        "若哪天加了，这个 `or` 的语义就变了",
+    )
+
+    def _snap(detections, aim):
+        result = VisionResult(
+            sequence=1, timestamp_ns=0, source_width=640, source_height=480,
+            detections=tuple(detections), aim_armor=aim,
+        )
+        return VisionSnapshot(source="probe", result=result, received_ns=0)
+
+    def _obs(armor_id: int):
+        return ArmorObservation(
+            armor_id=armor_id, label="armor", color="blue", confidence=0.9, points=(),
+        )
+
+    a, b = _obs(1), _obs(2)
+
+    check(
+        "aim_armor 为 None 时，primary 落到第一条 detection",
+        _snap((a,), None).primary is a,
+        f"拿到 {_snap((a,), None).primary!r} —— `or next(iter(...))` 那一半被删了？",
+    )
+    check(
+        "detections 有多条时取的是**第一条**不是最后一条",
+        _snap((a, b), None).primary is a,
+        f"拿到 {_snap((a, b), None).primary!r}",
+    )
+    check(
+        "aim_armor 在场时优先于 detections",
+        _snap((a, b), b).primary is b,
+        f"拿到 {_snap((a, b), b).primary!r}",
+    )
+    check(
+        "两者都空时是 None（不是抛异常、也不是空壳对象）",
+        _snap((), None).primary is None,
+        f"拿到 {_snap((), None).primary!r}",
+    )
+    check(
+        "**只测两侧相等是不够的**：空壳对象也能过上面几条",
+        _snap((), None).primary is None
+        and _snap((a,), None).primary is not None,
+        "两条路径必须给出「有/无」的差别，恒等于 None 的实现也能骗过前几条",
+    )
+
+
 def main() -> int:
     tests = [
+        test_primary_falls_back_to_the_first_detection,
         test_hold_window_claim_is_now_true,
         test_hold_window_measured,
         test_payload_bit_identical_to_prechange_golden,
