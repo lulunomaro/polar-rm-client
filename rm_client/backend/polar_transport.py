@@ -52,6 +52,27 @@ ZERO_BURST_S = 0.30
 # 不能是 1 —— 那会把原行为静默装回来。
 RX_TX_FAILURE_LIMIT = 3
 
+# 第 74 轮：`stats()` 里那个「已探测到：COMx」清单的 TTL。
+#
+# ⚠ **关于它的耗时，两个测量差了 12 倍，我没能调和，所以这里不写"它是多少毫秒"。**
+#
+# * 第 73 轮的一个测量代理报 **1.50 ms**（并据此说它占整帧的 9.0%）；
+# * 我第 74 轮自己量同一个函数（强制 `ttl_s=0.0` 每次都真去枚举）得 **0.126 ms** 中位。
+#
+# 两者测的是**同一个函数**，差 12 倍。可能差在机器负载、端口数、
+# 或者"冷路径"到底包不包括 `describe_ports` 里的 USB 描述串读取 ——
+# **我没有证据判定谁对，所以不把任何一边当结论写进代码。**
+#
+# # 但改 TTL 这件事本身**不依赖那个数字**
+#
+# 无论它是 0.126 还是 1.50，形状都是**尖峰而非均值**：每 TTL 秒里有一拍真去枚举。
+# TTL 从 2 秒提到 10 秒，尖峰从**每 120 拍**变成**每 600 拍** ——
+# **频率降 5 倍**，尖峰本身不变。
+#
+# 对一行 tooltip 来说，插上 DT7 最多 10 秒出现在列表里 —— 操作员察觉不到。
+# 而**行为**路径（决定「Auto 连哪个口」）不走这里，它永远读真值。
+DESCRIBE_PORTS_TTL_S = 10.0
+
 class PolarTimestamp:
     """严格递增的 u32 毫秒时间戳。
 
@@ -661,7 +682,15 @@ class PolarLinkTransport:
         # "已探测到：" 那一行永远显示"无"，操作员插了 DT7 也看不见。
         #
         # 现在把它接进构造器。必须用 TTL 版而不是裸的 describe_ports()：
-        # stats() 在 60Hz 逻辑拍上，裸调用实测 2.63 ms/次 = 15% 单核。
+        # stats() 在 60Hz 逻辑拍上。
+        #
+        # ⚠ **它到底多贵，两个测量差了 12 倍**（0.126 ms vs 1.50 ms，详见
+        # `DESCRIBE_PORTS_TTL_S` 旁边的说明）—— **所以这里不给数字。**
+        #
+        # 但有一件事和那个数字无关：**它的形状是尖峰，不是均值**。
+        # 每 TTL 秒里有一拍真去枚举，而 `stats()` 每拍都调。
+        # 所以该看的是**尖峰除以帧预算**，不是"占单核百分之几" ——
+        # 第 64 轮我盯的恰恰是后者，那是我判断错的地方。
         return asdict(
             PolarLinkStats(
                 connected=self.connected,
@@ -679,7 +708,7 @@ class PolarLinkTransport:
                 last_segment_at=self.last_segment_at,
                 last_error=self.last_error,
                 link_age_s=self.link_age_s,
-                detected_ports=describe_ports_cached(),
+                detected_ports=describe_ports_cached(ttl_s=DESCRIBE_PORTS_TTL_S),
             )
         )
 
