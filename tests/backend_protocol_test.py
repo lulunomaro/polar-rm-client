@@ -742,6 +742,66 @@ def test_serial_partial_frame() -> None:
     check("partial retained", len(stream) - consumed == 5)
 
 
+def test_absent_string_field_is_not_the_same_as_an_empty_one() -> None:
+    """`_s()` 里那个 `or default` 把两件事压成了同一句。
+
+    第 115 轮。一次 `or_drop` 普查（AST，92 个生产文件）指出
+    `backend/protocol.py:187` 是个真风险位置，本轮实测确认。
+
+    ```python
+    def _b(fields, field) -> bytes:
+        values = fields.get(field)
+        if not values:
+            return b""                       # <- 字段缺失
+        ...
+    def _s(fields, field, default="") -> str:
+        return _b(fields, field).decode("utf-8", errors="replace") or default
+    ```
+
+    `_b()` 对「**字段不存在**」与「**字段在、但内容是空**」都返回 `b""`，
+    那个 `or` 于是把空字符串也换成了 `default`。
+
+    ## ⚠ 本条**钉的是现状**，不是「应该怎样」
+
+    我第一版写的是「字段在且为空时必须原样留成 `""`」——
+    **它当场就红了，因为代码给的是 `default`。**
+
+    写一条产品并不满足的断言，等于**把一个猜测写成契约**。
+    而且这里改的是**线上协议的取字段语义**：裁判那边发来的
+    「昵称为空」「队伍名为空」到底该显示成 `""` 还是 `"UNKNOWN"`，
+    **是一个产品问题，不是一条测试能替我定的**。
+
+    所以本条只做一件事：**把这个混淆钉成可见的事实**，
+    谁想改它，得先决定改完之后下游那些调用点各自意味着什么。
+
+    ## 实测的三条
+
+    * 字段缺失     -> `"UNKNOWN"`
+    * 字段在但为空 -> `"UNKNOWN"`   ← **与上面同义，这正是被混淆的地方**
+    * 字段有内容   -> `"ABC"`
+    """
+    from rm_client.backend.protocol import _s
+
+    check("字段缺失时用 default", _s({}, 7, "UNKNOWN") == "UNKNOWN",
+          f"拿到 {_s({}, 7, 'UNKNOWN')!r}")
+    check(
+        "字段在但内容为空时**也**落到 default（现状：两者被混淆）",
+        _s({7: [b""]}, 7, "UNKNOWN") == "UNKNOWN",
+        f"拿到 {_s({7: [b'']}, 7, 'UNKNOWN')!r} —— 混淆已经不存在了？那该重写这条",
+    )
+    check("字段有内容时原样返回",
+          _s({7: [b"ABC"]}, 7, "UNKNOWN") == "ABC",
+          f"拿到 {_s({7: [b'ABC']}, 7, 'UNKNOWN')!r}")
+    check("非 bytes 的取值也走同一条路（`_b` 返回 b''）",
+          _s({7: [123]}, 7, "UNKNOWN") == "UNKNOWN",
+          f"拿到 {_s({7: [123]}, 7, 'UNKNOWN')!r}")
+    check(
+        "default 本身为空串时两条路径本就同义（这一条两侧一致）",
+        _s({}, 7, "") == "" and _s({7: [b""]}, 7, "") == "",
+        "default 为空串时，`or` 的两半给不出可区分的结果",
+    )
+
+
 def test_codec_regressions() -> None:
     print("[video] codec regressions")
     check("h264 sps", detect_frame_codec(b"\x00\x00\x00\x01\x67\x64\x00\x2a") == "h264")
@@ -1075,6 +1135,7 @@ def main() -> None:
     test_backend_lock_requests_input_clear()
     test_protocol_regressions()
     test_serial_partial_frame()
+    test_absent_string_field_is_not_the_same_as_an_empty_one()
     test_codec_regressions()
     test_mqtt_publish_rc()
     test_backend_frontend_sync()
