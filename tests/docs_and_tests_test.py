@@ -61,6 +61,26 @@ def check(label: str, condition: bool, detail: str = "") -> None:
         print(f"[FAIL] {label} {detail}")
 
 
+def note(label: str, detail: str = "") -> None:
+    """**只报告，不计入通过数，也不算失败。**
+
+    第 108 轮加。存在的理由就是下面那个曾经撒谎的地方：
+
+    ```python
+    if not other.exists():
+        check("tools/MODULE_BACKEND_MAP.md 存在", True)   # \u7f3a\u5931\u65f6\u624d\u6253\u5b83
+    ```
+
+    这行**只在文件不存在时才执行**，却打印「存在」——
+    **标签断言的正好是它所在分支条件的反面。**
+    一个空转断言只是没用；**一个反向的断言是在骗人**：
+    它会把「文档不见了」记成「文档存在，已通过」。
+
+    打印出来不等于通过。所以这里用 `note`：**看得见，但不进通过数。**
+    """
+    print(f"[NOTE] {label} {detail}".rstrip())
+
+
 def load_generator():
     spec = importlib.util.spec_from_file_location("module_backend_map_probe", GENERATOR)
     assert spec is not None and spec.loader is not None
@@ -513,7 +533,10 @@ def test_other_map_doc_stale_lines_are_reported() -> None:
     """
     other = ROOT / "tools" / "MODULE_BACKEND_MAP.md"
     if not other.exists():
-        check("tools/MODULE_BACKEND_MAP.md 存在", True)
+        # 第 108 轮：这里原来写的是 `check("...存在", True)`，
+        # **而这一行只在文件缺失时才执行** —— 标签说的正好是分支条件的反面。
+        # 改成 note：**照样看得见，但不再冒充通过。**
+        note("tools/MODULE_BACKEND_MAP.md 不存在，本项无可对拍", "（该文件不属于本组，不在这里断言它）")
         return
     text = other.read_text(encoding="utf-8")
     refs = re.findall(r"([A-Za-z0-9_./\\]+\.py):(\d+)", text)
