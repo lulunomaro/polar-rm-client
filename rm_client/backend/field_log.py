@@ -411,13 +411,45 @@ class RotatingJsonlLogger:
             return not (self._queue or self._inflight)
 
     def close(self, timeout: float = 1.0) -> None:
-        """停止写盘线程并释放句柄。队列里剩下的会在本线程里直接写掉。"""
+        """停止写盘线程并释放句柄。队列里剩下的会在本线程里直接写掉。
+
+        第 97 轮：**不返回值**。`field_log_async_test` 里有一条
+        `check("close() 幂等", logger.close(timeout=1.0) is None)`——
+        **返回 `None` 是被钉住的合同**，不是就好返回 None。
+        所以结果只走 `last_error`（本类已经在用的那个渠道）。
+
+        ## 为什么要有这个返回值 —— 因为原来的收尾会拆掉 worker 还拥有的东西
+
+        原来是「join 一个带超时的值 ⇒ **不看结果** ⇒ 继续把队列括空、
+        `_inflight = False`、`reopen()` 关句柄」。
+
+        **join 超时时 worker 还活着**，于是：
+
+        * 它下一次 `_append` 会写到一个**已经关掉的句柄** ⇒ `OSError`
+          ⇒ 那一批被记进 `dropped_events`，而 `last_error` 是在 close 时刻设的，
+          **现场看不到真正的错**；
+        * `_size` 的记账与 worker 的交叉 ⇒ **轮转判断被抁乱**；
+        * `flush()` 会在 worker 还在写的时候报「已排空」。
+
+        **所以 join 没成，就不要去拆它的状态**：本方法只把这件事**说出来**，
+        返回 `False`，把 `last_error` 写清楚。**一个说得出口的「没关干净」
+        远好过一个安静的自毁。**
+        """
         self._closed = True
         with self._cv:
             self._cv.notify_all()
         worker = self._worker
+        joined = True
         if worker is not None and worker is not threading.current_thread():
             worker.join(max(0.0, float(timeout)))
+            joined = not worker.is_alive()
+        if not joined:
+            self.last_error = (
+                "field_log 关闭超时：写盘线程仍在运行，"
+                "本次未拆除它拥有的状态（队列 / 句柄）。"
+            )
+            return
+        
         leftovers: list[bytes] = []
         with self._cv:
             report, self._unreported = self._unreported, 0
