@@ -129,6 +129,32 @@ class OfficialSafety:
         self._publish_at.clear()
         self.lock_control("scenario changed")
 
+    # 第 65 轮：**这个类到截止没有任何锁** —— 已核实，但不是代表它必然有竞态。
+    #
+    # `update_stage` 在 **paho 网络线程**（`mqtt_backend.py:481`，每条 `GameStatus`）调用，
+    # `is_fighting()` / `can_publish()` 在 **Qt 主线程** 60/75 Hz 调用。
+    #
+    # 审计提制说「分别写入与读取在不同线程上」——**那条是对的**（本文件确实一个 `Lock` 都没有，
+    # “当初那 15 处命中」全是枚举字符串 `LOCKED`，不是锁）。
+    #
+    # **但它描述的失败在本机上不可达**，两个理由：
+    #
+    # 1. **下面那两行是相邻的两次 `STORE_ATTR`**，中间没有任何能释放 GIL 的字节码；
+    #    本机是 **CPython 3.13.15，`sys._is_gil_enabled()` 为 True**。
+    # 2. **即使被打断，结果也是 fail-safe**：读到的是“上一条消息的阶段”
+    #    （两个字段一致旧值）。而混混读到 `current_stage=新` + `_stage_seen=旧`
+    #    的窗口，只会得到“**不在打起」”而不会得到“在打贡”。
+    #
+    # **最坏结果是“门门持续一拍过时”，不是 fail-open。**
+    #
+    # ## 什么时候这个结论会不成立
+    #
+    # * **自由线程构建**（CPython 3.13 的 `-X thread` / 3.14 默认去 GIL）：
+    #   那时上面两个条件**同时失效**，窗口会真的存在。
+    # * **PyPy**、或任何未来把这两行拆开的改动：同样。
+    #
+    # 那时应该在这里加 `threading.Lock`。**本轮不加** —— 不能为一个
+    # **测不出**的竞态在 60 Hz 的热路上加锁，而把“它有多小影响”也一起变成未知。
     def update_stage(self, current_stage: Any) -> None:
         stage = str(current_stage).strip()
         if stage.isdigit() and len(stage) <= 2:
