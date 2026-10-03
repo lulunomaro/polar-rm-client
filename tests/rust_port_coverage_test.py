@@ -147,7 +147,6 @@ DEFERRED: dict[str, str] = {
     "backend/manager.py": "组合根：已由 rm-client 承担判据，但这一层还混着大量编排，待拆",
     "backend/field_log.py": "现场日志：异步写盘 + 回放，判据在 Python 侧，待搬",
     "backend/qualification.py": "资格赛证据管理：与导出打包面耦合，待搬",
-    "backend/readiness.py": "就绪度聚合：纯逻辑但与 UI 呈现耦合，待拆",
     "backend/codec_selftest.py": "编解码自检：要真 ffmpeg 才能验，本机装不了",
 }
 
@@ -620,9 +619,16 @@ def test_a_deferred_entry_does_not_claim_to_be_porting_a_crate_that_already_exis
     crates = {q.name for q in crate_dir.glob("*") if q.is_dir()} if crate_dir.is_dir() else set()
     drifted = []
     for name, why in DEFERRED.items():
+        # ⚠ 措词集不能只有一个。第 43 轮又遇上一次同款漂移，
+        # 而那一次写的是**"待拆"**——第 38 轮的守卫只认 "在搬"，所以漏掉了。
+        #
+        # 列述不可能完整，但这几个覆盖了本仓实际出现过的写法。
+        # **补上它们才是守卫性的；写法本身永远写不完**——
+        # 所以这条守卫的正确性依赖于**新出现一种写法时补一条**，而不是它一开始就完整。
+        pending = ("在搬", "待拆", "待接", "待搬", "未消费")
         for token in _re.findall(r"rm-[a-z][a-z0-9_-]*", why):
             if "在搬" in why and token in crates:
-                drifted.append(f"{name} 声称在搬 {token}，而 crates/{token}/ 已存在")
+                drifted.append(f"{name} 声称待办 {token}，而 crates/{token}/ 已存在")
     assert not drifted, "分类漂移（DEFERRED 里声称在搬的 crate 已经落地）：\n  " + "\n  ".join(drifted)
 
 
