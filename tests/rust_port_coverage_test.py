@@ -145,8 +145,6 @@ DEFERRED: dict[str, str] = {
     "app.py": "主窗口装配：UI 全在冻结区，搬了也没有意义；只可能搬编排层",
     "match_modes.py": "红线留下（非待办）：整个文件就是**视觉配置** —— `asset_path`、场地热区坐标、`default_right_display` / `default_map_size` / `default_module_list_style`。搬它不能帮 rm-client 的控制链，而要消费它就得先接管渲染默认值——**那正好是红线禁的那一段**",
     "backend/manager.py": "组合根：已由 rm-client 承担判据，但这一层还混着大量编排，待拆",
-    "backend/field_log.py": "现场日志：异步写盘 + 回放，判据在 Python 侧，待搬",
-    "backend/qualification.py": "资格赛证据管理：与导出打包面耦合，待搬",
     "backend/codec_selftest.py": "编解码自检：要真 ffmpeg 才能验，本机装不了",
 }
 
