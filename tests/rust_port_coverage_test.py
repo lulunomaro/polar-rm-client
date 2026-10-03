@@ -140,16 +140,10 @@ DEFERRED: dict[str, str] = {
     # 上一轮骗的是"已搬的忘了改备注"，这一轮骗的是"已搬的忘了改分类"。
     # 所以补的守卫不是"查某一张表"，而是**查磁盘与表是否一致**：
     # 见下面 `every_crate_on_disk_is_registered_somewhere`。
-
-    "auto_spin.py": "第 12 轮在搬（rm-calibration）：判定逻辑早已做进 rm-control，这里只搬编排",
     "config_store.py": "配置落盘：含 atexit / 并发写 / 原子替换，判据都在 Python 侧，待搬",
-    "calibration.py": "第 12 轮在搬（rm-calibration）",
     "vision.py": "与视觉强相关但**未被冻结**：取舍，不是禁令。判据要靠假设备搭一套",
     "app.py": "主窗口装配：UI 全在冻结区，搬了也没有意义；只可能搬编排层",
     "match_modes.py": "赛制模式表：已随 tables_vectors 导出，但 rm-client 尚未消费，待接",
-
-    "runtime_paths.py": "第 12 轮在搬（rm-ports）",
-    "serial_ports.py": "第 12 轮在搬（rm-ports）：只搬解析与排序，**不碰真设备**",
     "backend/manager.py": "组合根：已由 rm-client 承担判据，但这一层还混着大量编排，待拆",
     "backend/field_log.py": "现场日志：异步写盘 + 回放，判据在 Python 侧，待搬",
     "backend/qualification.py": "资格赛证据管理：与导出打包面耦合，待搬",
@@ -607,6 +601,28 @@ def test_no_table_has_a_duplicated_key() -> None:
 
     check("至少读到了一张表的 AST", seen_any, "一张表都没读到 —— 守卫等于没跑")
 
+
+
+def test_a_deferred_entry_does_not_claim_to_be_porting_a_crate_that_already_exists() -> None:
+    """**第 38 轮加的** —— 堵住 DEFERRED 的第三种漂移形态。
+
+    前两轮已经堵住的：重复键（第 27 轮）、已搬的 crate 却还标着"待搬"（第 15 轮）。
+    这一轮撞上的是**同一族的第三个形态**：条目写着"第 12 轮在搬（rm-ports）"，
+    而 `crates/rm-ports/` **早就在磁盘上**、`paths.rs`/`ports.rs` 也都在，
+    分类却还停在 `DEFERRED`。
+
+    判据：DEFERRED 的说明里只要出现 `在搬`，
+    **且它提到的那个 crate 目录真实存在**，就是漂移 —— 红。
+    """
+    import re as _re
+    root = pathlib.Path(__file__).resolve().parents[1]
+    crates = {p.name for p in (root.parent / "rmclient-rs" / "crates").glob("*") if p.is_dir()}
+    drifted = []
+    for name, why in DEFERRED.items():
+        for token in _re.findall(r"rm-[a-z][a-z0-9_-]*", why):
+            if "在搬" in why and token in crates:
+                drifted.append(f"{name} 声称在搬 {token}，而 crates/{token}/ 已存在")
+    assert not drifted, "分类漂移（DEFERRED 里声称在搬的 crate 已经落地）：\n  " + "\n  ".join(drifted)
 
 def test_a_ported_crate_means_its_module_is_not_still_deferred() -> None:
     """``CRATE_NOTES`` 点名的 Python 模块，**不许**还挂在 ``DEFERRED`` 上。
