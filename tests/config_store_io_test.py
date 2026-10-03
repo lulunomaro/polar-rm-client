@@ -549,11 +549,23 @@ def test_concurrent_saves_all_land() -> None:
             except BaseException as exc:  # noqa: BLE001
                 errors.append(exc)
 
-        threads = [threading.Thread(target=worker, args=(i,)) for i in range(8)]
+        # 第 67 轮：原来**没传 daemon** —— 这些是非守护线程。
+        # `join(30)` 只限制了【等待】，没限制【线程】：任何一个工作线程在 +30 秒还活着，
+        # 解释器就会在退出时**永远阻塞在它身上**，整次运行被记成一个干净的 TIMEOUT，
+        # **不留任何诊断** —— 那就是"哪个测试卡住了"的最差记录方式。
+        threads = [
+            threading.Thread(target=worker, args=(i,), daemon=True) for i in range(8)
+        ]
         for thread in threads:
             thread.start()
         for thread in threads:
             thread.join(30)
+        stuck = [i for i, thread in enumerate(threads) if thread.is_alive()]
+        check(
+            f"8 个工作线程在 30 秒内全部结束（残留 {len(stuck)}/8）",
+            not stuck,
+            f"残留的线程号: {stuck}",
+        )
         store.flush(timeout=10.0)
         check("并发保存没有抛异常", not errors, str(errors[:2]))
         landed = [p for p in Path(tmp).glob("p*.json")]
