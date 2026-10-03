@@ -72,15 +72,32 @@ class RmSerialBackend(SerialBridgeStub):
 
     def stop(self) -> None:
         self._running = False
+        # 第 94 轮：**顺序反了，而且丢掉了活着的线程句柄。**
+        #
+        # 原来是「先 close 串口 → 再 join 线程 → 再把句柄置 None」。
+        # 读线程的循环是 `while self._running and self._serial is not None:`，
+        # 所以 close 之后它**下一次解引用拿到的是 None** ⇒ `AttributeError`
+        # ⇒ 被那个宽 `except Exception` 接住 ⇒ **用一句管道错误覆盖了真实的串口故障**。
+        #
+        # 子代理在**真类**上复现了：join 预算 602.7 ms 用尽后线程仍活着，
+        # 而 `self._reader = None` 让下一次 `start()` 的 `is_alive()` 守卫失效，
+        # **同一个 COM 口上出现两个 rm-serial 读线程**。
+        #
+        # 本仓里正确的顺序就在旁边：`polar_transport.py` 是 **先 join 再 close**，
+        # 并且 join 之后**保留句柄**（`transports.py:279-282`、`vision.py:379-380`
+        # 也都保留句柄，让 `start()` 能拒绝重复启动）。**这里两个都做反了。**
+        reader = self._reader
+        if reader is not None and reader.is_alive():
+            reader.join(timeout=0.6)
         if self._serial is not None:
             try:
                 self._serial.close()
             except Exception:
                 pass
             self._serial = None
-        if self._reader is not None and self._reader.is_alive():
-            self._reader.join(timeout=0.6)
-        self._reader = None
+        # 句柄**保留**：join 超时的话线程可能还活着，丢掉句柄等于让下一次
+        # `start()` 的 `is_alive()` 守卫看不见它。
+        self._reader = reader
         self.connected = False
 
     # ------------------------------------------------------------------
