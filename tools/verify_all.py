@@ -66,6 +66,7 @@ PYTHON_SUITES = (
     "tongji_postprocess_parity_test",  # AI 后处理与 Python 逐位一致
     "settings_access_test",          # 设置项读取：6 处手写收敛后的逐位等价
     "spin_readback_test",            # 自转 0x1F 回读闭环（AGENT.md 不变量 9）
+    "safety_input_clear_hook_test",  # 第 53 轮：松键钩子抛异常时失败要看得见
     "hotpath_cache_test",            # 热路径缓存不返回同一份可变对象
     "robot_health_field_test",       # 敌方基地血量不得当成机器人血量
     "polar_link_snapshot_test",      # polar_link 快照是单一来源

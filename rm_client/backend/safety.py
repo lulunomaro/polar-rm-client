@@ -65,6 +65,13 @@ class OfficialSafety:
         self.last_reason = "startup lock"
         self.last_transition_at = time.perf_counter()
         self.input_clear_hook: Callable[[str], None] | None = None
+        # 第 53 轮新增：那个 hook 是唯一能松开卡住按键的机制，它抛异常时
+        # **不能只 `pass`** —— 见 `_notify_input_clear` 的注释。
+        #
+        # ⚠ 这里**只记账，不改变控制流**：状态照落（那是安全方向），
+        # 但失败要**看得见**，否则现场只看到一个安静的 ESTOP。
+        self.input_clear_failures = 0
+        self.last_input_clear_error: str | None = None
 
     def _notify_input_clear(self, reason: str) -> None:
         hook = self.input_clear_hook
@@ -72,9 +79,32 @@ class OfficialSafety:
             return
         try:
             hook(str(reason))
-        except Exception:
+        except Exception as exc:  # noqa: BLE001
             # Safety state transitions must never depend on diagnostics/UI.
-            pass
+            #
+            # 第 53 轮：这里**原来真的是光秃秃的 `pass`**。
+            # 那个 hook 是**唯一**能在 LOCKED / ESTOP 时松开卡住的按键的机制
+            # （下游 `input_dispatch_mixin._clear_control_inputs_for_lock`
+            # 的文档写着：DT7 与官方客户端**没有**陈旧帧超时，
+            # 所以松不开就等于**那个键一直被按住**）。
+            #
+            # 而状态是在**通知之前**就写进去的（见 `lock_control` /
+            # `arm_match` / `trigger_estop`）—— 于是 hook 一抛，
+            # 状态机报着 ESTOP，而车还按着最后一个键。
+            #
+            # **但"通知失败"不等于"可以不看"**：状态必须照落（那是安全方向），
+            # 所以**不改变控制流**；这里只把失败**记成看得见的**，
+            # 让现场能看出"这次没能松键"，而不是只看到一个安静的 ESTOP。
+            # ⚠ **绝不动 `last_reason`** —— 它记的是「这次状态转移成了什么」，
+            # 是现场看的第一句话。既有套件
+            # `manager_safety_branch_audit_test` 里那条
+            # 「清零钩子抛异常：`last_reason` 照样写下来了」**就是在钉这一条**：
+            # 第 53 轮第一版把失败原因写进了 `last_reason`，结果把「为什么变成 ESTOP」
+            # 顶掉了 —— **那条测试当场把它抓住**。
+            #
+            # 所以失败**另开**两个字段记，不挤占既有诊断。
+            self.input_clear_failures += 1
+            self.last_input_clear_error = f"{type(exc).__name__}: {reason}"
 
     def configure(
         self,
