@@ -72,7 +72,18 @@ class _HookDispatch:
         return sink._event_queue
 
     def _start_locked(self) -> None:
-        if self._thread is not None or self._closed:
+        # 第 63 轮：原来是 `self._thread is not None or self._closed`。
+        #
+        # 那测的是**身份**，不是**存活**。线程一旦因为任何原因结束了，
+        # `self._thread` 就是一个**死的但非 None** 的 `Thread` 对象，
+        # 而下一次 `register()` 看见它非 None 就**直接返回** ——
+        # **这个派发线程永远不会重启**，而 `submit()` 仍然返回 True（队列填到 8192）。
+        #
+        # 同仓库的 `config_store._ensure_writer` 就是对的：`if ... .is_alive(): return`。
+        # 两处同为的事，**这一处写错了**。
+        if self._thread is not None and self._thread.is_alive():
+            return
+        if self._closed:
             return
         thread = threading.Thread(
             target=self._run, name="mqtt-event-hook", daemon=True
@@ -177,6 +188,11 @@ atexit.register(_flush_hook_dispatch)
 
 class RmMqttBackend(OfficialMqttBridge):
     """SharkClient 风格 MQTT 后端，兼容本地 OfficialMqttBridge 全部接口。"""
+
+    # 第 63 轮新增：网络线程正常关闭失败的次数与最后一次原因。
+    # 不再完全静默：它一旦失败，旧 Client 就会永远占着那个 client_id。
+    loop_stop_errors = 0
+    last_loop_stop_error = None
 
     def __init__(
         self,
@@ -304,6 +320,8 @@ class RmMqttBackend(OfficialMqttBridge):
             self.connected = False
             self._started = False
 
+    # 第 63 轮新增：网络线程正常关闭失败的次数。
+    # 不再完全静默：它一旦失败，旧 Client 就会永远占着那个 client_id。
     def stop(self, *, publish_status: bool = True) -> None:
         self._started = False
         client = self.client
@@ -326,10 +344,34 @@ class RmMqttBackend(OfficialMqttBridge):
                 client.disconnect()
             except Exception:
                 pass
+            # 第 63 轮：原来这里是 `client.loop_stop(force=True)`。
+            #
+            # **本仓库锁的 paho-mqtt 是 2.1.0，它的签名是 `loop_stop(self)`** ——
+            # `force` 那个参数在 1.x 就有，2.x 去掉了。实测：
+            #
+            #     inspect.signature(paho.mqtt.client.Client.loop_stop) -> (self) -> MQTTErrorCode
+            #
+            # 所以每一次 `stop()` 都在这里抛 `TypeError`，然后被同下面的
+            # `except Exception: pass` 吞掉。
+            #
+            # # 代价：网络线程**没被终止、也没被 join**
+            #
+            # `loop_stop` 是唯一会设 `_thread_terminate = True` 并做 `thread.join()` 的方法。
+            # 不调它：
+            #   * 旧 `Client` 一直被它自己的线程拿着，socket 不关，直到
+            #     paho 自己意识到 `disconnect()` 才收尾（等待是 1 秒一切）；
+            #   * 而 `start()` 紧接着就用**同一个 `client_id`** 开了一个新会话 ——
+            #     MQTT 要求 id 唯一，broker 会把一个踢掉。踢的是**新的**，
+            #     所以链路会抖到旧常驻完为止。
+            #
+            # 这正是第 34 轮“两个连接共一个 client_id”那个类似问题。
             try:
-                client.loop_stop(force=True)
-            except Exception:
-                pass
+                client.loop_stop()
+            except Exception as exc:
+                # 不再完全静默（第 53—57 轮的纮端）：记一笔，让现场看得见。
+                self.loop_stop_errors += 1
+                self.last_loop_stop_error = f"{type(exc).__name__}: {exc}"
+                self.connected = False
         self.connected = False
         self.disconnected_at = time.perf_counter()
         # 换 broker / 重连后**必须**丢掉上一个 epoch 攒下的解码结果。
