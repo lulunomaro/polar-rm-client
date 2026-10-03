@@ -226,8 +226,54 @@ AUDIT_CHECKS = (
 )
 
 
-def run(label: str, argv: list[str]) -> tuple[bool, str]:
+# 第 102 轮：门禁必须自己给子进程一个**能写、且在工作树外**的临时目录。
+#
+# 为什么必须（子代理实测的结论）：
+#   * 本机的整个用户目录**对 Python 子进程不可写**：
+#     `%TEMP%` / `%LOCALAPPDATA%` / `%APPDATA%` / `%USERPROFILE%` 全部 `PermissionError`。
+#   * 所以 `tempfile.gettempdir()` 把候选位置一个一个试完、全部拒绝，
+#     **回退到 `os.getcwd()`**，而门禁把 cwd 设为 ROOT —— **临时目录落在 git 工作树里**。
+#   * 后果：每个套件的 `mkdtemp()` 都写进仓库，zig 也拿到不可写的缓存目录。
+#   * 部分套件还直接读 `os.environ["TEMP"]`，根本不经 `tempfile`。
+#
+# 工作树**父目录**是可写的（已实测），且**不在 git 工作树里**。
+_SCRATCH = None
+
+
+def scratch_dir() -> str:
+    """返回一个可写、且**在 git 工作树之外**的临时目录。"""
+    global _SCRATCH
+    if _SCRATCH is None:
+        base = ROOT.parent / ".rm_verify_scratch"
+        try:
+            base.mkdir(parents=True, exist_ok=True)
+            probe = base / ".w"
+            probe.write_text("x", encoding="utf-8")
+            probe.unlink()
+            _SCRATCH = str(base)
+        except OSError:
+            # 父目录不可写时退回原行为（不把门禁变红，只是不修它）。
+            _SCRATCH = tempfile.gettempdir()
+    return _SCRATCH
+
+
+def scratch_env() -> dict:
+    """给子进程的环境：把临时目录统一指到 scratch_dir()。
+
+    同时设 `TEMP` / `TMP`（部分套件直接读它，不经过 `tempfile`）和
+    `ZIG_GLOBAL_CACHE_DIR`（zig 的临时目录另设一处，不看这个环境变量）。
+    """
     env = dict(os.environ)
+    scratch = scratch_dir()
+    env["TMPDIR"] = scratch
+    env["TEMP"] = scratch
+    env["TMP"] = scratch
+    env["ZIG_GLOBAL_CACHE_DIR"] = str(Path(scratch) / "zig-cache")
+    return env
+
+
+def run(label: str, argv: list[str]) -> tuple[bool, str]:
+    env = scratch_env()
     env.setdefault("QT_QPA_PLATFORM", "offscreen")
     env.setdefault("PYTHONIOENCODING", "utf-8")
     # 隔离用户数据：这些测试会构造真实窗口并自动保存配置，不隔离会污染开发机存档
@@ -254,7 +300,7 @@ def acquire_lock() -> bool:
     用文件锁而不是 pid 文件：进程被杀也不会留下假的占用者（锁随句柄关闭自动释放）。
     """
     global _LOCK
-    path = Path(tempfile.gettempdir()) / "rm_verify_all.lock"
+    path = Path(scratch_dir()) / "rm_verify_all.lock"
     try:
         handle = open(path, "a+", encoding="utf-8")
         if os.name == "nt":

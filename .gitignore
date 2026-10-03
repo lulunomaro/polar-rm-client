@@ -91,3 +91,11 @@ polar_startup_userdata*/
 verify_all_*/
 verify_all_*/
 spec_bad_*/
+
+# 第 102 轮：门禁的运行时锁与临时目录，不是源码。
+rm_verify_all.lock
+
+
+# \u7b2c 102 \u8f6e\uff1a\u8fd9\u4e9b\u662f\u4e13\u4ef6\u8def\u5f84\u7684 mkdtemp \u4ea7\u7269\uff08\u76f4\u63a5\u8bfb TEMP\uff0c\u4e0d\u7ecf tempfile\uff09\u3002
+polar_b19_*/
+tmp[0-9a-z]*/
