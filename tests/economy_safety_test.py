@@ -337,6 +337,43 @@ def test_one_observation_credits_at_most_one_transaction() -> None:
     check("第二笔的基线已重设到当前状态", second.baseline_ammo == 190, f"{second.baseline_ammo}")
 
 
+def test_a_still_pending_transaction_is_never_finalised_early() -> None:
+    """还没到终态的交易，**不许被提前当成"已结算"**。
+
+    第 106 轮加。背景是一次变异审计把 `_settle` 里「仍然 pending」那一支的
+    `return False` 改成 `return True`，**六个套件全部照样绿**。
+
+    ## 这里要把两件事分开，因为它们**不是同一件**
+
+    改错之后**确实**会出问题，但**不是**「没等到裁判确认就把钱扣了」：
+
+    * `_settle` 里有**三道互相独立的闸**——
+      `self._finish(transaction)`、`if succeeded:`、`self._rebase_rest(...)`。
+      `succeeded` 只在裁判确认那一支才置 True，
+      所以提前 `return True` **走不到 `_rebase_rest`**，**金币不会被错扣**。
+    * 真正坏掉的是：提前返回会让执行**继续往下走**，
+      于是给一笔**仍然 pending** 的交易**盖上 `completed_at` 并 `_finish` 掉**。
+      交易被当成终态移出队列，**之后真的来确认时已经没有在途交易可确认了**。
+
+    所以这里钉的是**「pending 不得被提前终结」**，不是「金币不会被错扣」
+    —— 后者本来就由 `if succeeded:` 挡着，那道闸另有测试在钉。
+    """
+    state = fresh_state()
+    bridge = EconomyCommandBridge()
+    bridge.sender = RefusingWindow(accepted=True).send_economy_request
+    tx = bridge.submit(state, offer_for(state, "rmuc_infantry_17_10"), mock=False, now=1.0)
+
+    # 未确认、也远未到 deadline：既没有裁判观测，也没有超时。
+    result = bridge._settle(state, tx, now=1.05)
+
+    check("_settle 对仍然 pending 的交易返回 False（= 本拍没有结算任何东西）",
+          result is False, f"got {result!r}")
+    check("它没有被标成终态", tx.status == "pending", tx.status)
+    check("它没有被盖上完成时间", not tx.completed_at, repr(tx.completed_at))
+    check("它还在队列里等确认", bridge._inflight.get(tx.sequence) is tx,
+          f"inflight={sorted(bridge._inflight)}")
+
+
 # --------------------------------------------------------------------------
 # 2b. 逐位一致：只有一笔在途时，新旧判定表必须完全相同
 # --------------------------------------------------------------------------
@@ -881,6 +918,7 @@ def main() -> int:
         test_superseded_transaction_reaches_its_own_deadline,
         test_superseded_transaction_can_still_be_confirmed,
         test_one_observation_credits_at_most_one_transaction,
+        test_a_still_pending_transaction_is_never_finalised_early,
         test_single_request_decision_table_is_bit_identical,
         test_update_returns_latest_when_nothing_changed,
         test_refusal_reason_is_preserved,
