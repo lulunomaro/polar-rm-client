@@ -32,6 +32,8 @@
 
 from __future__ import annotations
 
+import ast
+import pathlib
 import re
 import sys
 from pathlib import Path
@@ -227,6 +229,137 @@ def test_assurance_suites_are_registered_somewhere() -> None:
           not missing, f"没被覆盖：{missing}")
 
 
+
+# ==================================================================== 第 42 轮
+# 防"加了测试，但它从来没跑过"。
+
+
+def _runner_listed(tree) -> set:
+    """从 AST 里读出 `tests = [...]` 等**双号列表**按名字列出的函数。"""
+    out: set = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign):
+            targets, value = node.targets, node.value
+        elif isinstance(node, ast.AnnAssign):
+            targets, value = [node.target], node.value
+        else:
+            continue
+        if not isinstance(value, (ast.List, ast.Tuple)):
+            continue
+        names = [t.id for t in targets if isinstance(t, ast.Name)]
+        if not any(n in ("tests", "checks", "RUN", "_CHECKS") for n in names):
+            continue
+        for elt in value.elts:
+            if isinstance(elt, ast.Name):
+                out.add(elt.id)
+            elif isinstance(elt, ast.Attribute):
+                out.add(elt.attr)
+    return out
+
+
+def _module_level_tests(tree) -> list:
+    return [
+        n.name
+        for n in tree.body
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name.startswith("test_")
+    ]
+
+
+def _scanned_files() -> list:
+    """⚠ **两个命名都要收**：`*_test.py` 与 `test_*.py`。
+
+    只收前者的话，**本文件自己就扫不到**——
+    第 40 轮的那个版本正是这个错，它连纯错都没报出来。
+    """
+    root = pathlib.Path(__file__).resolve().parents[1]
+    found = set()
+    for pattern in ("*_test.py", "test_*.py"):
+        found.update(q for q in (root / "tests").glob(pattern) if q.is_file())
+        found.update(q for q in (root / "tools").glob(pattern) if q.is_file())
+    return sorted(found)
+
+
+def test_no_test_function_is_missing_from_its_own_runner_list() -> None:
+    """**第 42 轮落地**。前两轮写过一版，都因为不能被证伪而被拒绝。
+
+    本仓 **38 个** suite 用同一种写法：`main()` 里手写 `tests = [...]`，再 for 循环跑。
+    所以**每加一条测试，都可能忘了往清单里加一行**——
+    而**这种失败看不出来**。
+
+    第 39 轮就中了：新加的分类漂移守卫根本没进清单，
+    跑出来是 `全部通过（31 项）`，而加之前也是 31。
+    它甚至**一跑就是红的**（`NameError`）——只是从来没被调用过。
+
+    “全部通过”这句话在**漏跑**和**不漏跑**时**一模一样**——
+    所以只能拿**项数**当证据。
+    """
+    missing: list[str] = []
+    scanned = 0
+    for path in _scanned_files():
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        defined = _module_level_tests(tree)
+        if not defined:
+            continue
+        listed = _runner_listed(tree)
+        if not listed:
+            continue  # 没有手写清单 = 自动发现，天然安全
+        scanned += 1
+        missing += [f"{path.name} :: {n}" for n in defined if n not in listed]
+    assert not missing, (
+        f"**{len(missing)} 条测试函数没出现在自己文件的手写清单里**"
+        f"（已扫 {scanned} 个 suite）—— 它们**从来没跑过**。\n  "
+        + "\n  ".join(missing)
+        + "\n\n要么把名字加进 `tests = [...]`，要么把该文件改成自动发现。"
+    )
+
+
+def test_the_missing_test_detector_finds_a_planted_violation() -> None:
+    """**负向证明**：制造一个确实漏跑的样本，扫描器必须报出它。
+
+    不这个测试才是“加了守卫”的证书——
+    它是第 40/41 轮挫了两次的那个东西：
+    **守卫自己不会报错**。
+
+    每一个守卫都必须自己证明“我能报错”，
+    否则它只是一个**永远绿的默认**。
+    """
+    # ⚠ 样本用**逐行拼**写，不用三引号。
+    #
+    # 原因：`test_no_assertion_free_test_functions` 用 **文本**分割（`_FUNC_SPLIT`），
+    # 而不是 AST ——它会把我字符串里的那两行**当成真测试**，
+    # 然后报成“零断言测试”。
+    #
+    # 那是它的设计界（语法分割才能也能包括字符串里的代码），
+    # **不是它的 bug** —— 而是我不应在源码里放一个**行尾开头**的 `def test_`。
+    planted = "\n".join([
+        "def test_alpha() -> None:",
+        "    assert True",
+        "",
+        "def test_beta() -> None:",
+        "    assert True",
+        "",
+        "def main() -> int:",
+        "    tests = [",
+        "        test_alpha,",
+        "    ]",
+        "    return 0",
+    ])
+    found = scan_text_for_missing(planted, "planted_bad.py")
+    assert found == ["test_beta"], (
+        f"扫描器在一个**确实漏跑**的样本上没报出。\n"
+        f"报出的是：{found!r}\n"
+        f"这说明扫描器自身有问题 —— **不能拿它守别人**。"
+    )
+
+
+def scan_text_for_missing(src: str, label: str) -> list:
+    tree = ast.parse(src)
+    defined = _module_level_tests(tree)
+    listed = _runner_listed(tree)
+    if not (defined and listed):
+        return []
+    return [n for n in defined if n not in listed]
+
 def main() -> int:
     tests = [
         test_detector_recognises_every_assertion_idiom,
@@ -235,6 +368,8 @@ def main() -> int:
         test_no_assertion_free_test_functions,
         test_every_suite_actually_verifies_something,
         test_assurance_suites_are_registered_somewhere,
+        test_no_test_function_is_missing_from_its_own_runner_list,
+        test_the_missing_test_detector_finds_a_planted_violation,
     ]
     for test in tests:
         print(f"\n--- {test.__name__} ---")
