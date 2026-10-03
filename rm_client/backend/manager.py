@@ -144,6 +144,9 @@ class BackendManager:
         self.polar_motion = PolarMotionVerifier()
         # 队内链路自动重连节律：启动后才插机器人、机器人中途重启都能接回。
         self._polar_last_connect_attempt = 0.0
+        # 第 101 轮：连接动作在工作线程上，以免阻塞 60 Hz 拍。
+        self._polar_connect_thread = None
+        self._polar_link_logged_up = False
         self._polar_last_logged_error = ""
         self._polar_gimbal_last: tuple[float, float] | None = None
         # 自转指令（0x04）状态机，见 _update_spin_command。
@@ -353,15 +356,52 @@ class BackendManager:
         if now - self._polar_last_connect_attempt < POLAR_RETRY_S:
             return
         self._polar_last_connect_attempt = now
-        was_connected = self.polar.connected
-        self.polar.start()
-        if self.polar.connected and not was_connected:
+        # 第 101 轮：`polar.start()` 会同步走到 `socket.create_connection(..., timeout=1.5)`。
+        # **实测（本机）**：不可达地址 **1513 ms**，即便是本地「没人监听」
+        # 也是 **1506 ms**（网卡拒绝了包）。而本方法跑在 60 Hz 拍上。
+        #
+        # 以等：每拍错过约 **90 帧 60 Hz** 和 **约 112 帧 75 Hz KMC**，
+        # 而固件主机控制新鲜度门限只有 **150 ms**。
+        # 而 `_retry_polar_connect` 的门限是 `POLAR_RETRY_S = 2.0` ——
+        # **连接未通的那段时间里，75% 的时间 GUI 线程是卡住的**，
+        # 而这恰好是「操作员先启动客户端、后插机器人」那个状态。
+        #
+        # **只把「连接动作」移到工作线程**，`polar_transport.py` 一字不动——
+        # 它的同步契约（返回时 `connected` 已知）完好保留。
+        if self._polar_connect_thread is not None and self._polar_connect_thread.is_alive():
+            return
+        self._polar_connect_thread = threading.Thread(
+            target=self._polar_connect_worker,
+            name="polar-connect",
+            daemon=True,
+        )
+        self._polar_connect_thread.start()
+
+    def _polar_connect_worker(self) -> None:
+        """在**工作线程**里做一次连接尝试。
+
+        `polar.start()` 自己已经把失败记进 `last_error` / `last_error_code`，
+        这里只需要不让异常把拍带崩。"""
+        try:
+            self.polar.start()
+        except Exception:  # noqa: BLE001 — 已有记账路径，这里只是兜底
+            pass
+        # ⚠ **接通现在是异步的**，所以不能再靠「本次调用前后对比 connected」。
+        # 原来的 `was_connected` 取在调 `start()` **之前**，而当时 `start()` 已经返回。
+        # 接连变成异步之后，下一拍看到的 `connected` 已经是新值了，
+        # **那个转移每次都会被漏掉 -> `polar_link_up` 不会发。**
+        # 所以改成记住「已经记过 up」：**每次真实的上线转移只发一次**。
+        if self.polar.connected and not self._polar_link_logged_up:
+            self._polar_link_logged_up = True
             self.field_log.emit(
                 "polar_link_up",
                 port=self.polar.resolved_port,
                 requested_port=self.polar.port,
                 send_hz=self.polar.send_hz,
             )
+        elif not self.polar.connected and self._polar_link_logged_up:
+            self._polar_link_logged_up = False
+
         elif not self.polar.connected and self._polar_last_connect_attempt > 0.0:
             # 不刷屏：只在端口曾经可用又掉线时记一次
             if self.polar.last_error and self.polar.last_error != self._polar_last_logged_error:

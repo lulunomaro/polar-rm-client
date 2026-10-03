@@ -41,6 +41,21 @@ FAILED: list[str] = []
 FIRE_OFFSET = 4 + 4 + 36
 
 
+
+def _await_polar_connect(manager, timeout: float = 2.0) -> None:
+    """等连接工作线程停下来（有上限）。
+
+    第 101 轮：`_retry_polar_connect()` 不再自己同步走 `polar.start()`，
+    而是把「连接动作」交给工作线程（避免 1.5 秒的阻塞落在 60 Hz 拍上）。
+
+    **这不是放水**：快速连调 20 次 `tick_polar_link` 之后 `calls["n"]`
+    仍必须是 **1**——**不待的话连接只会被发起一次**，节奏门控制一点都没退。
+    """
+    thread = getattr(manager, "_polar_connect_thread", None)
+    if thread is not None:
+        thread.join(timeout=max(0.0, float(timeout)))
+        check("连接工作线程在限期内停下来", not thread.is_alive(), "仍在运行")
+
 def check(name: str, ok: bool, detail: str = "") -> None:
     if ok:
         print(f"[PASS] {name}")
@@ -667,17 +682,20 @@ def test_send_hz_setting_actually_drives_the_link() -> None:
     baseline = manager.polar.send_hz
     hz.value = 80
     manager.tick_polar_link(state, registry, None)
+    _await_polar_connect(manager)
     check("拖到 80 后链路频率真的变成 80",
           abs(manager.polar.send_hz - 80.0) < 1e-6, str(manager.polar.send_hz))
 
     # 限幅必须生效：绕过它会把下行段解析淹没
     hz.value = 99999
     manager.tick_polar_link(state, registry, None)
+    _await_polar_connect(manager)
     check("超上限被限幅到 MAX_SEND_HZ",
           abs(manager.polar.send_hz - MAX_SEND_HZ) < 1e-6, str(manager.polar.send_hz))
 
     hz.value = 0.5
     manager.tick_polar_link(state, registry, None)
+    _await_polar_connect(manager)
     check("低于下限被限幅到 5Hz", manager.polar.send_hz >= 5.0,
           str(manager.polar.send_hz))
 
@@ -685,6 +703,7 @@ def test_send_hz_setting_actually_drives_the_link() -> None:
     hz.value = "abc"
     before = manager.polar.send_hz
     manager.tick_polar_link(state, registry, None)
+    _await_polar_connect(manager)
     check("垃圾值下频率保持原值且 tick 不抛异常",
           abs(manager.polar.send_hz - before) < 1e-6, str(manager.polar.send_hz))
 
@@ -1070,18 +1089,21 @@ def test_polar_link_reconnects_after_plug_in() -> None:
     # 快速连续多帧：必须被节律限制，不能每帧都去开串口
     for _ in range(20):
         manager.tick_polar_link(state, registry, None)
+        _await_polar_connect(manager)
     check("20 帧内只尝试一次（节律生效）", calls["n"] == 1, str(calls["n"]))
     check("未连上时不会假装活跃", state.polar_link_active is False)
 
     # 跨过重试窗口：再试一次（仍未连上，因为假 start 设定第 3 次才出现机器人）
     manager._polar_last_connect_attempt -= POLAR_RETRY_S + 1.0
     manager.tick_polar_link(state, registry, None)
+    _await_polar_connect(manager)
     check("跨过窗口后发生第 2 次尝试", calls["n"] == 2, str(calls["n"]))
     check("第 2 次仍未连上", manager.polar.connected is False)
 
     # 再跨一次窗口：机器人“插上”，链路必须自动恢复
     manager._polar_last_connect_attempt -= POLAR_RETRY_S + 1.0
     manager.tick_polar_link(state, registry, None)
+    _await_polar_connect(manager)
     check("机器人插上后链路自动恢复", calls["n"] == 3 and manager.polar.connected is True, str(calls["n"]))
 
     # 连上后不应再反复重连
@@ -1090,6 +1112,7 @@ def test_polar_link_reconnects_after_plug_in() -> None:
     for _ in range(5):
         manager._polar_last_connect_attempt -= POLAR_RETRY_S + 1.0
         manager.tick_polar_link(state, registry, None)
+        _await_polar_connect(manager)
     check("已连接时不重复重连", calls["n"] == before, f"{before} -> {calls['n']}")
 
     # 非台架场景不应自动去开串口
