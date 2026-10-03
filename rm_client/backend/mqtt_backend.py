@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import atexit
+import sys
 import threading
 import time
 import weakref
@@ -160,10 +161,39 @@ class _HookDispatch:
                 self.delivered += ok
                 self._cv.notify_all()
 
-    def shutdown(self) -> None:  # pragma: no cover - 解释器退出路径
+    def shutdown(self, join_timeout: float = 0.0) -> bool:
+        """置位关闭。**默认只置位、不等待**（保持原有语义），`join_timeout > 0` 时才 join。
+
+        第 96 轮：原来这里只置位、**从不 join**，而且**生产代码从来不调它**
+        （全仓唯一调用点是 `tests/mqtt_dispatch_liveness_test.py`）。
+
+        后果是：`_thread` 从 `BackendManager.__init__` 起就一直活着直到解释器退出
+        —— 每个 `BackendManager` 漏一个守护线程（生产一个；批量造 manager 的测试
+        工具会漏一串）。它不会卡住退出（是 daemon），**但它会在 `field_log`
+        已经停止之后继续往里投递**。
+
+        ## 为什么默认 `join_timeout=0.0`
+
+        `shutdown()` 原本是「**发信号**」，不是「**发信号并等**」。
+        `mqtt_dispatch_liveness_test` 的 DP4 会在**队列里还压着 600 条**时调
+        `shutdown()`，然后**用自己的一套 deadline 去等排空** —— 它测的正是
+        「置位之后还能把剩下的送完」。**默认就 join 会把 1 秒花在那一次调用里**，
+        把「关停后排空」这个行为从测试手里抢走。
+
+        所以：**默认保持原语义**；需要「确认线程真的停了」的调用方才传
+        `join_timeout`，返回值是那个事实。
+        """
         with self._cv:
             self._closed = True
             self._cv.notify_all()
+        thread = self._thread
+        if thread is None or join_timeout is None or float(join_timeout) <= 0.0:
+            return not (thread is not None and thread.is_alive())
+        thread.join(timeout=float(join_timeout))
+        exited = not thread.is_alive()
+        if exited:
+            self._thread = None
+        return exited
 
 
 _HOOK_DISPATCH = _HookDispatch()
@@ -175,12 +205,35 @@ def _flush_hook_dispatch() -> None:  # pragma: no cover - 解释器退出路径
     ``stop()`` 已经会 flush，但进程被 Ctrl+C / 强杀时不一定走到那里。
     证据链宁可多等零点几秒，也不能在最后一刻丢掉 mqtt_disconnect 这类
     最关键的收尾记录。
+
+    第 96 轮：**这里原来把 `flush_events` 的返回值丢了。**
+    那个布尔的意思是"队列真的排空了没有"——**超时和干净收尾长得一模一样**，
+    于是"排空超时 ⇒ 尾部事件丢失"这件事**没有任何地方记录**。
+
+    现在按 sink 记账并留一份未排空的清单；它会在解释器退出前打到 stderr，
+    因为**这时候已经没人能读到结构化日志了**。
     """
+    unfinished: list[str] = []
     for sink in _HOOK_DISPATCH.all_sinks():
+        name = type(sink).__name__
         try:
-            sink.flush_events(timeout=0.5)
-        except Exception:
-            pass
+            if not sink.flush_events(timeout=0.5):
+                unfinished.append(name)
+        except Exception as exc:
+            unfinished.append("%s(%s)" % (name, type(exc).__name__))
+    if unfinished:
+        # 刻意用 stderr：退出这一刻场记可能已经停了。
+        sys.stderr.write(
+            "[mqtt] 退出前排空**未完成**：%s —— 这些 backend 的尾部事件"
+            "（含 mqtt_disconnect）可能已经丢失。\n" % ", ".join(sorted(set(unfinished)))
+        )
+        sys.stderr.flush()
+    # ⚠ **这里刻意不调 `shutdown()`。**
+    # 这个函数同时也是"只排空"的工具（测试直接调它，然后期望全局派发器还能继续用），
+    # 把它变成"排空并永久关停"会让 `register()` 的 `if self._closed: return`
+    # 把全局派发器**永久留在关停态** —— `mqtt_backend_branches_audit_test`
+    # 的「分发线程恢复运行」正是钉这件事的。
+    # 关停是 `BackendManager.shutdown()` 该做的事，不是排空该做的事。
 
 
 atexit.register(_flush_hook_dispatch)
