@@ -183,6 +183,63 @@ def test_codec_roundtrip_still_accepts() -> None:
 
 # --- 8. 反例护栏：单比特翻转必须被发现（证明表没算错方向） ----------------
 
+def test_exact_minimum_remainder_is_still_scanned() -> None:
+    """循环门槛 `index + 9 <= len(stream)`：**等于**的时候也必须进去。
+
+    第 109 轮加。一次变异审计把 `<=` 改成 `<`，**全套件照样绿** ——
+    因为没有任何一条用例造出「剩余正好 9 字节」的流。
+
+    ## 为什么这一个 off-by-one 值得单独立一条
+
+    9 是最短可解码帧的下界。流式读取里，**缓冲区末尾正好剩 9 字节**
+    是一件完全正常的事（串口一次读到半帧 + 下一个半帧）。
+    门槛写成 `<` 时这一轮循环**根本不进**，这 9 字节被整段留给下一轮，
+    而下一轮会把它们当成新帧的开头重新扫 —— **结果不是丢帧，是错位**。
+
+    ## 判据是 `consumed`，不是帧数
+
+    第 109 轮第一版我写成「补 9 个零字节，然后断言帧数还是 1」——
+    **负向证明当场把它戳穿：变异后 exit=0。**
+    原因很直白：尾部那 9 个零字节**既不含 SOF 也不含合法 CRC8**，
+    循环进不进去对结果**没有任何区别**，帧数自然不动。
+
+    所以尾部必须放一个**真的 SOF**：循环一旦进去，扫描器就会往前挪一格，
+    `consumed` 跟着变。**只有会变的量才是判据。**
+    """
+    codec = RefereeFrameCodec()
+    one = codec.encode(0x0301, b"\x01\x02", seq=7)
+    tail = bytes([0xA5]) + b"\x00" * 8          # 真的 SOF，后面跟不足一帧的字节
+    stream = one + tail
+
+    check("前提成立：尾部正好 9 字节且以 SOF 开头",
+          len(tail) == 9 and tail[0] == 0xA5 and len(stream) == len(one) + 9,
+          f"tail={len(tail)} head={tail[0]:#x}")
+
+    frames, consumed = codec.decode_with_consumed(stream)
+    check("整帧那一条照常解出", [f.cmd_id for f in frames] == [0x0301],
+          f"{[f.cmd_id for f in frames]}")
+
+    # ⭐ 真正的判据。实测两边的取值：
+    #   门槛 `<=` : consumed = len(one) + 1   （循环进去了，扫到 SOF，CRC8 不匹配，往前挪一格）
+    #   门槛 `<`  : consumed = len(one)       （循环**根本没进**，这 9 字节整段留着）
+    # 所以判据是「**有没有比整帧末尾更靠后**」，而不是「有没有吃完」。
+    #
+    # 第 109 轮我先写成 `consumed == len(stream)`，那也不对 ——
+    # 尾部那 9 字节里只有 1 个 SOF，挪一格之后 `index+9 <= len` 就不成立了，
+    # **本来就吃不干净**。要求吃干净等于要求实现去做另一件事。
+    check(
+        "剩余正好 9 字节时循环门槛仍然进入（consumed 越过整帧末尾）",
+        consumed > len(one),
+        f"consumed={consumed}，整帧末尾={len(one)}"
+        "（门槛多半被写成了 <，这 9 字节被整段留给下一轮错位扫）",
+    )
+
+    # 反侧：8 字节不够一帧，必须整段留作半帧，一个字节都不许吞
+    frames8, consumed8 = codec.decode_with_consumed(one + tail[:8])
+    check("剩余 8 字节时只解出整帧那一条", len(frames8) == 1, f"{len(frames8)}")
+    check("不足的 8 字节没被吞掉", consumed8 == len(one), f"consumed={consumed8}")
+
+
 def test_single_bit_flip_is_detected() -> None:
     rng = random.Random(11)
     payload = bytes(rng.getrandbits(8) for _ in range(64))
@@ -247,6 +304,7 @@ def main() -> int:
         test_boundary_lengths,
         test_referee_frame_bytes_identical,
         test_codec_roundtrip_still_accepts,
+        test_exact_minimum_remainder_is_still_scanned,
         test_single_bit_flip_is_detected,
         test_accepts_buffer_protocol,
         test_table_is_faster,
