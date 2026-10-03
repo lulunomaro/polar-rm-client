@@ -46,6 +46,12 @@ DEADMAN_TIMEOUT_S = 0.20
 ZERO_BURST_S = 0.30
 
 
+
+# 第 71 轮：连续多少拍上下扇失败才算「链路真的断了」。
+# 短暂抖动（USB 插拔瞬态）撑得住；持续不好才筶，避免变成 4 ms 轮询循环。
+# 不能是 1 —— 那会把原行为静默装回来。
+RX_TX_FAILURE_LIMIT = 3
+
 class PolarTimestamp:
     """严格递增的 u32 毫秒时间戳。
 
@@ -121,6 +127,8 @@ class PolarLinkStats:
     mock_writes: bool = True
     resolved_port: str = ""
     last_error_code: str = ""
+    # 第 71 轮：连续多少拍上下扇失败才算「链路真的断了」
+    _io_failures: int = 0
     detected_ports: list[str] = field(default_factory=list)
     port: str = "Stub"
     baud: int = 115200
@@ -402,16 +410,51 @@ class PolarLinkTransport:
             now = time.perf_counter()
             try:
                 self._drain_rx()
+                rx_failed = False
             except Exception as exc:
+                # 第 71 轮：原来这里是 `break`。
+                #
+                # **与同一个文件里的 `_write()` 矛盾**：
+                # `_write` 写失败时只记一笔、置 `connected = False`、**然后返回**，主循环欸存；
+                # 而这里一出错就 **break** —— 整条链路线程死掉。
+                #
+                # 常见触发是 `self._serial.read(512)` 报错：USB-CDC 被拔掉、传输中途断开
+                # 都是**瞬态**的。一次瞬态抖动就把死了整个链路，
+                # 而重连路径每 2 秒才能试一次、且走的是 60 Hz 的 Qt 拍。
+                #
+                # 不能直接改成继续：设备真死了 `read()` 每拍都报错，
+                # 就变成一个 4 ms 的轮询循环。所以给一个**连续次数上限**：
+                # **短暂抖动撑得住，持续不好才筸。中间恢复了就清零。
+                rx_failed = True
                 self.last_error = str(exc)
-                break
-            if now >= next_send:
+                self.last_error_code = "RX_FAULT"
+                self.connected = False
+            # 第 71 轮：改成——**刚读失败这一拍不去发送**。
+            #
+            # 两个理由：
+            # 1. 一条刚读失败的链路去发送，本身没意义；
+            # 2. 发送会走 `NOT_CONNECTED` 那一支，把 **RX 的真实原因覆写掉** ——
+            #    现场看到的就只剩一句「串口未连接」，
+            #    而丢掉了「设备已拔走」这个真正有用的线索。
+            if now >= next_send and not rx_failed:
                 next_send = now + interval
                 try:
                     self._pump_tx(now)
+                    tx_failed = False
                 except Exception as exc:
+                    tx_failed = True
                     self.last_error = str(exc)
+                    self.last_error_code = "TX_FAULT"
+                    self.connected = False
+            elif now >= next_send:
+                # 跳过发送但**把排期推进**，否则恢复后会累积一挤。
+                next_send = now + interval
+            if rx_failed or tx_failed:
+                self._io_failures = getattr(self, "_io_failures", 0) + 1
+                if self._io_failures >= RX_TX_FAILURE_LIMIT:
                     break
+            else:
+                self._io_failures = 0
             time.sleep(max(0.0, min(interval * 0.25, next_send - time.perf_counter())))
         self.connected = False
         self._running = False
