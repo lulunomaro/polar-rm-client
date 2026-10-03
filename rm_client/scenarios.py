@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from . import settings_access
+
 
 SCENARIO_MODES = ["OfficialEvent", "CampusSimulation", "LabDebug"]
 
@@ -170,7 +172,6 @@ class ScenarioManager:
         control.mock_output = not config.safety.allow_mqtt_publish
 
     def _set_setting(self, registry: Any, module_name: str, setting_name: str, value: object) -> None:
-        module = registry.get(module_name)
-        setting = module.get_setting(setting_name) if module else None
-        if setting is not None:
-            setting.value = value
+        # 第 105 轮：方法体原来与 `match_modes._set_setting` **逐字节相同**，
+        # 现在两边的逻辑都落在 `settings_access.set_value` 这一处。
+        settings_access.set_value(registry, module_name, setting_name, value)

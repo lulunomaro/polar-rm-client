@@ -144,3 +144,24 @@ def read_number_guarded(module: Any, name: str, default: float) -> float:
         return float(setting.value)
     except (TypeError, ValueError):
         return float(default)
+
+
+def set_value(registry: Any, module_name: str, setting_name: str, value: object) -> None:
+    """按「模块名 → 设置项名」写入设置项；找不到就什么都不做。
+
+    第 105 轮合并。原先有**两份逐字节相同**的实现：
+    `MatchModesManager._set_setting`（`match_modes.py`）与
+    `ScenarioManager._set_setting`（`scenarios.py`），两者方法体完全一致。
+
+    保留原来那个「找不到就静默跳过」的语义**没有改**：
+    模块不存在、设置项不存在、`registry.get` 返回 None —— 都直接返回。
+
+    为什么两个类的私有方法还在（只把方法体换成调用这里）：
+    调用点写的是 `self._set_setting(...)`，**那是它们内部的写法**；
+    去掉方法会牵动调用点，而那对本次合并没有收益。
+    合并掉的是**逻辑**，不是调用形状。
+    """
+    module = registry.get(module_name)
+    setting = module.get_setting(setting_name) if module else None
+    if setting is not None:
+        setting.value = value
