@@ -91,6 +91,78 @@ def test_readonly_by_default() -> None:
         check("机器人只收到零速帧", all(abs(c[0]) < 1e-6 for c in session.robot.received_cmds), str(session.robot.received_cmds[:2]))
 
 
+def test_unfinished_selftest_duration_is_not_negative_epoch() -> None:
+    """自检没跑完就导出时，`duration_s` 不能是 `0.0 - epoch`（约 −1.79e9）。
+
+    第 116 轮。一次 `or_drop` 普查（AST，92 个生产文件）把它列为第一顺位，本轮实测确认。
+
+    ```python
+    finished_at: float = 0.0                       # <- 「还没结束」的缺省值
+    "finished_at": round(self.finished_at or time.time(), 3),
+    "duration_s": round((self.finished_at or time.time()) - self.started_at, 3),
+    ```
+
+    ## 那个 `or` 挡掉的是什么
+
+    `started_at` 是 epoch 秒（`default_factory=time.time`）。所以一旦
+    `finished_at` 保持缺省的 `0.0` 而没人去 `or` 一下，
+    `duration_s` 就是 **`0.0 − 1.79e9`**。
+
+    **这是一份会被现场当证据读的文件**（本文件的注释自己写着
+    「正式现场证据必须由 QualificationManager 以 HMAC 签名记录」），
+    **让证据里出现一个负二十亿秒的时长，是在污染它**。
+
+    ## 判据
+
+    只断「`duration_s` 落在 `[0, 60)` 里」——
+    上界取 60 秒是因为本用例把 `started_at` 设成 5 秒前，
+    而 5 秒后 `finished_at` 仍是 `0.0`，走 `or` 拿到的是**当下**，
+    于是 `duration_s` 约等于 5。给它一个宽松但明确的窗口，
+    **既容得下真值，又容不下 −1.79e9**。
+    """
+    import time
+
+    result = ps.SelftestResult()
+    result.started_at = time.time() - 5.0
+    result.finished_at = 0.0                       # 从未设置 —— 就是缺省那个「没结束」
+
+    payload = result.as_dict()
+    duration = float(payload["duration_s"])
+
+    check(
+        "未结束时 duration_s 落在 [0, 60) 而不是 0.0 - epoch",
+        0.0 <= duration < 60.0,
+        f"拿到 {duration} —— `finished_at or time.time()` 的 `or` 被删了？"
+        f"started_at={result.started_at!r} finished_at={result.finished_at!r}",
+    )
+    check(
+        "同一次导出里 finished_at 与 duration_s 自洽"
+        "（差值应落在 [0, 60) 内，不是各算各的）",
+        abs(float(payload["finished_at"]) - float(payload["started_at"]) - duration) < 1.0,
+        f"finished_at={payload['finished_at']} started_at={payload['started_at']} "
+        f"duration_s={duration}",
+    )
+
+
+def test_finished_selftest_duration_matches_the_finish_time() -> None:
+    """已结束时 `duration_s` 必须等于**它自己记录的**那个结束时刻之差。
+
+    上面那条只能证明「没结束时不是负数」，证明不了「结束时是对的」——
+    **一个恒等于 0 的实现也能过上面那条**。这条把另一侧钉住。
+    """
+    import time
+
+    result = ps.SelftestResult()
+    result.started_at = 1000.0
+    result.finished_at = 1007.25                    # 一个不会漂移的固定值
+
+    payload = result.as_dict()
+    check("已结束时 duration_s 就是结束时刻之差", abs(float(payload["duration_s"]) - 7.25) < 1e-3,
+          str(payload["duration_s"]))
+    check("已结束时 finished_at 原样透传（不被 `or` 改写）",
+          abs(float(payload["finished_at"]) - 1007.25) < 1e-3, str(payload["finished_at"]))
+
+
 def test_single_switch_is_not_enough() -> None:
     print("\n--- 只给一个开关不允许运动 ---")
     with RobotSession(consumes_chassis=True) as session:
@@ -225,7 +297,9 @@ def test_report_is_written_and_parseable() -> None:
 def main() -> int:
     tests = [
         test_readonly_by_default,
-        test_single_switch_is_not_enough,
+        test_unfinished_selftest_duration_is_not_negative_epoch,
+    test_finished_selftest_duration_matches_the_finish_time,
+    test_single_switch_is_not_enough,
         test_motion_loopback_patched_robot,
         test_motion_loopback_unpatched_robot,
         test_motion_gate_refusals,
