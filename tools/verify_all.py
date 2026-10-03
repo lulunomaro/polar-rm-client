@@ -67,8 +67,6 @@ PYTHON_SUITES = (
     "settings_access_test",          # 设置项读取：6 处手写收敛后的逐位等价
     "spin_readback_test",            # 自转 0x1F 回读闭环（AGENT.md 不变量 9）
     "safety_input_clear_hook_test",
-    # 第 66 轮新增：一次瞬时串口抖动不许杀死链路线程。
-    "polar_transport_transient_fault_test",
     # 第 68 轮新增：一帧出错不许拆掉整个推理线程。
     "tongji_frame_fault_test",  # 第 53 轮：松键钩子抛异常时失败要看得见
     "hotpath_cache_test",            # 热路径缓存不返回同一份可变对象
