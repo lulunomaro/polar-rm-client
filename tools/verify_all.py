@@ -306,6 +306,23 @@ def main() -> int:
         if not ok:
             failures.append(f"Python: {name} -> {detail}")
 
+    print("\n[视觉红线]")
+    # 第 85 轮补：**这条门本来根本不被任何东西跑到。**
+    #
+    # 红队审计（子代理）实测：`Select-String tools\verify_all.py -Pattern
+    # 'visual_freeze|freeze_guard'` 命中 **0 次**。本文件注册了 64 个套件，
+    # **红线门不在其中** —— 也就是说，一次改掉所有冻结文件的提交，
+    # 只要没人手动跑 `--check`，**就能通过本项目自己的全部门禁**。
+    #
+    # 它必须**在这里**跑，而且要**跑在最前面**：红线被碰了就该立刻停，
+    # 而不是把 64 个套件跑完再报告。
+    freeze = ROOT / "tools" / "visual_freeze_guard.py"
+    ok, detail = run("visual_freeze", [py, str(freeze), "--check"])
+    total_checks += 1
+    print(f"  [{'OK' if ok else 'XX'}] {'视觉红线（400 个受保护文件）':38} {detail}")
+    if not ok:
+        failures.append(f"视觉红线: {detail}")
+
     print("\n[固件补丁编译与行为校验]")
     for rel, label in C_CHECKS:
         path = ROOT / rel
