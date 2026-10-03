@@ -1075,10 +1075,26 @@ class BackendManager:
         """
 
         if self.udp.decode_h265 and self.udp.running and self.udp.h265_decoder is not None:
-            health = self.udp.h265_decoder.health()
-            if health.get("first_frame_timeout") or health.get("stale"):
-                self.udp.h265_recovery.reset()
-                self.udp._request_h265_restart()
+            # 第 100 轮：`health()` 与 `_request_h265_restart()` **都会去拿 `_h265_restart_lock`**，
+            # 而这把锁正被重启 worker 整段持有。
+            # 子代理**实测**：ffmpeg 健康时锁持有 **55–62 ms**，卡死时 **610 ms**。
+            #
+            # `_request_h265_restart()` 自己**有**「已有重启在跑就返回」的守卫
+            # （`video_backend.py:480`）—— **但那道守卫在 `with self._h265_restart_lock:` 之后**，
+            # **它要先等锁**。**它在等一把此刻正被别人拿着的锁。**
+            # 而本方法跑在 60 Hz 拍上，等的就是拍。
+            #
+            # 空闲时（没有重启在跑）这两调用都很便宜，所以**只在锁被占时跳过探测**：
+            # **不新建线程、不改探测频率**（空闲时仍是每拍一次），
+            # 只是**不在别人握着锁的时候排队**。
+            #
+            # `video_backend.py` 在冻结名单里，**所以这里只读它的属性、不改它**。
+            in_flight = getattr(self.udp, "_h265_restart_thread", None)
+            if not (in_flight is not None and in_flight.is_alive()):
+                health = self.udp.h265_decoder.health()
+                if health.get("first_frame_timeout") or health.get("stale"):
+                    self.udp.h265_recovery.reset()
+                    self.udp._request_h265_restart()
 
         native_selected = self._active_video_source in {
             "native", "native 0x0310", "0x0310",
