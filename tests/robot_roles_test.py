@@ -214,6 +214,51 @@ def test_role_mismatch_is_reported() -> None:
     check("未上报时仍不误报（英雄这一侧同样）",
           not stats4.get("role_mismatch"), str(stats4.get("role_mismatch")))
 
+    # ---- 第 123 轮：`Speed Scale % = 0` 会被读成 **100%**（实测，不是推的）----
+    #
+    # manager.py:847-848
+    #     speed_scale = float(settings["Speed Scale %"].value or 100) / 100.0
+    #
+    # ## 实测到的三件事
+    #
+    # 1. `number_setting("Speed Scale %", 100, 10, 100, 5)` —— **min 是 10**；
+    # 2. **但 `Setting.value` 是普通数据类字段，没有夹取 setter** ——
+    #    实测 `s.value = 0` 之后读回来就是 `0`，`min_value` 不会把它抬回去；
+    # 3. `rm_client/settings_access.py` 的 `set_value()` **直接写 `setting.value`**，
+    #    同样不过夹取（那是第 105 轮我合并出来的公共函数）。
+    #
+    # 所以「min=10 所以 0 到不了」这个推理**在类型上不成立**。
+    #
+    # ## 本条钉的是**现状**，不是「应该怎样」
+    #
+    # 正确的读法大概是「0 就该是停」，而不是「0 变成全速」——
+    # 但那是一条**驾驶安全路径上的行为变更**，要不要改是产品决定。
+    # **写一条断言把现状守成契约，就等于替产品做了这个决定**，
+    # 所以这里只把**可测的事实**钉下来：0 会变成 100，
+    # 且写入通道存在且不过夹取。将来有人改 manager.py 那行，本条会红。
+    from rm_client import settings_access
+
+    scale = registry.get("RobotLink").get_setting("Speed Scale %")
+    check("前提：Speed Scale % 的出厂值是 100", float(scale.value) == 100.0, str(scale.value))
+    check("前提：它的 min 是 10（所以 0 不在合法区间里）", float(scale.min_value) == 10.0,
+          str(scale.min_value))
+
+    # 走**真实的写入通道**（不是直接赋属性）—— 第 105 轮合并出来的那个。
+    settings_access.set_value(registry, "RobotLink", "Speed Scale %", 0)
+    check(
+        "写入通道不过夹取：0 原样落库（min=10 拦不住）",
+        float(scale.value) == 0.0,
+        "读到 {} —— `set_value` 里加夹取了？那本条该重写".format(scale.value),
+    )
+    check(
+        "⚠ **0 被读成 100**：`value or 100` 让「想减速到零」变成「全速」",
+        float(scale.value or 100) == 100.0,
+        "读到 {}".format(float(scale.value or 100)),
+    )
+
+    # 放回去，别影响后面那条「未上报时限幅」的用例。
+    settings_access.set_value(registry, "RobotLink", "Speed Scale %", 100)
+
     try:
         manager.shutdown()
     except Exception:
