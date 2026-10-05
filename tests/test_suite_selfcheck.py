@@ -246,14 +246,27 @@ def _runner_listed(tree) -> set:
             continue
         if not isinstance(value, (ast.List, ast.Tuple)):
             continue
-        names = [t.id for t in targets if isinstance(t, ast.Name)]
-        if not any(n in ("tests", "checks", "RUN", "_CHECKS") for n in names):
-            continue
-        for elt in value.elts:
+        # ⚠⚠ **第 173 轮：这里原来是一份允许名单**
+        # `if not any(n in ("tests", "checks", "RUN", "_CHECKS") for n in names): continue`
+        #
+        # **而 `combat_events_test.py` 的清单叫 `TESTS`、`spin_calib_matchmode_branches_test.py`
+        # 的叫 `groups`** —— **两个都不在名单上**，于是它们走的是
+        # 「没有手写清单 = 自动发现，天然安全」那条 `continue`，
+        # **而那个假设从来没被验证过**（子代理实测：**21 个带模块级 `test_` 的套件里有 21 个走了那条 continue**）。
+        #
+        # **改成结构判据，不问名字**：
+        # **一个列表只要含有任何一个 `test_*` 函数名，它就是「跑测试的清单」。**
+        # **这样任何名字都逃不掉，也不用再维护一份名单。**
+        elts = value.elts
+        referenced = set()
+        for elt in elts:
             if isinstance(elt, ast.Name):
-                out.add(elt.id)
+                referenced.add(elt.id)
             elif isinstance(elt, ast.Attribute):
-                out.add(elt.attr)
+                referenced.add(elt.attr)
+        if not (referenced & set(_module_level_tests(tree))):
+            continue
+        out |= referenced
     return out
 
 
@@ -275,7 +288,12 @@ def _scanned_files() -> list:
     found = set()
     for pattern in ("*_test.py", "test_*.py"):
         found.update(q for q in (root / "tests").glob(pattern) if q.is_file())
-        found.update(q for q in (root / "tools").glob(pattern) if q.is_file())
+        # ⚠⚠ **第 173 轮：`tools` 改成递归** —— 原来是 `.glob()`（**不递归**）。
+        #
+        # **后果（子代理实测）：`tools/**` 28 个测试文件里有 20 个从没被扫到** ——
+        # `tools/dt7_link/*` 全部 12 个、`tools/firmware/**` 全部 8 个，
+        # **而它们正是 `C_CHECKS` 里 26 组的主体。**
+        found.update(q for q in (root / "tools").rglob(pattern) if q.is_file())
     return sorted(found)
 
 
