@@ -516,10 +516,25 @@ def test_test_registration_gaps_are_pinned() -> None:
         actual = gaps[key]
         added = sorted(set(actual) - set(pinned))
         fixed = sorted(set(pinned) - set(actual))
-        check(f"{key} 的注册漏项与已知清单一致（当前 {len(actual)} 项）", actual == pinned,
-              f"新增未注册={added} 已补注册={fixed}；"
-              f"前者要么去 verify_all/build_release 注册、要么跑 "
-              f"`python tests/docs_and_tests_test.py --update` 把它们记进债务清单")
+        # ⚠ **第 153 轮更正：这里原来是一句 `check(..., actual == pinned)`。**
+        #
+        # **那是一个反向断言** —— 和第 141 轮修掉的那句
+        # 「`MODULE_BACKEND_MAP.md` 的行号债务清单非空」**是同一个错**：
+        # **有人把那四个套件注册进去（把债还了），这个套件反而变红。**
+        #
+        # **门禁该奖励还债，不该惩罚。** 所以拆成两件事：
+        #
+        # * `added`（**新**冒出来的漏项）—— **那才是真问题，判红**；
+        # * `fixed`（**已登记**、所以从债务清单里该消失的）—— **那是好消息，只记一笔**。
+        #
+        # ⚠ **为什么不顺手把 `fixed` 从 `KNOWN_UNREGISTERED` 里删掉**：
+        #   那是 `--update` 的活（`_rewrite_pins` 会重写整个块）。
+        #   **判红之外再自动改源文件 —— 那会让「谁改了清单」看不出来。**
+        check(f"{key} 没有**新**冒出来的注册漏项（当前债务 {len(actual)} 项）", not added,
+              f"新增未注册={added}；要么去 verify_all/build_release 注册、"
+              f"要么跑 `python tests/docs_and_tests_test.py --update` 把它们记进债务清单")
+        if fixed:
+            note(f"{key} 有 {len(fixed)} 项**已经还清**（从债务清单里该删掉）：{fixed}")
     # 注册表里写着的套件必须真的存在（否则是 SKIP 而非通过）
     ghost = sorted(n for n in va if not (ROOT / "tests" / n).exists())
     check("verify_all 注册的套件都真实存在", not ghost, str(ghost))
