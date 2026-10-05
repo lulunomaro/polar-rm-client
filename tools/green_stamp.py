@@ -26,7 +26,10 @@ import pathlib
 import sys
 import time
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+# ⚠ **第 164 轮：可以被指定**。
+# **Rust 仓不在这个文件所在的树里** —— 不指定就会监控错了那个树。
+# **第一版缺少它，结果是 Rust 那张章监控的是 Python 的源文件**（实测）。
+ROOT = pathlib.Path(os.environ.get("GREEN_ROOT") or pathlib.Path(__file__).resolve().parent.parent)
 STAMP = ROOT / ".green-stamp.json"
 
 # 改了就必须重新验证的目录。
