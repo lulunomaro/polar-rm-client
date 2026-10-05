@@ -65,6 +65,7 @@ PYTHON_SUITES = (
     "overlay_write_guard_test",      # overlay 只能写白名单字段
     "tongji_postprocess_parity_test",  # AI 后处理与 Python 逐位一致
     "settings_access_test",
+    "dead_callers_test",
     "settings_access_call_sites_test",          # 设置项读取：6 处手写收敛后的逐位等价
     "spin_readback_test",            # 自转 0x1F 回读闭环（AGENT.md 不变量 9）
     "safety_input_clear_hook_test",

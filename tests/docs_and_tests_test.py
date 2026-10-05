@@ -463,7 +463,7 @@ KNOWN_UNREGISTERED = {
         "hud_batch20_robotoverlay_color_test.py", "hud_batch21_radaroverlay_map_test.py", "hud_batch8_settings_test.py",
         "hud_batch9_settings_test.py", "hud_overlay_settings_test.py", "hud_status_settings_test.py",
         "hud_telemetry_settings_test.py", "polar_link_failclosed_test.py", "robot_health_field_test.py",
-        "settings_access_call_sites_test.py", "settings_doc_consistency_test.py", "tongji_postprocess_parity_test.py", "transition_visual_check.py",
+        "dead_callers_test.py", "settings_access_call_sites_test.py", "settings_doc_consistency_test.py", "tongji_postprocess_parity_test.py", "transition_visual_check.py",
         "vision_pipeline_hardening_test.py",
     ),
 }
