@@ -9,8 +9,8 @@
 | `auto_spin._bool_setting` | `bool(setting.value) if setting is not None else bool(default)` | **不**捕获类型错 |
 | `auto_spin._number_setting` | `float(setting.value)`，外面包 `try/except (TypeError, ValueError)` | 捕获 |
 | `hero_lob` 的内嵌 `setting()` | `item.value if item is not None else fallback` | **不**捕获、**不**转型 |
-| `manager.tick_polar_link` | `{name: module.get_setting(name) ... for name in (...15 项...)}` | 取原始 `Setting` 对象 |
-| `persistence_mixin.get_setting_number` | 同 `_number_setting` | 捕获 |
+| `manager.tick_polar_link` | `{name: module.get_setting(name) ... for name in ROBOT_LINK_SETTING_NAMES}` | 取原始 `Setting` 对象 |
+| `persistence_mixin.get_setting_number` | 同 `_number_setting` | 捕获，但它**在冻结文件里**（`rm_client/ui/**`），**第 105 轮没有迁**，所以它在上面这张表里只是一条记录 |
 | `polar_app` / `config_actions_mixin` | 各有各的 | 视觉冻结文件，本轮不动 |
 
 问题不是"重复了几行"，而是**它们对同一件事给了不同的答案**：
@@ -23,6 +23,13 @@
 现在把**每一种实际在用的语义**都显式命名，调用方按名字选，而不是每个人
 现场手搓一份。**迁移不改变任何一处现有行为** —— `tests/settings_access_test.py`
 逐个变体做等价性对拍（同一组输入下迁移前后逐项相同）。
+
+⚠ **第 137 轮补一句**：上面那句只覆盖了**读法本身**。
+那份对拍**从不 import 任何真实调用点**（`auto_spin` / `hero_lob` /
+`match_modes` / `scenarios` / `backend.manager`）——
+**所以它验的是「实现等价」，不是「接线还在」。**
+接线那一层由 `tests/settings_access_call_sites_test.py` 补上；
+零调用者由 `tests/dead_callers_test.py` 盯住。
 
 # 新增读取语义时
 
@@ -112,8 +119,23 @@ def read_bool_guarded(module: Any, name: str, default: bool) -> bool:
     """bool 设置项，值不合法时静默退回默认值。
 
     与 :func:`read_bool_strict` 的区别就是这一条。
-    新代码请**优先用这个** —— 配置文件是人手写的、可能来自旧版本，
-    一个不合法的值不应该让整个模块炸掉。
+
+    # ⚠ **第 139 轮更正：原来这里写着「新代码请优先用这个」—— 那是一句假话。**
+
+    实测（全仓 AST 扫描，第 138 轮）：**本函数的生产调用点是 0 个**，
+    唯一的引用在 `tests/dead_callers_test.py` 里。
+    **而 `auto_spin.py` 用的是 `read_bool_strict`** —— 也就是说
+    第 105 轮那次合并**把「优先用 guarded」这条建议原封不动地留在了原地**，
+    一个字都没落实。
+
+    **为什么不改 `auto_spin` 去用这个**：那是一条**自转**路径上的行为变更
+    （strict 遇到不合法值会抛，guarded 会静默退回），
+    **而没有任何人拍过这个板**。**「新代码该用哪个」是产品决定，不是重构顺手能带的事。**
+
+    所以这里只把**实测事实**写对：**它现在是一个已备好、无人调用的备选实现。**
+    将来要用它，先决定要不要让 `auto_spin` 也换过去 —— 那是另一次显式的动作。
+
+    两条语义都在，名字也在：选哪个是调用方的事，**前提是它知道自己选了什么**。
     """
     setting = find_setting(module, name)
     if setting is None:
