@@ -64,7 +64,8 @@ PYTHON_SUITES = (
     "polar_link_failclosed_test",    # 解码器 fail-closed（含畸形输入模糊测试）
     "overlay_write_guard_test",      # overlay 只能写白名单字段
     "tongji_postprocess_parity_test",  # AI 后处理与 Python 逐位一致
-    "settings_access_test",          # 设置项读取：6 处手写收敛后的逐位等价
+    "settings_access_test",
+    "settings_access_call_sites_test",          # 设置项读取：6 处手写收敛后的逐位等价
     "spin_readback_test",            # 自转 0x1F 回读闭环（AGENT.md 不变量 9）
     "safety_input_clear_hook_test",
     # 第 68 轮新增：一帧出错不许拆掉整个推理线程。
