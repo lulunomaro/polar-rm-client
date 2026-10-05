@@ -83,7 +83,18 @@ def at(now, fn, *args, **kwargs):
 
 def check(name, ok, detail=""):
     global FAILED
-    print(("[ OK ] " if ok else "[FAIL] ") + name + (("  " + detail) if detail else ""))
+    # ⚠ **第 156 轮：成功时打 `[PASS]`** ——
+    # 原来打 `[ OK ]`，而 `verify_all.run()` 只数**以** `[PASS]` 开头**的行**，
+    # **所以这个套件给门禁的贡献一直是 0**（第 155 轮量出来了）。
+    #
+    # ⚠ **第 155 轮我在这里下过一个错结论**：我量它的输出时用了一个
+    # 不匹配 `[ OK ]`（左括号后面有空格）的正则，于是判它
+    # 「只有测量值、不是检查项」而**没有动它**。
+    # **它本来就有逐项 check()，和我上一轮刚改过的那个是同一种形状。**
+    # **测量的正则错了，结论就跟着错** —— 这是本会话第三次。
+    #
+    # **只改成功那一侧**：失败仍打 `[FAIL]`。
+    print(("[PASS] " if ok else "[FAIL] ") + name + (("  " + detail) if detail else ""))
     FAILED += 0 if ok else 1
 
 
