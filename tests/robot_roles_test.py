@@ -268,6 +268,67 @@ def test_role_mismatch_is_reported() -> None:
     # 放回去，别影响后面那条「未上报时限幅」的用例。
     settings_access.set_value(registry, "RobotLink", "Speed Scale %", 100)
     settings_access.set_value(registry, "RobotLink", "Yaw Scale %", 100)
+
+    # ---- 第 134 轮：**哨兵锁一个键就能被拆掉**（子代理找到，实测复现）----
+    #
+    # ## 为什么这条比限速那几条更要紧
+    #
+    # `robot_roles.py` 读权限位用的是 `entry.get("drivable", True)` ——
+    # **缺键就当成 True**。而 `polar_protocol.json` 不是冻结文件，
+    # `robot_roles.py` 开头明写「电控改 JSON 就生效」——
+    # **「少写一个键」是一次正常的、预期内的事件。**
+    #
+    # 实测（修复前）：把哨兵那一条的 `drivable` 与 `gimbal_controllable` 删掉，
+    # `_validate_roles` **一个错都不报**，`spec.ok` 仍是 True，
+    # 而 `drive_block_reason(7)` 返回空串 —— 那正是 `manager.py` 放行驾驶的条件。
+    #
+    # **哨兵会被下发底盘指令**，而 `robot_roles.py:107` 明写「客户端不得如此」。
+    #
+    # 对照：删掉 `max_linear_mps` **是**会报错的（落到内置表，`drivable=False`），
+    # **唯独这两个权限位没有守卫**。
+    from rm_client.backend import polar_spec as _spec_mod
+
+    _spec = _spec_mod.get_spec()
+    check(
+        "前提：线上规格本身是有效的",
+        _spec.ok,
+        "出厂的 polar_protocol.json 就已经不合法了？" + str([e.message for e in _spec.errors][:2]),
+    )
+    check(
+        "前提：哨兵在线上规格里就是不可驾驶的",
+        not roles.limits_for(7).drivable,
+        "drivable={}".format(roles.limits_for(7).drivable),
+    )
+
+    import copy as _copy
+
+    for _missing in ("drivable", "gimbal_controllable"):
+        _raw = _copy.deepcopy(_spec.raw)
+        _stripped = False
+        for _entry in _raw.get("roles", []):
+            if _entry.get("robot_id") == 7:
+                _entry.pop(_missing, None)
+                _stripped = True
+        check(
+            "前提：哨兵那一条里确实有 {}".format(_missing),
+            _stripped,
+            "出厂规格里没有这个键 —— 那本条测的不是想测的东西",
+        )
+        _bad = _spec_mod.PolarSpec(
+            raw=_raw, errors=[], warnings=[], roles={}, fallback_role={}
+        )
+        _spec_mod._validate_roles(_bad)
+        check(
+            "**少了 `{}` 就要整份规格作废**（修复前它不报任何错）".format(_missing),
+            not _bad.ok,
+            "`spec.ok` 仍是 True —— 那 `robot_roles` 就会按 `get(..., True)` "
+            "把哨兵判成可驾驶。本条红了说明守卫被删掉了。",
+        )
+        check(
+            "报错要指名是哪个键",
+            bool(_bad.errors) and _missing in _bad.errors[0].message,
+            "第一个错是 {}".format(_bad.errors[0].message if _bad.errors else None),
+        )
     from rm_client import settings_access
 
     scale = registry.get("RobotLink").get_setting("Speed Scale %")

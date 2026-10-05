@@ -256,6 +256,49 @@ def _validate_roles(spec: PolarSpec) -> None:
         if linear < 0 or yaw < 0:
             spec.errors.append(SpecIssue("error", f"roles[{index}]", "限速为负"))
             return
+        # 第 134 轮：**两个权限位必须显式给**，缺一即整份规格无效。
+        #
+        # 为什么这条比限速那几条还重要（**实测出来的，不是推的**）：
+        # `robot_roles.py` 读它们时用的是 `entry.get("drivable", True)` ——
+        # **缺键就当成 True**。而 `polar_protocol.json` 不是冻结文件，
+        # `robot_roles.py` 开头明写着「电控改 JSON 就生效」——
+        # **所以「少写一个键」是一次正常的、预期内的事件**。
+        #
+        # 实测：把哨兵（robot_id=7）那一条里的 `drivable` 与
+        # `gimbal_controllable` 删掉，本函数**不报任何错**，`spec.ok` 仍是 True，
+        # 而 `drive_block_reason(7)` 返回空串 —— 那正是 `manager.py`
+        # 放行驾驶指令的条件。**哨兵会被下发底盘指令**，
+        # 而 `robot_roles.py` 明写「客户端不得如此」。
+        #
+        # 删掉 `max_linear_mps` 是会报错的（落到内置表，`drivable=False`）；
+        # **唯独这两个权限位没有守卫。**
+        # 第 134 轮：**两个权限位必须显式给**，缺一即整份规格无效。
+        #
+        # 为什么这条比限速那几条还重要（**实测出来的，不是推的**）：
+        # `robot_roles.py` 读它们时用的是 `entry.get("drivable", True)` ——
+        # **缺键就当成 True**。而 `polar_protocol.json` 不是冻结文件，
+        # `robot_roles.py` 开头明写着「电控改 JSON 就生效」——
+        # **所以「少写一个键」是一次正常的、预期内的事件**。
+        #
+        # 实测：把哨兵（robot_id=7）那一条里的 `drivable` 与
+        # `gimbal_controllable` 删掉，本函数**不报任何错**，`spec.ok` 仍是 True，
+        # 而 `drive_block_reason(7)` 返回空串 —— 那正是 `manager.py`
+        # 放行驾驶指令的条件。**哨兵会被下发底盘指令**，
+        # 而 `robot_roles.py` 明写「客户端不得如此」。
+        #
+        # 删掉 `max_linear_mps` 是会报错的（落到内置表，`drivable=False`）；
+        # **唯独这两个权限位没有守卫。**
+        for _flag in ("drivable", "gimbal_controllable"):
+            if not isinstance(entry.get(_flag), bool):
+                spec.errors.append(
+                    SpecIssue(
+                        "error",
+                        f"roles[{index}]",
+                        "{} 必须是显式的 true/false：缺失会按 True 处理，"
+                        "哨兵会被下发驾驶指令".format(_flag),
+                    )
+                )
+                return
         # 限速放大属于安全相关变更：允许，但必须在规格里标 known=true
         if linear > 2.5 or yaw > 4.0:
             spec.warnings.append(
