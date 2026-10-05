@@ -553,8 +553,12 @@ check("0x0306 开着但没链路时不算键鼠来源冲突（线上一个字节
 header("9) tick() 不传 now= 的公开默认，以及 _idle_zero_authorized 的几种 safety 形态")
 # 探针事实（facts.py H1/H2 段）：tick(STATE, REG) 不传 now 也能发；
 # _tick_now == last_send_at（落戳与门控同一把钟）；
-# safety 没有 is_fighting -> True；is_fighting() False -> False；
-# control_state 是裸字符串 -> True；LOCKED -> False；control_state None -> False。
+# ⚠ 第 135 轮：这里原来钉的是 `True`，那是**记了实测到的现象**，不是有意之为。
+#   原因：`control.py` 里上两行的阶段检查对同一类「读不到」是 fail-closed，
+#   而这句是 fail-open —— **同一个函数里两种相反的答案**。
+# safety 没有 is_fighting -> **False**（第 135 轮从 True 改过来）；
+# is_fighting() False -> False；control_state 是裸字符串 -> True；
+# LOCKED -> False；control_state None -> False。
 # 变异 M18（删掉 hasattr 那一半）/ M20（删掉 now is None 的回退）/ M21 后本节必须红。
 br = fresh()
 CLOCK.t = 5.0                                   # 让"没落过戳"这件事看得见
@@ -598,9 +602,13 @@ class SafetyNone:
     control_state = None
 
 
-for name, obj, want in (("safety 没有 is_fighting", SafetyNoFight(), True),
+for name, obj, want in (("safety 没有 is_fighting", SafetyNoFight(), False),
                         ("is_fighting() 为假（不在打仗阶段）", SafetyFightFalse(), False),
-                        ("control_state 是裸字符串", SafetyStrState(), True),
+                        # ⚠ **第 135 轮从 True 改成 False。**
+                        # 裸字符串的 `control_state` 能过第一道阶段检查（值就是 "MATCH_ARMED"），
+                        # 但那个替身**同样没有 `is_fighting`** ——
+                        # **所以它和上一行是同一个 fail-open 的两个受害者。**
+                        ("control_state 是裸字符串（且没有 is_fighting）", SafetyStrState(), False),
                         ("control_state=LOCKED", SafetyLocked(), False),
                         ("control_state=None", SafetyNone(), False)):
     probe = KeyboardControlBridge(type("P", (), {"safety": obj})(), mock_output=False)

@@ -78,7 +78,8 @@ PYTHON_SUITES = (
     "config_store_io_test",          # 配置落盘与并发写
     "vision_pipeline_hardening_test",  # 视觉管线的空帧/坏帧处理
     "field_log_async_test",          # 现场日志异步写盘
-    "control_loop_test",             # 控制回路限频与闸门
+    "control_loop_test",
+    "control_idle_zero_direction_test",             # 控制回路限频与闸门
     "test_suite_selfcheck",          # 套件自检：无零断言测试、关键 suite 都被登记
     "encode_invariant_attack_test",  # 攻编码路径：fire 恒 0、禁位不上线（不只查常量）
     "zero_frame_and_diagnostics_test",

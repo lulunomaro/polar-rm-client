@@ -456,7 +456,7 @@ KNOWN_UNREGISTERED = {
     ),
     "build_release": (
         "autoaim_settings_test.py", "combat_events_test.py", "config_store_io_test.py",
-        "control_loop_test.py", "economy_safety_test.py", "field_log_async_test.py",
+        "control_idle_zero_direction_test.py", "control_loop_test.py", "economy_safety_test.py", "field_log_async_test.py",
         "gimbal_host_request_test.py", "hotpath_cache_test.py", "hud_batch10_settings_test.py",
         "hud_batch13_settings_test.py", "hud_batch14_settings_test.py", "hud_batch16_killfx_test.py",
         "hud_batch17_crosshair_test.py", "hud_batch18_powerguard_test.py", "hud_batch19_bufftimeline_test.py",

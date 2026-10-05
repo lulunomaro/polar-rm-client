@@ -515,7 +515,21 @@ class KeyboardControlBridge:
         if str(value) != "MATCH_ARMED":
             return False
         is_fighting = getattr(safety, "is_fighting", None)
-        return not callable(is_fighting) or bool(is_fighting())
+        # 第 135 轮：**读不到 `is_fighting` 就算「不在交战」**（不放行）。
+        #
+        # 原来写的是 `not callable(is_fighting) or bool(is_fighting())` ——
+        # `safety` 上没有这个方法时 `not callable(None)` 是 `True`，
+        # 于是**读不到反而放行**。
+        #
+        # ⚠ 而**上面两行**的阶段检查对同一类「读不到」是 fail-closed 的
+        #   （`str(value) != "MATCH_ARMED"` 直接 `return False`）。
+        #   **同一个判定函数里，两种读不到给出相反的答案** ——
+        #   那正是「不确定性该往哪边倒」没有定下来的症状。
+        #
+        # 实际影响有界：这一帧是**全零**指令，而且真发布仍由
+        # `safety.can_publish()` 把关。所以那不是「车动了」，
+        # 而是「闸门锁着时还在尝试发」—— **但方向仍然是反的**。
+        return callable(is_fighting) and bool(is_fighting())
 
     def build_command(self, state: RobotState, registry: ModuleRegistry) -> ChassisCommand:
         forward = float(self.key_state["W"]) - float(self.key_state["S"])
