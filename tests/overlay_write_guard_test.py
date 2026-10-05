@@ -209,10 +209,31 @@ def test_spec_state_fields_landing_sites() -> None:
     else:
         check("规格里所有 state_fields 落点都存在于 RobotState", True)
 
+    # ⚠⚠ **第 174 轮：这里原来是 `check(..., True)`** ——
+    # **而标签写着「这些必须真的写进去」**。
+    #
+    # **子代理实测：把 `spec.segment_state_fields` 整个抹掉以后，**
+    # **打出来是「已接通 0 个」而仍然全绿。**
+    #
+    # 它做两件事：
     hit = [name for name in landing if name in _OVERLAY_WRITABLE]
+    #
+    # ① **落点不能为空** —— **为空时下面那条会成为空转**，
+    # **而上面那条「落点都存在于 RobotState」也变成空转**。
     check(
-        f"已接通 {len(hit)} 个 state_fields 落点（这些必须真的写进去）",
-        True,
+        f"规格里确实有 state_fields 落点（当前 {len(landing)} 个）",
+        bool(landing),
+        "落点为空 → 下面两条都变成空转，"
+        f"而不是「都正确」",
+    )
+    # ② **每一个落点都要落在可写字段上** —— 这才是标签上那句话。
+    unwritable = sorted(name for name in landing if name not in _OVERLAY_WRITABLE)
+    check(
+        f"已接通 {len(hit)}/{len(landing)} 个 state_fields 落点"
+        f"（这些必须真的写进去）",
+        not unwritable,
+        f"落在不可写字段上的：{unwritable}"
+        f"（落点：{ {k: v for k, v in landing.items() if k in unwritable} }）",
     )
 
 
