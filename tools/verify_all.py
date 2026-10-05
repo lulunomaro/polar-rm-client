@@ -318,7 +318,26 @@ def run(label: str, argv: list[str]) -> tuple[bool, str]:
                or "error:" in l or "FAILED" in l]
         return False, " | ".join(bad[:3])[:400] or f"exit={proc.returncode}"
     count = sum(1 for l in out.splitlines() if l.strip().startswith("[PASS]"))
-    return True, f"{count} 项通过" if count else "通过"
+    # ⚠ **第 154 轮：这里原来直接返回 `f"{count} 项通过"`。**
+    #
+    # **那个说法是不实的**，量级上也不对：只数 `[PASS]` 开头的行，
+    # **于是用别的写法报数的套件全部计成 0** ——
+    # `smoke_test` 的 1114 条裸 `assert`、`backend_protocol_test` 的
+    # `ALL PASSED (197 checks)`、`[ OK ]` 那一族、以及中文的「N 项通过」。
+    # **子代理量出缺口 24–28%**（第 141 轮那份审计）。
+    #
+    # **所以这里不再把它叫做「项」** —— 它只是**这个套件打了多少行 `[PASS]`**。
+    # 真正要紧的是**别让它静地变成 0**：
+    # **一个干了活的套件如果打不出 `[PASS]`，那是一条要说出来的事实**，
+    # 而不是一行漂亮的汇总数字把它吞掉。
+    if count:
+        return True, f"{count} 条 [PASS]"
+    if out.strip():
+        # ⚠ 打了东西、却一条 `[PASS]` 都没有 —— **要么它用了别的写法，
+        # 要么它真的什么都没查**。**两者的区别不该被抹平。**
+        lines = sum(1 for l in out.splitlines() if l.strip())
+        return True, f"通过（**0 条 [PASS]，但打了 {lines} 行**）"
+    return True, "通过（无输出）"
 
 
 _LOCK = None

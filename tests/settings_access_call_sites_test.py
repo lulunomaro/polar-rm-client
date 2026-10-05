@@ -210,6 +210,9 @@ def main() -> int:
             print("FAIL {}  真实={!r} 参照={!r}".format(name, got, want))
     if failed:
         return 1
+    # ⚠ 第 154 轮：同上（原来给门禁的贡献是 0）。
+    for _name, _ok, _got, _want in results:
+        print("[PASS] " + _name)
     print("{} 项通过".format(len(results)))
     return 0
 

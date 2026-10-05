@@ -100,6 +100,11 @@ def main() -> int:
         if not ok:
             print("FAIL {} {}".format(name, detail))
             return 1
+    # ⚠ **第 154 轮：改成打 `[PASS]` 行。**
+    # 原来只打中文数字，而 `verify_all.run()` 只数以 `[PASS]` 开头的行
+    # —— **这个套件给门禁的贡献是 0。**
+    for name, _ok, _detail in checks:
+        print("[PASS] " + name)
     print("{} 项通过".format(len(checks)))
     return 0
 

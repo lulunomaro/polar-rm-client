@@ -163,6 +163,12 @@ def main() -> int:
             print("FAIL {} {}".format(name, detail))
     if failed:
         return 1
+    # ⚠ **第 154 轮：改成打 `[PASS]` 行。**
+    # `verify_all.run()` 只数以 `[PASS]` 开头的行，
+    # **原来这个套件给门禁的贡献是 0**，
+    # **而它确实跑了 10 项。**无声地变成 0 才是真正的问题。
+    for _name, _ok, _detail in results:
+        print("[PASS] " + _name)
     print("{} 项通过".format(len(results)))
     return 0
 
