@@ -177,7 +177,10 @@ def main() -> int:
     tp.stop()
     bridge.stop.set()
     time.sleep(0.2)
-    check("停掉之后桥与串口都关掉了", board.closed is True or True, str(board.closed))
+    # ⚠ 第 141 轮：原来是 `board.closed is True or True` —— **对任何 X 都为真**，
+    #   标签写着「停掉之后桥与串口都关掉了」，而属性**根本没被断言**。
+    #   这是注册套件里的纯态词，门禁会把它计成一项通过。
+    check("停掉之后桥与串口都关掉了", board.closed is True, str(board.closed))
 
     print("\n--- 4) 地址没填时必须失败得清楚 ---")
     tp2 = PolarLinkTransport(port="Stub", mock_writes=False)

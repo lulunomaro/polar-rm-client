@@ -553,7 +553,10 @@ def test_other_map_doc_stale_lines_are_reported() -> None:
     print(f"[INFO] tools/MODULE_BACKEND_MAP.md 共 {len(refs)} 处 .py:行号（债务清单，只报告不改）：")
     for s in suspects:
         print(f"       {s}")
-    check("tools/MODULE_BACKEND_MAP.md 的行号债务清单非空（= 已知未修）", bool(suspects))
+    # ⚠ 第 141 轮：原来是 `check(..., bool(suspects))`，
+        #   **债务还清的时候它红。那就是“今天没人拿到 RED “”。
+        #   门禁应该**奖励付债，不是惩罚他**。改成 `note`（它不计入通过数）。
+        note("tools/MODULE_BACKEND_MAP.md 仍有 %d 处行号债务" % len(suspects))
 
 
 def main() -> int:
