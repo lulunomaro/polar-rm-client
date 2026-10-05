@@ -454,6 +454,10 @@ def run_compare(baseline_path: Path) -> int:
         print(f"[惰性成员不可赋值] {lazy_failures}")
     print(_summary(current))
     if is_clean(diffs) and not lazy_failures:
+        # ⚠ 第 155 轮：加一行 `[PASS]` —— 原来只打 `PASS: ...`，
+        # 而门禁只数**以** `[PASS]` 开头**的行**，`PASS: ` 不算。
+        # **这一个套件只做一件事**（基线对拍），**所以就是一行。**
+        print("[PASS] API 冻结面与基线一致")
         print(f"PASS: 与基线 {baseline_path.name} 一致")
         return 0
     print(f"FAIL: 与基线 {baseline_path.name} 不一致（exit 2）")

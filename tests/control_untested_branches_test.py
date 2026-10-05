@@ -65,7 +65,11 @@ C.time = CLOCK
 
 def check(name, ok, detail=""):
     global FAILED
-    print(("[ OK ] " if ok else "[FAIL] ") + name + (("  " + detail) if detail else ""))
+    # ⚠ 第 155 轮：成功时打 `[PASS]`（失败仍打 `[FAIL]`）——
+    # 原来只打 `[ OK ]`，而 `verify_all.run()` 只数 `[PASS]` 开头的行
+    # —— **这个套件给门禁的贡献始终是 0**。
+    # **只改成功那一边：失败那边一字不能动**。
+    print(("[PASS] " if ok else "[FAIL] ") + name + (("  " + detail) if detail else ""))
     FAILED += 0 if ok else 1
 
 

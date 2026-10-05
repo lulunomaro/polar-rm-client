@@ -35,7 +35,14 @@ def check(name: str, condition: bool, detail: str = "") -> None:
     if not condition:
         raise AssertionError(f"FAIL {name}: {detail}")
     PASS += 1
-    print(f"  ok {name}")
+    # ⚠ 第 155 轮：原来打的是 `  ok {name}`——而 `verify_all.run()` 只数
+    # **以 `[PASS]` 开头的行**，`  ok ` 不算，
+    # **所以这个套件的 197 条检查一直给门禁的贡献是 0。**
+    #
+    # ⚠ **中间还纠错过一次**：第一版把 `print("[protocol] ...")` 那几行
+    # 当成检查项改成 `[PASS]` —— **那些是段落标题**，不是检查。
+    # **已回退**。报数量必须指向真正被检查的那些行。
+    print(f"[PASS] {name}")
 
 
 def test_uplink_roundtrip() -> None:
