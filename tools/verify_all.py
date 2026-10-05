@@ -393,7 +393,22 @@ def main() -> int:
     for name in PYTHON_SUITES:
         path = ROOT / "tests" / f"{name}.py"
         if not path.exists():
-            print(f"  [SKIP] {name:24} 文件不存在")
+            # ⚠⚠ **第 158 轮：这里原来只 print 一句 `[SKIP]` 然后 `continue`。**
+            #
+            # **那意味着 `git rm tests/smoke_test.py`（1114 条断言，最大的套件）
+            # 之后门禁照样打「GO」** —— 子代理跑真实的 `main()` 验证过。
+            #
+            # **而 `total_checks` 也没有加** —— **所以这一组从分母里也消失了**，
+            # 「96 组」会变成「95 组」，**而 GO 依然成立**。
+            #
+            # **`docs_and_tests_test` 抓不到**：`all_tests - registered` 是
+            # 「盘上的减已登记的」，**一个被删掉的文件从两边同时消失，不产生漏项**。
+            #
+            # > **一个能被「删掉被检查的东西」而通过的���禁，不是门禁。**
+            # **登记在册的套件**文件不存在 = 门禁坏了，**判红。**
+            total_checks += 1
+            failures.append(f"Python: {name} -> **登记在册但文件不存在**（删掉被检查的东西不算通过）")
+            print(f"  [XX] {name:24} **文件不存在 —— 登记在册的套件被删了**")
             continue
         ok, detail = run(name, [py, "-u", str(path)])
         total_checks += 1
@@ -422,7 +437,11 @@ def main() -> int:
     for rel, label in C_CHECKS:
         path = ROOT / rel
         if not path.exists():
-            print(f"  [SKIP] {label} 文件不存在")
+            # ⚠⚠ **第 158 轮**：同 Python 套件那一处——
+            # **登记在册的检查文件不存在 = 门禁坏了。**
+            total_checks += 1
+            failures.append(f"C: {label} -> **登记在册但文件不存在**")
+            print(f"  [XX] {label:38} **文件不存在 —— 登记在册的检查被删了**")
             continue
         ok, detail = run(label, [py, "-u", str(path)])
         total_checks += 1
@@ -431,10 +450,14 @@ def main() -> int:
             failures.append(f"C: {label} -> {detail}")
 
     print("\n[前后端对齐审计]")
+    # ⚠ 第 158 轮：这个循环里的文件不存在处理**同样判红**（见下方）。
     for rel, label, extra in AUDIT_CHECKS:
         path = ROOT / rel
         if not path.exists():
-            print(f"  [SKIP] {label} 文件不存在")
+            # ⚠⚠ **第 158 轮**：同前两处 —— **删掉被检查的东西不算通过**。
+            total_checks += 1
+            failures.append(f"审计: {label} -> **登记在册但文件不存在**")
+            print(f"  [XX] {label:38} **文件不存在 —— 登记在册的检查被删了**")
             continue
         ok, detail = run(label, [py, "-u", str(path), *extra])
         total_checks += 1
