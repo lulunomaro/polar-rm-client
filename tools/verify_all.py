@@ -24,6 +24,8 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import tempfile
 from pathlib import Path
 
@@ -476,6 +478,21 @@ def main() -> int:
         # 准备脚本会留下已套补丁的工作树，这里只报告不擅自还原别人的仓库
 
     print("\n" + "=" * 66)
+    # ⚠⚠ **第 163 轮：盖章。退出码 0 才盖，非零要把旧章毁掉。**
+    #
+    # **两次事故都是同一件事：**
+    # * 第 159 轮 —— 变异脚本把一行改回去，**而流水线绿在改动之前**；
+    # * 第 162 轮 —— 测试 0、流水线 101，**那次提交照样做成了**。
+    #
+    # **所以「我跑过了」不是证据，「最近一次跑是绿的、且绿在当前代码上」才是。**
+    # `tools/green_stamp.py --check` 在提交前读这个章。
+    try:
+        import green_stamp as _gs  # type: ignore[import-not-found]
+
+        _gs.record(1 if failures else 0, f"verify_all {total_checks} groups")
+    except Exception as exc:  # 盖章失败不该改判结论 —— 但要说出来
+        print(f"[green-stamp] \u76d6\u7ae0\u5931\u8d25\uff08{exc}\uff09\uff1a\u63d0\u4ea4\u524d\u7684\u6821\u9a8c\u4f1a\u62d2\u7edd\u3002")
+
     if failures:
         print(f"结论：NO-GO —— {len(failures)} / {total_checks} 项未通过")
         for line in failures:
