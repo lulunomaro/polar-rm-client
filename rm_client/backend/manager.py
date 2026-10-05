@@ -844,8 +844,23 @@ class BackendManager:
             control.cc_enabled = False
         self._cc_was_enabled = bool(control is not None and control.cc_enabled)
         if drive_armed and command is not None:
-            speed_scale = float(settings["Speed Scale %"].value or 100) / 100.0
-            yaw_scale = float(settings["Yaw Scale %"].value or 100) / 100.0
+            # 第 127 轮：去掉 `or 100`。
+            #
+            # 原来写的是 `value or 100`，于是 **0 被读成 100** ——
+            # 操作员（或任何一条不过夹取的写入通道）把比例写成 0 时，
+            # 拿到的是**全速**而不是**停**。方向是反的。
+            #
+            # `Setting.value` 是**普通数据类字段、没有夹取 setter**（实测：
+            # 直接赋 0 就是 0，`min_value` 不会把它抬回去）；
+            # 而 `settings_access.set_value()` 直接写它、同样不过夹取。
+            # 所以「min=10 所以 0 到不了」**在类型上不成立** ——
+            # `tests/robot_roles_test.py` 里钉着这三条实测。
+            #
+            # ⚠ **两个都改了**：`Yaw Scale %` 那一行是同一个写法，
+            #   而「偏航比例 0 变成全速旋转」和「平移全速」一样是**驾驶安全**问题。
+            #   只改一个而留另一个，等于把同一个缺陷留在原地。
+            speed_scale = float(settings["Speed Scale %"].value) / 100.0
+            yaw_scale = float(settings["Yaw Scale %"].value) / 100.0
             vx, vy, wz = scale_drive(
                 command.vx,
                 command.vy,

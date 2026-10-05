@@ -214,28 +214,60 @@ def test_role_mismatch_is_reported() -> None:
     check("未上报时仍不误报（英雄这一侧同样）",
           not stats4.get("role_mismatch"), str(stats4.get("role_mismatch")))
 
-    # ---- 第 123 轮：`Speed Scale % = 0` 会被读成 **100%**（实测，不是推的）----
+    # ---- 第 123 轮实测 / 第 127 轮**已修**：`Speed Scale % = 0` 曾被读成 **100%** ----
     #
-    # manager.py:847-848
+    # manager.py 第 847-848 行原来写的是
     #     speed_scale = float(settings["Speed Scale %"].value or 100) / 100.0
     #
-    # ## 实测到的三件事
+    # ## 第 123 轮实测到的三件事
     #
     # 1. `number_setting("Speed Scale %", 100, 10, 100, 5)` —— **min 是 10**；
     # 2. **但 `Setting.value` 是普通数据类字段，没有夹取 setter** ——
     #    实测 `s.value = 0` 之后读回来就是 `0`，`min_value` 不会把它抬回去；
     # 3. `rm_client/settings_access.py` 的 `set_value()` **直接写 `setting.value`**，
-    #    同样不过夹取（那是第 105 轮我合并出来的公共函数）。
+    #    同样不过夹取（那是第 105 轮合并出来的公共函数）。
     #
     # 所以「min=10 所以 0 到不了」这个推理**在类型上不成立**。
     #
-    # ## 本条钉的是**现状**，不是「应该怎样」
+    # ## 第 127 轮：产品决定「0 就是停」，`or 100` 已去掉
     #
-    # 正确的读法大概是「0 就该是停」，而不是「0 变成全速」——
-    # 但那是一条**驾驶安全路径上的行为变更**，要不要改是产品决定。
-    # **写一条断言把现状守成契约，就等于替产品做了这个决定**，
-    # 所以这里只把**可测的事实**钉下来：0 会变成 100，
-    # 且写入通道存在且不过夹取。将来有人改 manager.py 那行，本条会红。
+    # 上面那三条**实测仍然成立**（写入通道依旧不过夹取 —— 那是个更大的问题，
+    # 改它会影响所有模块的写入语义，是另一个决定）。
+    # **变的是消费端**：现在 `float(value) / 100.0`，0 就是 0，也就是停。
+    #
+    # ⚠ **`Yaw Scale %` 那一行是同一个写法，也一并去掉了** ——
+    #   「偏航比例 0 变成全速旋转」和「平移全速」一样是驾驶安全问题，
+    #   只改一个等于把同一个缺陷留在原地。
+    from rm_client import settings_access
+
+    scale = registry.get("RobotLink").get_setting("Speed Scale %")
+    yaw = registry.get("RobotLink").get_setting("Yaw Scale %")
+    check("前提：Speed Scale % 的出厂值是 100", float(scale.value) == 100.0, str(scale.value))
+    check("前提：它的 min 是 10（所以 0 不在合法区间里）", float(scale.min_value) == 10.0,
+          str(scale.min_value))
+
+    # 走**真实的写入通道**（不是直接赋属性）—— 第 105 轮合并出来的那个。
+    settings_access.set_value(registry, "RobotLink", "Speed Scale %", 0)
+    settings_access.set_value(registry, "RobotLink", "Yaw Scale %", 0)
+    check(
+        "写入通道不过夹取：0 原样落库（min=10 拦不住）",
+        float(scale.value) == 0.0,
+        "读到 {} —— `set_value` 里加夹取了？那本条该重写".format(scale.value),
+    )
+    check(
+        "**`or 100` 已去掉：0 现在就是 0（停），不是全速**",
+        float(scale.value) / 100.0 == 0.0,
+        "读到 {} —— `or` 那一半又被加回去了？".format(float(scale.value) / 100.0),
+    )
+    check(
+        "**偏航那一行同样去掉了 `or 100`**",
+        float(yaw.value) / 100.0 == 0.0,
+        "读到 {} —— 只改了平移没改偏航？".format(float(yaw.value) / 100.0),
+    )
+
+    # 放回去，别影响后面那条「未上报时限幅」的用例。
+    settings_access.set_value(registry, "RobotLink", "Speed Scale %", 100)
+    settings_access.set_value(registry, "RobotLink", "Yaw Scale %", 100)
     from rm_client import settings_access
 
     scale = registry.get("RobotLink").get_setting("Speed Scale %")
