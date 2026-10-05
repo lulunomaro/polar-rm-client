@@ -79,7 +79,11 @@ def record(exit_code: int, label: str) -> int:
         return 0
     newest, where = _newest_source_mtime()
     path.write_text(
-        '{"at": %.6f, "newest": %.6f, "where": %s, "label": %s}\n'
+        # ⚠ **第 169 轮：原来是 `%.6f`** —— **而 mtime 的精度高于微秒**，
+        # `%.6f` 会**向下取整**，所以刚盖的章**比自己记录的值小**，
+        # **可 `--check` 永远拒绝**。**第 169 轮实测到了这个。**
+        # 改用 `%.9f`（微秒恰好够）。
+        '{"at": %.9f, "newest": %.9f, "where": %s, "label": %s}\n'
         % (time.time(), newest, json_quote(where), json_quote(label)),
         encoding="utf-8",
     )
