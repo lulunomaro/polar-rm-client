@@ -109,6 +109,12 @@ def _prepare_runtime_paths(
 
 
 if __name__ == "__main__":
+    # Fail closed even for malformed simulation switches; never fall through
+    # to a physical backend because a simulator flag was misspelled.
+    if any(arg.split("=", 1)[0].startswith(("--mujoco", "--sim-")) for arg in sys.argv[1:]):
+        from rm_client.ui.sim_operator_window import main as operator_main
+
+        raise SystemExit(operator_main(sys.argv[1:]))
     if "--replay-field-log" in sys.argv:
         raise SystemExit(_run_replay(sys.argv[1:]))
     if "--polar-selftest" in sys.argv:

@@ -398,6 +398,22 @@ class MinecraftCombatHudRenderer:
 
     @staticmethod
     def scoreboard_lines(state: Any) -> tuple[tuple[str, QColor], ...]:
+        if getattr(state, "mujoco_operator", False):
+            valid = getattr(state, "mujoco_telemetry_valid", False)
+            if not valid:
+                texts = ("§e§lSIM OPERATOR", "§cDISCONNECTED / STALE", "§fHP: §7?", "§fAmmo: §7?", "§fHeat: §7?", "§fTime: §7?", "§7Virtual input disabled")
+            else:
+                seconds = max(0, int(state.stage_countdown_sec))
+                texts = ("§e§lSIM OPERATOR", "§7" + str(state.current_stage),
+                    f"§fTime left: §a{seconds//60}:{seconds%60:02d}", "",
+                    f"§fRobot: §a{state.robot_id}",
+                    f"§fHP: §a{int(state.current_health)}/{int(state.max_health)}",
+                    f"§fAmmo: §a{int(state.remaining_ammo)}",
+                    f"§fHeat: §a{int(state.current_heat)}/{int(state.max_heat)}", "",
+                    f"§fAlly VP: §a{state.ally_victory_points}",
+                    f"§fEnemy VP: §c{state.enemy_victory_points}",
+                    "§7Map: simulator truth", "§7Physical TX: disabled")
+            return tuple((text, QColor("#ffffff")) for text in texts)
         seconds = max(0, int(getattr(state, "stage_countdown_sec", 0)))
         allies, enemies = MinecraftCombatHudRenderer._team_rows(state)
         ally_alive = sum(1 for row in allies if int(row.get("hp", 0)) > 0 and str(row.get("state", "")).upper() not in {"DOWN", "DEAD"})
@@ -462,6 +478,10 @@ class MinecraftCombatHudRenderer:
         label_scale = max(1, scale // 2)
         thermal_text = f"COOL {int(round(thermal_margin * 100.0))}%  -{int(getattr(state, 'heat_cooldown_rate', 0))}/S"
         power_text = f"PWR {int(getattr(state, 'chassis_power_w', 0))}/{int(getattr(state, 'power_limit', 0))}W"
+        if getattr(state, "mujoco_operator", False):
+            power_text = "PWR ?"
+            chassis_ratio = 0.0
+            thermal_text = f"COOL {int(round(thermal_margin * 100.0))}%" if getattr(state, "mujoco_telemetry_valid", False) else "COOL ?"
         thermal_display = HudDisplayText(thermal_text, hud_text(thermal_text, chinese))
         power_display = HudDisplayText(power_text, hud_text(power_text, chinese))
         # Buff 指示：优先裁判 Buff 解码（buff_indicator_state），

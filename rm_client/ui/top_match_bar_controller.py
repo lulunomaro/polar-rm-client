@@ -211,10 +211,14 @@ class TopMatchBarController:
             if not self.visible():
                 self.hide()
                 return
-            feed = self._ensure_feed()
-            if not self.owner.backend.mqtt.connected:
-                feed.reset()
-            frame = feed.snapshot(now, local_robot_id=int(self.owner.state.robot_id))
+            simulation_provider = getattr(self.owner.backend, "simulation_match_bar", None)
+            if callable(simulation_provider):
+                frame = simulation_provider(now)
+            else:
+                feed = self._ensure_feed()
+                if not self.owner.backend.mqtt.connected:
+                    feed.reset()
+                frame = feed.snapshot(now, local_robot_id=int(self.owner.state.robot_id))
             # Counts are ground-robot lives, never the nominal mode/team size.
             scope_label = (self._custom_rosters[2] if self._custom_rosters is not None else "GROUND ALIVE")
             frame = replace(frame, roster_label=scope_label)

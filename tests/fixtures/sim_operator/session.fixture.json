@@ -1,0 +1,61 @@
+{
+  "schema": "polar.sim.operator.v1",
+  "session_id": "synthetic-contract-fixture",
+  "epoch": 0,
+  "robot_id": "red_infantry",
+  "server_time_ms": 1791784800000.0,
+  "ttl_ms": 250,
+  "state": "idle",
+  "reason": "no_control",
+  "last_seq": -1,
+  "accepted_count": 0,
+  "rejected_count": 0,
+  "control": {
+    "vx_mps": 0.0,
+    "vy_mps": 0.0,
+    "yaw_rate_rps": 0.0,
+    "pitch_rate_rps": 0.0,
+    "fire": false
+  },
+  "robots": [
+    "red_hero",
+    "red_infantry",
+    "red_sentry",
+    "blue_hero",
+    "blue_infantry",
+    "blue_sentry"
+  ],
+  "simulation_only": true,
+  "hardware_transport": false,
+  "coordinate_frame": "chassis_body",
+  "axes": {
+    "vx_mps": "forward",
+    "vy_mps": "left",
+    "yaw_rate_rps": "gimbal_left_positive",
+    "pitch_rate_rps": "gimbal_up_positive"
+  },
+  "limits": {
+    "speed_mps": 1.0,
+    "yaw_rate_rps": 2.0,
+    "pitch_rate_rps": 2.0,
+    "gimbal_yaw_rad": [
+      -3.14,
+      3.14
+    ],
+    "gimbal_pitch_rad": [
+      -0.4,
+      0.5
+    ]
+  },
+  "first_person_camera": "red_infantry__aim",
+  "endpoints": {
+    "control": "/control",
+    "telemetry": "/telemetry",
+    "frame": "/frame.jpg"
+  },
+  "capabilities": {
+    "robot_selection": false,
+    "reset": false,
+    "automatic_targeting": false
+  }
+}

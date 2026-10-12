@@ -1,0 +1,14 @@
+{
+  "session_id": "synthetic-contract-fixture",
+  "epoch": 0,
+  "robot_id": "red_infantry",
+  "seq": 1,
+  "sent_at_ms": 1791784800000,
+  "focus": true,
+  "deadman": true,
+  "vx_mps": 0.4,
+  "vy_mps": 0.0,
+  "yaw_rate_rps": -0.2,
+  "pitch_rate_rps": 0.1,
+  "fire": false
+}

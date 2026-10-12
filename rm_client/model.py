@@ -884,7 +884,7 @@ def action_group_setting(name: str, options: list[str], description: str = "") -
     )
 
 
-def build_default_registry() -> ModuleRegistry:
+def build_default_registry(*, discover_devices: bool = True) -> ModuleRegistry:
     modules = [
         Module(
             "Scenario",
@@ -1644,7 +1644,7 @@ def build_default_registry() -> ModuleRegistry:
             [
                 # 选项启动时从系统实际探测，机器人 USB CDC 在车上可能是任意 COM 号；
                 # "Auto" 会在启动时自动选中唯一/最像 STM32 的 USB 串口。
-                mode_setting("Port", "Auto", polar_port_choices(nonblocking=True)),
+                mode_setting("Port", "Auto", (polar_port_choices(nonblocking=True) if discover_devices else ["Stub"])),
                 number_setting("Baud", 115200, 9600, 921600, 9600),
                 number_setting("Send Hz", 50, 10, 100, 1),
                 # 能力位：由场景写入，表示本环境允许队内链路真写。
@@ -1679,7 +1679,7 @@ def build_default_registry() -> ModuleRegistry:
                 # （configs/dt7_profile.json、README 第 20/21 节），
                 # 因此默认关，且没现场确认前不许上正式比赛。
                 bool_setting("Direct DT7 Egress", False),
-                mode_setting("DT7 Port", "Auto", dt7_port_choices(nonblocking=True)),
+                mode_setting("DT7 Port", "Auto", (dt7_port_choices(nonblocking=True) if discover_devices else ["Stub"])),
                 # 串口清单是启动那一刻算出来的，而现场十有八九"先开客户端、后插 DT7"：
                 # 那时下拉里只有 Auto，Auto 认不出 DJI 口就宁可拒发（不许乱开别人的口），
                 # 于是只剩"重启程序"一条路 —— 场上一抖就是几十秒。给一个手动重扫。
@@ -1694,7 +1694,7 @@ def build_default_registry() -> ModuleRegistry:
                 # 与 0x0311 侧的 KM_KEY_ALLOWED_MASK 同一条纪律；勾了才发。
                 bool_setting("DT7 Allow Fire Keys", False),
                 bool_setting("Custom Controller Egress", False),
-                mode_setting("CC Port", "Auto", polar_port_choices(nonblocking=True)),
+                mode_setting("CC Port", "Auto", (polar_port_choices(nonblocking=True) if discover_devices else ["Stub"])),
                 number_setting("CC Hz", 30, 5, 30, 1),
                 # 默认 mock：没确认选手端挑口规则之前，绝不写真串口。
                 bool_setting("CC Mock Writes", True),

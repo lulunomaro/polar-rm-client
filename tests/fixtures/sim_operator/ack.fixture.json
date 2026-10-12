@@ -1,0 +1,11 @@
+{
+  "schema": "polar.sim.operator.v1",
+  "accepted": true,
+  "reason": "active",
+  "session_id": "synthetic-contract-fixture",
+  "epoch": 0,
+  "robot_id": "red_infantry",
+  "seq": 1,
+  "last_seq": 1,
+  "server_time_ms": 1791784800000.0
+}

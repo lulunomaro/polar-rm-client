@@ -394,11 +394,12 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
 
-        self.paths = RuntimePaths.discover()
+        simulation = getattr(self, "_simulation_runtime", None)
+        self.paths = simulation.paths if simulation is not None else RuntimePaths.discover()
         self.paths.ensure_writable_dirs()
         self.paths.seed_default_config()
         self.workspace = self.paths.workspace_root
-        self.registry = build_default_registry()
+        self.registry = simulation.registry() if simulation is not None else build_default_registry()
         self.state = RobotState()
         self.combat_hud_animator = CombatHudAnimator()
         # CPU fluorescent FOV ring cache: (radius_px, line_w, glow) → (image, half_extent).
@@ -412,11 +413,11 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         self.match_mode_manager = MatchModeManager("RMUC7v7")
         self.mode_manager = GuiModeManager(PRIMARY_GUI_MODE)
         self.vision = MockVisionPipeline()
-        self.camera_worker = CameraCaptureWorker()
+        self.camera_worker = simulation.camera if simulation is not None else CameraCaptureWorker()
         self.camera_started = False
         self._camera_config: tuple[int, int, int] | None = None
         # SharkClient 对齐后端：三种模式统一由 BackendManager 编排（仅接线，不动 UI）
-        self.backend = BackendManager(
+        self.backend = simulation.create_backend(self.state) if simulation is not None else BackendManager(
             workspace=self.workspace,
             state=self.state,
             client_id=str(self.state.robot_id),
@@ -451,7 +452,7 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         # a second Shark fragment header. Keep the compatibility pipeline for
         # explicit tools, but do not double-assemble the production stream.
         self.backend.udp.external_on_frame = None
-        self.control = KeyboardControlBridge(self.backend, mock_output=True)
+        self.control = simulation.create_control() if simulation is not None else KeyboardControlBridge(self.backend, mock_output=True)
         self.backend.input_clear_hook = self._clear_control_inputs_for_lock
         self._clear_control_inputs_for_lock("startup locked")
         self._qualification_runtime_baseline = self._capture_qualification_runtime_baseline()
@@ -461,13 +462,13 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         self.config_store = ClientConfigStore(self.paths.configs_root)
         self.calibration = CameraCalibrationManager(self.workspace, profile_dir=self.paths.calibrations_root)
         self.calibration.load("polar_webcam")
-        self.tongji_receiver = TongjiVisionReceiver()
+        self.tongji_receiver = simulation.tongji_receiver if simulation is not None else TongjiVisionReceiver()
         self.gimbal_command_bridge = GimbalCommandBridge()
         self.composite_vision = CompositeVisionPipeline()
-        self.local_vision = LocalAlignedVision(
+        self.local_vision = simulation.local_vision if simulation is not None else LocalAlignedVision(
             self._client_asset_path("同济自瞄", "sp_vision_25", "assets", "yolov5.xml")
         )
-        self.tongji_bridge = TongjiVisionBridge()
+        self.tongji_bridge = simulation.tongji_bridge if simulation is not None else TongjiVisionBridge()
         self._vision_source = "Mock"
         self._tongji_enabled = False
         self._vision_snapshot: VisionSnapshot | None = None
