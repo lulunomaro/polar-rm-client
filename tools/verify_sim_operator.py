@@ -84,6 +84,7 @@ try:
         assert during['own']['gimbal_yaw']<t['own']['gimbal_yaw']-.01,(t['own'],during['own'])
         assert during['own']['ammo']<t['own']['ammo'],(t['own'],during['own'])
         capture('operator-active.png',warm=False)
+        key(Qt.Key.Key_F8);tick(.5);capture('operator-modlist.png');key(Qt.Key.Key_F8);tick(.3)
         focused[0]=False;w.focusOutEvent(QFocusEvent(QEvent.Type.FocusOut));tick(.15)
         blur=runtime.transport.snapshot()[0];result['after_blur']=blur
         assert not runtime.armed and not blur['applied_operator_command']['fire']

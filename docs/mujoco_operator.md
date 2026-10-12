@@ -111,3 +111,31 @@ presentation. Each screenshot has a JSON sidecar with frame sequence, video and
 telemetry simulation times, robot and armed state. Actual recordings/screenshots
 belong in private evidence storage; only independently synthetic protocol fixtures
 are part of this repository.
+
+## Follow-on truth cleanup (separate checkpoint)
+
+The basic operator checkpoint retained original operational module rows whose
+simulator commands were not implemented. The follow-on cleanup explicitly marks
+those rows **[SIM N/A]**, prevents activation by GUI, hotkey, hotbar, configuration
+load or direct module assignment, and leaves the normal device-mode registry
+unchanged. It does not implement those missing features.
+
+Spin/autoaim/FOV/friction/locking, unsupported modes, hardware links, purchasing,
+revival, deployment, calibration and unconnected strategy/statistics panels cannot
+claim success in SIM. Native special-case hotbar/menu actions are guarded as well
+as generic module toggles. Movement key remapping remains available. Robot/team,
+match and camera settings remain tied to the current simulator session; imported
+configs cannot replace the SIM map's 12×8 coordinate frame.
+
+Unobserved FRIC/LOCK/ANTIRO, capacitor/buffer/power and control-zone progress do not
+appear as confirmed robot state. The blue Minecraft bar is explicitly **HEAT ROOM**,
+derived from `1 - heat / heat_max`; it is not battery charge. World gimbal heading
+is chassis heading plus the simulator's relative gimbal joint angle.
+
+```sh
+QT_QPA_PLATFORM=offscreen python -m unittest tests.test_sim_operator_truth tests.test_sim_operator_truth_review
+```
+
+This truth cleanup is deliberately separate from implementing actual spin or
+source-camera automatic aiming. Their presence in the original ModList is not
+proof of an end-to-end simulator implementation.

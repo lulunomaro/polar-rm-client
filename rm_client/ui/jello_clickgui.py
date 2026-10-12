@@ -913,6 +913,8 @@ class JelloClickGuiRenderer:
                 panel.width() / max(0.001, scale) - text_x - 10.0,
             )
             localized_name = module_label(module.name, chinese_enabled(host.registry))
+            display_label = getattr(host, 'module_display_label', None)
+            if callable(display_label):localized_name = display_label(module, localized_name)
             display_name = self._elided_module_name(
                 row_font,
                 localized_name,
@@ -1112,7 +1114,8 @@ class JelloClickGuiRenderer:
             title,
             self._elided_module_name(
                 self._font(host, "jello_medium", 40.0),
-                module_label(module.name, chinese_enabled(host.registry)),
+                (host.module_display_label(module,module_label(module.name,chinese_enabled(host.registry)))
+                 if callable(getattr(host,'module_display_label',None)) else module_label(module.name,chinese_enabled(host.registry))),
                 490.0,
             ),
             self._font(host, "jello_medium", 40.0),

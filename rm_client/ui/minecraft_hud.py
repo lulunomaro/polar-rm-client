@@ -481,7 +481,7 @@ class MinecraftCombatHudRenderer:
         if getattr(state, "mujoco_operator", False):
             power_text = "PWR ?"
             chassis_ratio = 0.0
-            thermal_text = f"COOL {int(round(thermal_margin * 100.0))}%" if getattr(state, "mujoco_telemetry_valid", False) else "COOL ?"
+            thermal_text = f"HEAT ROOM {int(round(thermal_margin * 100.0))}%" if getattr(state, "mujoco_telemetry_valid", False) else "HEAT ROOM ?"
         thermal_display = HudDisplayText(thermal_text, hud_text(thermal_text, chinese))
         power_display = HudDisplayText(power_text, hud_text(power_text, chinese))
         # Buff 指示：优先裁判 Buff 解码（buff_indicator_state），

@@ -9,11 +9,12 @@ from PySide6.QtGui import QColor,QFont,QPainter,QPixmap,QSurfaceFormat
 from PySide6.QtWidgets import QApplication
 from .polar_app import PolarRMWindow
 from ..sim_operator_runtime import OperatorRuntime
+from ..match_modes import MATCH_MODES
 
 
 class OperatorWindow(PolarRMWindow):
     def __init__(self,runtime):
-        self._simulation_runtime=runtime
+        self._simulation_runtime=runtime;self._simulation_configuration_ready=False
         super().__init__()
         self.home_visible=False;self.startup_step='done'
         config=self.match_mode_manager.set_mode('RMUL3v3')
@@ -31,8 +32,10 @@ class OperatorWindow(PolarRMWindow):
             module=self.registry.get(name)
             if module:module.enabled=False
         self.registry.get('Crosshair').enabled=True
+        if runtime.feature_policy:runtime.feature_policy.notify=self.toast
         runtime.apply_state(self.state)
         self.setWindowTitle('POLAR-RM · SIM OPERATOR · physical TX disabled')
+        self._simulation_configuration_ready=True
         runtime.start()
 
     def on_tick(self):
@@ -40,6 +43,79 @@ class OperatorWindow(PolarRMWindow):
         super().on_tick()
         # Final authority after all legacy presentation-only ticks.
         self._simulation_runtime.apply_state(self.state)
+
+    def restore_sim_configuration(self):
+        runtime=self._simulation_runtime
+        runtime.feature_policy.restore_locked_settings()
+        config=MATCH_MODES['RMUL3v3']
+        self.match_mode_manager.current=replace(config,title='SIM truth',field=replace(config.field,title='SIM XY / display only',asset_path='',zones=[]))
+        self._vision_source='Simulation';self._tongji_enabled=False
+        runtime.apply_state(self.state)
+        runtime.feature_policy.sync_identity(self.state)
+
+    def sync_runtime_from_registry(self,*args,**kwargs):
+        result=super().sync_runtime_from_registry(*args,**kwargs)
+        if self._simulation_configuration_ready:
+            self.restore_sim_configuration()
+            self._simulation_runtime.disarm('Configuration changed: press F2 to resume')
+        return result
+
+    def apply_match_mode(self,*args,**kwargs):
+        if self._simulation_configuration_ready:
+            self.toast('SIM mode is fixed by the current simulator session');return
+        return super().apply_match_mode(*args,**kwargs)
+
+    def apply_robot_profile(self,*args,**kwargs):
+        if self._simulation_configuration_ready:
+            self._simulation_runtime.feature_policy.sync_identity(self.state)
+            self._simulation_runtime.disarm('Robot selection is unavailable in this SIM session')
+            self.toast(self._simulation_runtime.note);return
+        return super().apply_robot_profile(*args,**kwargs)
+
+    def reload_current_config(self,*args,**kwargs):
+        result=super().reload_current_config(*args,**kwargs)
+        if self._simulation_configuration_ready:
+            self.restore_sim_configuration()
+            self._simulation_runtime.disarm('Configuration loaded: press F2 to resume')
+        return result
+
+    def toast(self,message,*,kind='info'):
+        policy=self._simulation_runtime.feature_policy
+        if policy:
+            for name in policy.unavailable_names:
+                if message.startswith(name+' ') and ('已启用' in message or '已关闭' in message):
+                    message='SIM unavailable: '+name+' — '+policy.reason(name);break
+        return super().toast(message,kind=kind)
+
+    def module_display_label(self,module,label):
+        return '[SIM N/A] '+label if self._simulation_runtime.feature_policy.reason(module.name) else label
+
+    def after_setting_changed(self,setting):
+        policy=self._simulation_runtime.feature_policy
+        if policy and policy.reject_setting(setting):
+            self._simulation_runtime.disarm('Unsupported setting: virtual input released')
+            self.invalidate_gui_cache();return
+        return super().after_setting_changed(setting)
+
+    def reject_sim_action(self,label):
+        self._simulation_runtime.disarm('SIM unavailable: '+label)
+        self.toast(self._simulation_runtime.note);return False
+
+    def open_economy_workspace(self,*args,**kwargs):return self.reject_sim_action('purchasing/revival')
+    def send_economy_request(self,*args,**kwargs):return self.reject_sim_action('economy commands')
+    def open_hero_deploy_interface(self,*args,**kwargs):return self.reject_sim_action('hero deployment')
+    def open_match_chat(self,*args,**kwargs):return self.reject_sim_action('chat delivery')
+    def open_student_panel(self,panel):
+        if panel!='inventory':return self.reject_sim_action(panel+' data/commands')
+        return super().open_student_panel(panel)
+    def handle_calibration_action(self,*args,**kwargs):return self.reject_sim_action('camera calibration')
+    def hud_row_visible(self,module_name,show_setting=None):
+        if module_name=='VictoryPointStatus' and show_setting=='Control Zone':return False
+        return super().hud_row_visible(module_name,show_setting)
+
+    def chassis_follow_mode(self):return 'SIM BODY'
+    def rm_indicator_visible(self,key):return False
+    def status_card_visible(self,label):return False
 
     def draw_rm_hud(self,*args,**kwargs):
         if self.state.mujoco_telemetry_valid:

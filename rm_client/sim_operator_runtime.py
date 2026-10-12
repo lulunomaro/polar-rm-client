@@ -16,6 +16,7 @@ from .control import KeyboardControlBridge
 from .model import build_default_registry
 from .runtime_paths import RuntimePaths
 from .sim_operator_transport import SimOperatorTransport
+from .sim_operator_features import SimFeaturePolicy
 from .top_match_bar import LifeState, MatchBarFrame, RobotCard, TeamStrip
 
 IDS={'red_hero':1,'red_infantry':3,'red_sentry':7,'blue_hero':101,'blue_infantry':103,'blue_sentry':107}
@@ -120,7 +121,7 @@ class OperatorRuntime:
         self.paths=RuntimePaths.discover(environ={'POLAR_USER_DATA_ROOT':self._tmp.name})
         self.camera=NoIOService();self.local_vision=NoIOService();self.tongji_receiver=NoIOService();self.tongji_bridge=NoIOService()
         self.armed=False;self.note='F2: enable virtual operator input; F12: stop'
-        self._generation=-1;self.backend=None
+        self._generation=-1;self.backend=None;self.feature_policy=None
     def registry(self):
         registry=build_default_registry(discover_devices=False)
         # Session-local options. Original user settings remain untouched.
@@ -130,6 +131,7 @@ class OperatorRuntime:
             if setting is not None:
                 if name=='Source' and value not in setting.options:setting.options.append(value)
                 setting.value=value
+        self.feature_policy=SimFeaturePolicy(registry)
         return registry
     def create_backend(self,state):
         self.backend=SimBackend(self,state);return self.backend
@@ -181,12 +183,21 @@ class OperatorRuntime:
     def apply_state(self,state):
         telemetry=self.transport.snapshot()[0]
         state.mock_simulation_enabled=False;state.official_state_active=False;state.mujoco_operator=True
-        state.mujoco_unknown_fields=('chassis_power_w','power_limit','capacitor_percent','heat_cooldown_rate','base_health','outpost_health')
+        state.mujoco_unknown_fields=('chassis_power_w','power_limit','capacitor_percent','heat_cooldown_rate','base_health','outpost_health','base_shield','current_chassis_energy','current_buffer_energy','gimbal_power','speed_limit','friction_wheel','lock_state','anti_rotation','target_id','target_distance_m','total_projectiles_fired','remaining_economy','total_economy_obtained','control_progress')
         state.mujoco_telemetry_valid=telemetry is not None
         state.vision_backend='MuJoCo operator camera';state.vision_connected=False
         state.mqtt_connected=state.serial_connected=False;state.polar_link_active=False
         state.small_buff=state.large_buff=state.jump_ready=state.pte_ready=state.wheel_online=state.les_online=False
         state.target_locked=False;state.energy_target_locked=False;state.buff_rows=[]
+        state.friction_wheel=state.lock_state=state.anti_rotation=False
+        state.vision_tracking_state='unavailable';state.vision_calibrated=False
+        state.target_id=-1;state.target_distance_m=state.target_health=state.target_max_health=0
+        state.current_chassis_energy=state.current_buffer_energy=state.gimbal_power=state.speed_limit=0
+        state.base_shield=state.enemy_base_shield=0;state.base_status=state.enemy_base_status='UNKNOWN'
+        state.outpost_status=state.enemy_outpost_status='UNKNOWN'
+        state.can_remote_heal=state.can_remote_ammo=state.out_of_combat=False
+        state.total_projectiles_fired=state.total_economy_obtained=state.control_progress=0
+        state.projectile_shop_state='UNAVAILABLE';state.economy_mock_mode=False
         state.base_health=state.enemy_base_health=state.outpost_health=state.enemy_outpost_health=0
         state.chassis_power_w=state.power_limit=state.capacitor_percent=state.heat_cooldown_rate=0
         state.remaining_economy=0;state.supply_zone_known=False
@@ -209,6 +220,8 @@ class OperatorRuntime:
         for field,key in [('chassis_yaw_deg','chassis_yaw'),('gimbal_yaw_deg','gimbal_yaw')]:
             setattr(state,field,math.degrees(own.get(key) or 0))
         state.relative_yaw_deg=state.gimbal_yaw_deg
+        state.gimbal_yaw_deg=(state.chassis_yaw_deg+state.relative_yaw_deg+180)%360-180
+        if self.feature_policy:self.feature_policy.sync_identity(state)
         side=own['team'];other='blue' if side=='red' else 'red'
         state.ally_victory_points=telemetry.get('vp',{}).get(side,0);state.enemy_victory_points=telemetry.get('vp',{}).get(other,0)
         owner=telemetry.get('control_owner');state.control_owner='NEUTRAL' if owner is None else 'ALLY' if owner==side else 'ENEMY'
