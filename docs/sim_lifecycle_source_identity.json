@@ -1,0 +1,44 @@
+{
+  "repository": "lulunomaro/polar-rm-client",
+  "branch": "feat/mujoco-operator-20261012",
+  "base_commit": "8ca7f9b2bc18690a4d72f6658c140306027f7cfc",
+  "author_base_commit": "8ca7f9b2bc18690a4d72f6658c140306027f7cfc",
+  "scope": "bounded QA renewal/close lifecycle source and tests; original stage6 records unchanged",
+  "files": [
+    {
+      "path": "rm_client/sim_platform_lifecycle.py",
+      "sha256": "0bacab944cf4210c86e8a1503be1d3989af4b9737eecc07185239c2923f56357",
+      "git_blob_sha": "4b455f18aa65c316d9821028039e6630c29ed7f2",
+      "bytes": 6686,
+      "baseline_sha256": null
+    },
+    {
+      "path": "tools/verify_offline_platform.py",
+      "sha256": "d1ce592cd6d052c54b7d6a3a902067f2fb21411e311a5d1836c5c28a429ee18b",
+      "git_blob_sha": "38936655c7bb0aea6286f1ea5219a2956f9ddf64",
+      "bytes": 8922,
+      "baseline_sha256": "cc6fd53bfe33d14900e44c5eaeacaef0693138844fdd306534b9191db8244542"
+    },
+    {
+      "path": "tests/test_sim_platform_lifecycle.py",
+      "sha256": "688c386a9beeb2cf445348a69dd4617f02b1d8a24a467ca1d94f4830b52426ae",
+      "git_blob_sha": "665b92b68c79bbe5fc4fb0031fc50a0c680c3d90",
+      "bytes": 4768,
+      "baseline_sha256": null
+    },
+    {
+      "path": "tools/verify_lifecycle_loopback.py",
+      "sha256": "694d3635484d51344023f164f83d56fef7262af5011cf8bcd464550792a60db2",
+      "git_blob_sha": "efb372f2ab066f04174ceedf719fb45b73f68ac1",
+      "bytes": 3929,
+      "baseline_sha256": null
+    },
+    {
+      "path": "docs/sim_clock_modes.md",
+      "sha256": "aab416e267b52ddd605e4a721bbfd52b91f541bf8b8ccf0109b0ff77f41977ed",
+      "git_blob_sha": "f2e85e09740d940d292c6c7b231ed43e5e16d0d2",
+      "bytes": 4196,
+      "baseline_sha256": null
+    }
+  ]
+}
