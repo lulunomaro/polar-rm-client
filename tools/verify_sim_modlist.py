@@ -23,7 +23,7 @@ result=dict(scene=a.scene_label,render_path='original PolarRMWindow CPU QImage +
 w=None
 try:
  if not select.select([child.stdout],[],[],30)[0]:raise RuntimeError('Bridge ready timeout')
- ready=child.stdout.readline();log.write(ready);log.flush();url=json.loads(ready)['url']
+ ready=child.stdout.readline();log.write(ready);log.flush();ready_data=json.loads(ready);url=ready_data['url'];result['bridge_ready_identity']=ready_data
  from PySide6.QtWidgets import QApplication
  from PySide6.QtCore import Qt,QEvent,QPointF,QRectF
  from PySide6.QtGui import QImage,QPainter,QKeyEvent,QMouseEvent,QFocusEvent
@@ -72,13 +72,18 @@ try:
   wait('source_capabilities',lambda t:r.modes.support==(True,True) and r.transport.snapshot()[1] is not None)
   for i in range(8):tick(.04);capture('ready.png')
   result['startup_neutral']=r.transport.snapshot()[0]
+  result['mouse_angle_capability']=(r.transport.session or {}).get('capabilities',{}).get('mouse_angle_input_version')
   if a.manual_pitch_pixels:
    if not -100<=a.manual_pitch_pixels<=100:raise ValueError('Manual alignment must be bounded')
    arm();before_pitch=r.transport.snapshot()[0]['own']['pitch']
    for y in (450,450+a.manual_pitch_pixels):
     w.mouseMoveEvent(QMouseEvent(QEvent.Type.MouseMove,QPointF(680,y),QPointF(680,y),Qt.MouseButton.NoButton,Qt.MouseButton.NoButton,Qt.KeyboardModifier.NoModifier));tick(.04)
-   tick(.6)
-   result['manual_camera_alignment']=dict(pixels=a.manual_pitch_pixels,before_pitch=before_pitch,after_pitch=r.transport.snapshot()[0]['own']['pitch'],method='original Qt mouseMoveEvent only; no world/target coordinates')
+   expected_pitch=before_pitch-a.manual_pitch_pixels*.002
+   if result['mouse_angle_capability']==1:
+    wait('mouse_angle_consumed_exactly',lambda t:abs((t.get('control') or {}).get('mouse_angle_ack',{}).get('consumed_pitch_total_rad',999)+a.manual_pitch_pixels*.002)<1e-12)
+    wait('mechanical_pitch_settled',lambda t:abs(t['own']['pitch']-expected_pitch)<.0001,timeout=8)
+   else:tick(.6)
+   result['manual_camera_alignment']=dict(pixels=a.manual_pitch_pixels,before_pitch=before_pitch,after_pitch=r.transport.snapshot()[0]['own']['pitch'],mouse_angle_ack=(r.transport.snapshot()[0].get('control') or {}).get('mouse_angle_ack'),method='original Qt mouseMoveEvent only; no world/target coordinates')
    assert abs(result['manual_camera_alignment']['after_pitch']-before_pitch)>.005
 
   if a.aim_case in ('narrow','both'):

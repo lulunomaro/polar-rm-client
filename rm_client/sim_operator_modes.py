@@ -40,6 +40,16 @@ def circle_request(radius_logical,hud_scale,window_width,window_height,video_wid
     fit=min(ww/vw,wh/vh);radius_px=radius*scale
     return number(radius_px/(vw*fit),1e-9,2),number(radius_px/(vh*fit),1e-9,2)
 
+def supports_mouse_angle(session):
+    caps=(session or {}).get('capabilities',{})
+    return isinstance(caps,dict) and type(caps.get('mouse_angle_input_version')) is int and caps['mouse_angle_input_version']==1
+
+def mouse_angle_request(value):
+    if not isinstance(value,dict) or set(value)!={'generation','yaw_total_rad','pitch_total_rad'}:raise ValueError('Invalid mouse-angle request')
+    generation=value['generation']
+    if type(generation) is not int or not 0<=generation<=2**53-1:raise ValueError('Invalid mouse generation')
+    return dict(generation=generation,yaw_total_rad=number(value['yaw_total_rad'],-1e6,1e6),pitch_total_rad=number(value['pitch_total_rad'],-1e6,1e6))
+
 def supported_modes(session):
     caps=(session or {}).get('capabilities',{})
     if not isinstance(caps,dict):return False,False
@@ -61,6 +71,13 @@ def source_camera_metadata(headers,width,height,session):
 
 def validate_feedback(data,session):
     """Validate optional feedback before it can become a confirmed UI state."""
+    if supports_mouse_angle(session):
+        control=data.get('control') or {};ack=control.get('mouse_angle_ack')
+        if not isinstance(ack,dict):raise ValueError('Missing consumed mouse-angle acknowledgement')
+        for key in ('generation','revoked_generation','consumed_control_seq'):
+            if type(ack.get(key)) is not int or not -1<=ack[key]<=2**53-1:raise ValueError('Invalid mouse-angle acknowledgement sequence')
+        for key in ('consumed_yaw_total_rad','consumed_pitch_total_rad'):number(ack.get(key),-1e6,1e6)
+        if ack.get('reason') not in ('no_input','revoked','consumed','discarded_by_authority'):raise ValueError('Unknown mouse-angle acknowledgement state')
     spin,aim=supported_modes(session)
     mode=data.get('operator_modes')
     if mode is not None:

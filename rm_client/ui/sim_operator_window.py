@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QApplication
 from .polar_app import PolarRMWindow
 from ..sim_operator_runtime import OperatorRuntime
 from ..match_modes import MATCH_MODES
+from ..sim_operator_modes import supports_mouse_angle
 
 
 class OperatorWindow(PolarRMWindow):
@@ -242,7 +243,8 @@ class OperatorWindow(PolarRMWindow):
         if p.isActive():
             width,height=kwargs.get('logical_size') or (self.width(),self.height())
             p.save();p.setPen(QColor('#73f2df'));p.setFont(QFont('Sans Serif',10))
-            label='SIM ONLY | F2 arm | WASD move | mouse aim | left click fire | F12 stop'
+            mouse_label='mouse angle' if supports_mouse_angle(self._simulation_runtime.transport.session) else 'legacy mouse rate (RTF dependent)'
+            label='SIM ONLY | F2 arm | WASD move | '+mouse_label+' | left fire | F12 stop'
             if not self._simulation_runtime.armed:label='SIM DISARMED | '+self._simulation_runtime.note
             p.drawText(QRectF(18,58,width-36,20),Qt.AlignmentFlag.AlignCenter,label)
             feedback=self._simulation_runtime.modes.feedback()

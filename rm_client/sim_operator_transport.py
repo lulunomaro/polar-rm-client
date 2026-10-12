@@ -12,7 +12,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from .sim_operator_modes import spin_request,aim_request,SPIN_DEFAULT,AIM_DEFAULT,validate_feedback,supported_modes,source_camera_metadata
+from .sim_operator_modes import spin_request,aim_request,SPIN_DEFAULT,AIM_DEFAULT,validate_feedback,supported_modes,source_camera_metadata,supports_mouse_angle,mouse_angle_request
 
 SCHEMA = 'polar.sim.operator.v1'
 MAX_JSON = 2_000_000
@@ -47,6 +47,8 @@ class SimOperatorTransport:
         self.video_source_sequence=None;self.video_native_size=None
         self.video=None;self.video_at=0.0;self.video_sequence=-1;self.video_sim_time=None
         self._lease_min_seq=1;self._aim_hold_min_seq=1
+        self._mouse_generation=0;self._mouse_totals=[0.,0.];self._mouse_identity=None
+        self._neutral_revision=0;self._neutral_pending=True
         self._seq=0;self._offset_ms=0.0;self._input_at=-1e9;self._focus=False
         self._intent=dict(vx_mps=0.,vy_mps=0.,yaw_rate_rps=0.,pitch_rate_rps=0.,fire=False)
         self._mode_request=None;self._aim_request=None
@@ -100,8 +102,9 @@ class SimOperatorTransport:
 
     def neutral(self,reason='input released'):
         with self._lock:
+            self._neutral_revision+=1;self._neutral_pending=True
             self._intent=dict(vx_mps=0.,vy_mps=0.,yaw_rate_rps=0.,pitch_rate_rps=0.,fire=False)
-            self._focus=False;self._input_at=-1e9;self._mouse_pending=[0.,0.]
+            self._focus=False;self._input_at=-1e9;self._mouse_pending=[0.,0.];self._mouse_totals=[0.,0.]
             if self._aim_request:self._aim_request=dict(self._aim_request,hold=False)
             self.last_error=str(reason)
 
@@ -123,11 +126,19 @@ class SimOperatorTransport:
     def heartbeat(self,focused):
         with self._lock:
             if self._expire_input():focused=False
-            if focused and not self._focus:self._lease_min_seq=self._seq+1
+            if not focused and self._focus:
+                self._neutral_revision+=1;self._neutral_pending=True
+            if focused and not self._focus:
+                self._lease_min_seq=self._seq+1
+                if supports_mouse_angle(self.session):
+                    if self._mouse_generation>=2**53-1:
+                        self.neutral('Mouse generation exhausted; start a new simulator session');return
+                    self._mouse_generation+=1;self._mouse_totals=[0.,0.]
+
             self._focus=bool(focused);self._input_at=self.clock()
             if focused and self.session is not None:self._focused_since_session=True
             if not focused:
-                self._mouse_pending=[0.,0.]
+                self._mouse_pending=[0.,0.];self._mouse_totals=[0.,0.]
                 self._intent=dict(vx_mps=0.,vy_mps=0.,yaw_rate_rps=0.,pitch_rate_rps=0.,fire=False)
 
     def submit_input(self,*,vx_mps,vy_mps,yaw_rate_rps,pitch_rate_rps,fire):
@@ -143,23 +154,37 @@ class SimOperatorTransport:
         values=(finite(yaw_delta_rad,'yaw delta'),finite(pitch_delta_rad,'pitch delta'))
         with self._lock:
             if not self._focus or not self._focused_since_session:return
-            # Bounded relative-motion accumulator, cleared on every release.
-            # A 75 Hz UI zero tick must not erase motion before 50 Hz egress.
-            self._mouse_pending=[max(-.1,min(.1,old+delta)) for old,delta in zip(self._mouse_pending,values)]
+            if supports_mouse_angle(self.session):
+                totals=[old+delta for old,delta in zip(self._mouse_totals,values)]
+                try:mouse_angle_request(dict(generation=self._mouse_generation,yaw_total_rad=totals[0],pitch_total_rad=totals[1]))
+                except ValueError:
+                    self.neutral('Invalid cumulative mouse angle');raise
+                self._mouse_totals=totals
+            else:
+                # Explicit legacy compatibility. This rate path depends on RTF;
+                # deterministic mouse-angle qualification requires capability v1.
+                self._mouse_pending=[max(-.1,min(.1,old+delta)) for old,delta in zip(self._mouse_pending,values)]
 
     def _control_payload(self):
         if self.session is None:return None
         self._expire_input()
         self._seq+=1
         fresh=self._focus and self._focused_since_session and self.clock()-self._input_at<=.15
+        if supports_mouse_angle(self.session) and self._neutral_pending:fresh=False
         values=dict(self._intent) if fresh else dict(vx_mps=0.,vy_mps=0.,yaw_rate_rps=0.,pitch_rate_rps=0.,fire=False)
         now=self.clock();dt=.02 if self._last_control_at is None else max(.01,min(.1,now-self._last_control_at))
         self._last_control_at=now
-        if fresh:
+        angle_cap=supports_mouse_angle(self.session)
+        if fresh and not angle_cap:
             for key,delta in zip(('yaw_rate_rps','pitch_rate_rps'),self._mouse_pending):
                 values[key]=max(-2.,min(2.,values[key]+delta/dt))
         self._mouse_pending=[0.,0.]
         extensions={}
+        if angle_cap:
+            # Angle increments and rates cannot both drive the same axes.
+            values['yaw_rate_rps']=values['pitch_rate_rps']=0.
+            if fresh:
+                extensions['mouse_angle']=dict(generation=self._mouse_generation,yaw_total_rad=self._mouse_totals[0],pitch_total_rad=self._mouse_totals[1])
         if self._mode_request is not None:extensions['mode_request']=dict(self._mode_request,spin_enabled=bool(fresh and self._mode_request['spin_enabled']))
         if self._aim_request is not None:extensions['aim_request']=dict(self._aim_request,enabled=bool(fresh and self._aim_request['enabled']),hold=bool(fresh and self._aim_request['hold']))
         return dict(schema=SCHEMA,session_id=self.session['session_id'],epoch=self.session['epoch'],
@@ -186,6 +211,17 @@ class SimOperatorTransport:
             last_seq=data.get('last_seq',-1)
             if type(last_seq) is not int or not -1<=last_seq<2**53-1:raise ValueError('Invalid server sequence')
             self._seq=max(self._seq,last_seq)
+            if supports_mouse_angle(data):
+                generation=data.get('mouse_angle_last_generation')
+                if type(generation) is not int or not -1<=generation<=2**53-1:raise ValueError('Invalid server mouse generation')
+                # Keep the local floor across reconnects to the same identity,
+                # but a genuinely new session may recover from exhaustion.
+                if self._mouse_identity!=current:
+                    self._mouse_generation=max(0,generation)
+                else:
+                    self._mouse_generation=max(self._mouse_generation,generation)
+                self._mouse_identity=current
+
             self.session=dict(data);self._offset_ms=server_time-(time.time()*1000 if request_midpoint_ms is None else request_midpoint_ms)
 
     def validate_identity(self,data,session):
@@ -229,14 +265,16 @@ class SimOperatorTransport:
     def _control_loop(self):
         while not self._stop.is_set():
             try:
-                with self._lock:body=self._control_payload();generation=self._generation
+                with self._lock:body=self._control_payload();generation=self._generation;neutral_revision=self._neutral_revision
                 if body is not None:
                     ack=self._json('/control',body,timeout=.1)
                     if ack.get('schema')!=SCHEMA or type(ack.get('accepted')) is not bool or any(ack.get(k)!=body[k] for k in ('session_id','epoch','robot_id','seq')):raise ValueError('Wrong control acknowledgement')
                     with self._lock:
                         if generation!=self._generation:continue
                         self.last_ack=ack
-                        if ack.get('accepted') is True:self.accepted_count+=1
+                        if ack.get('accepted') is True:
+                            self.accepted_count+=1
+                            if not body['focus'] and neutral_revision==self._neutral_revision:self._neutral_pending=False
                         else:
                             self.rejected_count+=1
                             self._clear_session('Simulator rejected control: '+str(ack.get('reason','unknown')))

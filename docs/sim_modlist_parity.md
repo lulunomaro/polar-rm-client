@@ -34,17 +34,17 @@ the private run evidence. Full moving-robot robustness remains a separate stage.
 
 ## Limited checkpoint: repeatability is still open
 
-This checkpoint saves capability-qualified client bindings and their synthetic
-boundary tests. A same-session narrow-range rejection followed by wide-range
-source activation was observed in an explicitly fixed visible-target simulation
-scene. Repeating a fixed number of mouse pixels did not consistently reproduce
-that complete workflow. Mouse deltas currently become wall-clock angular rates
-while the simulator integrates simulation time; varying real-time factor changes
-the resulting angle. Nearby camera views also exposed source-detector sensitivity.
+The earlier binding checkpoint saved capability-qualified controls and their
+synthetic boundary tests. A same-session narrow-range rejection followed by
+wide-range source activation was observed in an explicitly fixed visible-target
+scene, but repeating a fixed number of mouse pixels did not consistently reproduce
+the complete workflow. The former mouse-rate path mixed wall time with simulation
+time. Nearby camera images also exposed source-detector sensitivity.
 
-These are open integration defects/limits, not passing general-use acceptance.
-This checkpoint must not be described as full end-to-end qualification, generally
-usable automatic aiming, or complete ModList parity. The next separate change is
-a sequence-qualified cumulative-angle input contract, followed by repeated
-same-session range tests and fixed-image detector checks. No actual test records,
-private scenes or source specifications are included in this public source view.
+The cumulative-angle extension below addresses the input-clock defect when the
+endpoint advertises that capability. Complete repeated narrow-to-wide acceptance
+remains open: a correctly consumed and mechanically settled mouse movement can
+still yield no admitted source detections. Zero detections must not be counted as
+successful FOV rejection. This is not general-use automatic-aim qualification or
+complete ModList parity. No actual test records, private scenes or source
+specifications are included in this public source view.

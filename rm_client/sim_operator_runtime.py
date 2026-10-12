@@ -17,7 +17,7 @@ from .model import build_default_registry
 from .runtime_paths import RuntimePaths
 from .sim_operator_transport import SimOperatorTransport
 from .sim_operator_features import SimFeaturePolicy
-from .sim_operator_modes import SimModeBindings
+from .sim_operator_modes import SimModeBindings,supports_mouse_angle
 from .top_match_bar import LifeState, MatchBarFrame, RobotCard, TeamStrip
 
 IDS={'red_hero':1,'red_infantry':3,'red_sentry':7,'blue_hero':101,'blue_infantry':103,'blue_sentry':107}
@@ -143,6 +143,8 @@ class OperatorRuntime:
     def disarm(self,reason='Virtual controls released'):
         self.armed=False;self.note=reason;self.transport.neutral(reason)
     def arm(self):
+        if supports_mouse_angle(self.transport.session) and not self.transport._focus and self.transport._mouse_generation>=2**53-1:
+            self.note='Mouse generation exhausted; start a new simulator session';return False
         telemetry,video,*_=self.transport.snapshot()
         if telemetry is None or video is None or telemetry.get('phase')!='running' or not telemetry['own']['alive']:
             self.note='Need current simulator state and first-person video before controlling';return False

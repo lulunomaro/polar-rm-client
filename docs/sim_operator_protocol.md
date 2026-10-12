@@ -99,3 +99,32 @@ For source-authority confirmation, `autoaim.algorithm` must equal the session's
 is rejected, even if its numeric frame index appears recent. Native-camera
 headers identify source capture sequence separately from display frame sequence;
 preview images without a capture index are not claimed as detector observations.
+
+
+## Optional cumulative mouse-angle contract
+
+Capability `mouse_angle_input_version: 1` requires the session's
+`mouse_angle_last_generation`, an integer from -1 through 2^53-1. The complete
+optional `mouse_angle` object contains `generation` (integer 0 through 2^53-1),
+`yaw_total_rad` and `pitch_total_rad` (finite signed totals within +/-1e6).
+When this object is present, both gimbal angular-rate fields must be zero.
+
+Within one armed generation, physics consumes only the difference from the last
+consumed total, once, without multiplying by simulation dt. Sequence gaps and
+repeated totals are permitted. A generation cannot change while active. Neutral
+or expired input permanently revokes the generation; rearm must use a strictly
+larger generation. Generations never wrap. Neutral controls omit `mouse_angle`.
+The client waits for an ACK of its current neutral release before sending new
+active input. A delayed ACK from an older release cannot open this barrier.
+
+`control.mouse_angle_ack` includes `generation`, `revoked_generation`,
+`consumed_yaw_total_rad`, `consumed_pitch_total_rad`, `consumed_control_seq` and
+`reason` (`no_input`, `revoked`, `consumed`, `discarded_by_authority`). Integer
+sentinels are -1, not null. This is input-consumption evidence only, not proof the
+mechanical joints have reached a pose. Source-authority discard consumes the
+manual totals without applying or queuing them for after automatic aiming ends.
+A reconnect to the same identity preserves its local/server generation floor;
+a new session/epoch/selected-robot identity starts from the new server floor.
+
+The synthetic mouse-angle fixture is an independently authored schema example.
+No actual match or source-detector record is needed to test this contract.

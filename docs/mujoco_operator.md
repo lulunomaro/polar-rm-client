@@ -190,17 +190,44 @@ public repository.
 
 ## Limited checkpoint: repeatability is still open
 
-This checkpoint saves capability-qualified client bindings and their synthetic
-boundary tests. A same-session narrow-range rejection followed by wide-range
-source activation was observed in an explicitly fixed visible-target simulation
-scene. Repeating a fixed number of mouse pixels did not consistently reproduce
-that complete workflow. Mouse deltas currently become wall-clock angular rates
-while the simulator integrates simulation time; varying real-time factor changes
-the resulting angle. Nearby camera views also exposed source-detector sensitivity.
+The earlier binding checkpoint saved capability-qualified controls and their
+synthetic boundary tests. A same-session narrow-range rejection followed by
+wide-range source activation was observed in an explicitly fixed visible-target
+scene, but repeating a fixed number of mouse pixels did not consistently reproduce
+the complete workflow. The former mouse-rate path mixed wall time with simulation
+time. Nearby camera images also exposed source-detector sensitivity.
 
-These are open integration defects/limits, not passing general-use acceptance.
-This checkpoint must not be described as full end-to-end qualification, generally
-usable automatic aiming, or complete ModList parity. The next separate change is
-a sequence-qualified cumulative-angle input contract, followed by repeated
-same-session range tests and fixed-image detector checks. No actual test records,
-private scenes or source specifications are included in this public source view.
+The cumulative-angle extension below addresses the input-clock defect when the
+endpoint advertises that capability. Complete repeated narrow-to-wide acceptance
+remains open: a correctly consumed and mechanically settled mouse movement can
+still yield no admitted source detections. Zero detections must not be counted as
+successful FOV rejection. This is not general-use automatic-aim qualification or
+complete ModList parity. No actual test records, private scenes or source
+specifications are included in this public source view.
+
+
+## Deterministic mouse-angle extension
+
+An endpoint advertising `mouse_angle_input_version: 1` receives signed cumulative
+mouse angles per explicitly armed input generation. Original Qt mouse collection
+and sensitivity are retained; transport polling frequency and rendering real-time
+factor do not rescale the angle. Repeated or coalesced control payloads carry the
+same accumulated total, and the simulator consumes only the unconsumed difference.
+The existing manual gimbal limits still apply.
+
+Focus loss, mode/range changes, F12, UI timeout and disconnect drop local totals.
+A rearm waits for an accepted neutral control from the current release before it
+sends a new generation. An old neutral ACK cannot open a newer release barrier.
+Reconnection preserves the generation floor for the same session, while a genuinely
+new session can recover from generation exhaustion. A source-authority consumer
+may explicitly discard manual angles; they must not accumulate for later release.
+
+The HUD identifies this capability as cumulative mouse input. Older endpoints
+remain labelled legacy mouse rate (RTF dependent); they do not satisfy deterministic
+mouse-input acceptance. A consumed-angle ACK is not a measured mechanical pose:
+the integration script checks these separately before changing range settings.
+Complete source detection and repeated range qualification are still open above.
+
+```sh
+PYTHONPATH=.:tests QT_QPA_PLATFORM=offscreen python -m unittest tests.test_sim_operator_mouse_angle
+```

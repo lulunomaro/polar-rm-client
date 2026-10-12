@@ -1,0 +1,19 @@
+{
+  "capabilities": {
+    "mouse_angle_input_version": 1
+  },
+  "mouse_angle_last_generation": 4,
+  "mouse_angle": {
+    "generation": 5,
+    "yaw_total_rad": 0.012,
+    "pitch_total_rad": -0.008
+  },
+  "mouse_angle_ack": {
+    "generation": 5,
+    "revoked_generation": 4,
+    "consumed_yaw_total_rad": 0.012,
+    "consumed_pitch_total_rad": -0.008,
+    "consumed_control_seq": 19,
+    "reason": "consumed"
+  }
+}
