@@ -14,6 +14,7 @@ import urllib.parse
 import urllib.request
 from .sim_operator_modes import spin_request,aim_request,SPIN_DEFAULT,AIM_DEFAULT,validate_feedback,supported_modes,source_camera_metadata,supports_mouse_angle,mouse_angle_request
 
+from .sim_drive_frames import supports_drive_frames
 from .sim_robot_selection import selection_profiles, validate_selection_ack, MAX_SEQUENCE
 
 SCHEMA = 'polar.sim.operator.v1'
@@ -175,7 +176,7 @@ class SimOperatorTransport:
             return True
 
     def submit_modes(self,mode,aim):
-        mode=None if mode is None else spin_request(mode)
+        mode=None if mode is None else spin_request(mode,drive_frames=supports_drive_frames(self.session))
         aim=None if aim is None else aim_request(aim)
         with self._lock:
             if aim and aim['hold'] and not (self._aim_request or {}).get('hold'):
@@ -240,7 +241,7 @@ class SimOperatorTransport:
         self._expire_input()
         self._seq+=1
         fresh=self._focus and self._focused_since_session and self.clock()-self._input_at<=.15
-        if supports_mouse_angle(self.session) and self._neutral_pending:fresh=False
+        if (supports_mouse_angle(self.session) or supports_drive_frames(self.session)) and self._neutral_pending:fresh=False
         values=dict(self._intent) if fresh else dict(vx_mps=0.,vy_mps=0.,yaw_rate_rps=0.,pitch_rate_rps=0.,fire=False)
         now=self.clock();dt=.02 if self._last_control_at is None else max(.01,min(.1,now-self._last_control_at))
         self._last_control_at=now
@@ -255,6 +256,11 @@ class SimOperatorTransport:
             values['yaw_rate_rps']=values['pitch_rate_rps']=0.
             if fresh:
                 extensions['mouse_angle']=dict(generation=self._mouse_generation,yaw_total_rad=self._mouse_totals[0],pitch_total_rad=self._mouse_totals[1])
+        if supports_drive_frames(self.session):
+            # These axes use the explicitly selected reference. Legacy v1
+            # vx/vy retain chassis-frame semantics and therefore stay zero.
+            extensions['drive_axes']=dict(forward_mps=values['vx_mps'],left_mps=values['vy_mps'])
+            values['vx_mps']=values['vy_mps']=0.
         if self._mode_request is not None:extensions['mode_request']=dict(self._mode_request,spin_enabled=bool(fresh and self._mode_request['spin_enabled']))
         if self._aim_request is not None:extensions['aim_request']=dict(self._aim_request,enabled=bool(fresh and self._aim_request['enabled']),hold=bool(fresh and self._aim_request['hold']))
         return dict(schema=SCHEMA,session_id=self.session['session_id'],epoch=self.session['epoch'],

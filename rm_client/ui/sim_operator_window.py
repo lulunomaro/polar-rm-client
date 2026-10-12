@@ -11,6 +11,8 @@ from .polar_app import PolarRMWindow
 from ..sim_operator_runtime import OperatorRuntime
 from ..match_modes import MATCH_MODES
 from ..sim_operator_modes import supports_mouse_angle
+from ..sim_drive_frames import supports_drive_frames
+from .jello_locale import chinese_enabled
 from ..sim_robot_selection import SELECTION_SETTING, selection_profiles
 
 
@@ -98,6 +100,12 @@ class OperatorWindow(PolarRMWindow):
         if module.name in policy.supported:return '[SIM REQUEST] '+label
         return label
 
+    def setting_display_label(self,setting,label):
+        module=self._simulation_runtime.feature_policy.owner(setting)
+        if module and module.name=='ChassisAssist' and setting.name=='Follow':
+            return 'SIM 参考方向' if chinese_enabled(self.registry) else 'SIM drive frame'
+        return label
+
     def setting_is_unavailable(self,setting):
         if setting.name==SELECTION_SETTING:return not selection_profiles(self._simulation_runtime.transport.session) or self._simulation_runtime.transport.selection_pending
         policy=self._simulation_runtime.feature_policy
@@ -127,7 +135,7 @@ class OperatorWindow(PolarRMWindow):
     def on_module_toggled(self,module,enabled,source):
         hit=self._simulation_runtime.hit_spin
         if module.name=='SpinMode' and not hit.in_transition(module,enabled):hit.operator_override()
-        if module.name in ('SpinMode','ArmorAutoAim','AutoSpinOnHit') and not hit.in_transition(module,enabled):
+        if module.name in ('SpinMode','ArmorAutoAim','AutoSpinOnHit','ChassisAssist') and not hit.in_transition(module,enabled):
             self._simulation_runtime.disarm('SIM request changed: release keys, then F2')
             self.control.reset_inputs()
         return super().on_module_toggled(module,enabled,source)
@@ -160,7 +168,10 @@ class OperatorWindow(PolarRMWindow):
         return super().hud_row_visible(module_name,show_setting)
 
     def effective_spin_enabled(self):return self._simulation_runtime.modes.feedback()['spin']
-    def chassis_follow_mode(self):return 'SIM BODY'
+    def chassis_follow_mode(self):
+        if not supports_drive_frames(self._simulation_runtime.transport.session):return 'SIM BODY'
+        frame=self._simulation_runtime.modes.feedback()['drive']
+        return {'free':'SIM BODY','field':'SIM FIELD','gimbal':'SIM GIMBAL'}.get(frame,'SIM REF ?')
     def rm_indicator_visible(self,key):return False
     def status_card_visible(self,label):return False
 
@@ -270,6 +281,9 @@ class OperatorWindow(PolarRMWindow):
                 spin=('ACTIVE ('+str(feedback['spin_origin'])+')') if feedback['spin'] else feedback['spin_reason']
                 aim='SOURCE ACTIVE' if feedback['aim'] else feedback['aim_reason']
                 p.drawText(QRectF(18,184,width-36,20),Qt.AlignmentFlag.AlignCenter,f'SIM spin: {spin} | measured {measured} | aim: {aim} | manual fire')
+                if self._simulation_runtime.modes.drive_support:
+                    frame=feedback['drive'] or feedback['drive_reason']
+                    p.drawText(QRectF(18,207,width-36,20),Qt.AlignmentFlag.AlignCenter,'SIM driving reference: '+str(frame)+' | no chassis yaw follow')
             p.restore()
             if existing is None:p.end()
         return result

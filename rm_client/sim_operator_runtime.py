@@ -153,7 +153,7 @@ class OperatorRuntime:
         window.control.reset_inputs()
         # Explicit selection starts clean; do not re-enable a manual or on-hit
         # mode merely because the next robot supports the same capability.
-        for name in ('SpinMode','ArmorAutoAim','AutoSpinOnHit'):
+        for name in ('SpinMode','ArmorAutoAim','AutoSpinOnHit','ChassisAssist'):
             window.registry.get(name).enabled=False
         self.modes.signature=None
         self.transport.select_robot(robot_id)

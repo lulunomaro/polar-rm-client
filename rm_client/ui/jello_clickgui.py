@@ -1293,6 +1293,9 @@ class JelloClickGuiRenderer:
         if visible.isEmpty():
             return
         localized_name = setting_label(setting.name, chinese_enabled(host.registry))
+        display_label = getattr(host, "setting_display_label", None)
+        if callable(display_label):
+            localized_name = display_label(setting, localized_name)
         localized_name = self._elided_module_name(
             self._font(host, "jello_light", 25.0),
             localized_name,
