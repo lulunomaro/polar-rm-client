@@ -44,7 +44,10 @@ class PlatformWindow(OperatorWindow):
         if p.isActive():
             width,height=kwargs.get('logical_size') or (self.width(),self.height())
             r=self._simulation_runtime;t=r.transport
-            if t.role=='spectator':label='V2 OBSERVER | watch only | movement / gimbal / fire disabled'
+            clock=(t.raw_state or {}).get('clock_profile',{})
+            offline=clock.get('kind')=='offline_modeled_latency_v1'
+            if offline:label='OFFLINE / SIL | modeled delays | '+str(clock.get('barrier_state','unknown'))
+            elif t.role=='spectator':label='V2 OBSERVER | watch only | movement / gimbal / fire disabled'
             elif r.armed:label='V2 MANUAL | WASD / mouse target / left fire | F12 release'
             elif t.owned_robot:label='V2 LEASE CLAIMED, DISARMED | F2 arm | F12 release'
             elif t.claim_pending:label='V2 CLAIM PENDING | no input sent'

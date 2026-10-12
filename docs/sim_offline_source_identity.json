@@ -1,0 +1,37 @@
+{
+  "repository": "lulunomaro/polar-rm-client",
+  "branch": "feat/mujoco-operator-20261012",
+  "base_commit": "2764b7977d55629b51e8885e64168ba827a2ae3c",
+  "scope": "bounded offline SIL source/tests/methods; live behavior remains separate",
+  "files": [
+    {
+      "path": "rm_client/ui/sim_platform_window.py",
+      "sha256": "5da26eec4899509424adb0db207c71f30e919d76a363152b1e09890e3a62d258",
+      "git_blob_sha": "961506f25b5ab01214e6f410bcbece2f265bc5bc",
+      "bytes": 4894,
+      "baseline_sha256": "7aa4b76bc1e9e6fbe65ad34a92e489662bd13009d63f1408d22ef154b5abc2d9"
+    },
+    {
+      "path": "tools/verify_offline_platform.py",
+      "sha256": "cc6fd53bfe33d14900e44c5eaeacaef0693138844fdd306534b9191db8244542",
+      "git_blob_sha": "d268e1f42e802c22324cbcf652dcfd20d1e8381e",
+      "bytes": 7796,
+      "baseline_sha256": null
+    },
+    {
+      "path": "tests/test_offline_platform_view.py",
+      "sha256": "b2732c0791946f51b32c163560d44056276dc634045b359c0ac9e83b8ffb15d4",
+      "git_blob_sha": "0698de7363190858708d9492b05593f37fdace7d",
+      "bytes": 2112,
+      "baseline_sha256": null
+    },
+    {
+      "path": "docs/sim_offline_view.md",
+      "sha256": "c0e5257df5c41bc5f21bf263eafd9139a936b92e55986403a7bd53d3f6facbd0",
+      "git_blob_sha": "9dc5607bd3c9bcba30690a0afcea4d6314f208ad",
+      "bytes": 2757,
+      "baseline_sha256": null
+    }
+  ],
+  "source_dependencies": "Authorized simulator/source/model artifacts supplied locally; no native assets or full transitive environment bundled."
+}
