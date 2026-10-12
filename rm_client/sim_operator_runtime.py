@@ -116,6 +116,7 @@ class SimBackend:
 
 
 from .sim_hit_spin import SimHitSpinPolicy
+from .sim_robot_selection import SELECTION_SETTING, selection_profiles
 
 
 class OperatorRuntime:
@@ -136,6 +137,8 @@ class OperatorRuntime:
             if setting is not None:
                 if name=='Source' and value not in setting.options:setting.options.append(value)
                 setting.value=value
+        from .model import Setting
+        registry.get('RobotProfile').settings.append(Setting(SELECTION_SETTING,'mode','disconnected',options=[],description='SIM only: select the bridge-owned vehicle, then release inputs and press F2. Other role settings remain read-only.'))
         self.feature_policy=SimFeaturePolicy(registry)
         return registry
     def create_backend(self,state):
@@ -145,7 +148,45 @@ class OperatorRuntime:
     def stop(self):self.disarm('Disconnected');self.transport.stop()
     def disarm(self,reason='Virtual controls released'):
         self.armed=False;self.note=reason;self.transport.neutral(reason);self.hit_spin.reset()
+    def select_robot(self,window,robot_id):
+        self.disarm('Selecting SIM vehicle: release inputs')
+        window.control.reset_inputs()
+        # Explicit selection starts clean; do not re-enable a manual or on-hit
+        # mode merely because the next robot supports the same capability.
+        for name in ('SpinMode','ArmorAutoAim','AutoSpinOnHit'):
+            window.registry.get(name).enabled=False
+        self.modes.signature=None
+        self.transport.select_robot(robot_id)
+        self.note=self.transport.selection_status or 'SIM vehicle unchanged; press F2'
+        window.frame_image=None;window.frame_pixmap=None
+        window.invalidate_gui_cache()
+    def sync_selection(self,window):
+        registry=getattr(window,'registry',None)
+        setting=registry.get('RobotProfile').get_setting(SELECTION_SETTING) if registry is not None else None
+        profiles=selection_profiles(self.transport.session)
+        current=(self.transport.session or {}).get('robot_id','disconnected')
+        value=('pending: '+str(self.transport.selection_target)) if self.transport._selection_busy else current
+        if setting is not None and (setting.options!=list(profiles) or setting.value!=value):
+            setting.options=list(profiles);setting.value=value;window.invalidate_gui_cache()
+        was_pending=self.transport.selection_pending
+        ready=self.transport.selection_ready()
+        if was_pending:self.note=self.transport.selection_status
+        return ready
     def arm(self):
+        if not self.transport.selection_ready():
+            self.note='Wait for selected vehicle state, camera and neutral acknowledgement';return False
+        # A new camera/capability may arrive between the last Qt tick and F2.
+        # Establish the current request signature before the explicit rearm,
+        # rather than arming and immediately treating that fresh fit as an edit.
+        window=self.modes.window
+        if window is not None:
+            if self._generation!=self.transport._generation:
+                self._generation=self.transport._generation
+                self.disarm('New selected session: input released')
+                window.control.reset_inputs()
+            try:self.modes.sync(window)
+            except (ValueError,TypeError,OverflowError) as exc:
+                self.disarm('Invalid SIM request: '+str(exc));window.control.reset_inputs();return False
         if supports_mouse_angle(self.transport.session) and not self.transport._focus and self.transport._mouse_generation>=2**53-1:
             self.note='Mouse generation exhausted; start a new simulator session';return False
         telemetry,video,*_=self.transport.snapshot()
@@ -155,6 +196,7 @@ class OperatorRuntime:
             self.backend.release_estop()
         self.armed=True;self.note='SIM operator active: WASD / mouse / left click';return True
     def heartbeat(self,window):
+        self.sync_selection(window)
         try:self.modes.sync(window)
         except (ValueError,TypeError,OverflowError) as exc:
             self.disarm('Invalid SIM request: '+str(exc));window.control.reset_inputs()

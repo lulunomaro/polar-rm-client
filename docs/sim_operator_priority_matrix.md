@@ -20,7 +20,7 @@ retained; normal device mode and SIM remain separate.
 | 11 | Burst / firing modes | Unsupported in SIM | Manual firing is not proof that original burst/rate/safety settings are consumed |
 | 12 | ChassisAssist | Partial | Body-relative Free only; Gimbal/Field following and power/buffer protection unavailable |
 | 13 | Key bindings | Partial | Original movement binding path retained; all module/global key conflicts not desktop-qualified |
-| 14 | Robot/team switching | Unsupported in SIM UI | Current session displayed authoritatively; selection belongs to bridge startup, not unrelated local profiles |
+| 14 | Robot/team switching | Implemented, bounded | Original Jello SIM Vehicle row, six model-backed vehicles, epoch/cache/input reset, new camera/neutral ACK and explicit F2; role-specific skills remain separate |
 | 15 | Referee/HUD | Partial | Actual own HP/ammo/heat, phase/time/VP and roster subset; no invented official packet or unknown power values |
 | 16 | Hit/kill events and effects | Partial | Actual own projectile damage is consumed for hit-spin; full injury, kill/effects and settlement mapping incomplete |
 | 17 | Minimap | Partial | Labelled simulation XY for display; not perception input, radar observation or map command support |
@@ -39,3 +39,6 @@ The cache/font fix and its memory/performance boundary are documented in
 [font raster validation](minecraft_font_raster.md). Remaining unsupported control
 paths and broader source-aim qualification still need separate increments; a
 readable HUD does not complete all 73 modules or the desktop rendering matrix.
+
+The bounded six-vehicle cycle and its source-capability boundary are described in
+[SIM vehicle selection](sim_robot_selection.md).

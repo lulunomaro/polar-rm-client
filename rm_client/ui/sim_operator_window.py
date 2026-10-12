@@ -11,6 +11,7 @@ from .polar_app import PolarRMWindow
 from ..sim_operator_runtime import OperatorRuntime
 from ..match_modes import MATCH_MODES
 from ..sim_operator_modes import supports_mouse_angle
+from ..sim_robot_selection import SELECTION_SETTING, selection_profiles
 
 
 class OperatorWindow(PolarRMWindow):
@@ -98,6 +99,7 @@ class OperatorWindow(PolarRMWindow):
         return label
 
     def setting_is_unavailable(self,setting):
+        if setting.name==SELECTION_SETTING:return not selection_profiles(self._simulation_runtime.transport.session) or self._simulation_runtime.transport.selection_pending
         policy=self._simulation_runtime.feature_policy
         module=policy.owner(setting)
         if module is None:return False
@@ -105,6 +107,12 @@ class OperatorWindow(PolarRMWindow):
         return module.name in policy.original_descriptions and id(setting) in policy.locked_values and setting.name not in policy.supported.get(module.name,set()) and module.name not in ('Scenario','MatchMode','RobotProfile','AllianceProfile','CameraFeed')
 
     def after_setting_changed(self,setting):
+        if setting.name==SELECTION_SETTING:
+            try:self._simulation_runtime.select_robot(self,str(setting.value))
+            except (ValueError,TypeError) as exc:
+                self._simulation_runtime.disarm('Selection unavailable: '+str(exc));self.control.reset_inputs();self.toast(self._simulation_runtime.note)
+            self._simulation_runtime.sync_selection(self)
+            return
         policy=self._simulation_runtime.feature_policy
         if policy and policy.reject_setting(setting):
             self._simulation_runtime.disarm('Unsupported setting: virtual input released')

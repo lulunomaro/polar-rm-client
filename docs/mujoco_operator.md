@@ -274,3 +274,12 @@ cumulative mouse-angle input. See [operator validation scope](sim_operator_valid
 for the exact functional and screenshot limits. This supersedes the earlier open
 static-scene workflow result above; it does not claim general moving-source,
 desktop/OpenGL, physical-hit AutoSpinOnHit or complete ModList acceptance.
+
+## Explicit SIM vehicle selection
+
+When the bridge declares selection capability, open the original Jello
+RobotProfile settings and use **SIM Vehicle**. The row lists only bridge-declared
+model vehicles. Selection releases inputs and clears the old picture immediately;
+wait for the selected robot's state/camera and neutral acknowledgement, then
+press F2. Original device Role settings remain read-only in SIM. See
+[protocol, boundaries and bounded QA](sim_robot_selection.md).

@@ -14,6 +14,8 @@ import urllib.parse
 import urllib.request
 from .sim_operator_modes import spin_request,aim_request,SPIN_DEFAULT,AIM_DEFAULT,validate_feedback,supported_modes,source_camera_metadata,supports_mouse_angle,mouse_angle_request
 
+from .sim_robot_selection import selection_profiles, validate_selection_ack, MAX_SEQUENCE
+
 SCHEMA = 'polar.sim.operator.v1'
 MAX_JSON = 2_000_000
 MAX_JPEG = 4_000_000
@@ -53,6 +55,9 @@ class SimOperatorTransport:
         self._intent=dict(vx_mps=0.,vy_mps=0.,yaw_rate_rps=0.,pitch_rate_rps=0.,fire=False)
         self._mode_request=None;self._aim_request=None
         self.last_error='Simulator disconnected';self.frame_error='No first-person frame'
+        self._selection_busy=False;self._selection_job=None;self.selection_pending=False
+        self.selection_target=None;self.selection_status='';self._selection_expected=None
+        self._selection_identity=None;self._selection_sequence=-1
         self.last_ack=None;self.accepted_count=0;self.rejected_count=0;self._generation=0
         self._focused_since_session=False;self._mouse_pending=[0.,0.];self._last_control_at=None
         self._opener=urllib.request.build_opener(urllib.request.ProxyHandler({}),NoRedirect())
@@ -63,7 +68,7 @@ class SimOperatorTransport:
         try:
             response=self._opener.open(req,timeout=timeout)
         except urllib.error.HTTPError as exc:
-            if path!='/control' or exc.code!=409:raise
+            if path not in ('/control','/select_robot') or exc.code!=409:raise
             response=exc
         with response:
             if response.status not in (200,409):raise ValueError('Simulator returned a non-success response')
@@ -107,6 +112,67 @@ class SimOperatorTransport:
             self._focus=False;self._input_at=-1e9;self._mouse_pending=[0.,0.];self._mouse_totals=[0.,0.]
             if self._aim_request:self._aim_request=dict(self._aim_request,hold=False)
             self.last_error=str(reason)
+
+    def select_robot(self,robot_id):
+        """Queue exactly one selection; clear presentation and control immediately."""
+        with self._lock:
+            self.neutral('Vehicle selection requested: virtual input released')
+            if self._selection_busy:raise ValueError('Vehicle selection is already pending')
+            profiles=selection_profiles(self.session)
+            if robot_id not in profiles:raise ValueError('Vehicle selection is unavailable')
+            if robot_id==self.session['robot_id']:return False
+            sequence=max(self._selection_sequence,self.session['last_selection_id'])+1
+            if sequence>MAX_SEQUENCE:raise ValueError('Selection sequence exhausted; restart simulator')
+            self.neutral('Selecting SIM vehicle: virtual input released')
+            neutral=self._control_payload()
+            body=dict(session_id=self.session['session_id'],epoch=self.session['epoch'],robot_id=self.session['robot_id'],selection_id=sequence,requested_robot_id=robot_id)
+            self._selection_sequence=sequence
+            offset=self._offset_ms
+            self._selection_busy=True;self.selection_pending=True
+            self.selection_target=robot_id;self.selection_status='Selecting '+robot_id
+            self._selection_expected=None
+            self._clear_session(self.selection_status)
+            self._selection_job=(body,neutral,offset,self._generation)
+            return True
+
+    def _run_selection(self):
+        with self._lock:
+            job=self._selection_job
+            if job is None:return False
+            self._selection_job=None
+        body,neutral,offset,generation=job
+        accepted=False;ack=None
+        try:
+            # A neutral attempt precedes the atomic server-side release. Even
+            # if the old endpoint is unavailable, no active requests are queued.
+            if neutral is not None:
+                try:self._json('/control',neutral,timeout=.10)
+                except Exception:pass
+            body=dict(body,sent_at_ms=time.time()*1000+offset)
+            ack=self._json('/select_robot',body,timeout=.30)
+            accepted=validate_selection_ack(ack,body)
+            status=('Selected '+body['requested_robot_id']+'; waiting for fresh state/video and neutral ACK' if accepted else 'Selection rejected: '+str(ack.get('reason','unknown')))
+        except Exception as exc:
+            status='Selection result uncertain; reconciling simulator session: '+str(exc)
+        with self._lock:
+            if generation==self._generation and not self._stop.is_set():
+                if accepted:self._selection_expected=(ack['session_id'],ack['epoch'],ack['robot_id'])
+                self.selection_status=status;self.last_error=status
+                # No retries of the selection operation. GET /session resolves
+                # a lost reply without replaying a switch or old input.
+                self._selection_busy=False
+        return True
+
+    def selection_ready(self):
+        with self._lock:
+            if self._selection_busy:return False
+            if not self.selection_pending:return True
+            telemetry,video,*_=self.snapshot()
+            if self.session is None or telemetry is None or video is None or self._neutral_pending:return False
+            self.selection_pending=False
+            self.selection_status='SIM vehicle '+self.session['robot_id']+' ready; press F2'
+            self.selection_target=None
+            return True
 
     def submit_modes(self,mode,aim):
         mode=None if mode is None else spin_request(mode)
@@ -170,7 +236,7 @@ class SimOperatorTransport:
                 self._mouse_pending=[max(-.1,min(.1,old+delta)) for old,delta in zip(self._mouse_pending,values)]
 
     def _control_payload(self):
-        if self.session is None:return None
+        if self.session is None or self._selection_busy:return None
         self._expire_input()
         self._seq+=1
         fresh=self._focus and self._focused_since_session and self.clock()-self._input_at<=.15
@@ -207,7 +273,15 @@ class SimOperatorTransport:
             raise ValueError('Endpoint must explicitly declare simulation-only transport')
         if data.get('coordinate_frame')!='chassis_body':raise ValueError('Unsupported control coordinates')
         if data.get('first_person_camera')!=data['robot_id']+'__aim':raise ValueError('Selected first-person camera required')
+        profiles=selection_profiles(data)
         with self._lock:
+            if self._selection_busy:return False
+            expected=self._selection_expected
+            if expected and data['session_id']==expected[0]:
+                if data['epoch']<expected[1] or (data['epoch']==expected[1] and data['robot_id']!=expected[2]):raise ValueError('Old selected session reply')
+            if self._selection_identity!=data['session_id']:
+                self._selection_identity=data['session_id'];self._selection_sequence=-1
+            if profiles:self._selection_sequence=max(self._selection_sequence,data['last_selection_id'])
             previous=(self.session or {}).get('session_id'),(self.session or {}).get('epoch'),(self.session or {}).get('robot_id')
             current=data['session_id'],data['epoch'],data['robot_id']
             if previous!=current:
@@ -268,6 +342,7 @@ class SimOperatorTransport:
 
     def _control_loop(self):
         while not self._stop.is_set():
+            if self._run_selection():continue
             try:
                 with self._lock:body=self._control_payload();generation=self._generation;neutral_revision=self._neutral_revision
                 if body is not None:
@@ -289,6 +364,7 @@ class SimOperatorTransport:
 
     def _telemetry_loop(self):
         while not self._stop.is_set():
+            if self._selection_busy:self._stop.wait(.03);continue
             try:
                 with self._lock:session=self.session;generation=self._generation
                 if session is None:
@@ -309,6 +385,7 @@ class SimOperatorTransport:
 
     def _video_loop(self):
         while not self._stop.is_set():
+            if self._selection_busy:self._stop.wait(.03);continue
             with self._lock:session=dict(self.session) if self.session else None;generation=self._generation
             if session is None:self._stop.wait(.1);continue
             try:
