@@ -405,11 +405,13 @@ class MinecraftCombatHudRenderer:
     def scoreboard_lines(state: Any) -> tuple[tuple[str, QColor], ...]:
         if getattr(state, "mujoco_operator", False):
             valid = getattr(state, "mujoco_telemetry_valid", False)
+            role = getattr(state, "mujoco_session_role", None)
+            sim_title = "§e§lSIM SPECTATOR" if role == "spectator" else "§e§lSIM OPERATOR"
             if not valid:
-                texts = ("§e§lSIM OPERATOR", "§cDISCONNECTED / STALE", "§fHP: §7?", "§fAmmo: §7?", "§fHeat: §7?", "§fTime: §7?", "§7Virtual input disabled")
+                texts = (sim_title, "§cDISCONNECTED / STALE", "§fHP: §7?", "§fAmmo: §7?", "§fHeat: §7?", "§fTime: §7?", "§7Virtual input disabled")
             else:
                 seconds = max(0, int(state.stage_countdown_sec))
-                texts = ("§e§lSIM OPERATOR", "§7" + str(state.current_stage),
+                texts = (sim_title, "§7" + str(state.current_stage),
                     f"§fTime left: §a{seconds//60}:{seconds%60:02d}", "",
                     f"§fRobot: §a{state.robot_id}",
                     f"§fHP: §a{int(state.current_health)}/{int(state.max_health)}",

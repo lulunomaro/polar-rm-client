@@ -1,0 +1,80 @@
+{
+  "schema": "camera_qt_stage3.increment.v1",
+  "status": "author_qualified_pending_independent_review",
+  "repository": "lulunomaro/polar-rm-client",
+  "branch": "feat/mujoco-operator-20261012",
+  "base_commit": "685a920f738f63cefb887cbef8e6d3157600b84e",
+  "file_count": 10,
+  "files": {
+    "main.py": {
+      "sha256": "24d300cd49f414f2e78eea7bddfccaefe22c4e107c26c298530e88679fbb7b04",
+      "bytes": 5722,
+      "repository_path": "main.py",
+      "base_sha256": "b70a2ad38a0cf0be8b071fa7576ea5de16b659b842f730c1d0956aae0743b864",
+      "inherited_sha256": "b70a2ad38a0cf0be8b071fa7576ea5de16b659b842f730c1d0956aae0743b864"
+    },
+    "rm_client/sim_platform_client.py": {
+      "sha256": "d1dce8143986e7f88469640b0d5df33ac593903975aaa4d4833865ea77fb83e1",
+      "bytes": 9363,
+      "repository_path": "rm_client/sim_platform_client.py",
+      "base_sha256": null,
+      "inherited_sha256": "d1dce8143986e7f88469640b0d5df33ac593903975aaa4d4833865ea77fb83e1"
+    },
+    "rm_client/sim_platform_runtime.py": {
+      "sha256": "8e10d046afa44ed3c9072106d4640d9ffeae77dfbda540427632cbfd7b189251",
+      "bytes": 5332,
+      "repository_path": "rm_client/sim_platform_runtime.py",
+      "base_sha256": null,
+      "inherited_sha256": "8e10d046afa44ed3c9072106d4640d9ffeae77dfbda540427632cbfd7b189251"
+    },
+    "rm_client/sim_platform_transport.py": {
+      "sha256": "fde82cf721f7ec99234b9fe53aa63192785400de03379fd9efb2b9e6951a2394",
+      "bytes": 19893,
+      "repository_path": "rm_client/sim_platform_transport.py",
+      "base_sha256": null,
+      "inherited_sha256": "6b55bb39ea2798d6c06d64b9127b227d26755f9b94eb6dbb24e9bdf532e4fcfb"
+    },
+    "rm_client/ui/minecraft_hud.py": {
+      "sha256": "2749ea427023d712a7df7992b29f3f07e9a4b9e54adcab0140cea823abb58034",
+      "bytes": 35582,
+      "repository_path": "rm_client/ui/minecraft_hud.py",
+      "base_sha256": "312ddaec91f2ef4da4d86fb1eecc6c474741a31fccb6594a4212668122eb652f",
+      "inherited_sha256": "312ddaec91f2ef4da4d86fb1eecc6c474741a31fccb6594a4212668122eb652f"
+    },
+    "rm_client/ui/sim_platform_window.py": {
+      "sha256": "7aa4b76bc1e9e6fbe65ad34a92e489662bd13009d63f1408d22ef154b5abc2d9",
+      "bytes": 4655,
+      "repository_path": "rm_client/ui/sim_platform_window.py",
+      "base_sha256": null,
+      "inherited_sha256": "b2a47e610eac1590655a3be2d8cb4033ec01d0714e67697a7f6b85821b445044"
+    },
+    "tests/test_sim_platform_entry.py": {
+      "sha256": "6ad43ed418ceddd81e6216b94a4862b2486233541da924ed084534f43107589b",
+      "bytes": 1440,
+      "repository_path": "tests/test_sim_platform_entry.py",
+      "base_sha256": null,
+      "inherited_sha256": null
+    },
+    "tests/test_sim_platform_v2.py": {
+      "sha256": "16b068242f1242c1970b203e6495f150c5c83ebc573e5b379012f7808e3dc2bb",
+      "bytes": 13067,
+      "repository_path": "tests/test_sim_platform_v2.py",
+      "base_sha256": null,
+      "inherited_sha256": "998fbd64fbee8bb4b5b0abc520c5cce2eaa5a9161280580067b8e03a200991bf"
+    },
+    "tools/verify_sim_platform.py": {
+      "sha256": "ec09d22c9ac0a11ae40e96ff9a92dba27f27d87f3e30e9f0939181af3b8f5700",
+      "bytes": 11726,
+      "repository_path": "tools/verify_sim_platform.py",
+      "base_sha256": null,
+      "inherited_sha256": null
+    },
+    "docs/sim_platform_v2.md": {
+      "sha256": "62b9b9da9fd4b021596fe7c3e54521b7663da6943f1c10e22300927a3903a98b",
+      "bytes": 6231,
+      "repository_path": "docs/sim_platform_v2.md",
+      "base_sha256": null,
+      "inherited_sha256": null
+    }
+  }
+}

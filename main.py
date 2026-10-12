@@ -111,6 +111,10 @@ def _prepare_runtime_paths(
 if __name__ == "__main__":
     # Fail closed even for malformed simulation switches; never fall through
     # to a physical backend because a simulator flag was misspelled.
+    if any(arg.split("=", 1)[0] == "--sim-platform-v2" for arg in sys.argv[1:]):
+        from rm_client.ui.sim_platform_window import main as platform_main
+
+        raise SystemExit(platform_main(sys.argv[1:]))
     if any(arg.split("=", 1)[0].startswith(("--mujoco", "--sim-")) for arg in sys.argv[1:]):
         from rm_client.ui.sim_operator_window import main as operator_main
 
