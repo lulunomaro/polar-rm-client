@@ -1,0 +1,57 @@
+{
+  "scope": "strict server-window manual input; fail-closed display; guarded discrete fire consumption; bounded reproducible tests",
+  "repository": "lulunomaro/polar-rm-client",
+  "branch": "feat/mujoco-operator-20261012",
+  "base": "3fe215c4a7bf0ff27a64e6683c8131ed7fc7f963",
+  "source_manifest_sha256": "915c8fd7c99ce506278ee9a6870a93627b442da6b70ff30d75bf6911768d61bc",
+  "previous": [
+    {
+      "path": "rm_client/sim_platform_client.py",
+      "remote_blob": "6b8921b391ae5b59a697c670192d2bb36646f972",
+      "previous_sha256": "d1dce8143986e7f88469640b0d5df33ac593903975aaa4d4833865ea77fb83e1"
+    },
+    {
+      "path": "rm_client/sim_platform_transport.py",
+      "remote_blob": "b5c8cfda8420e0e4d92b178bcad3970b699c3f84",
+      "previous_sha256": "fde82cf721f7ec99234b9fe53aa63192785400de03379fd9efb2b9e6951a2394"
+    }
+  ],
+  "files": [
+    {
+      "path": "rm_client/sim_platform_client.py",
+      "sha256": "22638e4491894ae72bdc2513faa9d69e9fb04eaecfc205f6ba19994febc5a635",
+      "git_blob_sha": "432660e80a48a5500adf844891dd1fc36a48679b",
+      "bytes": 12374
+    },
+    {
+      "path": "rm_client/sim_platform_transport.py",
+      "sha256": "fa3ff3730105170f9f7b02a24c0d55c4315f5b279cd9286a2f0e6d83c9be227d",
+      "git_blob_sha": "b45886972437ba99dbcf7b8726c0d77da2bdb581",
+      "bytes": 24488
+    },
+    {
+      "path": "tests/test_platform_display_generation.py",
+      "sha256": "33b66c4ddd2c59dd76d6dcbab452b6812c9488537981cdeb75d363b214315e42",
+      "git_blob_sha": "8e015f231f39b42338e40031975a99319ba795ef",
+      "bytes": 3425
+    },
+    {
+      "path": "tests/test_platform_control_windows.py",
+      "sha256": "54f397da265a07dbb50dc26fc1229a82f6fb07965c2ad6ad6eec047f84beb65e",
+      "git_blob_sha": "6e6032e881de183074a14e9646058c80f7cf6a35",
+      "bytes": 4280
+    },
+    {
+      "path": "tools/verify_platform_control_loopback.py",
+      "sha256": "473b86969f8e25ec4648db64771403dd6ea8fb2f640756d85085339744b7beb1",
+      "git_blob_sha": "25fba1bf5c1b2bee41d08facd2b7540212e1d057",
+      "bytes": 10090
+    },
+    {
+      "path": "docs/sim_manual_input_windows.md",
+      "sha256": "b24805850fccca3fd3124c4ca9a001363f2536c6b65aace318ced3ba14576c8a",
+      "git_blob_sha": "944ca07b81ba0929860481a3172269f17e020eed",
+      "bytes": 3422
+    }
+  ]
+}

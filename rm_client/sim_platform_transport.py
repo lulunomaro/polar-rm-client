@@ -47,13 +47,14 @@ def integer(v,label,minimum=0):
 class PlatformTransport:
     def __init__(self,url='http://127.0.0.1:8766',*,role='spectator',clock=time.monotonic,client=None):
         if role not in ('operator','spectator'):raise ValueError('Explicit operator/spectator role required')
-        self.client=client or PlatformClient(url,timeout=.15);self.role=role;self.clock=clock
+        self.client=client or PlatformClient(url,timeout=.15,control_profile='server_window_v1' if role=='operator' else 'legacy_v2');self.role=role;self.clock=clock
         self._lock=threading.RLock();self._stop=threading.Event();self._threads=[]
         self.session=None;self.raw_state=None;self.telemetry=None;self.telemetry_at=0.;self.robot_ids=()
         self.watch_robot=None;self.watch_epoch=None;self._watch_generation=0;self._watch_job=None
         self._claim_job=None;self._release_job=None;self.owned_robot=None;self.owned_epochs={};self.claim_pending=False
-        self._generation=0;self._focus=False;self._input_at=-1e9;self._heartbeat_at=-1e9
+        self._generation=0;self._connection_generation=0;self._connected=False;self._control_generation=0;self._claim_serial=0;self._focus=False;self._input_at=-1e9;self._heartbeat_at=-1e9
         self._intent=dict(vx=0.,vy=0.,fire=False);self._angles=None;self._renew_at=0.;self._keepalive_at=0.
+        self._input_revision=0;self._window=None;self._window_deadline=0.;self._window_sample_cut=0
         self.video=None;self.video_at=0.;self.video_sequence=-1;self.video_sim_time=None;self.frame_error='No v2 camera provider'
         self.video_native_size=None;self.video_source_sequence=None;self.max_frame_age=2.5
         self.last_error='V2 disconnected';self.note='V2 '+role+'; choose a watched robot'
@@ -65,18 +66,26 @@ class PlatformTransport:
             thread=threading.Thread(name=name,target=target,daemon=True);self._threads.append(thread);thread.start()
     def stop(self):
         self.neutral('V2 disconnected');self._stop.set()
-        with self._lock:self._watch_generation+=1;self._generation+=1;self._clear_frame('Stopped')
+        with self._lock:
+            self._connection_generation+=1;self._connected=False;self._watch_generation+=1;self._generation+=1
+            self.session=None;self.raw_state=None;self.telemetry=None;self.telemetry_at=0.;self.robot_ids=()
+            self._watch_job=None;self.watch_epoch=None;self.selection_pending=False
+            self._clear_frame('Stopped',reset_identity=True);self.last_error='V2 disconnected'
         for thread in self._threads:thread.join(timeout=.5)
         self._threads=[]
         try:self.client.close()
         except Exception:pass
     def connect_once(self):
+        with self._lock:generation=self._connection_generation
         result=self.client.open(self.role)
         with self._lock:
-            self.session=dict(result,robot_id=self.watch_robot,capabilities={});self._generation+=1;self.last_error=''
+            if self._stop.is_set() or generation!=self._connection_generation:
+                self.client.uncertain=True;return result
+            self.session=dict(result,robot_id=self.watch_robot,capabilities={});self._generation+=1;self._connection_generation+=1;self._connected=True;self.last_error=''
         return result
     def neutral(self,reason='Input released'):
         with self._lock:
+            self._control_generation+=1;self._window=None;self._window_deadline=0.;self._window_sample_cut=self._input_revision
             self._focus=False;self._intent=dict(vx=0.,vy=0.,fire=False);self._angles=None;self._input_at=-1e9
             self._claim_job=None;self.claim_pending=False
             if self.owned_robot is not None:self._release_job=(self.owned_robot,dict(self.owned_epochs))
@@ -99,7 +108,7 @@ class PlatformTransport:
             if not self.selection_ready():raise ValueError('Need current watched robot state and camera')
             if self.claim_pending:return False
             if self.owned_robot==self.watch_robot:return True
-            self.claim_pending=True;self._claim_job=(self.watch_robot,self._watch_generation);self.note='Claim pending; no controls active'
+            self._claim_serial+=1;self.claim_pending=True;self._claim_job=(self.watch_robot,self._watch_generation,self._control_generation,self._claim_serial);self.note='Claim pending; no controls active'
             return False
     def activate(self):
         with self._lock:
@@ -117,7 +126,7 @@ class PlatformTransport:
             if not self._focus:return
             vx=finite(vx_mps,'vx',-1,1);vy=finite(vy_mps,'vy',-1,1);norm=max(1.,math.hypot(vx,vy))
             if type(fire) is not bool:raise ValueError('Invalid fire')
-            self._intent=dict(vx=vx/norm,vy=vy/norm,fire=fire);self._input_at=self.clock()
+            self._intent=dict(vx=vx/norm,vy=vy/norm,fire=fire);self._input_at=self.clock();self._input_revision+=1
     def submit_mouse(self,yaw_delta_rad,pitch_delta_rad):
         with self._lock:
             if not self._focus or self._angles is None:return
@@ -127,7 +136,10 @@ class PlatformTransport:
     def selection_ready(self):
         data,video,*_=self.snapshot()
         return bool(not self.client.uncertain and self.watch_robot is not None and self.watch_epoch is not None and data is not None and video is not None and not self.selection_pending)
-    def install_state(self,data):
+    def install_state(self,data,*,connection_generation=None):
+        with self._lock:
+            generation=self._connection_generation if connection_generation is None else connection_generation
+            if generation!=self._connection_generation or not self._connected or self._stop.is_set() or self.client.uncertain:return False
         if data.get('schema')!='rm.sim.platform.v2' or data.get('source')!='simulator_truth_display_only' or data.get('algorithm_input') is not False:raise ValueError('Wrong v2 display provenance')
         stamp=finite(data.get('sim_time'),'simulation time',0);episode=integer(data.get('episode'),'episode')
         robots=data.get('robots')
@@ -146,6 +158,7 @@ class PlatformTransport:
             mapped.append(r)
         if data.get('phase') not in ('running','paused','idle','finished','countdown'):raise ValueError('Unknown match phase')
         with self._lock:
+            if generation!=self._connection_generation or not self._connected or self._stop.is_set() or self.client.uncertain:return False
             if self.raw_state and (episode<self.raw_state['episode'] or (episode==self.raw_state['episode'] and stamp<self.raw_state['sim_time'])):raise ValueError('Old display state')
             if self.raw_state and episode!=self.raw_state['episode']:
                 self.neutral('New episode; explicit claim required');self._clear_frame('New episode',reset_identity=True);self.watch_epoch=None;self._watch_generation+=1;self._watch_job=(self.watch_robot,self._watch_generation);self._generation+=1
@@ -163,7 +176,9 @@ class PlatformTransport:
                 if any(leases.get(c,{}).get('owner')!=self.client.session_id or leases.get(c,{}).get('epoch')!=self.owned_epochs.get(c) for c in CHANNELS):self.neutral('Control ownership changed; explicit claim required')
     def snapshot(self):
         with self._lock:
-            now=self.clock();state=self.telemetry if now-self.telemetry_at<=.5 else None
+            now=self.clock()
+            if not self._connected or self._stop.is_set() or self.client.uncertain:return None,None,0.,self.video_sequence,self.video_sim_time
+            state=self.telemetry if now-self.telemetry_at<=.5 else None
             video=self.video if now-self.video_at<=self.max_frame_age else None
             return state,video,self.video_at if video is not None else 0.,self.video_sequence,self.video_sim_time
     def process_jobs(self):
@@ -179,17 +194,20 @@ class PlatformTransport:
                 if generation==self._watch_generation:
                     self.watch_epoch=result['watch_epoch'];self.selection_pending=False
         if claim:
-            rid,generation=claim
+            rid,generation,control_generation,serial=claim
             try:
                 result=self.client.claim(rid,list(CHANNELS))
                 with self._lock:
-                    if generation==self._watch_generation and self.claim_pending:
+                    if generation==self._watch_generation and control_generation==self._control_generation and serial==self._claim_serial and self.claim_pending and self._connected and not self._stop.is_set() and not self.client.uncertain:
                         self.owned_robot=rid;self.owned_epochs=dict(result['lease_epochs']);self._renew_at=self.clock();self.note='Lease claimed, input still disarmed; press F2 again'
                     else:self._release_job=(rid,dict(result['lease_epochs']))
             finally:
-                with self._lock:self.claim_pending=False
+                with self._lock:
+                    if serial==self._claim_serial:self.claim_pending=False
     def control_tick(self):
         self.process_jobs()
+        with self._lock:
+            if not self._connected or self._stop.is_set() or self.client.uncertain:return
         if self.session is not None and self.clock()-self._keepalive_at>10:
             self.client.keepalive();self._keepalive_at=self.clock()
         with self._lock:
@@ -201,17 +219,44 @@ class PlatformTransport:
             renew=now-self._renew_at>.3
             active=self._focus and now-self._input_at<=.15
             if self._focus and not active:self.neutral('No fresh input; explicit rearm required');return
-            intent=dict(self._intent);angles=list(self._angles) if self._angles else None
+            generation=self._control_generation
+            strict=getattr(self.client,'control_profile','legacy_v2')=='server_window_v1'
+            need_window=strict and (self._window is None or now>=self._window_deadline-.05)
         if renew:self.client.renew(rid,list(CHANNELS));self._renew_at=now
         if not active:return
+        if need_window:
+            # Runs only on the control worker, never the GUI thread. Anchor to
+            # request start; server monotonic timestamps are never mapped locally.
+            with self._lock:
+                if generation!=self._control_generation or not self._focus or rid!=self.owned_robot or epochs!=self.owned_epochs:return
+                started=self.clock()
+            window=self.client.control_window(rid,list(CHANNELS))
+            with self._lock:
+                if generation!=self._control_generation or not self._focus or rid!=self.owned_robot or epochs!=self.owned_epochs:return
+                deadline=started+window['valid_for_s']
+                if self.clock()>=deadline:
+                    self.neutral('Input window arrived too late; explicit reclaim required');return
+                self._window=window;self._window_deadline=deadline;self._window_sample_cut=self._input_revision
+            return  # Wait for an ordinary Qt input sample produced after ACK.
+        with self._lock:
+            if generation!=self._control_generation or not self._focus:return
+            if strict and (self._window is None or self._input_revision<=self._window_sample_cut):return
+            intent=dict(self._intent);angles=list(self._angles) if self._angles else None
+            window_id=self._window['window_id'] if strict else None
         values=dict(motion=dict(frame='base_link',vx_mps=intent['vx'],vy_mps=intent['vy'],wz_rps=0.),gimbal=dict(frame='base_link',yaw_rad=angles[0],pitch_rad=angles[1]),fire=dict(fire=intent['fire']))
         for channel in CHANNELS:
             with self._lock:
-                if not self._focus or rid!=self.owned_robot or epochs!=self.owned_epochs:return
-            self.client.control(rid,channel,values[channel],valid_for_s=.15)
+                if generation!=self._control_generation or not self._focus or rid!=self.owned_robot or epochs!=self.owned_epochs:return
+                if self.clock()-self._input_at>.15 or (strict and self.clock()>=self._window_deadline):
+                    self.neutral('Input sample/window expired before send');return
+            options={'window_id':window_id} if strict else {}
+            self.client.control(rid,channel,values[channel],valid_for_s=.15,**options)
     def _failed(self,error):
         with self._lock:
-            self.neutral('V2 connection error; restart to reconnect');self.client.uncertain=True;self.telemetry=None;self._clear_frame(str(error));self.last_error=str(error);self._generation+=1
+            self.neutral('V2 connection error; restart to reconnect');self.client.uncertain=True
+            self._connected=False;self._connection_generation+=1;self._watch_generation+=1;self._generation+=1
+            self.raw_state=None;self.telemetry=None;self.telemetry_at=0.;self.robot_ids=();self.watch_epoch=None;self._watch_job=None;self.selection_pending=False
+            self._clear_frame(str(error),reset_identity=True);self.last_error=str(error)
     def _control_loop(self):
         try:self.connect_once()
         except Exception as exc:self._failed(exc);return
@@ -221,13 +266,16 @@ class PlatformTransport:
             self._stop.wait(.02)
     def _state_loop(self):
         while not self._stop.is_set():
-            if self.session is not None:
-                try:self.install_state(self.client.state())
-                except Exception as exc:self._failed(exc)
+            with self._lock:ready=self._connected and not self.client.uncertain;generation=self._connection_generation
+            if ready:
+                try:self.install_state(self.client.state(),connection_generation=generation)
+                except Exception as exc:
+                    with self._lock:
+                        if generation==self._connection_generation:self._failed(exc)
             self._stop.wait(.05)
     def _camera_loop(self):
         while not self._stop.is_set():
-            with self._lock:ready=self.session is not None and self.watch_epoch is not None;generation=self._watch_generation
+            with self._lock:ready=self._connected and not self.client.uncertain and self.watch_epoch is not None;generation=self._watch_generation
             if ready:
                 try:
                     request_started=self.clock()
@@ -239,11 +287,12 @@ class PlatformTransport:
     def install_frame(self,data,*,generation,request_started=None):
         # The camera provider supplies this extension in its separate checkpoint.
         with self._lock:
-            if generation!=self._watch_generation:return False
+            if generation!=self._watch_generation or not self._connected or self._stop.is_set() or self.client.uncertain:return False
             if type(data.get('available')) is not bool:raise ValueError('Invalid camera availability')
             if not data['available']:
                 self._clear_frame(str(data.get('reason','Camera unavailable')));return False
-            if data.get('robot_id')!=self.watch_robot or data.get('watch_epoch')!=self.watch_epoch or self.raw_state is None or data.get('episode')!=self.raw_state['episode']:raise ValueError('Wrong watched-camera identity')
+            watch_epoch=integer(data.get('watch_epoch'),'watch epoch');episode=integer(data.get('episode'),'camera episode')
+            if data.get('robot_id')!=self.watch_robot or watch_epoch!=self.watch_epoch or self.raw_state is None or episode!=self.raw_state['episode']:raise ValueError('Wrong watched-camera identity')
             index=integer(data.get('frame_seq'),'frame sequence');stamp=finite(data.get('capture_sim_time'),'capture time',0)
             age=finite(data.get('age_wall_s'),'camera age',0,2.5)
             # Server age excludes response transfer and local decode. Anchor
@@ -286,6 +335,6 @@ class PlatformTransport:
         bgr=cv2.imdecode(np.frombuffer(raw,dtype=np.uint8),cv2.IMREAD_COLOR)
         if bgr is None or bgr.shape!=(h,w,3):raise ValueError('Invalid JPEG image')
         with self._lock:
-            if generation!=self._watch_generation:return False
+            if generation!=self._watch_generation or not self._connected or self._stop.is_set() or self.client.uncertain:return False
             if self.clock()-capture_local>ttl:raise ValueError('Camera expired during decode')
             self.max_frame_age=ttl;self.video=bgr;self.video_at=capture_local;self.video_sequence=index;self.video_sim_time=stamp;self.video_native_size=(w,h);self.frame_error='';return True

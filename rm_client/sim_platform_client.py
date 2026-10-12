@@ -18,10 +18,12 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self,*args,**kwargs):raise ClientError('Redirect forbidden')
 
 class PlatformClient:
-    def __init__(self,url,*,timeout=.25):
+    def __init__(self,url,*,timeout=.25,control_profile='legacy_v2'):
         u=urllib.parse.urlsplit(url)
         if (u.scheme!='http' or u.hostname!='127.0.0.1' or u.username or u.password or u.path not in ('','/') or u.query or u.fragment or u.port is None or not 1024<=u.port<=65535):raise ValueError('Explicit nonprivileged loopback HTTP endpoint required')
         if not 0<timeout<=2:raise ValueError('Bounded timeout required')
+        if type(control_profile) is not str or control_profile not in ('legacy_v2','server_window_v1'):raise ValueError('Unknown control profile')
+        self.control_profile=control_profile;self._windows={};self._last_window_ids={}
         self.url=f'http://127.0.0.1:{u.port}';self.timeout=timeout
         self._opener=urllib.request.build_opener(urllib.request.ProxyHandler({}),NoRedirect())
         self._token=None;self.session_id=None;self.role=None;self._leases={};self._seq={};self._lock=threading.RLock();self.uncertain=False
@@ -71,8 +73,12 @@ class PlatformClient:
         with self._lock:
             if self._token is not None:raise ClientError('Session already open')
             if role not in ('operator','spectator'):raise ValueError('Unknown session role')
-            result=self._request('/v2/sessions',{'role':role},authenticated=False)
+            body={'role':role}
+            if self.control_profile!='legacy_v2':body['control_profile']=self.control_profile
+            result=self._request('/v2/sessions',body,authenticated=False)
             if (type(result.get('token')) is not str or not 1<=len(result['token'])<=256 or type(result.get('session_id')) is not str or not 1<=len(result['session_id'])<=128 or result.get('role')!=role or not self._number(result.get('session_expires')) or not self._number(result.get('server_monotonic_s')) or result['session_expires']<=result['server_monotonic_s']):self._invalid('Invalid session response')
+            if self.control_profile=='server_window_v1':
+                if result.get('control_profile')!=self.control_profile or type(result.get('control_window_version')) is not int or result['control_window_version']!=1 or not self._number(result.get('control_window_ttl_s')) or not 0<result['control_window_ttl_s']<=.15:self._invalid('Required server input window profile unavailable')
             self._token=result['token'];self.session_id=result['session_id'];self.role=role;self.uncertain=False
             # Bearer stays memory-only and is deliberately absent from return data.
             return {k:v for k,v in result.items() if k!='token'}
@@ -112,26 +118,51 @@ class PlatformClient:
                 if result.get('released') is not True:self._invalid('Invalid release response')
                 return result
             finally:
+                self._windows.pop(rid,None)
                 for ch in channels:self._leases.pop((rid,ch),None)
-    def control(self,rid,channel,value,valid_for_s=.15):
+    def control_window(self,rid,channels):
+        with self._lock:
+            if self.uncertain:raise ClientError('Uncertain session; reconnect before input window')
+            if self.control_profile!='server_window_v1' or self.role!='operator':raise ClientError('Operator window profile required')
+            expected=self._epochs(rid,channels)
+            result=self._request('/v2/control_window',dict(robot_id=rid,lease_epochs=expected))
+            wid=result.get('window_id');issued=result.get('issued_wall');expires=result.get('expires_wall');ttl=result.get('valid_for_s')
+            if (result.get('robot_id')!=rid or result.get('session_id')!=self.session_id or result.get('lease_epochs')!=expected
+                or type(result.get('lease_epochs')) is not dict or any(not self._epoch(v) for v in result['lease_epochs'].values())
+                or not self._epoch(wid) or wid<=self._last_window_ids.get(rid,-1)
+                or not self._number(issued) or not self._number(expires) or not self._number(ttl)
+                or not 0<ttl<=.15 or not issued<expires or abs((expires-issued)-ttl)>1e-6):self._invalid('Invalid input window acknowledgement')
+            self._windows[rid]=dict(result);self._last_window_ids[rid]=wid
+            return result
+    def control(self,rid,channel,value,valid_for_s=.15,*,window_id=None):
         with self._lock:
             if self.uncertain:raise ClientError('Uncertain session; reconnect before control')
             epoch=self._epochs(rid,[channel])[channel];key=rid,channel,epoch
             seq=self._seq[key]+1;self._seq[key]=seq
-            result=self._request('/v2/control',dict(robot_id=rid,channel=channel,lease_epoch=epoch,seq=seq,value=value,valid_for_s=valid_for_s))
+            body=dict(robot_id=rid,channel=channel,lease_epoch=epoch,seq=seq,value=value,valid_for_s=valid_for_s)
+            window=self._windows.get(rid)
+            if self.control_profile=='server_window_v1':
+                if not self._epoch(window_id) or window is None or window_id!=window['window_id'] or window['lease_epochs'].get(channel)!=epoch:raise ClientError('Current input window required')
+                body['window_id']=window_id
+            elif window_id is not None:raise ClientError('Unexpected input window')
+            result=self._request('/v2/control',body)
             expected=dict(accepted=True,robot_id=rid,channel=channel,lease_epoch=epoch,seq=seq)
             if any(type(result.get(k)) is not type(v) or result.get(k)!=v for k,v in expected.items()):self._invalid('Invalid control acknowledgement')
+            if self.control_profile=='server_window_v1':
+                if type(result.get('window_id')) is not int or result['window_id']!=window_id or not self._number(result.get('input_expires')) or not window['issued_wall']<result['input_expires']<=window['expires_wall']:self._invalid('Invalid window control acknowledgement')
             return result
     def bind(self,rid,kind,adapter_id,config=None):
         with self._lock:
             if self.uncertain:raise ClientError('Uncertain session; reconnect before binding')
             channel={'navigation':'motion','aim':'gimbal'}[kind]
+            self._windows.pop(rid,None)
             result=self._request('/v2/bind',dict(robot_id=rid,kind=kind,lease_epochs=self._epochs(rid,[channel]),adapter_id=adapter_id,config=config or {}))
             if any(result.get(k)!=v for k,v in dict(robot_id=rid,kind=kind,adapter_id=adapter_id).items()) or not self._epoch(result.get('binding_epoch')):self._invalid('Invalid bind response')
             return result
     def unbind(self,rid,kind):
         with self._lock:
             channel={'navigation':'motion','aim':'gimbal'}[kind]
+            self._windows.pop(rid,None)
             result=self._request('/v2/unbind',dict(robot_id=rid,kind=kind,lease_epochs=self._epochs(rid,[channel])))
             if result.get('unbound') is not True or not self._epoch(result.get('binding_epoch')):self._invalid('Invalid unbind response')
             return result
@@ -141,5 +172,5 @@ class PlatformClient:
                 if self._token is not None:
                     result=self._request('/v2/close',{})
                     if result.get('closed') is not True:self._invalid('Invalid close response')
-            finally:self._token=None;self.session_id=None;self.role=None;self._leases.clear();self._seq.clear()
+            finally:self._token=None;self.session_id=None;self.role=None;self._leases.clear();self._seq.clear();self._windows.clear();self._last_window_ids.clear()
     def __repr__(self):return f'PlatformClient({self.url!r}, role={self.role!r})'
