@@ -1,3 +1,7 @@
+## 本机模拟入口
+
+手动 SIM 与有限 Linux native 观战请先看 [sim_quickstart.md](docs/sim_quickstart.md)。使用显式 SIM 入口；下面普通客户端/真机功能说明继续保留。
+
 # POLAR-RM 自定义客户端
 
 新增学生端展示入口：`~` 受伤害计分板、`E` MC 模块背包/技能工作台、

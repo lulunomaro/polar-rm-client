@@ -1,0 +1,51 @@
+{
+  "scope": "Explicit opt-in local SIM launchers and dependency declarations. Dry-run/help/CPU/mock qualification only. No actual new GUI/GL/native/Windows execution in this checkpoint.",
+  "source_files": [
+    {
+      "path": "README.md",
+      "original_sha256": "46b7777ae0bb466bc80bd69874e6b71d2ac5f1192696e86589301e55846a43bf",
+      "published_sha256": "46b7777ae0bb466bc80bd69874e6b71d2ac5f1192696e86589301e55846a43bf",
+      "transformation": "byte-identical"
+    },
+    {
+      "path": "docs/sim_quickstart.md",
+      "original_sha256": "f4b84fd8fc1df999a3cc2d785e2bf7ee0b3ea3d14edb937c508e7e5fdb6b9c25",
+      "published_sha256": "a5f4a660b27883f6c18eb051ea57bf4d144d441a6cdcaa724c503048af6f8d55",
+      "transformation": "private NAV identity -> explicit user-supplied logical root"
+    },
+    {
+      "path": "rm_client/sim_launcher.py",
+      "original_sha256": "4c2f6036af42c3f092af561d20de105df7a84816c5d5b17a16bf5d7261f8cebe",
+      "published_sha256": "4c2f6036af42c3f092af561d20de105df7a84816c5d5b17a16bf5d7261f8cebe",
+      "transformation": "byte-identical"
+    },
+    {
+      "path": "rm_client/sim_viewer_readiness.py",
+      "original_sha256": "db0f5f778b2eaa866db7b966771b07c27a7967bf5c0faa86892fd7b619a6beae",
+      "published_sha256": "db0f5f778b2eaa866db7b966771b07c27a7967bf5c0faa86892fd7b619a6beae",
+      "transformation": "byte-identical"
+    },
+    {
+      "path": "tests/test_sim_launcher.py",
+      "original_sha256": "4ee0b58f1aff499618479ceb355ccfa5cd4bea4f9af4b3e2416dca83b7c9f737",
+      "published_sha256": "4ee0b58f1aff499618479ceb355ccfa5cd4bea4f9af4b3e2416dca83b7c9f737",
+      "transformation": "byte-identical"
+    },
+    {
+      "path": "tools/launch_sim_platform.py",
+      "original_sha256": "58ef9d89e88b8916f7a0a72b6906304123b66f0c9784bb432aea6cf21b5e4e8b",
+      "published_sha256": "58ef9d89e88b8916f7a0a72b6906304123b66f0c9784bb432aea6cf21b5e4e8b",
+      "transformation": "byte-identical"
+    },
+    {
+      "path": "tools/view_sim_platform.py",
+      "original_sha256": "887a1db2630f11a35fe85afbeea6c3ba60c15683d018844644e9b762b69d425a",
+      "published_sha256": "887a1db2630f11a35fe85afbeea6c3ba60c15683d018844644e9b762b69d425a",
+      "transformation": "byte-identical"
+    }
+  ],
+  "runtime_source_policy": "Existing stage7 lifecycle sources are unchanged. New launcher verifies its required lifecycle dependency hashes.",
+  "dependency_limits": "Fresh package installation and binary/shared-library compatibility were not tested. External local scene/native/model assets are not included; no automatic download or deployment.",
+  "published_tests": "From client root: python -B -m unittest discover -s tests -p test_sim_launcher.py -v (38 cases). No Qt/model/physics execution.",
+  "independent_review_scope": "49 independent mock/unit cases and 3 relocated CLI checks; final PASS_SOURCE_MOCK_AND_RELOCATED_CLI_ONLY. Full independent runner and historical failure evidence require the separately preserved complete audit archive; these summaries are not a self-contained copy of that archive."
+}
