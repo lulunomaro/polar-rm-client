@@ -115,6 +115,9 @@ class SimBackend:
     def simulation_match_bar(self,now):return self.runtime.match_bar()
 
 
+from .sim_hit_spin import SimHitSpinPolicy
+
+
 class OperatorRuntime:
     simulation_only=True
     def __init__(self,url='http://127.0.0.1:8768',*,transport=None):
@@ -123,7 +126,7 @@ class OperatorRuntime:
         self.paths=RuntimePaths.discover(environ={'POLAR_USER_DATA_ROOT':self._tmp.name})
         self.camera=NoIOService();self.local_vision=NoIOService();self.tongji_receiver=NoIOService();self.tongji_bridge=NoIOService()
         self.armed=False;self.note='F2: enable virtual operator input; F12: stop'
-        self._generation=-1;self.backend=None;self.feature_policy=None;self.modes=SimModeBindings(self)
+        self._generation=-1;self.backend=None;self.feature_policy=None;self.modes=SimModeBindings(self);self.hit_spin=SimHitSpinPolicy(self)
     def registry(self):
         registry=build_default_registry(discover_devices=False)
         # Session-local options. Original user settings remain untouched.
@@ -141,7 +144,7 @@ class OperatorRuntime:
     def start(self):self.transport.start()
     def stop(self):self.disarm('Disconnected');self.transport.stop()
     def disarm(self,reason='Virtual controls released'):
-        self.armed=False;self.note=reason;self.transport.neutral(reason)
+        self.armed=False;self.note=reason;self.transport.neutral(reason);self.hit_spin.reset()
     def arm(self):
         if supports_mouse_angle(self.transport.session) and not self.transport._focus and self.transport._mouse_generation>=2**53-1:
             self.note='Mouse generation exhausted; start a new simulator session';return False

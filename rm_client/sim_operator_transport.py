@@ -46,7 +46,7 @@ class SimOperatorTransport:
         self._threads=[];self.session=None;self.telemetry=None;self.telemetry_at=0.0
         self.video_source_sequence=None;self.video_native_size=None
         self.video=None;self.video_at=0.0;self.video_sequence=-1;self.video_sim_time=None
-        self._lease_min_seq=1;self._aim_hold_min_seq=1
+        self._lease_min_seq=1;self._aim_hold_min_seq=1;self._mode_min_seq=1
         self._mouse_generation=0;self._mouse_totals=[0.,0.];self._mouse_identity=None
         self._neutral_revision=0;self._neutral_pending=True
         self._seq=0;self._offset_ms=0.0;self._input_at=-1e9;self._focus=False
@@ -114,7 +114,11 @@ class SimOperatorTransport:
         with self._lock:
             if aim and aim['hold'] and not (self._aim_request or {}).get('hold'):
                 self._aim_hold_min_seq=self._seq+1
+            if mode!=self._mode_request:self._mode_min_seq=self._seq+1
             self._mode_request=mode;self._aim_request=aim
+
+    def mark_mode_changed(self):
+        with self._lock:self._mode_min_seq=self._seq+1
 
     def _expire_input(self):
         if self._focus and self.clock()-self._input_at>.15:

@@ -5,6 +5,7 @@ never consulted for aiming. The source-video fit defines the requested circle.
 """
 from __future__ import annotations
 import math
+from .sim_projectile_damage import parse_observation,supports_damage_observation
 
 SPIN_DEFAULT=dict(spin_enabled=False,spin_direction='auto',spin_speed_dps=420.,chassis_follow='free')
 AIM_DEFAULT=dict(enabled=False,hold=False,fov_degrees=85.,circle_radius_x_norm=.25,circle_radius_y_norm=.25)
@@ -17,7 +18,8 @@ def number(value,low,high):
     return float(value)
 
 def spin_request(value):
-    if not isinstance(value,dict) or set(value)!=set(SPIN_DEFAULT):raise ValueError('Invalid spin request')
+    if not isinstance(value,dict) or set(value) not in (set(SPIN_DEFAULT),set(SPIN_DEFAULT)|{'spin_origin'}):raise ValueError('Invalid spin request')
+    if 'spin_origin' in value and value['spin_origin'] not in ('manual','on_hit'):raise ValueError('Invalid spin origin')
     if type(value['spin_enabled']) is not bool or value['spin_direction'] not in ('auto','cw','ccw') or value['chassis_follow']!='free':raise ValueError('Unsupported chassis mode')
     return dict(value,spin_speed_dps=number(value['spin_speed_dps'],120,720))
 
@@ -78,6 +80,8 @@ def validate_feedback(data,session):
             if type(ack.get(key)) is not int or not -1<=ack[key]<=2**53-1:raise ValueError('Invalid mouse-angle acknowledgement sequence')
         for key in ('consumed_yaw_total_rad','consumed_pitch_total_rad'):number(ack.get(key),-1e6,1e6)
         if ack.get('reason') not in ('no_input','revoked','consumed','discarded_by_authority'):raise ValueError('Unknown mouse-angle acknowledgement state')
+    if supports_damage_observation(session):
+        parse_observation(data.get('own_damage'),session,data['sim_time'])
     spin,aim=supported_modes(session)
     mode=data.get('operator_modes')
     if mode is not None:
@@ -92,6 +96,10 @@ def validate_feedback(data,session):
             v=mode.get(key)
             if v is not None and (type(v) is not int or not -1<=v<2**53):raise ValueError('Invalid mode sequence')
         if effective['spin_enabled'] and (not spin or mode.get('effective_seq') is None):raise ValueError('Unqualified effective spin')
+        if 'spin_origin' in mode.get('requested',{}):
+            if mode['requested']['spin_origin']=='on_hit' and not supports_damage_observation(session):raise ValueError('Unqualified hit-spin origin')
+            expected_origin=mode['requested']['spin_origin'] if effective['spin_enabled'] else None
+            if effective.get('spin_origin')!=expected_origin:raise ValueError('Wrong effective spin origin')
     auto=data.get('autoaim')
     if auto is not None:
         if not isinstance(auto,dict):raise ValueError('Invalid autoaim feedback')
@@ -124,12 +132,14 @@ class SimModeBindings:
             self.runtime.feature_policy.set_supported('ArmorAutoAim',support[1],{'Fov','Circle Size','Draw Fov'})
             self.runtime.disarm('Simulator capabilities changed: press F2 to resume')
             window.control.reset_inputs();window.invalidate_gui_cache()
+        self.runtime.hit_spin.configure(window)
         if not any(support):
             self.mode=dict(SPIN_DEFAULT);self.aim=dict(AIM_DEFAULT);self.signature=None
             return
         spin=window.registry.get('SpinMode');armor=window.registry.get('ArmorAutoAim')
         value=lambda module,name,default: module.get_setting(name).value if module and module.get_setting(name) else default
         mode=spin_request(dict(spin_enabled=bool(support[0] and spin.enabled),spin_direction=str(value(spin,'Direction','Auto')).lower(),spin_speed_dps=value(spin,'Spin Speed',420),chassis_follow='free'))
+        if supports_damage_observation(transport.session):mode['spin_origin']=self.runtime.hit_spin.origin
         aim=dict(AIM_DEFAULT,enabled=bool(support[1] and armor.enabled),fov_degrees=value(armor,'Fov',85))
         video=transport.snapshot()[1]
         if video is not None:
@@ -137,7 +147,7 @@ class SimModeBindings:
             aim.update(circle_radius_x_norm=rx,circle_radius_y_norm=ry)
         aim=aim_request(aim)
         signature=(tuple(mode.items()),tuple(aim.items()))
-        if self.signature is not None and signature!=self.signature:
+        if self.signature is not None and signature!=self.signature and not self.runtime.hit_spin.consume_transition(self.mode,mode,self.aim,aim):
             self.runtime.disarm('SIM mode/range changed: release keys, then F2')
             window.control.reset_inputs()
         self.signature=signature;self.mode=mode;self.aim=aim
@@ -146,15 +156,16 @@ class SimModeBindings:
         self.runtime.transport.submit_modes(self.mode if self.support[0] else None,aim if self.support[1] else None)
     def feedback(self):
         t=self.runtime.transport.snapshot()[0]
-        out=dict(spin=False,spin_reason='unavailable',measured_yaw_rate=None,aim=False,aim_available=False,aim_reason='unavailable')
+        out=dict(spin=False,spin_origin=None,spin_reason='unavailable',measured_yaw_rate=None,aim=False,aim_available=False,aim_reason='unavailable')
         if not t:return out
         mode=t.get('operator_modes') or {};auto=t.get('autoaim') or {}
         out['spin_reason']=str(mode.get('reason','unavailable'));out['aim_reason']=str(auto.get('reason','unavailable'))
         out['measured_yaw_rate']=(mode.get('measured') or {}).get('chassis_yaw_rate_rps')
         live=bool(self.runtime.armed and self.runtime.transport._focus and self.window and self.window.isActiveWindow() and self.window.combat_control_input_allowed())
         sequence=mode.get('effective_seq')
-        mode_fresh=type(sequence) is int and self.runtime.transport._lease_min_seq<=sequence<=self.runtime.transport._seq
+        mode_fresh=type(sequence) is int and max(self.runtime.transport._lease_min_seq,self.runtime.transport._mode_min_seq)<=sequence<=self.runtime.transport._seq
         out['spin']=bool(live and mode_fresh and self.mode['spin_enabled'] and mode.get('requested')==self.mode and (mode.get('effective') or {}).get('spin_enabled'))
+        if out['spin']:out['spin_origin']=(mode.get('effective') or {}).get('spin_origin','manual')
         out['aim_available']=bool(self.support[1] and auto.get('available'))
         fov=auto.get('fov') or {}
         same_range=all(fov.get(k)==self.aim[k] for k in ('fov_degrees','circle_radius_x_norm','circle_radius_y_norm'))

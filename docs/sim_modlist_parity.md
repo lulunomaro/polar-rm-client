@@ -12,7 +12,7 @@ behavior remain in place.
 | ArmorAutoAim | Qualified selected-source capability, right hold, actual source FOV request, authoritative active/reason | Arbitrary robot support, moving-source qualification, automatic firing |
 | Fov / Circle Size | Logical HUD radius mapped through actual fitted camera pixels; range changes require rearm | Invented target locks, map truth used for perception |
 | Aim display style / Smooth / Priority | Explicit SIM N/A | Unimplemented algorithm parameters disguised as effective settings |
-| AutoSpinOnHit | SIM N/A | Hit-event driven spin policy |
+| AutoSpinOnHit | Capability-qualified actual damage counter, original policy/settings subset, bounded same-lease spin request; CPU/synthetic Qt tested | Physical projectile-collision qualification, power/buffer protection |
 | ChassisAssist | SIM body-relative Free only | Gimbal/field following, power/buffer protection |
 | FrictionWheel / LockState / GimbalPower | SIM N/A | Mock/default active robot indicators |
 | Robot/team/scenario selection | Authoritative current session displayed | Switching the controlled robot through an unrelated UI profile |

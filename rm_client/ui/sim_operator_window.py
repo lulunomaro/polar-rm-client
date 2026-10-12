@@ -85,7 +85,7 @@ class OperatorWindow(PolarRMWindow):
         if policy:
             for name in policy.supported:
                 if message.startswith(name+' ') and ('已启用' in message or '已关闭' in message):
-                    message='SIM request changed: '+name+'; simulator feedback confirms execution';break
+                    message='SIM request changed: '+name+'; check simulator feedback for execution';break
             for name in policy.unavailable_names:
                 if message.startswith(name+' ') and ('已启用' in message or '已关闭' in message):
                     message='SIM unavailable: '+name+' — '+policy.reason(name);break
@@ -117,15 +117,23 @@ class OperatorWindow(PolarRMWindow):
         return super().after_setting_changed(setting)
 
     def on_module_toggled(self,module,enabled,source):
-        if module.name in ('SpinMode','ArmorAutoAim'):
+        hit=self._simulation_runtime.hit_spin
+        if module.name=='SpinMode' and not hit.in_transition(module,enabled):hit.operator_override()
+        if module.name in ('SpinMode','ArmorAutoAim','AutoSpinOnHit') and not hit.in_transition(module,enabled):
             self._simulation_runtime.disarm('SIM request changed: release keys, then F2')
             self.control.reset_inputs()
         return super().on_module_toggled(module,enabled,source)
 
     def publish_spin_control_state(self,*args,**kwargs):
+        # Only a synchronous private policy context can bypass this release.
+        enabled=args[0] if args else kwargs.get('enabled')
+        if self._simulation_runtime.hit_spin.in_transition(enabled=enabled):return False
         # Original dispatch can call this before the registry toggle. No device route.
         self._simulation_runtime.disarm('SIM spin request changed: press F2 to resume')
         self.control.reset_inputs();return False
+
+    def update_auto_spin_guard(self,now=None):
+        return self._simulation_runtime.hit_spin.update(self)
 
     def reject_sim_action(self,label):
         self._simulation_runtime.disarm('SIM unavailable: '+label)
@@ -251,7 +259,7 @@ class OperatorWindow(PolarRMWindow):
             if any(self._simulation_runtime.modes.support):
                 rate=feedback['measured_yaw_rate']
                 measured='unknown' if rate is None else f'{rate:.2f} rad/s'
-                spin='ACTIVE' if feedback['spin'] else feedback['spin_reason']
+                spin=('ACTIVE ('+str(feedback['spin_origin'])+')') if feedback['spin'] else feedback['spin_reason']
                 aim='SOURCE ACTIVE' if feedback['aim'] else feedback['aim_reason']
                 p.drawText(QRectF(18,184,width-36,20),Qt.AlignmentFlag.AlignCenter,f'SIM spin: {spin} | measured {measured} | aim: {aim} | manual fire')
             p.restore()

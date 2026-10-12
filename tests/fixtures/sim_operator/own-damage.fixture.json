@@ -1,0 +1,12 @@
+{
+  "schema": "polar.sim.projectile_damage.v1",
+  "source": "simulator_judge_actual_projectile_damage",
+  "session_id": "synthetic-projectile-damage-example",
+  "epoch": 0,
+  "robot_id": "red_infantry",
+  "episode": 0,
+  "revision": 2,
+  "total_damage": 12.5,
+  "last_event_sequence": 17,
+  "sim_time": 3.25
+}

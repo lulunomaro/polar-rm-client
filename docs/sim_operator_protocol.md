@@ -128,3 +128,32 @@ a new session/epoch/selected-robot identity starts from the new server floor.
 
 The synthetic mouse-angle fixture is an independently authored schema example.
 No actual match or source-detector record is needed to test this contract.
+
+## Optional actual-projectile-damage observation
+
+Capability `auto_spin_on_hit_damage_version: 1` requires `telemetry.own_damage`:
+`schema=polar.sim.projectile_damage.v1`,
+`source=simulator_judge_actual_projectile_damage`, session_id/epoch/robot_id,
+`episode`, `revision`, `total_damage`, `last_event_sequence` and `sim_time`.
+
+The producer counts actual HP credited at the judge's projectile-damage commit.
+It must not infer this counter from ordinary HP differences or count a boolean
+`valid_damage` as HP. Positive fractional credits are retained. A registered hit
+that removes zero remaining HP does not increment any damage counter. Initial
+revision/total/last-event are 0/0/-1. Revision increases once per positive credit;
+its total may be smaller than the revision when credits are fractional.
+
+The timestamp is the current physical snapshot time, not the last-hit time.
+Counters are scoped to session/epoch/robot/episode. The client establishes a fresh
+baseline on initial observation, every rearm, reconnect and identity change;
+it never replays historical hits. Duplicate revisions do not trigger again.
+Forward gaps aggregate actual credited damage once. Regressed counters, stale or
+malformed observations release the current input lease. A judge episode change
+also releases the current automatic policy.
+
+A complete `mode_request` may additionally include `spin_origin` (`manual` or
+`on_hit`); omission means manual. This field is provenance, not additional control
+authority. Requested feedback retains four fields for old four-field requests or
+five for explicit-origin requests. Effective feedback names the origin only while
+spin is effective; otherwise it is null. The client confirms origin only alongside
+fresh matching effective spin feedback. All ordinary TTL/deadman/focus checks apply.
