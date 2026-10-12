@@ -12,6 +12,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from .sim_operator_modes import spin_request,aim_request,SPIN_DEFAULT,AIM_DEFAULT,validate_feedback,supported_modes,source_camera_metadata
 
 SCHEMA = 'polar.sim.operator.v1'
 MAX_JSON = 2_000_000
@@ -43,9 +44,12 @@ class SimOperatorTransport:
         self.url=f'http://127.0.0.1:{parsed.port}'
         self.clock=clock;self._lock=threading.RLock();self._stop=threading.Event()
         self._threads=[];self.session=None;self.telemetry=None;self.telemetry_at=0.0
+        self.video_source_sequence=None;self.video_native_size=None
         self.video=None;self.video_at=0.0;self.video_sequence=-1;self.video_sim_time=None
+        self._lease_min_seq=1;self._aim_hold_min_seq=1
         self._seq=0;self._offset_ms=0.0;self._input_at=-1e9;self._focus=False
         self._intent=dict(vx_mps=0.,vy_mps=0.,yaw_rate_rps=0.,pitch_rate_rps=0.,fire=False)
+        self._mode_request=None;self._aim_request=None
         self.last_error='Simulator disconnected';self.frame_error='No first-person frame'
         self.last_ack=None;self.accepted_count=0;self.rejected_count=0;self._generation=0
         self._focused_since_session=False;self._mouse_pending=[0.,0.];self._last_control_at=None
@@ -89,15 +93,25 @@ class SimOperatorTransport:
         with self._lock:self._clear_session('Simulator disconnected')
 
     def _clear_session(self,reason):
+        self._mode_request=None;self._aim_request=None
         self.session=None;self.telemetry=None;self.video=None;self.video_at=0.;self.video_sequence=-1
-        self.telemetry_at=0.;self.video_sim_time=None;self._generation+=1;self._focused_since_session=False
+        self.telemetry_at=0.;self.video_sim_time=None;self.video_source_sequence=None;self.video_native_size=None;self._generation+=1;self._focused_since_session=False
         self.neutral(reason);self.last_error=str(reason)
 
     def neutral(self,reason='input released'):
         with self._lock:
             self._intent=dict(vx_mps=0.,vy_mps=0.,yaw_rate_rps=0.,pitch_rate_rps=0.,fire=False)
             self._focus=False;self._input_at=-1e9;self._mouse_pending=[0.,0.]
+            if self._aim_request:self._aim_request=dict(self._aim_request,hold=False)
             self.last_error=str(reason)
+
+    def submit_modes(self,mode,aim):
+        mode=None if mode is None else spin_request(mode)
+        aim=None if aim is None else aim_request(aim)
+        with self._lock:
+            if aim and aim['hold'] and not (self._aim_request or {}).get('hold'):
+                self._aim_hold_min_seq=self._seq+1
+            self._mode_request=mode;self._aim_request=aim
 
     def _expire_input(self):
         if self._focus and self.clock()-self._input_at>.15:
@@ -109,6 +123,7 @@ class SimOperatorTransport:
     def heartbeat(self,focused):
         with self._lock:
             if self._expire_input():focused=False
+            if focused and not self._focus:self._lease_min_seq=self._seq+1
             self._focus=bool(focused);self._input_at=self.clock()
             if focused and self.session is not None:self._focused_since_session=True
             if not focused:
@@ -144,9 +159,12 @@ class SimOperatorTransport:
             for key,delta in zip(('yaw_rate_rps','pitch_rate_rps'),self._mouse_pending):
                 values[key]=max(-2.,min(2.,values[key]+delta/dt))
         self._mouse_pending=[0.,0.]
+        extensions={}
+        if self._mode_request is not None:extensions['mode_request']=dict(self._mode_request,spin_enabled=bool(fresh and self._mode_request['spin_enabled']))
+        if self._aim_request is not None:extensions['aim_request']=dict(self._aim_request,enabled=bool(fresh and self._aim_request['enabled']),hold=bool(fresh and self._aim_request['hold']))
         return dict(schema=SCHEMA,session_id=self.session['session_id'],epoch=self.session['epoch'],
                     robot_id=self.session['robot_id'],seq=self._seq,sent_at_ms=time.time()*1000+self._offset_ms,
-                    focus=bool(fresh),deadman=bool(fresh),**values)
+                    focus=bool(fresh),deadman=bool(fresh),**values,**extensions)
 
     def install_session(self,data,*,request_midpoint_ms=None):
         if data.get('schema')!=SCHEMA or not isinstance(data.get('session_id'),str) or not data['session_id'] or len(data['session_id'])>100:
@@ -201,6 +219,7 @@ class SimOperatorTransport:
             if xy is not None:
                 if not isinstance(xy,list) or len(xy)!=2:raise ValueError('Invalid XY')
                 for x in xy:finite(x,'xy')
+        validate_feedback(data,session)
         with self._lock:
             if self.session is None or not self.validate_identity(data,self.session):return False
             if self.telemetry is not None and sim_time<self.telemetry['sim_time']:raise ValueError('Out-of-order telemetry')
@@ -260,6 +279,7 @@ class SimOperatorTransport:
                 if h.get('x-camera-name')!=session['first_person_camera'] or h.get('x-camera-overlays')!='false':raise ValueError('Raw selected first-person camera required')
                 width=int(h.get('x-frame-width','0'));height=int(h.get('x-frame-height','0'))
                 if not 1<=width<=4096 or not 1<=height<=4096:raise ValueError('Invalid frame dimensions')
+                source_index,native_size=source_camera_metadata(h,width,height,session)
                 import cv2,numpy as np
                 bgr=cv2.imdecode(np.frombuffer(raw,dtype=np.uint8),cv2.IMREAD_COLOR)
                 if bgr is None or bgr.ndim!=3 or bgr.shape[:2]!=(height,width):raise ValueError('Invalid camera image')
@@ -267,6 +287,7 @@ class SimOperatorTransport:
                     if generation!=self._generation:continue
                     if self.video_sim_time is not None and stamp<self.video_sim_time:raise ValueError('Out-of-order camera time')
                     if self.session and self.validate_identity(ident,self.session) and index>self.video_sequence:
+                        self.video_source_sequence=source_index;self.video_native_size=native_size
                         self.video=bgr;self.video_at=self.clock();self.video_sequence=index;self.video_sim_time=stamp;self.frame_error=''
             except Exception as exc:
                 with self._lock:

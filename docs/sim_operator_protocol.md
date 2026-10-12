@@ -67,3 +67,35 @@ extra trajectory/target overlays must not be baked into this source.
 
 The supplied session/control/ack fixtures are independently synthetic examples,
 not extracted simulation logs or official judge wire packets.
+
+## Optional ModList contracts
+
+Capabilities gate each extension. `operator_modes_version: 1`, `spin_mode: true`
+and `chassis_follow_modes: ["free"]` admit the complete `mode_request` object:
+`spin_enabled` boolean, `spin_direction` auto/cw/ccw, `spin_speed_dps` 120–720,
+`chassis_follow` free. The response separates requested/effective values,
+request/effective sequence, measured chassis yaw rate and torque, and saturation.
+Only a fresh effective response matching the current request is displayed active.
+
+Source aiming requires `aim_request_version: 1`, `automatic_targeting: true` and
+selected robot membership in `autoaim_robots`. The complete `aim_request` object
+has booleans `enabled` and `hold`, `fov_degrees` 10–180 and positive
+`circle_radius_x_norm`/`circle_radius_y_norm` no larger than 2. Normalized values
+are radii over the fitted image dimensions, not diameters or whole-window ratios.
+The admission rule is the intersection of source-image ellipse and angular FOV.
+
+`autoaim` feedback supplies requested/held/available/active, authority/reason,
+source frame/time, selected/in_fov/fov_applied and the actual applied FOV values.
+An active response must identify source authority, a fresh valid source frame,
+selection inside the admitted range and manual-only firing authority. The
+client also requires a control sequence after its current arm/right-hold edge.
+Frame indices may skip; they need not increment by one. The display frame index
+is not silently treated as the source detector index. No map coordinates are
+accepted by the client aiming request path.
+
+For source-authority confirmation, `autoaim.algorithm` must equal the session's
+`autoaim_source_identity`, and `autoaim.input_revision` must equal the current
+`control.safety_revision`. An active response with mismatched identity/revision
+is rejected, even if its numeric frame index appears recent. Native-camera
+headers identify source capture sequence separately from display frame sequence;
+preview images without a capture index are not claimed as detector observations.

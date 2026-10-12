@@ -68,14 +68,15 @@ class SimFeaturePolicy:
     def __init__(self,registry,notify=lambda message:None):
         self.registry=registry;self.notify=notify;self.locked_values={};self.unavailable_names=frozenset(UNAVAILABLE)
         self._original_toggle=registry.toggle_module
+        self.supported={};self.original_descriptions={m.name:m.description for m in registry.modules}
         for module in registry.modules:
             if module.name in UNAVAILABLE:
                 module.enabled=False
                 module.description='SIM unavailable: '+UNAVAILABLE[module.name]
                 previous_hook=module._enabled_change_hook
                 def hook(changed,enabled,original=previous_hook):
-                    if enabled:object.__setattr__(changed,'enabled',False)
-                    if original:original(changed,False)
+                    if enabled and self.reason(changed.name):object.__setattr__(changed,'enabled',False)
+                    if original:original(changed,bool(changed.enabled))
                 module._enabled_change_hook=hook
             if module.name in UNAVAILABLE or module.name in FIXED_SETTINGS:
                 for setting in module.settings:
@@ -83,16 +84,26 @@ class SimFeaturePolicy:
                     self.locked_values[id(setting)]=copy.deepcopy(setting.value)
         registry.toggle_module=self.toggle
 
-    def reason(self,name):return UNAVAILABLE.get(name,'')
+    def reason(self,name):return '' if name in self.supported else UNAVAILABLE.get(name,'')
+    def set_supported(self,name,enabled,settings):
+        module=self.registry.get(name)
+        if enabled:
+            self.supported[name]=set(settings)
+            module.description=self.original_descriptions[name]+' (SIM request; status confirmed by simulator)'
+        else:
+            self.supported.pop(name,None);module.enabled=False
+            module.description='SIM unavailable: '+UNAVAILABLE[name]
+        self.unavailable_names=frozenset(n for n in UNAVAILABLE if self.reason(n))
     def toggle(self,module,source='internal'):
         target=self.registry.get(module) if isinstance(module,str) else module
-        if target is not None and target.name in UNAVAILABLE:
+        if target is not None and self.reason(target.name):
             self.notify('SIM unavailable: '+target.name+' — '+self.reason(target.name));return target
         return self._original_toggle(module,source)
     def owner(self,setting):
         return next((m for m in self.registry.modules if any(s is setting for s in m.settings)),None)
     def reject_setting(self,setting):
         module=self.owner(setting)
+        if module is not None and setting.name in self.supported.get(module.name,set()):return False
         blocked=(id(setting) in self.locked_values or
                  (module is not None and module.name=='RobotLink' and not setting.name.startswith('Bind ')))
         if not blocked:return False
@@ -102,7 +113,7 @@ class SimFeaturePolicy:
     def restore_locked_settings(self):
         for module in self.registry.modules:
             for setting in module.settings:
-                if id(setting) in self.locked_values:setting.value=copy.deepcopy(self.locked_values[id(setting)])
+                if id(setting) in self.locked_values and setting.name not in self.supported.get(module.name,set()):setting.value=copy.deepcopy(self.locked_values[id(setting)])
 
     def sync_identity(self,state):
         pairs=[('RobotProfile','Role',state.robot_profile),('AllianceProfile','Side',state.alliance_color),('MatchMode','Alliance',state.alliance_color)]

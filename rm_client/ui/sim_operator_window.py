@@ -82,20 +82,49 @@ class OperatorWindow(PolarRMWindow):
     def toast(self,message,*,kind='info'):
         policy=self._simulation_runtime.feature_policy
         if policy:
+            for name in policy.supported:
+                if message.startswith(name+' ') and ('已启用' in message or '已关闭' in message):
+                    message='SIM request changed: '+name+'; simulator feedback confirms execution';break
             for name in policy.unavailable_names:
                 if message.startswith(name+' ') and ('已启用' in message or '已关闭' in message):
                     message='SIM unavailable: '+name+' — '+policy.reason(name);break
         return super().toast(message,kind=kind)
 
     def module_display_label(self,module,label):
-        return '[SIM N/A] '+label if self._simulation_runtime.feature_policy.reason(module.name) else label
+        policy=self._simulation_runtime.feature_policy
+        if policy.reason(module.name):return '[SIM N/A] '+label
+        if module.name in policy.supported:return '[SIM REQUEST] '+label
+        return label
+
+    def setting_is_unavailable(self,setting):
+        policy=self._simulation_runtime.feature_policy
+        module=policy.owner(setting)
+        if module is None:return False
+        if module.name=='RobotLink' and setting.name.startswith('Bind '):return False
+        return module.name in policy.original_descriptions and id(setting) in policy.locked_values and setting.name not in policy.supported.get(module.name,set()) and module.name not in ('Scenario','MatchMode','RobotProfile','AllianceProfile','CameraFeed')
 
     def after_setting_changed(self,setting):
         policy=self._simulation_runtime.feature_policy
         if policy and policy.reject_setting(setting):
             self._simulation_runtime.disarm('Unsupported setting: virtual input released')
             self.invalidate_gui_cache();return
+        module=policy.owner(setting) if policy else None
+        if module and module.name in policy.supported:
+            self._simulation_runtime.disarm('SIM request changed: release keys, then F2')
+            self.control.reset_inputs();self.invalidate_gui_cache()
+            return
         return super().after_setting_changed(setting)
+
+    def on_module_toggled(self,module,enabled,source):
+        if module.name in ('SpinMode','ArmorAutoAim'):
+            self._simulation_runtime.disarm('SIM request changed: release keys, then F2')
+            self.control.reset_inputs()
+        return super().on_module_toggled(module,enabled,source)
+
+    def publish_spin_control_state(self,*args,**kwargs):
+        # Original dispatch can call this before the registry toggle. No device route.
+        self._simulation_runtime.disarm('SIM spin request changed: press F2 to resume')
+        self.control.reset_inputs();return False
 
     def reject_sim_action(self,label):
         self._simulation_runtime.disarm('SIM unavailable: '+label)
@@ -113,6 +142,7 @@ class OperatorWindow(PolarRMWindow):
         if module_name=='VictoryPointStatus' and show_setting=='Control Zone':return False
         return super().hud_row_visible(module_name,show_setting)
 
+    def effective_spin_enabled(self):return self._simulation_runtime.modes.feedback()['spin']
     def chassis_follow_mode(self):return 'SIM BODY'
     def rm_indicator_visible(self,key):return False
     def status_card_visible(self,label):return False
@@ -215,6 +245,13 @@ class OperatorWindow(PolarRMWindow):
             label='SIM ONLY | F2 arm | WASD move | mouse aim | left click fire | F12 stop'
             if not self._simulation_runtime.armed:label='SIM DISARMED | '+self._simulation_runtime.note
             p.drawText(QRectF(18,58,width-36,20),Qt.AlignmentFlag.AlignCenter,label)
+            feedback=self._simulation_runtime.modes.feedback()
+            if any(self._simulation_runtime.modes.support):
+                rate=feedback['measured_yaw_rate']
+                measured='unknown' if rate is None else f'{rate:.2f} rad/s'
+                spin='ACTIVE' if feedback['spin'] else feedback['spin_reason']
+                aim='SOURCE ACTIVE' if feedback['aim'] else feedback['aim_reason']
+                p.drawText(QRectF(18,184,width-36,20),Qt.AlignmentFlag.AlignCenter,f'SIM spin: {spin} | measured {measured} | aim: {aim} | manual fire')
             p.restore()
             if existing is None:p.end()
         return result

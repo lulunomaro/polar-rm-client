@@ -84,6 +84,7 @@ __all__ = [
 ]
 
 
+
 class ModuleListMixin:
     """D12 ModuleList 模块列表绘制族（布局/数据面/十样式变体/周边 HUD/GPU 面）。"""
 
@@ -222,7 +223,7 @@ class ModuleListMixin:
             self.draw_text(p, index_rect, str(idx + 1), self.font("poppins_bold", 6.6), THEME.text, Qt.AlignmentFlag.AlignCenter)
             cat = module.category[:3].upper()
             self.draw_text(p, QRectF(rect.right() - 27, rect.top(), 24, rect.height()), hud_text(cat, chinese_enabled(self.registry)), category_font, THEME.text, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-            self.draw_text(p, rect.adjusted(25, 0, -32, 0), hud_module_name(module.name, chinese_enabled(self.registry)), font, THEME.text, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+            self.draw_text(p, rect.adjusted(25, 0, -32, 0), getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))), font, THEME.text, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
             p.restore()
             y += row_h + 3.0 * entry["height"]
 
@@ -544,7 +545,8 @@ class ModuleListMixin:
         sort_font_key = sort_font.key()
         for row in rows.values():
             module = row["module"]
-            cache_key = (font_key, sort_font_key, module.name)
+            measure_label = getattr(self, "module_display_label", lambda m, label: label)(module, module.name)
+            cache_key = (font_key, sort_font_key, measure_label)
             widths = width_cache.get(cache_key)
             if widths is None:
                 if metrics is None:
@@ -552,8 +554,8 @@ class ModuleListMixin:
                 if sort_metrics is None:
                     sort_metrics = QFontMetricsF(sort_font)
                 widths = (
-                    float(metrics.horizontalAdvance(module.name)),
-                    float(sort_metrics.horizontalAdvance(module.name)),
+                    float(metrics.horizontalAdvance(measure_label)),
+                    float(sort_metrics.horizontalAdvance(measure_label)),
                 )
                 width_cache[cache_key] = widths
             text_w, sort_w = widths
@@ -625,7 +627,7 @@ class ModuleListMixin:
                 row_transform.translate(-pivot.x(), -pivot.y())
                 gpu_commands.text(
                     row_transform.mapRect(text_rect),
-                    hud_module_name(module.name, chinese_enabled(self.registry)),
+                    getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))),
                     font,
                     QColor(254, 254, 254, round(255.0 * 0.95 * progress * base_opacity)),
                     Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop,
@@ -647,7 +649,7 @@ class ModuleListMixin:
                 p.drawText(
                     text_rect,
                     int(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop),
-                    hud_module_name(module.name, chinese_enabled(self.registry)),
+                    getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))),
                 )
                 p.restore()
             ease_height = (
@@ -739,12 +741,12 @@ class ModuleListMixin:
                 self.draw_text(p, tag_rect, (hud_text(tag, chinese_enabled(self.registry)) if tag_style == "Category" or (tag_style == "Keybind" and module.keybind == "None") else tag), tag_font, THEME.text if tags_variant else THEME.muted, Qt.AlignmentFlag.AlignCenter)
             align = Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter if right_aligned else Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
             # Name uses full RGB like OpenZen ModuleListHud text.
-            self.draw_text(p, text_rect, hud_module_name(module.name, chinese_enabled(self.registry)), name_font, with_alpha(row_rgb, 0.96), align)
+            self.draw_text(p, text_rect, getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))), name_font, with_alpha(row_rgb, 0.96), align)
             if dock:
                 progress = self.anim.value(f"hud.liquid_array.progress.{module.name}", 1.0 if module.enabled else 0.0, self.anim_duration(0.20), Easings.ease_out_cubic, initial=1.0)
                 bar = QRectF(rect.left() + 7.0, rect.bottom() - 2.3, max(2.0, (rect.width() - 14.0) * progress), 1.1)
                 rounded_rect(p, bar, 0.55, with_alpha(row_rgb, 0.72))
-            self.add_hotspot(rect, "module_toggle", module.name, tooltip=f"{hud_module_name(module.name, chinese_enabled(self.registry))} | {category_label(module.category, chinese_enabled(self.registry))} | {module.keybind}")
+            self.add_hotspot(rect, "module_toggle", module.name, tooltip=f"{getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry)))} | {category_label(module.category, chinese_enabled(self.registry))} | {module.keybind}")
             p.restore()
 
     def draw_module_list_polar_text(self, p: QPainter, start_y: float | None = None) -> None:
@@ -764,8 +766,8 @@ class ModuleListMixin:
             # OpenZen: getRainbowColor(10, index * 8) + text shadow.
             c = rainbow_color_index(idx, speed=10, step=8)
             text_rect = QRectF(x + entry["slide"], row_y, 260, h)
-            self.draw_text(p, text_rect.translated(1.0, 1.0), hud_module_name(module.name, chinese_enabled(self.registry)), font, color("#000000", 0.78))
-            self.draw_text(p, text_rect, hud_module_name(module.name, chinese_enabled(self.registry)), font, c)
+            self.draw_text(p, text_rect.translated(1.0, 1.0), getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))), font, color("#000000", 0.78))
+            self.draw_text(p, text_rect, getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))), font, c)
             p.restore()
             row_y += h + 1.0 * entry["height"]
 
@@ -859,7 +861,7 @@ class ModuleListMixin:
             p.setOpacity(entry["alpha"])
             rounded_rect(p, rect, 5, color("#242424", 0.50), color("#ffffff", 0.07))
             self.draw_text(p, QRectF(rect.left() + 8, rect.top(), 16, rect.height()), "*", self.font("material", 9.5), THEME.cyan, Qt.AlignmentFlag.AlignCenter)
-            self.draw_text(p, rect.adjusted(25, 0, -8, 0), hud_module_name(module.name, chinese_enabled(self.registry)), font, THEME.text, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+            self.draw_text(p, rect.adjusted(25, 0, -8, 0), getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))), font, THEME.text, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
             p.restore()
             y += row_h + gap * entry["height"]
 
@@ -887,7 +889,7 @@ class ModuleListMixin:
             self.draw_text(
                 p,
                 QRectF(x, rect.top(), label_w + 6, rect.height()),
-                hud_module_name(module.name, chinese_enabled(self.registry)),
+                getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))),
                 font,
                 rainbow_color_index(idx, speed=10, step=8),
                 Qt.AlignmentFlag.AlignCenter,
@@ -923,7 +925,7 @@ class ModuleListMixin:
             rounded_rect(p, name_rect, 5, color("#000000", 0.36), color("#ffffff", 0.08))
             rounded_rect(p, key_rect, 5, color("#000000", 0.36), color("#ffffff", 0.08))
             row_rgb = rainbow_color_index(idx, speed=10, step=8)
-            self.draw_text(p, name_rect.adjusted(6, 0, -6, 0), hud_module_name(module.name, chinese_enabled(self.registry)), name_font, row_rgb, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+            self.draw_text(p, name_rect.adjusted(6, 0, -6, 0), getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))), name_font, row_rgb, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
             self.draw_text(p, key_rect, (hud_text("ON", chinese_enabled(self.registry)) if module.keybind == "None" else key), key_font, row_rgb, Qt.AlignmentFlag.AlignCenter)
             p.restore()
             row_y += row_h + 3 * entry["height"]
@@ -955,7 +957,7 @@ class ModuleListMixin:
             rounded_rect(p, QRectF(rect.left() + icon_w, rect.top(), max(4.0, (rect.width() - icon_w) * ratio), row_h), 5, with_alpha(c, 0.42))
             rounded_rect(p, QRectF(rect.left(), rect.top(), icon_w, row_h), 5, with_alpha(c, 0.78))
             self.draw_text(p, QRectF(rect.left(), rect.top(), icon_w, row_h), str(idx + 1), value_font, THEME.text, Qt.AlignmentFlag.AlignCenter)
-            self.draw_text(p, QRectF(rect.left() + icon_w + 6, rect.top(), rect.width() - icon_w - 46, row_h), hud_module_name(module.name, chinese_enabled(self.registry)), name_font, c)
+            self.draw_text(p, QRectF(rect.left() + icon_w + 6, rect.top(), rect.width() - icon_w - 46, row_h), getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))), name_font, c)
             self.draw_text(p, QRectF(rect.right() - 42, rect.top(), 36, row_h), hud_text(category, chinese_enabled(self.registry)), value_font, with_alpha(c, 0.90), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
             p.restore()
             y += row_h + 2.0 * entry["height"]
@@ -981,7 +983,7 @@ class ModuleListMixin:
             badge = QRectF(rect.left() + 5, rect.top() + 5, 20, max(4.0, rect.height() - 10))
             rounded_rect(p, badge, 7, with_alpha(c, 0.70), color("#ffffff", 0.10))
             self.draw_text(p, badge, category_label(module.category, chinese_enabled(self.registry))[0], self.font("poppins_bold", 8.2), THEME.text, Qt.AlignmentFlag.AlignCenter)
-            self.draw_text(p, rect.adjusted(32, 3, -54, -13), hud_module_name(module.name, chinese_enabled(self.registry)), font, c)
+            self.draw_text(p, rect.adjusted(32, 3, -54, -13), getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))), font, c)
             self.draw_text(p, rect.adjusted(32, 15, -54, -2), category_label(module.category, chinese_enabled(self.registry)), sub_font, THEME.muted)
             chip = QRectF(rect.right() - 46, rect.top() + 6, 38, max(4.0, rect.height() - 12))
             rounded_rect(p, chip, 6, with_alpha(c, 0.14), with_alpha(c, 0.28))
@@ -1019,7 +1021,7 @@ class ModuleListMixin:
         self.draw_text(p, QRectF(x + 9, y + 4, row_w - 18, 14), hud_text("KeyBinds", chinese_enabled(self.registry)), font, THEME.text)
         for i, module in enumerate(rows):
             yy = y + 22 + i * row_h
-            self.draw_text(p, QRectF(x + 9, yy, row_w - 56, row_h), hud_module_name(module.name, chinese_enabled(self.registry)), font, THEME.muted)
+            self.draw_text(p, QRectF(x + 9, yy, row_w - 56, row_h), getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))), font, THEME.muted)
             self.draw_text(p, QRectF(x + 65, yy, row_w - 74, row_h), module.keybind, font, THEME.text, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         p.restore()
 
@@ -1038,7 +1040,7 @@ class ModuleListMixin:
             row = QRectF(rect.left() + 8, y, rect.width() - 16, 19)
             row_active = self.anim.value(f"hud.bind.row.{module.name}", 1.0 if module.enabled else 0.42, self.anim_duration(0.18), Easings.ease_out_quad, initial=0.0)
             rounded_rect(p, row, 5, color("#ffffff", 0.035 + 0.035 * row_active))
-            self.draw_text(p, row.adjusted(8, 0, -56, 0), hud_module_name(module.name, chinese_enabled(self.registry)), self.font("poppins_regular", 8.2), THEME.text if module.enabled else THEME.muted)
+            self.draw_text(p, row.adjusted(8, 0, -56, 0), getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))), self.font("poppins_regular", 8.2), THEME.text if module.enabled else THEME.muted)
             self.draw_text(p, row.adjusted(72, 0, -8, 0), module.keybind, self.font("poppins_medium", 8.2), self.hud_accent(), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         p.restore()
 
@@ -1465,7 +1467,7 @@ class ModuleListMixin:
             commands.text(badge, str(index + 1), gpu_index_font, color("#ffffff", alpha), Qt.AlignmentFlag.AlignCenter, clip)
             commands.text(
                 QRectF(body.left() + 6.0 * scale, rect.top(), max(2.0, body.width() - 49.0 * scale), rect.height()),
-                hud_module_name(module.name, chinese_enabled(self.registry)),
+                getattr(self, "module_display_label", lambda m, label: label)(module, hud_module_name(module.name, chinese_enabled(self.registry))),
                 gpu_font,
                 color("#ffffff", alpha),
                 Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,

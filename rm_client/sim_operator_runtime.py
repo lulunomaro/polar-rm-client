@@ -17,6 +17,7 @@ from .model import build_default_registry
 from .runtime_paths import RuntimePaths
 from .sim_operator_transport import SimOperatorTransport
 from .sim_operator_features import SimFeaturePolicy
+from .sim_operator_modes import SimModeBindings
 from .top_match_bar import LifeState, MatchBarFrame, RobotCard, TeamStrip
 
 IDS={'red_hero':1,'red_infantry':3,'red_sentry':7,'blue_hero':101,'blue_infantry':103,'blue_sentry':107}
@@ -55,6 +56,7 @@ class SimInputBridge(KeyboardControlBridge):
             yaw_rate_rps=0.,pitch_rate_rps=0.,
             fire=bool(command.left_button_down))
         self.runtime.transport.submit_mouse(-command.mouse_x*.002,command.mouse_y*.002)
+        self.runtime.modes.submit(command.right_button_down)
         self._dirty=False;self._consume_relative_motion()
     def tick(self,state,registry,now=None):
         return self.send_from_state(state,registry)
@@ -121,7 +123,7 @@ class OperatorRuntime:
         self.paths=RuntimePaths.discover(environ={'POLAR_USER_DATA_ROOT':self._tmp.name})
         self.camera=NoIOService();self.local_vision=NoIOService();self.tongji_receiver=NoIOService();self.tongji_bridge=NoIOService()
         self.armed=False;self.note='F2: enable virtual operator input; F12: stop'
-        self._generation=-1;self.backend=None;self.feature_policy=None
+        self._generation=-1;self.backend=None;self.feature_policy=None;self.modes=SimModeBindings(self)
     def registry(self):
         registry=build_default_registry(discover_devices=False)
         # Session-local options. Original user settings remain untouched.
@@ -148,6 +150,10 @@ class OperatorRuntime:
             self.backend.release_estop()
         self.armed=True;self.note='SIM operator active: WASD / mouse / left click';return True
     def heartbeat(self,window):
+        try:self.modes.sync(window)
+        except (ValueError,TypeError,OverflowError) as exc:
+            self.disarm('Invalid SIM request: '+str(exc));window.control.reset_inputs()
+            return
         if self._generation!=self.transport._generation:
             self._generation=self.transport._generation;self.disarm('Session changed: release inputs, then F2')
             window.control.reset_inputs()

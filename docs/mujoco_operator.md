@@ -139,3 +139,68 @@ QT_QPA_PLATFORM=offscreen python -m unittest tests.test_sim_operator_truth tests
 This truth cleanup is deliberately separate from implementing actual spin or
 source-camera automatic aiming. Their presence in the original ModList is not
 proof of an end-to-end simulator implementation.
+
+## Capability-qualified ModList controls
+
+This incremental mode retains the original Jello modules and input dispatch.
+An endpoint without the new capabilities keeps SpinMode and ArmorAutoAim at
+SIM N/A. Supported modules are labelled SIM REQUEST: a checked module is a
+request, while the main-window status and chassis compass use simulator feedback.
+Unsupported settings such as power protection, follow modes, flywheel, aim
+smoothing, target priority and lock decorations remain SIM N/A, with no active
+checkbox or operational hotspot. These settings do not gain hardware outlets.
+
+- SpinMode: original X toggle, Auto/CW/CCW and 120–720 degrees/s request.
+  Auto is deterministic CCW. Actual yaw rate is reported separately; saturation
+  may prevent reaching the requested rate. The only chassis coordinate mode is
+  body-relative Free. There is no world-stabilized gimbal promise.
+- ArmorAutoAim: original module toggle, right mouse hold, Fov and Circle Size.
+  Automatic control requires the server's qualified source adapter and supported
+  selected robot. Module/range changes clear all inputs and require F2 again.
+  The circle is a requested source-image range, not a confirmed target lock.
+  Its original HUD radius is mapped through the actual letterboxed video fit.
+- In the currently supported stationary-only source mode, driving or spinning
+  stays available but disengages automatic aiming. The server reports when the
+  source becomes eligible again. Aiming never grants firing authority; virtual
+  firing remains manual left click.
+- Right-button release, menu/focus loss, F12, expired lease and disconnect clear
+  automatic-aim authority. Re-arming cannot reuse an old confirmed spin/aim
+  response. Actual body motion can coast when torque is zero.
+
+The main window reports source availability/reason, active authority and measured
+spin rate. It does not draw invented target boxes or feed the map truth into
+perception. The selected source-camera image may be downsampled for display;
+frame and source identities remain separate. Source-mode validation must use the
+same camera geometry as the displayed image and explicitly name any test scene.
+
+Focused synthetic tests:
+
+```bash
+PYTHONPATH=.:tests QT_QPA_PLATFORM=offscreen python -m unittest tests.test_sim_operator_modes
+```
+
+A local integration check can launch a separately installed simulation bridge:
+write a local JSON file containing `argv` (a list of command arguments) and `cwd`,
+then run `python tools/verify_sim_modlist.py --bridge-command-file <local.json>
+--out <evidence-directory> --scene-label <explicit-scene-name>`. This entry uses
+real Qt handlers and actual simulator frames. It verifies CPU composition only;
+a real desktop/OpenGL session and complete ModList parity are separate checks.
+Do not put private bridge paths, source specifications or actual records into a
+public repository.
+
+## Limited checkpoint: repeatability is still open
+
+This checkpoint saves capability-qualified client bindings and their synthetic
+boundary tests. A same-session narrow-range rejection followed by wide-range
+source activation was observed in an explicitly fixed visible-target simulation
+scene. Repeating a fixed number of mouse pixels did not consistently reproduce
+that complete workflow. Mouse deltas currently become wall-clock angular rates
+while the simulator integrates simulation time; varying real-time factor changes
+the resulting angle. Nearby camera views also exposed source-detector sensitivity.
+
+These are open integration defects/limits, not passing general-use acceptance.
+This checkpoint must not be described as full end-to-end qualification, generally
+usable automatic aiming, or complete ModList parity. The next separate change is
+a sequence-qualified cumulative-angle input contract, followed by repeated
+same-session range tests and fixed-image detector checks. No actual test records,
+private scenes or source specifications are included in this public source view.

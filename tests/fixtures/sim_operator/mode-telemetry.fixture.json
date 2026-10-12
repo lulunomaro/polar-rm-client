@@ -1,0 +1,132 @@
+{
+  "schema": "polar.sim.operator.v1",
+  "session_id": "synthetic-contract-fixture",
+  "epoch": 0,
+  "robot_id": "red_sentry",
+  "server_time_ms": 0.0,
+  "sim_time": 1.0,
+  "phase": "running",
+  "remaining_seconds": 59.0,
+  "countdown": null,
+  "vp": {
+    "red": 0,
+    "blue": 0
+  },
+  "own": {
+    "robot_id": "red_sentry",
+    "team": "red",
+    "role": "sentry",
+    "hp": 200,
+    "max_hp": 200,
+    "ammo": 20,
+    "heat": 10,
+    "heat_max": 100,
+    "xy": [
+      -3.0,
+      1.0
+    ],
+    "chassis_yaw": 0.0,
+    "gimbal_yaw": 0.2,
+    "pitch": 0.1,
+    "alive": true
+  },
+  "robots": [
+    {
+      "robot_id": "red_sentry",
+      "team": "red",
+      "role": "sentry",
+      "hp": 200,
+      "max_hp": 200,
+      "ammo": 20,
+      "heat": 10,
+      "heat_max": 100,
+      "xy": [
+        -3.0,
+        1.0
+      ],
+      "chassis_yaw": 0.0,
+      "gimbal_yaw": 0.2,
+      "pitch": 0.1,
+      "alive": true
+    }
+  ],
+  "map_source": "simulator_truth_display_only",
+  "simulation_only": true,
+  "hardware_transport": false,
+  "events": [],
+  "operator_modes": {
+    "simulation_only": true,
+    "requested": {
+      "spin_enabled": false,
+      "spin_direction": "auto",
+      "spin_speed_dps": 420.0,
+      "chassis_follow": "free"
+    },
+    "request_seq": 7,
+    "effective_seq": 7,
+    "effective": {
+      "spin_enabled": false,
+      "spin_speed_dps": 0,
+      "target_yaw_rate_rps": 0,
+      "chassis_follow": "free",
+      "direction_resolved": null
+    },
+    "measured": {
+      "chassis_yaw_rate_rps": 0,
+      "yaw_torque": 0
+    },
+    "reason": "spin_active"
+  },
+  "autoaim": {
+    "requested": true,
+    "held": true,
+    "available": true,
+    "active": true,
+    "selected": true,
+    "in_fov": true,
+    "fov_applied": true,
+    "authority": "source_autoaim",
+    "fire_authority": "manual_only",
+    "source_frame_seq": 2,
+    "source_sim_time": 1.0,
+    "fov": {
+      "fov_degrees": 85.0,
+      "circle_radius_x_norm": 0.25,
+      "circle_radius_y_norm": 0.25
+    },
+    "reason": "source_tracking",
+    "input_revision": 1,
+    "algorithm": "synthetic-source-v1",
+    "simulation_only": true
+  },
+  "control": {
+    "last_seq": 7,
+    "safety_revision": 1
+  },
+  "camera": {
+    "first_person": true,
+    "overlays": false,
+    "source_camera": true,
+    "native_width": 1440,
+    "native_height": 1080,
+    "width": 320,
+    "height": 240,
+    "source_frame_seq": 2,
+    "frame_seq": 7,
+    "image_mapping": "full_native_frame_resized",
+    "raw_algorithm_pixels": true,
+    "calibration": {
+      "fx": 1000,
+      "fy": 1000,
+      "cx": 720,
+      "cy": 540,
+      "distortion": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}

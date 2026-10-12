@@ -1329,6 +1329,13 @@ class JelloClickGuiRenderer:
         label_y = row.top() + (2.0 * scale if setting.kind in {"mode", "action", "action_group"} else 0.0)
         label = QRectF(row.left() + 20.0 * scale, label_y, 200.0 * scale, label_h)
         self._label(host, state, commands, setting, label, clip, alpha, scale)
+        unavailable = getattr(host, "setting_is_unavailable", None)
+        if callable(unavailable) and unavailable(setting):
+            commands.text(QRectF(row.left() + 334.0 * scale, row.top(), 126.0 * scale, 30.0 * scale),
+                          "SIM N/A", self._font(host, "jello_light", 18.0),
+                          self._argb(DEEP_TEAL, alpha * .6),
+                          Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, clip, render_scale=scale)
+            return None
 
         if setting.kind == "bool":
             checkbox = QRectF(row.left() + 436.0 * scale, row.top() + 6.0 * scale, 24.0 * scale, 24.0 * scale)
