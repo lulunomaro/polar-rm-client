@@ -25,6 +25,11 @@ from .hud_locale import hud_text, hud_template, hud_module_name, HudDisplayText
 
 
 FUNCTION_SLOT_NAMES = tuple(f"Slot {index}" for index in range(1, 10))
+# Unihex glyphs have 16 physical rows for an 8-logical-pixel character.
+# Keep that detail through the intermediate HUD cache; a 1x cache irreversibly
+# drops CJK strokes before the final nearest-neighbour screen composition.
+HUD_LAYER_DPR = 2
+
 DEFAULT_FUNCTION_SLOTS = (
     "ArmorAutoAim",
     "ArmorLock",
@@ -532,17 +537,19 @@ class MinecraftCombatHudRenderer:
             tactical_map_enabled,
         )
         now = time.perf_counter()
-        image_size_changed = self._layer_image.size() != QSize(logical_width, logical_height)
+        layer_size = QSize(logical_width * HUD_LAYER_DPR, logical_height * HUD_LAYER_DPR)
+        image_size_changed = (self._layer_image.size() != layer_size
+                              or self._layer_image.devicePixelRatio() != HUD_LAYER_DPR)
         priority_changed = priority_key != self._layer_priority_key
         telemetry_due = now >= self._layer_next_refresh_at
 
         if image_size_changed or priority_changed or (layer_key != self._layer_key and telemetry_due):
             if image_size_changed:
                 self._layer_image = QImage(
-                    logical_width,
-                    logical_height,
+                    layer_size,
                     QImage.Format.Format_ARGB32_Premultiplied,
                 )
+                self._layer_image.setDevicePixelRatio(HUD_LAYER_DPR)
             self._layer_image.fill(Qt.GlobalColor.transparent)
             layer_painter = QPainter(self._layer_image)
             layer_painter.save()

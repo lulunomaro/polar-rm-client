@@ -28,13 +28,14 @@ retained; normal device mode and SIM remain separate.
 | 19 | F12 / F2 | Implemented, bounded | Virtual stop and explicit rearm; F2 is the documented SIM rearm action |
 | 20 | Focus / timeout / disconnect | Implemented, bounded | Independent wall-clock leases, stale-frame gates, no held-input replay |
 | 21 | Power / buffer / capacitor | Unsupported in SIM | No validated model/observations; controls and indicators stay unavailable |
-| 22 | Fonts / final visual rendering | Partial, visible defects | Actual original HUD CPU composition works; fragmented glyph/bitmap text defects remain, desktop/OpenGL not accepted |
+| 22 | Fonts / final visual rendering | Partial, CPU glyph fix qualified | Native CJK strokes preserved through 2x HUD cache; original-window CPU A/B and pixel tests pass; desktop/OpenGL and all panels remain unqualified |
 
 The bounded original-Qt source/FOV workflow is described in
 [validation scope](sim_operator_validation_scope.md). The physical simulated
 hit-spin check and its reproducible entry are described in
 [hit-spin physics validation](sim_hit_physics_validation.md).
 
-Next priority is reproducing and fixing the actual font/render-path defects
-without retouching screenshots or changing the established visual scheme, while
-continuing the remaining control/protocol paths as separate qualified increments.
+The cache/font fix and its memory/performance boundary are documented in
+[font raster validation](minecraft_font_raster.md). Remaining unsupported control
+paths and broader source-aim qualification still need separate increments; a
+readable HUD does not complete all 73 modules or the desktop rendering matrix.
