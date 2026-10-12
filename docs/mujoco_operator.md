@@ -265,3 +265,12 @@ features. Actual physical-hit qualification remains a separate run.
 ```sh
 PYTHONPATH=.:tests QT_QPA_PLATFORM=offscreen python -m unittest tests.test_sim_projectile_damage tests.test_sim_hit_spin
 ```
+
+## Subsequent bounded workflow validation
+
+The original Qt same-session narrow-to-wide source/FOV workflow now passes in an
+explicit static target scene with the corrected source optical profile and
+cumulative mouse-angle input. See [operator validation scope](sim_operator_validation_scope.md)
+for the exact functional and screenshot limits. This supersedes the earlier open
+static-scene workflow result above; it does not claim general moving-source,
+desktop/OpenGL, physical-hit AutoSpinOnHit or complete ModList acceptance.
