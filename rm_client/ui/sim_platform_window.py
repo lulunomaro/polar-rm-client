@@ -2,12 +2,15 @@
 from __future__ import annotations
 import argparse
 from PySide6.QtCore import Qt,QRectF
-from PySide6.QtGui import QColor,QFont,QPainter,QSurfaceFormat
+from PySide6.QtGui import QColor,QFont,QFontMetricsF,QPainter,QSurfaceFormat
 from PySide6.QtWidgets import QApplication
 from .polar_app import PolarRMWindow
 from .sim_operator_window import OperatorWindow
 from ..sim_platform_runtime import PlatformRuntime
 from ..sim_robot_selection import SELECTION_SETTING
+from ..sim_platform_adapters import SETTINGS,options
+from ..sim_platform_status import status_lines,status_layout
+from .sim_platform_status_layout import reserved_regions
 
 class PlatformWindow(OperatorWindow):
     def __init__(self,runtime):
@@ -17,7 +20,20 @@ class PlatformWindow(OperatorWindow):
         return super().setting_display_label(setting,label)
     def setting_is_unavailable(self,setting):
         if setting.name==SELECTION_SETTING:return not self._simulation_runtime.transport.robot_ids
+        if setting.name in SETTINGS:
+            t=self._simulation_runtime.transport
+            if t.role!='operator':return True
+            if setting.name in SETTINGS[:2]:return not t.catalog.get('ready')
+            if setting.name in SETTINGS[2:4]:return self.registry.get('RobotProfile').get_setting('V2 Navigation').value!='nav_rule_v1'
+            return self.registry.get('RobotProfile').get_setting('V2 Aim').value!='aim_native_rmcs_v1'
         return super().setting_is_unavailable(setting)
+    def after_setting_changed(self,setting):
+        if setting.name in SETTINGS:
+            try:self._simulation_runtime.configure_adapter_settings(self)
+            except (ValueError,RuntimeError) as exc:
+                self._simulation_runtime.disarm('Adapter selection unavailable: '+str(exc));self.control.reset_inputs();self.toast(str(exc));self._simulation_runtime.sync_adapters(self)
+            self.invalidate_gui_cache();return
+        return super().after_setting_changed(setting)
     def chassis_follow_mode(self):return 'V2 BODY'
     def draw_watermark(self,p):
         r=self._simulation_runtime;t=r.transport
@@ -31,13 +47,47 @@ class PlatformWindow(OperatorWindow):
             and self.combat_control_input_allowed()
             and event.key() in (Qt.Key.Key_W,Qt.Key.Key_A,Qt.Key.Key_S,Qt.Key.Key_D)):
             self.toast('V2 spectator: movement input disabled');event.accept();return
-        return super().keyPressEvent(event)
+        self.control.defer_sim_command=True;self.control.deferred_pending=False
+        try:result=super().keyPressEvent(event)
+        finally:self.control.defer_sim_command=False
+        self._simulation_runtime.modes.sync(self)
+        # Preserve original key/overlay routing, then synchronously revoke this
+        # simulation input if the event transferred ownership to a GUI panel.
+        if not self.combat_control_input_allowed():
+            self._simulation_runtime.disarm('V2 UI owns keyboard input; rearm after closing')
+            self.control.reset_inputs()
+        elif self.control.deferred_pending and self._simulation_runtime.armed:
+            self.control.send_from_state(self.state,self.registry)
+        self.control.deferred_pending=False
+        return result
+    def keyReleaseEvent(self,event):
+        self.control.defer_sim_command=True;self.control.deferred_pending=False
+        try:result=super().keyReleaseEvent(event)
+        finally:self.control.defer_sim_command=False
+        self._simulation_runtime.modes.sync(self)
+        if not self.combat_control_input_allowed():
+            self._simulation_runtime.disarm('V2 UI owns keyboard input; rearm after closing')
+            self.control.reset_inputs()
+        elif self.control.deferred_pending and self._simulation_runtime.armed:
+            self.control.send_from_state(self.state,self.registry)
+        self.control.deferred_pending=False
+        return result
     def mousePressEvent(self,event):
         if (self._simulation_runtime.transport.role=='spectator'
             and self.combat_control_input_allowed() and event.button()==Qt.MouseButton.LeftButton):
             self.toast('V2 spectator: fire input disabled');event.accept();return
         return super().mousePressEvent(event)
     def paint_overlay(self,event,**kwargs):
+        # An extra paint can precede the next UI heartbeat. Invalidate cached
+        # SIM validity before the original MC sidebar reads it; never refresh
+        # a stale model by repainting or invent a new telemetry sample.
+        state=getattr(self,'state',None)
+        if state is not None:
+            try:
+                identity=self._simulation_runtime.display_identity()
+                fresh=identity is not None and getattr(state,'_platform_display_identity',None)==identity
+            except Exception:fresh=False
+            if not fresh:state.mujoco_telemetry_valid=False;state.mujoco_partial=True
         # Reuse the original renderer once; do not show v1 rate/aim confirmation.
         result=PolarRMWindow.paint_overlay(self,event,**kwargs)
         existing=kwargs.get('painter');p=existing if existing is not None else QPainter(self)
@@ -48,15 +98,26 @@ class PlatformWindow(OperatorWindow):
             offline=clock.get('kind')=='offline_modeled_latency_v1'
             if offline:label='OFFLINE / SIL | modeled delays | '+str(clock.get('barrier_state','unknown'))
             elif t.role=='spectator':label='V2 OBSERVER | watch only | movement / gimbal / fire disabled'
-            elif r.armed:label='V2 MANUAL | WASD / mouse target / left fire | F12 release'
+            elif r.armed:label=('V2 OPERATOR | '+t.adapter_feedback()+' | fire manual | F12 release') if t.plan else 'V2 MANUAL | WASD / mouse target / left fire | F12 release'
             elif t.owned_robot:label='V2 LEASE CLAIMED, DISARMED | F2 arm | F12 release'
             elif t.claim_pending:label='V2 CLAIM PENDING | no input sent'
             else:label='V2 DISARMED | '+r.note
-            p.save();p.setPen(QColor('#73f2df'));p.setFont(QFont('Sans Serif',10));p.drawText(QRectF(18,58,width-36,24),Qt.AlignmentFlag.AlignCenter,label);p.restore()
             camera=t.snapshot()
             age=max(0.,t.clock()-camera[2]) if camera[1] is not None else None
             detail=('CAMERA %.2fs old | low-FPS | display TTL %.1fs' % (age,t.max_frame_age)) if age is not None else 'CAMERA unavailable | manual control disabled'
-            p.save();p.setPen(QColor('#e3c78b'));p.setFont(QFont('Sans Serif',8));p.drawText(QRectF(14,62,min(430,width-28),20),Qt.AlignmentFlag.AlignLeft,detail);p.restore()
+            presenter=getattr(r,'spin_status',None)
+            try:spin=presenter.snapshot() if presenter is not None else dict(reason='unknown')
+            except Exception:spin=dict(reason='presentation unavailable')
+            lines=['SIM ONLY | '+label,detail]+status_lines(spin)
+            font=QFont('Sans Serif',8);metrics=QFontMetricsF(font)
+            p.save();p.setFont(font)
+            regions=reserved_regions(self,width,height)
+            rectangles=status_layout(width,height,len(lines),regions)
+            for index,(text,rect) in enumerate(zip(lines,rectangles)):
+                p.setPen(QColor('#e3c78b' if index==1 else '#73f2df'))
+                shown=metrics.elidedText(text,Qt.TextElideMode.ElideRight,rect[2])
+                p.drawText(QRectF(*rect),Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter,shown)
+            p.restore()
             if existing is None:p.end()
         return result
 

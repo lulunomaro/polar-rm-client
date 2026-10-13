@@ -46,7 +46,7 @@ class SamplingTests(unittest.TestCase):
         self.input();self.t.control_tick();self.input();self.c.on_control=lambda ch:self.now.__setitem__(0,100.15)
         self.t.control_tick();self.assertEqual([c[2] for c in self.controls()],['motion']);self.assertFalse(self.t._focus)
     def test_new_window_requires_new_sampling_again(self):
-        self.input();self.t.control_tick();self.input();self.t.control_tick();self.now[0]+=.101;self.t.heartbeat(True)
+        self.input();self.t.control_tick();self.input();self.t.control_tick();self.now[0]+=.075;self.t.heartbeat(True)
         self.input();self.t.control_tick();self.assertEqual(self.c.window_count,2);self.t.control_tick();self.assertEqual(len(self.controls()),3)
         self.input();self.t.control_tick();self.assertEqual(len(self.controls()),6);self.assertEqual(self.controls()[-1][4]['window_id'],2)
     def test_no_mouse_only_refresh_of_old_keyboard_sample(self):

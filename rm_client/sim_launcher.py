@@ -29,6 +29,17 @@ def plain_file(path,limit=1024*1024*1024):
  if not stat.S_ISREG(info.st_mode) or info.st_size>limit:raise LaunchError('Expected bounded ordinary file: '+str(path))
  return path
 
+def python_executable(path,limit=1024*1024*1024):
+ # A venv's Python is commonly a symlink to its base interpreter. Calling the
+ # resolved target loses pyvenv.cfg discovery and selects a different sys.prefix.
+ # Preserve the explicit invocation path, including symlinked parent folders.
+ path=Path(path).expanduser()
+ if not path.is_absolute():path=Path.cwd()/path
+ info=path.stat()
+ if not stat.S_ISREG(info.st_mode) or info.st_size>limit:raise LaunchError('Expected bounded Python executable: '+str(path))
+ if not os.access(path,os.X_OK):raise LaunchError('Python path is not executable: '+str(path))
+ return path
+
 def digest(path):
  h=hashlib.sha256()
  with plain_file(path).open('rb') as stream:
@@ -100,7 +111,7 @@ def make_plan(a,client_root,*,host=None,environ=None):
  if host=='win32' and (a.gl=='egl' or env.get('MUJOCO_GL','').lower()=='egl'):raise LaunchError('EGL server path is Linux-only in this launcher')
  nr=Path(a.nav_root).expanduser().resolve(strict=True);cr=Path(client_root).resolve(strict=True)
  if not nr.is_dir() or not cr.is_dir():raise LaunchError('Repository roots must be directories')
- np=plain_file(a.nav_python);cp=plain_file(a.client_python)
+ np=python_executable(a.nav_python);cp=python_executable(a.client_python)
  out=a.out.expanduser().absolute()
  if out.exists() or out.is_symlink():raise LaunchError('Output must be a new directory')
  files={'nav_main':plain_file(nr/'rm_match/platform_v2/__main__.py'),'client_main':plain_file(cr/'main.py'),'client_sim_entry':plain_file(cr/'rm_client/ui/sim_platform_window.py')}
