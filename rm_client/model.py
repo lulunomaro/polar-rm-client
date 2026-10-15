@@ -32,7 +32,7 @@ CONTROL_BIND_OPTIONS = [
 ]
 # These keys are consumed by the window before control dispatch. Do not offer
 # a binding which can never reach its slot (F12 must remain the E-stop).
-CONTROL_RESERVED_KEYS = frozenset({"rightshift", "tab", "f8", "f9", "f12"})
+CONTROL_RESERVED_KEYS = frozenset({"rightshift", "tab", "f8", "f9", "f11", "f12"})
 CONTROL_BIND_OPTIONS = [key for key in CONTROL_BIND_OPTIONS if key.lower() not in CONTROL_RESERVED_KEYS]
 # Module shortcuts use the window's printable-key dispatcher, not the limited
 # driver-slot enum. Keep these distinct so a visual keyboard cannot invent an

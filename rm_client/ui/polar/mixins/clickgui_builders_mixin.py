@@ -379,7 +379,7 @@ class ClickGuiBuildersMixin:
         commands.text(tip.adjusted(12.0 * scale, 0, -12.0 * scale, 0), ui_text("Press 1/2 to load. Backspace returns." if is_match else "Press 1/2/3 to select. Enter continues.", chinese_enabled(self.registry)), self.font("poppins_regular", 7.2 * scale), self.gpu_alpha(THEME.muted, active), Qt.AlignmentFlag.AlignCenter)
 
     def build_gpu_startup_bottom_bar(self, commands: ClickGuiDrawList, width: int, height: int, scale: float, active: float, is_match: bool, *, settled: bool = False) -> None:
-        actions = [("Config", "startup_open_config", None, THEME.cyan), ("Import", "config_action", "Import Config", THEME.pink), ("Wallpaper", "startup_open_wallpaper", None, color("#4677ff")), ("ClickGUI", "startup_open_gui", None, color("#a98aff")), ("Exit", "startup_exit", None, color("#ff6464"))]
+        actions = [("Settings", "startup_open_settings", None, THEME.cyan), ("Config", "startup_open_config", None, THEME.cyan), ("Import", "config_action", "Import Config", THEME.pink), ("Wallpaper", "startup_open_wallpaper", None, color("#4677ff")), ("ClickGUI", "startup_open_gui", None, color("#a98aff")), ("Exit", "startup_exit", None, color("#ff6464"))]
         if is_match:
             actions.insert(0, ("Back", "startup_back", None, color("#ffd766")))
         button_h, gap, button_w = 42.0 * scale, 10.0 * scale, 82.0 * scale
@@ -440,7 +440,7 @@ class ClickGuiBuildersMixin:
                 clip_radius=5.0 * scale,
             )
 
-        actions = [("Config", THEME.cyan), ("Import", THEME.pink), ("Wallpaper", color("#4677ff")), ("ClickGUI", color("#a98aff")), ("Exit", color("#ff6464"))]
+        actions = [("Settings", THEME.cyan), ("Config", THEME.cyan), ("Import", THEME.pink), ("Wallpaper", color("#4677ff")), ("ClickGUI", color("#a98aff")), ("Exit", color("#ff6464"))]
         if is_match:
             actions.insert(0, ("Back", color("#ffd766")))
         button_h, action_gap, action_w = 42.0 * scale, 10.0 * scale, 82.0 * scale

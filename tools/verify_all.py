@@ -56,6 +56,7 @@ PYTHON_SUITES = (
     "test_ui_localization",  # Chinese labels, stable stored IDs and explicit English
     "test_startup_display_locale",  # production startup geometry, cache and toast display
     "test_clickgui_background_dismiss",  # issue #8: blank clicks, controls, drag and hotkeys
+    "test_startup_settings_fullscreen",  # issue #12: launcher settings and window-owned F11
     "test_escape_menu",  # modal input precedence, safe Esc actions and real Qt rendering
     "test_kill_selector_regressions",  # clipped preset popup wheel/touchpad routing
     "test_kill_audio_regressions",  # nonblocking PCM cache, Ready gating and errors; no audio output

@@ -753,6 +753,9 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
             self.refresh_vision_runtime()
         self.toast("ClickGUI 已就绪：Jello Sigma")
 
+        from .window_shortcuts import WindowShortcuts
+        WindowShortcuts(self)  # QObject parent owns the filter for this window.
+
         self.timer = QTimer(self)
         self.timer.setTimerType(Qt.TimerType.PreciseTimer)
         self.timer.timeout.connect(self.on_tick)
@@ -4483,6 +4486,10 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         )
         commands.text(back, ui_text("<  BACK", chinese_enabled(self.registry)), self.font("poppins_bold", 7.5 * scale), self.gpu_alpha(THEME.text, active), Qt.AlignmentFlag.AlignCenter)
         self.add_hotspot(back, "startup_back_match", None, tooltip=ui_text("返回比赛模式选择", chinese_enabled(self.registry)))
+        settings = QRectF(back.right() + 14 * scale, back.top(), 106 * scale, back.height())
+        self.build_gpu_glass_rect(commands, settings, settings.height() / 2.0, active, THEME.cyan)
+        commands.text(settings, ui_text("Settings", chinese_enabled(self.registry)), self.font("poppins_bold", 7.5 * scale), self.gpu_alpha(THEME.text, active), Qt.AlignmentFlag.AlignCenter)
+        self.add_hotspot(settings, "startup_open_settings", None, tooltip=ui_text("Settings", chinese_enabled(self.registry)))
         return commands
 
     # ------------------------------------------------------------------
