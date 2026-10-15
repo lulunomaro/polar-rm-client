@@ -1075,18 +1075,17 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         return baseline
 
     def resizeEvent(self, event) -> None:
-        super().resizeEvent(event)
+        # QOpenGLWidget.resizeEvent recreates its FBO and synchronously calls
+        # paintGL. Invalidate BEFORE delegating: a priority overlay can reuse
+        # the motion layer, whose replacement texture has no pixels yet.
         self.gui_cache.clear()
         self.map_display_cache.clear()
-        self._gpu_background_key = None
-        self._gpu_background_transform_key = None
-        self._gpu_static_ui_key = None
-        self._gpu_motion_layer_ready = False
-        self._gpu_motion_layer_updated_at = 0.0
+        self.invalidate_transient_overlay_scene()
         # Economy text scales with the viewport. Prepare the new font pages on
         # the first idle frame after a resize instead of during the first B
         # press at that resolution.
         self._gpu_warm_pending = True
+        super().resizeEvent(event)
 
     def initializeGL(self) -> None:
         self.gpu_compositor.initialize()
