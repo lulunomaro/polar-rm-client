@@ -15,7 +15,7 @@ from rm_client.ui.jello_clickgui import JelloMainTimeline, JelloReversibleAnimat
 from rm_client.ui.jello_keybinds import (ALL_KEYS, NATIVE_KEYS, BindingSession, KeyboardCanvas,
                                         BindingPicker, build_keyboard_manager, open_keyboard_manager)
 from rm_client.ui.cs2_settings_center import build_settings_center
-from test_cs2_settings_center import Host, APP
+from test_cs2_settings_center import Host, APP, ready_page
 
 
 class JelloKeyboardTests(unittest.TestCase):
@@ -83,7 +83,7 @@ class JelloKeyboardTests(unittest.TestCase):
 
     def test_keyboard_edits_only_settings_page_draft(self):
         dialog=build_settings_center(self.host)
-        page=dialog.pages['键盘 / 鼠标']
+        page=ready_page(dialog,'键盘 / 鼠标')
         session=BindingSession(self.host,page)
         target=next(e for e in session.entries if e.identity==('module','TacticalMap'))
         session.assign(target,'F10');session.apply()
@@ -158,7 +158,7 @@ class JelloKeyboardTests(unittest.TestCase):
 
     def test_binding_button_opens_keyboard_not_old_one_key_overlay(self):
         dialog=build_settings_center(self.host)
-        button=dialog.pages['键盘 / 鼠标'].module_bind_controls['TacticalMap']
+        button=ready_page(dialog,'键盘 / 鼠标').module_bind_controls['TacticalMap']
         with patch('rm_client.ui.jello_keybinds.open_keyboard_manager') as open_:
             button.button.click()
         open_.assert_called_once_with(self.host,dialog.pages['键盘 / 鼠标'],('module','TacticalMap'))
