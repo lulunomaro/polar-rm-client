@@ -1512,6 +1512,12 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         jobs = self._gpu_prewarm_jobs_pending
         if jobs is None or not self.gpu_compositor.available or not self.isVisible():
             return
+        # Atlas work is optional while these UI surfaces are interactive.
+        # Keep the iterator intact; a successful frame resumes it after close.
+        # Esc uses Qt text, not these atlases. Do not let a cold font upload
+        # compete with menu input or native settings construction/animation.
+        if self.escape_menu_visible or QApplication.activeModalWidget() is not None:
+            return
         context = self.context()
         if context is None or not context.isValid():
             return

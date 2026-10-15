@@ -17,11 +17,21 @@ from .jello_clickgui import JelloMainTimeline, JelloReversibleAnimation
 _book = None
 
 
+def use_jello_font_book(book):
+    """Reuse the window's already registered faces on the first native dialog."""
+    global _book
+    if _book is None and isinstance(book, FontBook):
+        _book = book
+
+
 def jello_font(pixels=20, medium=False):
     global _book
     if _book is None:
         _book = FontBook()
-        _book.load_from_project_assets(RuntimePaths.discover().resource_root)
+        _book.load_from_project_assets(
+            RuntimePaths.discover().resource_root,
+            keys=("jello_light", "jello_medium", "jello_regular"),
+        )
     font = _book.font("jello_medium" if medium else "jello_light", pixels * 72 / 96)
     return QFont(font)
 
@@ -96,7 +106,7 @@ def jello_stylesheet(scope="QWidget"):
     """
 
 
-def apply_jello_widgets(widget, scope=None):
+def apply_jello_widgets(widget, scope=None, *, stylesheet=True):
     scope = scope or ("QWidget#" + widget.objectName() if widget.objectName() else "QWidget")
     widget.setFont(jello_font())
     palette = widget.palette()
@@ -104,19 +114,21 @@ def apply_jello_widgets(widget, scope=None):
     for role in (QPalette.ColorRole.WindowText, QPalette.ColorRole.Text): palette.setColor(role, QColor("#333333"))
     palette.setColor(QPalette.ColorRole.ButtonText, QColor("#555555"))
     widget.setPalette(palette)
-    widget.setStyleSheet(jello_stylesheet(scope))
-    # Qt's stylesheet font resolver must not carry a named Light face into a
-    # CJK fallback. Original Jello has no Chinese glyphs; use explicit Regular.
+    # Set selector properties BEFORE installing the sheet. Qt then resolves
+    # each descendant once; unpolish/polish on every child used to repeat that
+    # work after Qt had already styled the entire subtree.
     for child in [widget,*widget.findChildren(QWidget)]:
         text = ""
-        for name in ("text","currentText","placeholderText"):
+        for name in ("text","currentText","placeholderText","title"):
             method = getattr(child,name,None)
             if callable(method):
                 try: text += str(method())
                 except TypeError: pass
-        child.setProperty("jelloCjk",has_cjk(text))
-        if has_cjk(text): child.setFont(cjk_ui_font(jello_font()))
-        child.style().unpolish(child);child.style().polish(child)
+        cjk = has_cjk(text)
+        child.setProperty("jelloCjk",cjk)
+        if cjk: child.setFont(cjk_ui_font(jello_font()))
+    if stylesheet:
+        widget.setStyleSheet(jello_stylesheet(scope))
 
 
 @lru_cache(maxsize=1)

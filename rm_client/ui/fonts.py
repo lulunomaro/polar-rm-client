@@ -26,7 +26,7 @@ class FontBook:
             self._cjk_families_cache = tuple(dict.fromkeys((*preferred, system or "Sans Serif", "Sans Serif")))
         return self._cjk_families_cache
 
-    def load_from_project_assets(self, workspace: Path) -> None:
+    def load_from_project_assets(self, workspace: Path, *, keys=None) -> None:
         # A reloaded face may keep its family name. Invalidate configured
         # font values as well as letting Qt invalidate its raster font cache.
         self._font_cache.clear()
@@ -49,6 +49,8 @@ class FontBook:
             "jello_regular": "Jello-Regular.ttf",
         }
         for key, filename in candidates.items():
+            if keys is not None and key not in keys:
+                continue
             path = self._find_font(Path(workspace), filename)
             if not path.exists():
                 continue
@@ -61,10 +63,12 @@ class FontBook:
         direct = workspace / "assets" / "fonts" / pattern
         if direct.exists():
             return direct
-        for path in workspace.rglob(pattern):
-            if ".venv" in path.parts:
-                continue
-            return path
+        # Bundled faces live only in assets/fonts. A missing optional face
+        # must not scan recordings, user data, SDKs or an entire source tree.
+        # Keep the icon wildcard and nested font-pack layouts within that root.
+        for path in sorted((workspace / "assets" / "fonts").glob("**/" + pattern)):
+            if path.is_file():
+                return path
         return workspace / "__missing_font__"
 
     def font(self, key: str, size: float, weight: int | None = None) -> QFont:
