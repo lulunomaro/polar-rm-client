@@ -1,0 +1,199 @@
+{
+  "root": "/workspace/scratch/8fc313400f06/combined-pr13-16",
+  "qt_version": "6.8.2",
+  "audio_outputs": [],
+  "limits": [
+    "Real Qt offscreen and FFmpeg decoded PCM; no speaker/device assertion.",
+    "KillSoundPool device-availability guard substituted because this host has no output device.",
+    "Focus cases explicitly control applicationState and emit real Qt signal; no operating-system focus claim.",
+    "Production decode completion held in worker with Event, then released before MAX_PENDING_AGE expiry."
+  ],
+  "fixture_sha256": {
+    "kill_cue": "fb4dbcecf30cf0f2d29483f35bb0f60da4ca7094efb5bfb13c6278e5c080dea8",
+    "cs2_manifest": "ade863aa72491386078c67e7a2c592f96a57066f53957e2f3570891fd8aa8841"
+  },
+  "source_sha256": {
+    "rm_client/kill_audio.py": "a3a80af1a0b5d10bf01e82e272fc4f076452a2d00da30d98c26c1f4e718113cd",
+    "rm_client/ui_audio.py": "fa956443b3746fd1710189d15c0a031069e670feb36894d3b17c8d2fccb0c11c",
+    "rm_client/audio_preferences.py": "badf4977e733d42ec3f085df43dd0040409b8658c345e5eb32e418cf633639e3",
+    "rm_client/ui/cs2_settings_center.py": "b8816068c43cf1e64c37890703d5361c89531d458be635502f583497a541fe63"
+  },
+  "checks": [
+    {
+      "name": "requested_while_master_muted",
+      "play_calls": 1,
+      "pcm_bytes": 262656,
+      "nonzero_pcm_bytes": 220614,
+      "volumes": [
+        0.55
+      ],
+      "sources": [
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav"
+      ],
+      "accepted": true,
+      "decoder_started": true,
+      "waiting_before_settings": 1,
+      "waiting_while_muted": 1,
+      "waiting_after_unmute": 1,
+      "stale_cue_reproduced": true,
+      "policy_pass": false
+    },
+    {
+      "name": "mute_then_unmute_during_decode",
+      "play_calls": 1,
+      "pcm_bytes": 262656,
+      "nonzero_pcm_bytes": 220614,
+      "volumes": [
+        0.55
+      ],
+      "sources": [
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav"
+      ],
+      "accepted": true,
+      "decoder_started": true,
+      "waiting_before_settings": 1,
+      "waiting_while_muted": 1,
+      "waiting_after_unmute": 1,
+      "stale_cue_reproduced": true,
+      "policy_pass": false
+    },
+    {
+      "name": "requested_while_unfocused",
+      "play_calls": 1,
+      "pcm_bytes": 262656,
+      "nonzero_pcm_bytes": 220614,
+      "volumes": [
+        0.55
+      ],
+      "sources": [
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav"
+      ],
+      "accepted": true,
+      "decoder_started": true,
+      "waiting_while_unfocused": 1,
+      "stale_cue_reproduced": true,
+      "policy_pass": false
+    },
+    {
+      "name": "focus_lost_then_restored_during_decode",
+      "play_calls": 1,
+      "pcm_bytes": 262656,
+      "nonzero_pcm_bytes": 220614,
+      "volumes": [
+        0.55
+      ],
+      "sources": [
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav"
+      ],
+      "accepted": true,
+      "decoder_started": true,
+      "waiting_while_unfocused": 1,
+      "stale_cue_reproduced": true,
+      "policy_pass": false
+    },
+    {
+      "name": "close_while_decode_pending",
+      "play_calls": 0,
+      "pcm_bytes": 0,
+      "nonzero_pcm_bytes": 0,
+      "volumes": [],
+      "sources": [],
+      "accepted": true,
+      "waiting_after_close": 0,
+      "closed_no_playback": true
+    },
+    {
+      "name": "native_cs2_request_while_master_muted",
+      "play_calls": 0,
+      "pcm_bytes": 0,
+      "nonzero_pcm_bytes": 0,
+      "volumes": [],
+      "sources": [],
+      "accepted": true,
+      "muted_no_playback": true
+    },
+    {
+      "name": "native_cs2_unmuted_repeated",
+      "play_calls": 4,
+      "pcm_bytes": 563392,
+      "nonzero_pcm_bytes": 461184,
+      "volumes": [
+        0.33,
+        0.33,
+        0.33,
+        0.33
+      ],
+      "sources": [
+        "kill.wav",
+        "kill.wav",
+        "kill.wav",
+        "kill.wav"
+      ],
+      "nonzero_pcm_observed": true
+    },
+    {
+      "name": "repeated_preview_settings_close_fullscreen",
+      "play_calls": 12,
+      "pcm_bytes": 3151872,
+      "nonzero_pcm_bytes": 2647368,
+      "volumes": [
+        0.55,
+        0.55,
+        0.55,
+        0.55,
+        0.55,
+        0.55,
+        0.55,
+        0.55,
+        0.55,
+        0.55,
+        0.55,
+        0.55
+      ],
+      "sources": [
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav",
+        "a41aadb2792a27ff19c1f41e0e21fa54670eedc4dc6791f908b70400dc9a263e.wav"
+      ],
+      "fullscreen_transitions": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "dialog_closed": true,
+      "preview_kill_count": 12,
+      "preview_pass": true
+    },
+    {
+      "name": "close_warm_pool_rejects_later_play",
+      "play_calls": 2,
+      "pcm_bytes": 114688,
+      "nonzero_pcm_bytes": 114194,
+      "volumes": [
+        0.55,
+        0.55
+      ],
+      "sources": [
+        "killsound_df.ogg",
+        "killsound_df.ogg"
+      ],
+      "accepted_before_close": true,
+      "states_after_close": [
+        "PlaybackState.PlayingState"
+      ],
+      "accepted_after_close": true,
+      "close_pass": false
+    }
+  ],
+  "pass": true
+}

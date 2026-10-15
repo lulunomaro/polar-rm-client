@@ -753,6 +753,9 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
             self.refresh_vision_runtime()
         self.toast("ClickGUI 已就绪：Jello Sigma")
 
+        from .window_shortcuts import WindowShortcuts
+        WindowShortcuts(self)  # QObject parent owns the filter for this window.
+
         self.timer = QTimer(self)
         self.timer.setTimerType(Qt.TimerType.PreciseTimer)
         self.timer.timeout.connect(self.on_tick)
@@ -1075,18 +1078,17 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         return baseline
 
     def resizeEvent(self, event) -> None:
-        super().resizeEvent(event)
+        # QOpenGLWidget.resizeEvent recreates its FBO and synchronously calls
+        # paintGL. Invalidate BEFORE delegating: a priority overlay can reuse
+        # the motion layer, whose replacement texture has no pixels yet.
         self.gui_cache.clear()
         self.map_display_cache.clear()
-        self._gpu_background_key = None
-        self._gpu_background_transform_key = None
-        self._gpu_static_ui_key = None
-        self._gpu_motion_layer_ready = False
-        self._gpu_motion_layer_updated_at = 0.0
+        self.invalidate_transient_overlay_scene()
         # Economy text scales with the viewport. Prepare the new font pages on
         # the first idle frame after a resize instead of during the first B
         # press at that resolution.
         self._gpu_warm_pending = True
+        super().resizeEvent(event)
 
     def initializeGL(self) -> None:
         self.gpu_compositor.initialize()
@@ -1215,7 +1217,11 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         pages: dict[float, set[str]] = {
             14.0: set(),
             18.0: {">", "Run", "Show all", "Hide", "执行", "显示全部", "收起"},
-            20.0: {module.description, jello_description_label(module.description, True)},
+            20.0: {
+                line
+                for value in (module.description, jello_description_label(module.description, True))
+                for line in self.jello_clickgui.wrapped_description(fonts[20.0], value, 440.0)
+            },
             25.0: set(),
             40.0: {module.name, jello_module_label(module.name, True)},
         }
@@ -1229,7 +1235,9 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         }
         for setting in module.settings:
             localized_setting = jello_setting_label(setting.name, True)
-            pages[14.0].update((setting.name, localized_setting, setting.description, jello_description_label(setting.description, True)))
+            pages[14.0].update((setting.name, localized_setting))
+            for value in (setting.description, jello_description_label(setting.description, True)):
+                pages[14.0].update(self.jello_clickgui.wrapped_description(fonts[14.0], value, 460.0))
             pages[25.0].update((setting.name, localized_setting))
             if setting.kind == "action_group":
                 for option in setting.options:
@@ -1512,6 +1520,12 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         jobs = self._gpu_prewarm_jobs_pending
         if jobs is None or not self.gpu_compositor.available or not self.isVisible():
             return
+        # Atlas work is optional while these UI surfaces are interactive.
+        # Keep the iterator intact; a successful frame resumes it after close.
+        # Esc uses Qt text, not these atlases. Do not let a cold font upload
+        # compete with menu input or native settings construction/animation.
+        if self.escape_menu_visible or QApplication.activeModalWidget() is not None:
+            return
         context = self.context()
         if context is None or not context.isValid():
             return
@@ -1623,8 +1637,14 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
             return False
         width, height = self.width(), self.height()
         ratio = self.devicePixelRatioF()
+        storage_generation = self.gpu_compositor.fbo_generation
         if width <= 0 or height <= 0 or not self.gpu_compositor.ensure_size(width, height, ratio):
             return False
+        if self.gpu_compositor.fbo_generation != storage_generation:
+            # Qt handles DPR-only changes without resizeEvent. Storage or its
+            # DPR interpretation changed, including a priority overlay's
+            # frozen motion layer. Forget readiness before any cache decision.
+            self.invalidate_transient_overlay_scene()
         functions = context.extraFunctions()
         try:
             restore_generation = self._economy_restore_pending_generation
@@ -2065,7 +2085,10 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
             return False
         device = self.gpu_compositor.paint_device("control")
         if device is None:
-            return False
+            # False means an unchanged, valid backdrop to the caller. A bind
+            # failure must instead reject this frame through its existing
+            # compatibility/retry recovery, never present untouched storage.
+            raise RuntimeError("GPU control backdrop paint device unavailable")
         device.setDevicePixelRatio(ratio)
         self.gpu_compositor.clear_current(functions, transparent=True)
         if economy_active:
@@ -4483,6 +4506,10 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         )
         commands.text(back, ui_text("<  BACK", chinese_enabled(self.registry)), self.font("poppins_bold", 7.5 * scale), self.gpu_alpha(THEME.text, active), Qt.AlignmentFlag.AlignCenter)
         self.add_hotspot(back, "startup_back_match", None, tooltip=ui_text("返回比赛模式选择", chinese_enabled(self.registry)))
+        settings = QRectF(back.right() + 14 * scale, back.top(), 106 * scale, back.height())
+        self.build_gpu_glass_rect(commands, settings, settings.height() / 2.0, active, THEME.cyan)
+        commands.text(settings, ui_text("Settings", chinese_enabled(self.registry)), self.font("poppins_bold", 7.5 * scale), self.gpu_alpha(THEME.text, active), Qt.AlignmentFlag.AlignCenter)
+        self.add_hotspot(settings, "startup_open_settings", None, tooltip=ui_text("Settings", chinese_enabled(self.registry)))
         return commands
 
     # ------------------------------------------------------------------

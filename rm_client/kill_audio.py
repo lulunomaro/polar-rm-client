@@ -22,6 +22,7 @@ import wave
 from PySide6.QtCore import QCoreApplication, Signal, Qt
 from PySide6.QtMultimedia import QMediaDevices
 
+from .audio_preferences import cue_volume
 from .runtime_paths import RuntimePaths
 from .ui_audio import ReliableAudioPool, _media_preload_disabled
 
@@ -156,8 +157,12 @@ class KillSoundPool(ReliableAudioPool):
             self._queue_decode(name)
 
     def play(self, name: str, volume: float) -> bool:
+        if self._closed:
+            return False
         self.last_sound = name
-        if volume <= 0:
+        # Check policy before enqueueing a cold decode. Keep the original gain:
+        # ReliableAudioPool applies master volume once when playback starts.
+        if cue_volume(volume) <= 0:
             return True
         if QMediaDevices.defaultAudioOutput().isNull():
             self.last_error = '没有可用的音频输出设备'
@@ -195,8 +200,14 @@ class KillSoundPool(ReliableAudioPool):
                 # Exactly one chosen playback path for each queued request.
                 super().play(name, volume)
 
+    def stop(self) -> None:
+        # Decode/cache work can finish, but old cues must not replay after a
+        # focus restore, audio preference change, or application shutdown.
+        self._waiting.clear()
+        super().stop()
+
     def close(self):
         self._closed = True
-        self._waiting.clear()
+        self.stop()
         if self._executor is not None:
             self._executor.shutdown(wait=False, cancel_futures=True)

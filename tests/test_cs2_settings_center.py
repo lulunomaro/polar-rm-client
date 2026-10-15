@@ -41,6 +41,21 @@ class Host(QWidget):
         return event.text().upper()
 
 
+def ready_page(dialog, name):
+    """Exercise the production event-loop loader, never force a blocking fill."""
+    page = dialog.pages[name] if name in dialog.pages else dialog.crosshair
+    if not dialog.isVisible():
+        dialog.show()
+    dialog.tabs.setCurrentWidget(page)
+    from time import monotonic
+    deadline = monotonic() + 8
+    while not page.builder.ready and not page.builder.error and monotonic() < deadline:
+        QTest.qWait(10)
+    if not page.builder.ready:
+        raise AssertionError(page.builder.error or "settings page did not finish")
+    return page
+
+
 class SettingsTests(unittest.TestCase):
     def setUp(self):
         self.host = Host(); self.addCleanup(self.host.deleteLater)
@@ -88,7 +103,7 @@ class SettingsTests(unittest.TestCase):
         dialog.show(); APP.processEvents()
         self.assertEqual([dialog.tabs.tabText(i) for i in range(dialog.tabs.count())],
                          ["视频", "音频", "游戏", "键盘 / 鼠标", "准星", "界面 / HUD"])
-        page = dialog.pages["键盘 / 鼠标"]
+        page = ready_page(dialog, "键盘 / 鼠标")
         page.controls[("RobotLink", "Mouse Sensitivity")].spin.setValue(1.75)
         self.assertEqual(self.host.registry.get("RobotLink").get_setting("Mouse Sensitivity").value, 1)
         dialog.tabs.setCurrentWidget(page); dialog.apply_button.click()

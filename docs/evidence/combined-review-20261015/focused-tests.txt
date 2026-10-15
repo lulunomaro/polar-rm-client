@@ -1,0 +1,47 @@
+.Saved resolution incompatible with current DPI; using current window
+.....This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+........This plugin does not support raise()
+This plugin does not support grabbing the keyboard
+This plugin does not support raise()
+This plugin does not support raise()
+This plugin does not support grabbing the keyboard
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support raise()
+This plugin does not support raise()
+This plugin does not support grabbing the keyboard
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+..........................................................................................................................................This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+........QOpenGLWidget is not supported on this platform.
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+...qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+...........................击杀音效 PCM 解码失败: cue.ogg: bad decoder
+........音效播放失败: /cue.ogg: Unsupported codec
+.Kill audio: 没有可用的音频输出设备
+.....Kill audio PCM decoder unavailable; using Qt media backend
+.................................................................................This plugin does not support raise()
+This plugin does not support grabbing the keyboard
+..This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+...
+----------------------------------------------------------------------
+Ran 290 tests in 59.909s
+
+OK

@@ -1,0 +1,214 @@
+{
+  "scope": "Qt 6.8.2 Linux offscreen CPU/raster settings benchmark; not GPU or Windows hardware acceptance",
+  "assets": "56 repository blobs verified against main 9599a1c5: all 9 fonts, full CS2 UI pack, Jello check and shadows. Chinese glyphs use the Linux host fallback, not Windows YaHei.",
+  "baseline": {
+    "qt": "6.8.2",
+    "platform": "offscreen",
+    "source": "main 9599a1c5fd8742fd5dd53c1b57fec1effd4827bd (isolated source subset)",
+    "bundled_fonts_present": true,
+    "hardware": false,
+    "opens": [
+      {
+        "index": 0,
+        "build_ms": 1018.8545410019287,
+        "show_ms": 84.58757999687805,
+        "event_ms": 54.23153000083403,
+        "widgets_on_open": 1618,
+        "tabs": []
+      },
+      {
+        "index": 1,
+        "build_ms": 779.0512530009437,
+        "show_ms": 72.01897599952645,
+        "event_ms": 55.01590499989106,
+        "widgets_on_open": 1618,
+        "tabs": []
+      },
+      {
+        "index": 2,
+        "build_ms": 904.8564719996648,
+        "show_ms": 74.16820700018434,
+        "event_ms": 55.22314900008496,
+        "widgets_on_open": 1618,
+        "tabs": []
+      }
+    ]
+  },
+  "fixed": {
+    "qt": "6.8.2",
+    "platform": "offscreen",
+    "source": "fix/first-escape-settings-stall (same source subset + patch)",
+    "bundled_fonts_present": true,
+    "hardware": false,
+    "opens": [
+      {
+        "index": 0,
+        "build_ms": 117.19419400105835,
+        "show_ms": 27.48999499817728,
+        "event_ms": 20.51925600244431,
+        "widgets_on_open": 179,
+        "tabs": [
+          {
+            "name": "音频",
+            "select_handler_ms": 0.6577120002475567,
+            "ready_elapsed_ms": 155.5758149988833,
+            "slices": 8,
+            "max_slice_ms": 32.74660199895152,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "游戏",
+            "select_handler_ms": 0.4810210011783056,
+            "ready_elapsed_ms": 232.37161799988826,
+            "slices": 16,
+            "max_slice_ms": 5.37098499989952,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "键盘 / 鼠标",
+            "select_handler_ms": 0.8402509993175045,
+            "ready_elapsed_ms": 347.90215300017735,
+            "slices": 25,
+            "max_slice_ms": 4.986576997907832,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "准星",
+            "select_handler_ms": 1.6891459999897052,
+            "ready_elapsed_ms": 220.59028100193245,
+            "slices": 4,
+            "max_slice_ms": 65.36779700036277,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "界面 / HUD",
+            "select_handler_ms": 1.2669820025621448,
+            "ready_elapsed_ms": 485.9492460018373,
+            "slices": 34,
+            "max_slice_ms": 5.25459399796091,
+            "error": "",
+            "ready": true
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "build_ms": 100.33165499771712,
+        "show_ms": 18.610597002407303,
+        "event_ms": 10.749690998636652,
+        "widgets_on_open": 179,
+        "tabs": [
+          {
+            "name": "音频",
+            "select_handler_ms": 0.7080760005919728,
+            "ready_elapsed_ms": 122.41363400244154,
+            "slices": 8,
+            "max_slice_ms": 4.89084500077297,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "游戏",
+            "select_handler_ms": 0.5108350014779717,
+            "ready_elapsed_ms": 254.80420500025502,
+            "slices": 17,
+            "max_slice_ms": 5.119863999425434,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "键盘 / 鼠标",
+            "select_handler_ms": 0.7180110005720053,
+            "ready_elapsed_ms": 350.52680800072267,
+            "slices": 25,
+            "max_slice_ms": 17.12151099854964,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "准星",
+            "select_handler_ms": 1.586544000019785,
+            "ready_elapsed_ms": 154.5628210005816,
+            "slices": 4,
+            "max_slice_ms": 46.58772399852751,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "界面 / HUD",
+            "select_handler_ms": 1.2129819988331292,
+            "ready_elapsed_ms": 450.31612899765605,
+            "slices": 33,
+            "max_slice_ms": 5.308284002239816,
+            "error": "",
+            "ready": true
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "build_ms": 64.0441510004166,
+        "show_ms": 16.700698997738073,
+        "event_ms": 8.179415999620687,
+        "widgets_on_open": 179,
+        "tabs": [
+          {
+            "name": "音频",
+            "select_handler_ms": 0.6705710002279375,
+            "ready_elapsed_ms": 108.26654899938148,
+            "slices": 7,
+            "max_slice_ms": 4.710550998424878,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "游戏",
+            "select_handler_ms": 0.5163329988135956,
+            "ready_elapsed_ms": 246.91416199857485,
+            "slices": 16,
+            "max_slice_ms": 5.2327729972603265,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "键盘 / 鼠标",
+            "select_handler_ms": 0.6700800004182383,
+            "ready_elapsed_ms": 322.81750599941006,
+            "slices": 24,
+            "max_slice_ms": 3.379533998668194,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "准星",
+            "select_handler_ms": 2.550017998146359,
+            "ready_elapsed_ms": 163.42264899867587,
+            "slices": 4,
+            "max_slice_ms": 48.68899900247925,
+            "error": "",
+            "ready": true
+          },
+          {
+            "name": "界面 / HUD",
+            "select_handler_ms": 1.360550999379484,
+            "ready_elapsed_ms": 464.6257450003759,
+            "slices": 34,
+            "max_slice_ms": 5.401392001658678,
+            "error": "",
+            "ready": true
+          }
+        ]
+      }
+    ]
+  },
+  "escape_menu_raster_ms": [
+    22.828204000688856,
+    2.14353800038225,
+    1.9504320007399656,
+    2.0026689999212977
+  ]
+}

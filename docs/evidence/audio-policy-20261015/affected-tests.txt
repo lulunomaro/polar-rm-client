@@ -1,0 +1,53 @@
+==== test_audio_replay_regressions.py
+test_different_sources_and_volume_are_preserved (__main__.AudioReplayTests.test_different_sources_and_volume_are_preserved) ... ok
+test_full_busy_pool_remains_bounded_and_rotates (__main__.AudioReplayTests.test_full_busy_pool_remains_bounded_and_rotates) ... ok
+test_hit_does_not_steal_first_kill_while_pool_has_capacity (__main__.AudioReplayTests.test_hit_does_not_steal_first_kill_while_pool_has_capacity) ... ok
+test_loading_voice_is_not_stolen_while_pool_has_capacity (__main__.AudioReplayTests.test_loading_voice_is_not_stolen_while_pool_has_capacity) ... ok
+test_missing_sound_does_not_consume_a_voice (__main__.AudioReplayTests.test_missing_sound_does_not_consume_a_voice) ... ok
+test_muted_cue_does_not_interrupt_or_allocate (__main__.AudioReplayTests.test_muted_cue_does_not_interrupt_or_allocate) ... ok
+test_new_voice_is_used_without_stopping_first_kill (__main__.AudioReplayTests.test_new_voice_is_used_without_stopping_first_kill) ... ok
+test_preloaded_same_source_replays_after_finish (__main__.AudioReplayTests.test_preloaded_same_source_replays_after_finish) ... ok
+test_sequential_finished_same_source_replays_from_zero (__main__.AudioReplayTests.test_sequential_finished_same_source_replays_from_zero) ... ok
+test_cs2_native_success_does_not_add_a_fallback_cue (__main__.KillCueSelectionTests.test_cs2_native_success_does_not_add_a_fallback_cue) ... ok
+test_different_victims_and_expired_repeat_have_no_bonus (__main__.KillCueSelectionTests.test_different_victims_and_expired_repeat_have_no_bonus) ... ok
+test_disabling_bonus_keeps_normal_sound_on_every_kill (__main__.KillCueSelectionTests.test_disabling_bonus_keeps_normal_sound_on_every_kill) ... ok
+test_explicit_bonus_tag_keeps_kill_cue_even_if_bonus_file_is_missing (__main__.KillCueSelectionTests.test_explicit_bonus_tag_keeps_kill_cue_even_if_bonus_file_is_missing) ... ok
+test_repeated_same_victim_retains_selected_kill_cue_for_every_preset (__main__.KillCueSelectionTests.test_repeated_same_victim_retains_selected_kill_cue_for_every_preset) ... ok
+test_sound_disabled_and_death_stay_silent (__main__.KillCueSelectionTests.test_sound_disabled_and_death_stay_silent) ... ok
+test_repeated_six_kill_preview_keeps_combo_progression (__main__.PreviewAudioTests.test_repeated_six_kill_preview_keeps_combo_progression) ... ok
+test_test_elimination_button_keeps_cue_on_repeated_clicks (__main__.PreviewAudioTests.test_test_elimination_button_keeps_cue_on_repeated_clicks) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.063s
+
+OK
+==== test_cs2_settings_center.py
+.Saved resolution incompatible with current DPI; using current window
+.....This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+......
+----------------------------------------------------------------------
+Ran 12 tests in 1.177s
+
+OK
+==== test_settings_cold_start.py
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 7.726s
+
+OK
+==== test_startup_settings_fullscreen.py
+.....This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+........QOpenGLWidget is not supported on this platform.
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+......
+----------------------------------------------------------------------
+Ran 19 tests in 3.138s
+
+OK

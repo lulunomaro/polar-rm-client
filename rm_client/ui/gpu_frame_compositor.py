@@ -222,6 +222,9 @@ class GpuFrameCompositor:
         self.target_fbo: QOpenGLFramebufferObject | None = None
         self._size = QSize()
         self._device_pixel_ratio = 1.0
+        # Scene metadata belongs to this storage and pixel ratio, not just
+        # the widget's logical size. DPR can change without resizeEvent.
+        self.fbo_generation = 0
         # 静态 HUD 与逐帧动画镜片必须分开。旧实现只在静态层失效时
         # 清空一个总列表，动态岛和地图镜片会逐帧累积并把画面洗白。
         self._static_glass_commands: list[GlassCommand] = []
@@ -309,6 +312,12 @@ class GpuFrameCompositor:
                 self.target_fbo,
             )
         ):
+            if ratio != self._device_pixel_ratio:
+                # Equal physical sizes can still represent different logical
+                # geometry. Retain storage, but redraw its content and blur.
+                self.fbo_generation += 1
+                self._blur_valid = False
+                self._treated_blur_valid = False
             self._device_pixel_ratio = ratio
             return True
         self._destroy_fbos()
@@ -358,6 +367,7 @@ class GpuFrameCompositor:
             self._device_pixel_ratio = ratio
             self._blur_valid = False
             self._treated_blur_valid = False
+            self.fbo_generation += 1
             return True
         except Exception as exc:
             self.last_error = str(exc)

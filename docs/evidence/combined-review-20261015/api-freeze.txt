@@ -1,0 +1,18 @@
+QOpenGLWidget is not supported on this platform.
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+API 冻结面一致：无差异。
+成员总数=1158（bound-method=542, callable=331, method=11, plain-attribute=273, property=1）；volatile 排除=26，实际比对=1132
+PASS: 与基线 api_freeze_baseline.json 一致

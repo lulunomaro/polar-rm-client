@@ -248,13 +248,22 @@ class _ShapedLine:
 
 
 @dataclass
-class _ShapedTextAtlas:
+class _ShapedTextPage:
     texture: QOpenGLTexture
+    lines: dict[str, _ShapedLine]
+    pixels: int
+
+
+@dataclass
+class _ShapedTextAtlas:
+    texture: QOpenGLTexture | None
     lines: dict[str, _ShapedLine]
     raster_font: QFont
     ratio: float
     sample_scale: float
     raster_scale: float
+    pages: tuple[_ShapedTextPage, ...] = ()
+    line_pages: dict[str, _ShapedTextPage] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -331,6 +340,15 @@ class GlyphAtlasSnapshot:
 
 class ClickGuiGpuRenderer:
     """独立 GPU ClickGUI 渲染器；不与 QPainter 在同一层交替绘制。"""
+
+    # Each immutable shaped page is small enough to add a settings page
+    # without rerasterizing its entire browsing history. Retention is per
+    # exact font/DPR key; the current request is never evicted for the budget.
+    _SHAPED_PAGE_PIXELS = 1024 * 1024
+    _SHAPED_PAGE_LINES = 64
+    _SHAPED_CACHE_PIXELS = 4 * 1024 * 1024
+    _SHAPED_CACHE_LINES = 2048
+    _SHAPED_CACHE_PAGES = 64
 
     def __init__(self) -> None:
         self.available = False
@@ -1174,28 +1192,17 @@ class ClickGuiGpuRenderer:
         raster_scale = max(0.25, float(raster_scale))
         key = self._font_key(font, raster_scale, preserve_weight)
         requested = {str(value) for value in texts if str(value)}
-        known = self._shaped_texts.setdefault(key, set())
+        known = self._shaped_texts.get(key, set())
         current = self.shaped_atlases.get(key)
-        # Warm frames usually request a small subset of a preloaded page.
-        # Avoid copying/comparing its entire (up to 2048-line) set each frame.
-        # Oversized pages still take the original bounded-retention path.
-        if current is not None and len(known) <= 2048 and requested.issubset(known):
-            self.atlas_hits += 1
-            return current
-        before = set(known)
-        known.update(requested)
-        # A settings description can be supplied by a plugin.  Keep the cache
-        # bounded while always retaining strings needed by this frame.
-        if len(known) > 2048:
-            retained = set(sorted(known)[: max(0, 2048 - len(requested))])
-            known.intersection_update(retained | requested)
-        current = self.shaped_atlases.get(key)
-        if current is not None and known == before:
+        if current is not None and requested.issubset(known):
             self.atlas_hits += 1
             return current
         if self._atlas_locked:
             raise RuntimeError("shaped text atlas mutation attempted during a render pass")
         self.atlas_misses += 1
+        # Nothing is advertised as resident until every new page succeeds.
+        # A failed allocation must not poison future warm-hit/ready checks.
+        missing = requested - known if current is not None else requested
 
         if font.pointSizeF() > 0:
             logical_px = font.pointSizeF() * (96.0 / 72.0)
@@ -1218,12 +1225,13 @@ class ClickGuiGpuRenderer:
 
         padding = max(3, int(math.ceil(sample_scale * self._pixel_ratio)))
         prepared: list[tuple[str, QTextLayout, int, int, float, float, float]] = []
-        for value in sorted(known):
+        pending_layouts = {}
+        for value in sorted(missing):
             layout_key = (key, value)
             shaped = self._shaped_layouts.get(layout_key)
             if shaped is None:
                 shaped = self._jello_text_layout(value, raster_font)
-                self._shaped_layouts[layout_key] = shaped
+                pending_layouts[layout_key] = shaped
             layout, advance, line_height, ascent = shaped
             cell_width = max(1, int(math.ceil(advance)) + padding * 2 + 2)
             cell_height = max(1, int(math.ceil(line_height)) + padding * 2 + 2)
@@ -1231,6 +1239,64 @@ class ClickGuiGpuRenderer:
                 raise RuntimeError(f"shaped Jello line exceeds 4096px: {value[:80]!r}")
             prepared.append((value, layout, cell_width, cell_height, advance, line_height, ascent))
 
+        created = []
+        chunk = []
+        area = 0
+        try:
+            for item in prepared:
+                item_area = item[2] * item[3]
+                if chunk and (len(chunk) >= self._SHAPED_PAGE_LINES
+                              or area + item_area > self._SHAPED_PAGE_PIXELS):
+                    created.append(self._rasterize_shaped_page(chunk, padding, sample_scale, raster_scale))
+                    chunk, area = [], 0
+                chunk.append(item)
+                area += item_area
+            if chunk:
+                created.append(self._rasterize_shaped_page(chunk, padding, sample_scale, raster_scale))
+        except Exception:
+            for page in created:
+                page.texture.destroy()
+            raise
+
+        pages = [*(current.pages if current is not None else ()), *created]
+        # Evict whole untouched pages only. Coordinates and pixels on retained
+        # pages never change, and every line needed by this frame stays valid.
+        protected = {id(page) for page in pages if requested.intersection(page.lines)}
+        pixels = sum(page.pixels for page in pages)
+        count = sum(len(page.lines) for page in pages)
+        page_count = len(pages)
+        retained, evicted = [], []
+        for page in pages:
+            if (id(page) not in protected and
+                    (pixels > self._SHAPED_CACHE_PIXELS or count > self._SHAPED_CACHE_LINES
+                     or page_count > self._SHAPED_CACHE_PAGES)):
+                pixels -= page.pixels
+                count -= len(page.lines)
+                page_count -= 1
+                evicted.append(page)
+            else:
+                retained.append(page)
+        # Put requested pages at the recent end for the next miss. This is
+        # metadata-only and runs before the render-pass lock is acquired.
+        retained.sort(key=lambda page: id(page) in protected)
+        lines = {value: line for page in retained for value, line in page.lines.items()}
+        line_pages = {value: page for page in retained for value in page.lines}
+        published = _ShapedTextAtlas(
+            retained[0].texture if retained else None, lines, raster_font,
+            self._pixel_ratio, sample_scale, raster_scale, tuple(retained), line_pages,
+        )
+        self.shaped_atlases[key] = published
+        self._shaped_texts[key] = set(lines)
+        self._shaped_layouts.update(pending_layouts)
+        self.atlas_generation += 1
+        for page in evicted:
+            page.texture.destroy()
+            for value in page.lines:
+                self._shaped_layouts.pop((key, value), None)
+        return published
+
+    def _rasterize_shaped_page(self, prepared, padding, sample_scale, raster_scale):
+        """Rasterize new lines only; publish the immutable texture atomically."""
         def pack(atlas_width: int):
             placements: list[tuple[int, int]] = []
             x = y = row_height = 0
@@ -1253,7 +1319,7 @@ class ClickGuiGpuRenderer:
             target_width = 4096
             placements, atlas_height = pack(target_width)
         if atlas_height > 4096:
-            raise RuntimeError(f"shaped Jello atlas exceeds 4096px for {font.family()} {font.pointSizeF():g}pt")
+            raise RuntimeError("shaped Jello page exceeds 4096px")
 
         atlas_width = max(1, target_width)
         image = QImage(atlas_width, max(1, atlas_height), QImage.Format.Format_ARGB32_Premultiplied)
@@ -1284,23 +1350,14 @@ class ClickGuiGpuRenderer:
         painter.end()
 
         texture = QOpenGLTexture(image, QOpenGLTexture.MipMapGeneration.DontGenerateMipMaps)
-        texture.setMinificationFilter(QOpenGLTexture.Filter.Linear)
-        texture.setMagnificationFilter(QOpenGLTexture.Filter.Linear)
-        texture.setWrapMode(QOpenGLTexture.WrapMode.ClampToEdge)
-        published = _ShapedTextAtlas(
-            texture,
-            lines,
-            raster_font,
-            self._pixel_ratio,
-            sample_scale,
-            raster_scale,
-        )
-        old = self.shaped_atlases.get(key)
-        self.shaped_atlases[key] = published
-        self.atlas_generation += 1
-        if old is not None:
-            old.texture.destroy()
-        return published
+        try:
+            texture.setMinificationFilter(QOpenGLTexture.Filter.Linear)
+            texture.setMagnificationFilter(QOpenGLTexture.Filter.Linear)
+            texture.setWrapMode(QOpenGLTexture.WrapMode.ClampToEdge)
+        except Exception:
+            texture.destroy()
+            raise
+        return _ShapedTextPage(texture, lines, atlas_width * atlas_height)
 
     def _ensure_atlas(
         self,
@@ -1313,24 +1370,19 @@ class ClickGuiGpuRenderer:
         """Create a complete atlas page and swap it only at a frame boundary."""
         raster_scale = max(0.25, float(raster_scale))
         key = self._font_key(font, raster_scale, preserve_weight)
-        chars = self._atlas_chars.setdefault(key, set())
+        known = self._atlas_chars.get(key, set())
         current = self.atlases.get(key)
-        # Check only this frame's glyphs on a warm page; retain the original
-        # eviction/rebuild and render-pass lock behavior for every miss.
-        if current is not None and len(chars) <= 1024 and chars.issuperset(text):
-            self.atlas_hits += 1
-            return current
-        before = set(chars)
-        chars.update(text)
-        if len(chars) > 1024:
-            chars.intersection_update(set(sorted(chars)[:1024]))
-        current = self.atlases.get(key)
-        if current is not None and chars == before:
+        if current is not None and known.issuperset(text):
             self.atlas_hits += 1
             return current
         if self._atlas_locked:
             raise RuntimeError("glyph atlas mutation attempted during a render pass")
         self.atlas_misses += 1
+        requested = set(text)
+        chars = known | requested
+        if len(chars) > 1024:
+            # Discard old optional glyphs, never a glyph requested now.
+            chars = requested | set(sorted(known - requested)[:max(0, 1024 - len(requested))])
 
         raster_font = QFont(font)
         # Snap sizes to whole device pixels — fractional pt × dpr is a top cause of mushy 1K GUI text.
@@ -1435,9 +1487,13 @@ class ClickGuiGpuRenderer:
             QOpenGLTexture.MipMapGeneration.DontGenerateMipMaps,
         )
         # Nearest keeps ClickGUI labels crisp at 1K; Linear was milk-blurring small Poppins.
-        new_texture.setMinificationFilter(QOpenGLTexture.Filter.Linear)
-        new_texture.setMagnificationFilter(QOpenGLTexture.Filter.Linear)
-        new_texture.setWrapMode(QOpenGLTexture.WrapMode.ClampToEdge)
+        try:
+            new_texture.setMinificationFilter(QOpenGLTexture.Filter.Linear)
+            new_texture.setMagnificationFilter(QOpenGLTexture.Filter.Linear)
+            new_texture.setWrapMode(QOpenGLTexture.WrapMode.ClampToEdge)
+        except Exception:
+            new_texture.destroy()
+            raise
         published = _GlyphAtlas(
             new_texture,
             glyphs,
@@ -1448,6 +1504,7 @@ class ClickGuiGpuRenderer:
         )
         old = self.atlases.get(key)
         self.atlases[key] = published
+        self._atlas_chars[key] = chars
         self.atlas_generation += 1
         if old is not None:
             old.texture.destroy()
@@ -1544,10 +1601,25 @@ class ClickGuiGpuRenderer:
             index = end
 
     def _draw_shaped_text_batch(
+        self, functions, commands, atlas: _ShapedTextAtlas, width: int, height: int,
+    ) -> None:
+        # Never globally regroup by texture: translucent text/shadow ordering
+        # must match the input commands across glass and control layers.
+        index = 0
+        while index < len(commands):
+            page = atlas.line_pages.get(commands[index].text)
+            end = index + 1
+            while end < len(commands) and atlas.line_pages.get(commands[end].text) is page:
+                end += 1
+            if page is not None:
+                self._draw_shaped_page_batch(functions, commands[index:end], page, width, height)
+            index = end
+
+    def _draw_shaped_page_batch(
         self,
         functions,
         commands: list[GpuText],
-        atlas: _ShapedTextAtlas,
+        atlas: _ShapedTextPage,
         width: int,
         height: int,
     ) -> None:
@@ -1781,7 +1853,8 @@ class ClickGuiGpuRenderer:
         self.atlases.clear()
         self._atlas_chars.clear()
         for atlas in self.shaped_atlases.values():
-            atlas.texture.destroy()
+            for page in atlas.pages:
+                page.texture.destroy()
         self.shaped_atlases.clear()
         self._shaped_texts.clear()
         self._shaped_layouts.clear()

@@ -35,7 +35,9 @@ import math
 import time
 from typing import Any
 
-from PySide6.QtCore import QPointF, QRectF, Qt
+import numpy as np
+
+from PySide6.QtCore import QPointF, QRect, QRectF, Qt
 from PySide6.QtGui import (
     QBrush,
     QColor,
@@ -43,6 +45,7 @@ from PySide6.QtGui import (
     QLinearGradient,
     QPainter,
     QPainterPath,
+    QPicture,
     QPen,
     QRadialGradient,
 )
@@ -144,6 +147,65 @@ class CombatTargetHudMixin:
         roi_px = max(64, min(roi_px, 512))
         roi_px = (roi_px + 3) // 4 * 4
 
+        # Resolve presence once before selecting the rendering path. Only CS
+        # primitives are recorded; target HUD text retains direct Qt rasterization.
+        now = time.perf_counter()
+        result = self.interpolated_vision_result(now)
+        presence = self.target_hud_presence.update(now, self.has_valid_combat_target(result))
+        target_visible = bool(module and module.enabled and presence.visible)
+        crosshair = self.registry.get("Crosshair")
+        style = crosshair.get_setting("Style") if crosshair is not None else None
+        if not target_visible and crosshair is not None and crosshair.enabled and style is not None and style.value == "CS2":
+            # The ring-sized central ROI clips large CS profiles. Record one
+            # CS primitive draw in physical coordinates.
+            # QPicture stores vector commands, not a viewport-sized pixel image.
+            fb_w = max(1, int(round(float(width) * float(ratio))))
+            fb_h = max(1, int(round(float(height) * float(ratio))))
+            picture = QPicture()
+            painter = QPainter(picture)
+            painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+            painter.setRenderHint(QPainter.RenderHint.TextAntialiasing, True)
+            painter.translate(fb_w * 0.5, fb_h * 0.5)
+            painter.scale(pixel_scale, pixel_scale)
+            painter.translate(-logical_width * 0.5, -logical_height * 0.5)
+            self.draw_crosshair(painter, logical_width, logical_height)
+            painter.end()
+            bounds = picture.boundingRect()
+            if bounds.isEmpty():
+                return True
+            bounds = bounds.adjusted(-2, -2, 2, 2).intersected(QRect(0, 0, fb_w, fb_h))
+            # One normal crosshair is a tiny patch. Extreme profiles use bounded
+            # tiles, never an unbounded/full-frame QImage or a new GPU texture.
+            # Two guard pixels prevent Qt's aliased curve clipper from
+            # changing a boundary pixel on adjacent independently drawn tiles.
+            for y in range(bounds.top(), bounds.bottom() + 1, 508):
+                for x in range(bounds.left(), bounds.right() + 1, 508):
+                    tile_w = min(508, bounds.right() - x + 1)
+                    tile_h = min(508, bounds.bottom() - y + 1)
+                    image = QImage(tile_w + 4, tile_h + 4, QImage.Format.Format_ARGB32_Premultiplied)
+                    if image.isNull():
+                        return False
+                    image.fill(0)
+                    painter = QPainter(image)
+                    painter.drawPicture(QPointF(2 - x, 2 - y), picture)
+                    painter.end()
+                    # A huge gap/circle may put all primitives offscreen, or
+                    # leave only a thin arm in a tile. Avoid uploading and
+                    # sanitizing transparent full-frame-equivalent patches.
+                    pixels = np.frombuffer(image.constBits(), dtype=np.uint32)
+                    pixels = pixels.reshape(image.height(), image.bytesPerLine() // 4)
+                    core = pixels[2:tile_h + 2, 2:tile_w + 2]
+                    rows = np.flatnonzero(core.any(axis=1))
+                    if not rows.size:
+                        continue
+                    cols = np.flatnonzero(core.any(axis=0))
+                    left, right = max(0, int(cols[0]) - 2), min(tile_w, int(cols[-1]) + 3)
+                    top, bottom = max(0, int(rows[0]) - 2), min(tile_h, int(rows[-1]) + 3)
+                    tile = image.copy(left + 2, top + 2, right - left, bottom - top)
+                    if tile.isNull() or not self.gpu_compositor.upload_target_region(functions, tile, x + left, y + top):
+                        return False
+            return True
         image = QImage(roi_px, roi_px, QImage.Format.Format_ARGB32_Premultiplied)
         image.fill(0)
         painter = QPainter(image)
@@ -154,14 +216,12 @@ class CombatTargetHudMixin:
         painter.translate(roi_px * 0.5, roi_px * 0.5)
         painter.scale(pixel_scale, pixel_scale)
         painter.translate(-logical_width * 0.5, -logical_height * 0.5)
-        now = time.perf_counter()
-        self.paint_combat_target_overlay(
-            painter,
-            logical_width,
-            logical_height,
-            self.interpolated_vision_result(now),
-            now,
-        )
+        if target_visible:
+            self.draw_combat_target_hud_layer(
+                painter, logical_width, logical_height, module, presence=presence,
+            )
+        elif crosshair is not None and crosshair.enabled:
+            self.draw_crosshair(painter, logical_width, logical_height)
         painter.end()
 
         fb_w = max(1, int(round(float(width) * float(ratio))))

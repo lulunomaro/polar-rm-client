@@ -17,7 +17,8 @@ from PySide6.QtWidgets import (
 
 from ..model import CONTROL_BIND_OPTIONS, MODULE_BIND_OPTIONS, CONTROL_RESERVED_KEYS, CONTROL_SLOT_ORDER, build_default_registry, Setting
 from .jello_locale import module_label, option_label, setting_label
-from .jello_widgets import JelloDialog, JelloCheckBox as QCheckBox, JelloComboBox as QComboBox, apply_jello_widgets, jello_font
+from .jello_widgets import JelloDialog, JelloCheckBox as QCheckBox, JelloComboBox as QComboBox, apply_jello_widgets, jello_font, use_jello_font_book
+from .settings_preparation import SettingsBuildQueue
 
 
 # None means all scalar preferences, never action/action_group controls.
@@ -211,21 +212,47 @@ class NumberControl(QWidget):
 
 
 class RegistrySettingsPage(QScrollArea):
-    def __init__(self, host, page, defaults):
+    def __init__(self, host, page, defaults, *, deferred=False):
         super().__init__()
         self.host, self.page, self.defaults = host, page, defaults
         self.controls, self.toggle_controls, self.module_bind_controls = {}, {}, {}
         self.audio_controls = {}
+        self._baseline, self._forced_dirty = {}, set()
         self.search_rows, self.groups = [], []
         self.setWidgetResizable(True)
         self.content = QWidget(); self.setWidget(self.content)
         root = QVBoxLayout(self.content); root.setSpacing(22)
+        self.loading = QLabel("正在准备设置…")
+        root.addWidget(self.loading)
+        self.content.setEnabled(False)
+        self.builder = SettingsBuildQueue(self, self._build_rows())
+        self.builder.finished.connect(self._finish_build)
+        if not deferred:
+            for _ in self.builder.steps:
+                pass
+            self.builder.ready = True
+            self._finish_build()
+
+    def _finish_build(self):
+        if self.builder.error:
+            self.loading.setText("设置加载失败：" + self.builder.error)
+        else:
+            self.loading.hide()
+            self.content.setEnabled(True)
+            self._baseline = self._draft_values()
+            self.refresh_clean_draft()
+        self.filter(getattr(self, "_query", ""))
+
+    def _build_rows(self):
+        host, page = self.host, self.page
+        root = self.content.layout()
         if page == "音频":
             from ..audio_preferences import current_audio
             from PySide6.QtMultimedia import QMediaDevices
             prefs = current_audio()
-            box = QGroupBox("音频输出"); root.addWidget(box)
+            box = QGroupBox("音频输出"); apply_jello_widgets(box, stylesheet=False); root.addWidget(box)
             form = QFormLayout(box); form.setSpacing(17); self.groups.append((box, []))
+            yield
             device = QComboBox(); device.addItem("系统默认设备", "default")
             for item in QMediaDevices.audioOutputs(): device.addItem(item.description(), bytes(item.id()).hex())
             if device.findData(prefs.device_id) < 0:
@@ -235,19 +262,24 @@ class RegistrySettingsPage(QScrollArea):
             mute = QCheckBox("切换至其他窗口时静音"); mute.setChecked(prefs.mute_unfocused)
             self.audio_controls = {"device_id": device, "master_volume": volume, "mute_unfocused": mute}
             self.add_row(form, "Audio", "音频输出设备", device, "output device")
+            yield
             self.add_row(form, "Audio", "主音量", volume, "master volume")
+            yield
             self.add_row(form, "Audio", "后台静音", mute, "mute unfocused")
+            yield
         for module, settings, toggle in settings_specs(host.registry, page):
             title = module_label(module.name, True)
             if module.name == "RobotLink": title = "鼠标设置与驾驶键位"
-            box = QGroupBox(title); root.addWidget(box)
+            box = QGroupBox(title); apply_jello_widgets(box, stylesheet=False); root.addWidget(box)
             form = QFormLayout(box); form.setSpacing(17)
             form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
             self.groups.append((box, []))
+            yield
             if toggle:
                 widget = QCheckBox("已启用"); widget.setChecked(module.enabled)
                 self.toggle_controls[module.name] = widget
                 self.add_row(form, module.name, "模块开关", widget)
+                yield
             for setting in settings:
                 if setting.name.startswith("Bind "):
                     widget = BindingControl(host, setting.value, manager=self, binding_id=(module.name,setting.name))
@@ -264,59 +296,131 @@ class RegistrySettingsPage(QScrollArea):
                 widget.setToolTip(setting.description or f"{title} · {setting_label(setting.name, True)}")
                 self.controls[(module.name, setting.name)] = widget
                 self.add_row(form, module.name, _EXTRA_LABELS.get(setting.name, setting_label(setting.name, True)), widget, setting.name)
+                yield
         if page == "键盘 / 鼠标":
             from .jello_keybinds import open_keyboard_manager
             keyboard_button = QPushButton("Open Keybind Manager / 打开键盘绑定管理器")
             keyboard_button.clicked.connect(lambda: open_keyboard_manager(host,self))
+            apply_jello_widgets(keyboard_button, stylesheet=False)
             root.insertWidget(0,keyboard_button)
             note = QLabel("驾驶键发送的仍是官方协议槽位；不会改固件。鼠标倍率只作用于本客户端输入，不修改NUC自瞄或DT7原始输入。\n"
-                          "F12急停、RightShift/Tab等界面保留键不能改绑。已有快捷键与驾驶键的历史重叠保留；新绑定会检查冲突。")
+                          "F11全屏、F12急停、RightShift/Tab等界面保留键不能改绑。已有快捷键与驾驶键的历史重叠保留；新绑定会检查冲突。")
+            apply_jello_widgets(note, stylesheet=False)
             note.setWordWrap(True); root.insertWidget(0, note)
-            box = QGroupBox("模块快捷键"); root.addWidget(box)
+            box = QGroupBox("模块快捷键"); apply_jello_widgets(box, stylesheet=False); root.addWidget(box)
             form = QFormLayout(box); form.setSpacing(15); self.groups.append((box, []))
+            yield
             for module in host.registry.modules:
                 if module.name in ("ClickGui", "MatchReadiness"): continue
                 widget = BindingControl(host, module.keybind, manager=self, binding_id=("module",module.name))
                 self.module_bind_controls[module.name] = widget
                 self.add_row(form, module.name, module_label(module.name, True), widget, "keybind")
+                yield
         root.addStretch()
+        yield
 
     def add_row(self, form, module, title, widget, original=""):
         label = QLabel(title); label.setMinimumWidth(240)
+        apply_jello_widgets(label, stylesheet=False)
+        apply_jello_widgets(widget, stylesheet=False)
         form.addRow(label, widget)
         record = (label, widget, f"{module} {title} {original}".casefold())
         self.search_rows.append(record); self.groups[-1][1].append(record)
 
     def filter(self, query):
         query = query.strip().casefold()
+        self._query = query
         for label, widget, text in self.search_rows:
             visible = not query or query in text
-            label.setVisible(visible); widget.setVisible(visible)
+            if label.isHidden() == visible: label.setVisible(visible)
+            if widget.isHidden() == visible: widget.setVisible(visible)
         for group, rows in self.groups:
-            group.setVisible(not query or any(query in text for _, _, text in rows))
+            visible = not query or any(query in text for _, _, text in rows)
+            if group.isHidden() == visible: group.setVisible(visible)
+
+    def _draft_widgets(self):
+        return {
+            **{("setting", *key): widget for key, widget in self.controls.items()},
+            **{("toggle", name): widget for name, widget in self.toggle_controls.items()},
+            **{("bind", name): widget for name, widget in self.module_bind_controls.items()},
+            **{("audio", name): widget for name, widget in self.audio_controls.items()},
+        }
+
+    @staticmethod
+    def _widget_value(widget):
+        if isinstance(widget, BindingControl): return widget.value
+        if isinstance(widget, QCheckBox): return widget.isChecked()
+        if isinstance(widget, QComboBox): return widget.currentData()
+        return widget.spin.value()
+
+    @staticmethod
+    def _set_widget_value(widget, value):
+        if isinstance(widget, BindingControl): widget.set_value(value)
+        elif isinstance(widget, QCheckBox): widget.setChecked(value)
+        elif isinstance(widget, QComboBox): widget.setCurrentIndex(widget.findData(value))
+        else: widget.spin.setValue(value)
+
+    def _draft_values(self):
+        return {key: self._widget_value(widget) for key, widget in self._draft_widgets().items()}
+
+    def refresh_clean_draft(self):
+        """Follow live changes only where this page has no pending user edit."""
+        if not self.builder.ready:
+            return
+        for key, widget in self._draft_widgets().items():
+            if key in self._forced_dirty or self._widget_value(widget) != self._baseline[key]:
+                continue
+            kind, name, *setting = key
+            if kind == "audio":
+                from ..audio_preferences import current_audio
+                value = getattr(current_audio(), name)
+                if name == "device_id" and widget.findData(value) < 0:
+                    widget.addItem("已离线的设备（当前回退系统默认）", value)
+            else:
+                module = self.host.registry.get(name)
+                if module is None:
+                    continue
+                if kind == "setting":
+                    live = module.get_setting(setting[0])
+                    if live is None:
+                        continue
+                    value = live.value
+                else:
+                    value = module.enabled if kind == "toggle" else module.keybind
+            self._set_widget_value(widget, value)
+            self._baseline[key] = self._widget_value(widget)
 
     def apply_draft(self):
-        draft = {}
-        for key, widget in self.controls.items():
-            if isinstance(widget, BindingControl): value = widget.value
-            elif isinstance(widget, QCheckBox): value = widget.isChecked()
-            elif isinstance(widget, QComboBox): value = widget.currentData()
-            else: value = widget.spin.value()
-            draft[key] = value
+        if not self.builder.ready:
+            raise ValueError("请等待当前页完成加载")
+        values = self._draft_values()
+        edits = {key: value for key, value in values.items()
+                 if key in self._forced_dirty or value != self._baseline[key]}
+        draft = {key[1:]: value for key, value in edits.items() if key[0] == "setting"}
+        audio_edits = {key[1]: value for key, value in edits.items() if key[0] == "audio"}
         audio = None
-        if self.audio_controls:
-            from ..audio_preferences import validate_audio
-            audio = validate_audio({"device_id": self.audio_controls["device_id"].currentData(),
-                                    "master_volume": int(self.audio_controls["master_volume"].spin.value()),
-                                    "mute_unfocused": self.audio_controls["mute_unfocused"].isChecked()})
+        if audio_edits:
+            from ..audio_preferences import current_audio, validate_audio
+            current = current_audio()
+            data = {name: getattr(current, name) for name in self.audio_controls}
+            data.update(audio_edits)
+            data["master_volume"] = int(data["master_volume"])
+            audio = validate_audio(data)
         apply_registry_draft(self.host, draft,
-                             {name: w.isChecked() for name, w in self.toggle_controls.items()},
-                             {name: w.value for name, w in self.module_bind_controls.items()})
+                             {key[1]: value for key, value in edits.items() if key[0] == "toggle"},
+                             {key[1]: value for key, value in edits.items() if key[0] == "bind"})
         if audio is not None:
             from ..audio_preferences import save_audio
             save_audio(audio)
+        self._baseline = values
+        self._forced_dirty.clear()
+        self.refresh_clean_draft()
 
     def reset_draft(self):
+        if not self.builder.ready:
+            return
+        # Reset is an explicit edit even if a default equals the old snapshot.
+        self._forced_dirty.update(self._draft_widgets())
         if self.audio_controls:
             self.audio_controls["device_id"].setCurrentIndex(0)
             self.audio_controls["master_volume"].spin.setValue(100)
@@ -335,9 +439,12 @@ def install_estop_shortcut(dialog, host):
     # An ordinary WindowShortcut misses nested modal file/import dialogs.
     class EstopFilter(QObject):
         def eventFilter(self, watched, event):
+            # Most events are layout/style/paint traffic. Do not enter Qt
+            # visibility checks or import Shiboken for every constructed child.
+            if event.type() not in (QEvent.Type.ShortcutOverride, QEvent.Type.KeyPress, QEvent.Type.KeyRelease):
+                return False
             from shiboken6 import isValid
-            if isValid(dialog) and dialog.isVisible() and event.type() in (QEvent.Type.ShortcutOverride,
-                    QEvent.Type.KeyPress, QEvent.Type.KeyRelease) and event.key() == Qt.Key.Key_F12:
+            if event.key() == Qt.Key.Key_F12 and isValid(dialog) and dialog.isVisible():
                 if event.type() == QEvent.Type.KeyPress and not event.isAutoRepeat():
                     host.control.reset_inputs()
                     ok, reason = host.backend.trigger_estop()
@@ -351,10 +458,53 @@ def install_estop_shortcut(dialog, host):
     return filter_
 
 
+class CrosshairSettingsPage(QScrollArea):
+    """Defer editor creation/style/attachment into separate event-loop turns."""
+    def __init__(self, host):
+        super().__init__()
+        self.host, self.editor = host, None
+        self.setWidgetResizable(True)
+        self.setObjectName("CrosshairSettingsScroll")
+        self.loading = QLabel("正在准备准星设置…")
+        self.setWidget(self.loading)
+        self.builder = SettingsBuildQueue(self, self._build())
+        self.builder.finished.connect(self._finish_build)
+
+    def _build(self):
+        from ..cs2_crosshair import build_crosshair_editor
+        self.editor = build_crosshair_editor(self.host)
+        self.editor.hide()
+        # The factory initially parents to the host; tie temporary lifetime
+        # to this page even if it is closed before the attachment step.
+        self.destroyed.connect(self.editor.deleteLater)
+        yield True
+        apply_jello_widgets(self.editor)
+        yield True
+        self.setWidget(self.editor)
+        self.editor.show()
+        yield True
+
+    def _finish_build(self):
+        if self.builder.error:
+            self.loading.setText("设置加载失败：" + self.builder.error)
+
+    def apply_draft(self):
+        if not self.builder.ready:
+            raise ValueError("请等待当前页完成加载")
+        self.editor.apply()
+
+    def reset_draft(self):
+        if self.builder.ready:
+            from ..cs2_crosshair import DEFAULTS
+            self.editor.load_profile(DEFAULTS)
+            default_scale = build_default_registry().get("Crosshair").get_setting("Crosshair Scale").value
+            self.editor.display_scale.setValue(default_scale)
+
+
 def build_settings_center(host):
     """Non-modal construction for visual/regression tests; open owns input lock."""
-    from ..cs2_crosshair import build_crosshair_editor
     from .cs2_video_settings import open_video_settings
+    use_jello_font_book(getattr(host, "fonts", None))
     dialog = JelloDialog(host); dialog.setWindowTitle("POLAR · Jello 设置")
     dialog.setObjectName("JelloSettingsCenter")
     screen = host.screen()
@@ -374,14 +524,15 @@ def build_settings_center(host):
     tabs = QTabWidget(); tabs.setObjectName("SettingsTabs"); root.addWidget(tabs, 1)
     video = open_video_settings(host, embedded=True); tabs.addTab(video, "视频")
     defaults = build_default_registry()
+    # Lightweight shells preserve tab identity and drafts. Only the selected
+    # page builds, after the entrance animation, in bounded GUI-thread slices.
     pages = {}
     for page in PAGES:
-        widget = RegistrySettingsPage(host, page, defaults)
+        widget = RegistrySettingsPage(host, page, defaults, deferred=True)
         pages[page] = widget; tabs.addTab(widget, page)
-    crosshair = build_crosshair_editor(host)
-    apply_jello_widgets(crosshair)
-    crosshair_scroll = QScrollArea(); crosshair_scroll.setWidgetResizable(True); crosshair_scroll.setWidget(crosshair)
-    crosshair_scroll.setObjectName("CrosshairSettingsScroll"); tabs.insertTab(4, crosshair_scroll, "准星")
+    crosshair_scroll = CrosshairSettingsPage(host)
+    tabs.insertTab(4, crosshair_scroll, "准星")
+    deferred_pages = (*pages.values(), crosshair_scroll)
     search.textChanged.connect(lambda text: [page.filter(text) for page in pages.values()])
     status = QLabel("F12 急停始终有效 · 设置不暂停裁判监测 · 返回后不会自动恢复操控")
     status.setWordWrap(True); root.addWidget(status)
@@ -393,24 +544,33 @@ def build_settings_center(host):
     def apply_current():
         widget = tabs.currentWidget()
         try:
-            if widget is crosshair_scroll: crosshair.apply()
-            else: widget.apply_draft()
+            widget.apply_draft()
             status.setText("当前页已应用；操控保持锁定，重新驾驶前需人工确认。视频重启项另有标注。")
         except (OSError, ValueError, TypeError) as exc:
             status.setText("未完整应用：" + str(exc))
     def reset_current():
         widget = tabs.currentWidget()
         if QMessageBox.question(dialog, "恢复默认", "只恢复当前页的编辑值，点击应用后才生效。继续？") == QMessageBox.StandardButton.Yes:
-            if widget is crosshair_scroll:
-                from ..cs2_crosshair import DEFAULTS
-                crosshair.load_profile(DEFAULTS)
-            else:
-                widget.reset_draft()
+            widget.reset_draft()
     apply.clicked.connect(apply_current); reset.clicked.connect(reset_current); back.clicked.connect(dialog.accept)
-    dialog.estop_shortcut = install_estop_shortcut(dialog, host)
-    dialog.tabs, dialog.pages, dialog.crosshair = tabs, pages, crosshair
+    def current_changed(_index=None):
+        current = tabs.currentWidget()
+        for page in deferred_pages:
+            page.builder.set_active(page is current)
+        if isinstance(current, RegistrySettingsPage):
+            current.refresh_clean_draft()
+        builder = getattr(current, "builder", None)
+        ready = builder is None or builder.ready
+        apply.setEnabled(ready); reset.setEnabled(ready)
+    tabs.currentChanged.connect(current_changed)
+    for page in deferred_pages:
+        page.builder.finished.connect(current_changed)
+        dialog.finished.connect(page.builder.cancel)
+    dialog.tabs, dialog.pages, dialog.crosshair = tabs, pages, crosshair_scroll
+
     dialog.search, dialog.status, dialog.apply_button = search, status, apply
     apply_jello_widgets(dialog)
+    dialog.estop_shortcut = install_estop_shortcut(dialog, host)
     return dialog
 
 

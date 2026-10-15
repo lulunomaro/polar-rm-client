@@ -41,23 +41,28 @@ class ReliableAudioPool(QObject):
         if app is not None:
             app.applicationStateChanged.connect(self._on_focus_changed)
 
+    def stop(self) -> None:
+        """Cancel queued cues and stop every playback path without unloading."""
+        self._pending.clear()
+        for voices in self._effects.values():
+            for voice in voices:
+                voice.stop()
+        for player, _output in [*self._fallback, *(v for voices in self._media_effects.values() for v in voices)]:
+            player.stop()
+
     def _on_focus_changed(self, _state) -> None:
         if cue_volume(100) <= 0:
-            self._pending.clear()
-            for voices in self._effects.values():
-                for voice in voices: voice.stop()
-            for player, _output in [*self._fallback, *(v for voices in self._media_effects.values() for v in voices)]:
-                player.stop()
+            self.stop()
 
     def apply_audio_preferences(self) -> None:
         selected_output.cache_clear()
         device = selected_output()
-        self._pending.clear()
+        self.stop()
         for voices in self._effects.values():
             for voice in voices:
-                voice.stop(); voice.setAudioDevice(device)
-        for player, output in [*self._fallback, *(v for voices in self._media_effects.values() for v in voices)]:
-            player.stop(); output.setDevice(device)
+                voice.setAudioDevice(device)
+        for _player, output in [*self._fallback, *(v for voices in self._media_effects.values() for v in voices)]:
+            output.setDevice(device)
 
     def _sound_path(self, name: str) -> Path:
         # Custom selections keep their portable "custom/<filename>" config key.
@@ -176,8 +181,14 @@ class ReliableAudioPool(QObject):
             player.setAudioOutput(output)
             player.errorOccurred.connect(lambda error, message, voice=player: self._on_media_error(voice, message))
             self._fallback.append((player, output))
-        player, output = self._fallback[self._fallback_index % len(self._fallback)]
-        self._fallback_index = (self._fallback_index + 1) % len(self._fallback)
+            # Use the voice we just created. Taking the old cursor modulo a
+            # growing pool selects voice 0 twice, interrupting the first kill
+            # (or its pending decoder load) while the new voice stays unused.
+            index = len(self._fallback) - 1
+        else:
+            index = self._fallback_index % len(self._fallback)
+        player, output = self._fallback[index]
+        self._fallback_index = (index + 1) % len(self._fallback)
         player.stop()
         output.setVolume(max(0.0, min(1.0, volume / 100.0)))
         source = QUrl.fromLocalFile(str(path.resolve()))

@@ -118,12 +118,13 @@ def apply_window_settings(host,prefs):
     # Changing focus/size never resumes stale controls or re-arms a vehicle.
     host.backend.lock_control("video settings applied")
     host.control.release_all(host.state,host.registry)
-    if prefs.window_mode=="Borderless":
-        host.showFullScreen()  # Uses the real desktop resolution/refresh.
-    else:
+    host._control_mouse_point = None
+    host.invalidate_transient_overlay_scene()
+    from .window_shortcuts import set_fullscreen
+    set_fullscreen(host, prefs.window_mode == "Borderless")
+    if prefs.window_mode == "Windowed" and logical is not None:
         host.showNormal()
-        if logical is not None:
-            host.resize(*logical)
+        host.resize(*logical)
     host.invalidate_transient_overlay_scene()
     host.frame_scheduler.force()
 
@@ -147,7 +148,7 @@ def open_video_settings(host, embedded=False):
     if not embedded:
         host.backend.lock_control("video settings opened")
         host.control.release_all(host.state,host.registry)
-    prefs=current_preferences()
+    prefs=replace(current_preferences(), window_mode="Borderless" if host.isFullScreen() else "Windowed")
     dialog=QDialog(host);dialog.setWindowTitle("POLAR · 视频设置")
     if embedded:
         dialog.setWindowFlags(Qt.WindowType.Widget)
@@ -183,7 +184,7 @@ def open_video_settings(host, embedded=False):
     resolution.setEnabled(mode.currentData()=="Windowed")
     mode.currentIndexChanged.connect(lambda _:resolution.setEnabled(mode.currentData()=="Windowed"))
     combo(basic_form,"hud_hz","HUD刷新节奏",[("跟随现有HUD设置",0),*((f"{v} Hz",v) for v in (60,75,90,120,144,165,240))],prefs.hud_hz)
-    note=QLabel("无边框模式使用Windows当前显示模式；此页不会伪装修改显示器物理刷新率。\n窗口分辨率按DPR换算；裁判逻辑、KMC与图传不随HUD帧率限额降频。")
+    note=QLabel("无边框模式使用Windows当前显示模式；此页不会伪装修改显示器物理刷新率。\nWindows全屏保留Qt建议的1像素合成边线，以兼容OpenGL窗口和弹窗。\n窗口分辨率按DPR换算；裁判逻辑、KMC与图传不随HUD帧率限额降频。")
     note.setWordWrap(True);basic_form.addRow(note)
     combo(advanced_form,"fps_limit","最大渲染帧率",[("跟随HUD节奏",0),*((str(v)+" FPS",v) for v in (30,60,75,90,120,144,165,240))],prefs.fps_limit)
     combo(advanced_form,"vsync","等待垂直同步（重启生效）",[("已启用",True),("已禁用",False)],prefs.vsync)

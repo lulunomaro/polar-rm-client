@@ -1,0 +1,95 @@
+{
+  "base_commit": "9599a1c5fd8742fd5dd53c1b57fec1effd4827bd",
+  "verified_original_prs": {
+    "13": "066fda7a11a73c7c5e50dca3786f8198bc182482",
+    "14": "dfe06e4ebff1276eb9a11111d1b47bfbbec209f0",
+    "15": "cfd45d69766ba673dfb391f340822527a7a3fc5a",
+    "16": "dd33ff54768b4f7de9d33cb29dd5880d6be85ad3"
+  },
+  "local_frozen_production_commit": "ba16f7fb6b68bf859caf06900e639284a33338de",
+  "runtime": {
+    "qt": "6.8.2",
+    "platform": "Linux offscreen",
+    "real_opengl_context": false,
+    "physical_audio_device": false,
+    "windows": false
+  },
+  "focused": {
+    "command": "python -m unittest test_cs2_settings_center test_jello_settings_keyboard test_escape_menu test_gpu_warmup_budget test_settings_cold_start test_render_performance_regressions test_clickgui_background_dismiss test_startup_display_locale test_ui_state_regressions gpu_compositor_test test_fullscreen_composition test_startup_settings_fullscreen test_audio_replay_regressions test_kill_audio_regressions test_lazy_settings_state test_cs_crosshair_visibility test_cs_crosshair_target_bounds test_framebuffer_generation test_jello_atlas_pages test_jello_description_wrapping test_fullscreen_input_extended",
+    "tests": 290,
+    "seconds": 59.909,
+    "result": "PASS"
+  },
+  "dpr_2": {
+    "command": "QT_SCALE_FACTOR=2 python -m unittest test_cs_crosshair_visibility test_cs_crosshair_target_bounds test_startup_settings_fullscreen test_fullscreen_input_extended",
+    "tests": 53,
+    "seconds": 4.659,
+    "result": "PASS"
+  },
+  "api_freeze": {
+    "compared_members": 1132,
+    "baseline_changed": false,
+    "result": "PASS"
+  },
+  "startup": {
+    "assertions": 73,
+    "result": "PASS"
+  },
+  "backend_integration": {
+    "assertions": 51,
+    "result": "PASS"
+  },
+  "aggregate": {
+    "command": "python tools/verify_all.py --timeout 90",
+    "fail": 0,
+    "incomplete": 78,
+    "checks": 98,
+    "exit_code": 1,
+    "result": "NO-GO: unrelated tests/firmware/audit inputs are not materialized"
+  },
+  "independent_atlas": {
+    "default_modules": 74,
+    "dpr": [
+      1,
+      2
+    ],
+    "languages": [
+      "English",
+      "Chinese"
+    ],
+    "description_bodies": 1088,
+    "lossless": true
+  },
+  "crosshair_physical_outer_bounds": {
+    "1080p": 36,
+    "1440p": 48,
+    "2160p": 72,
+    "equal_at_dpr": [
+      1,
+      2
+    ],
+    "presentation_multiplier": 2,
+    "saved_profile_mutated": false,
+    "scale_to_restore_previous_reference": 0.5
+  },
+  "hardware_claim": "No Windows/GPU/audio-output/vehicle acceptance; only CPU/raster/GL-command/decoded-PCM evidence.",
+  "combined_audio": {
+    "result": "PASS",
+    "stale_cases": 4,
+    "stale_play_calls": 0,
+    "stale_pcm_bytes": 0,
+    "native_normal_calls": 4,
+    "native_gain": 0.33,
+    "production_preview_cues": 12,
+    "production_preview_nonzero_pcm_bytes": 2647368,
+    "fullscreen_states": [
+      true,
+      false,
+      true,
+      false
+    ],
+    "warm_close_state": "StoppedState",
+    "post_close_play": false,
+    "evidence": "audio-pcm.json"
+  }
+}

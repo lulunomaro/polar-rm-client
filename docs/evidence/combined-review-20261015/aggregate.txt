@@ -1,0 +1,190 @@
+==================================================================
+客户端侧就绪验证（离线）
+==================================================================
+
+[Python 测试套件]
+  [INCOMPLETE] test_controller_angle_integration 文件不存在
+  [INCOMPLETE] test_controller_angle_safety_review 文件不存在
+  [INCOMPLETE] test_build_safety_regressions 文件不存在
+  [INCOMPLETE] test_transport_safety_regressions 文件不存在
+  [INCOMPLETE] test_serial_codec_regressions 文件不存在
+  [INCOMPLETE] test_serial_lifecycle_regressions 文件不存在
+  [INCOMPLETE] test_controller_frame_regressions 文件不存在
+  [INCOMPLETE] test_api_freeze_platform_regressions 文件不存在
+  [OK] test_ui_state_regressions 通过
+  [INCOMPLETE] test_polar_async_connect 文件不存在
+  [INCOMPLETE] test_device_manager_nonblocking 文件不存在
+  [INCOMPLETE] test_dt7_worker_dispatch 文件不存在
+  [INCOMPLETE] test_cc_worker_dispatch  文件不存在
+  [OK] test_gpu_warmup_budget   通过
+  [OK] test_fullscreen_composition 通过
+  [OK] test_settings_cold_start 通过
+  [OK] test_lazy_settings_state 通过
+  [OK] test_cs_crosshair_visibility 通过
+  [OK] test_cs_crosshair_target_bounds 通过
+  [OK] test_framebuffer_generation 通过
+  [OK] test_jello_atlas_pages   通过
+  [OK] test_jello_description_wrapping 通过
+  [OK] test_fullscreen_input_extended 通过
+  [OK] test_audio_replay_regressions 通过
+  [INCOMPLETE] test_background_display_locale 文件不存在
+  [INCOMPLETE] test_hero_display_locale 文件不存在
+  [INCOMPLETE] test_hud_display_locale  文件不存在
+  [INCOMPLETE] test_status_display_locale 文件不存在
+  [INCOMPLETE] test_match_strip_locale  文件不存在
+  [INCOMPLETE] test_economy_display_locale 文件不存在
+  [INCOMPLETE] test_ui_localization     文件不存在
+  [OK] test_startup_display_locale 通过
+  [OK] test_clickgui_background_dismiss 通过
+  [OK] test_startup_settings_fullscreen 通过
+  [OK] test_escape_menu         通过
+  [INCOMPLETE] test_kill_selector_regressions 文件不存在
+  [OK] test_kill_audio_regressions 通过
+  [INCOMPLETE] test_kill_asset_filtering 文件不存在
+  [INCOMPLETE] student_frontend_test    文件不存在
+  [INCOMPLETE] polar_spec_test          文件不存在
+  [INCOMPLETE] robot_roles_test         文件不存在
+  [INCOMPLETE] polar_link_test          文件不存在
+  [INCOMPLETE] polar_bridge_test        文件不存在
+  [OK] polar_integration_test   51 项通过
+  [INCOMPLETE] polar_selftest_test      文件不存在
+  [INCOMPLETE] startup_black_hole_test  文件不存在
+  [OK] polar_startup_test       73 项通过
+  [INCOMPLETE] gimbal_host_request_test 文件不存在
+  [INCOMPLETE] autoaim_settings_test    文件不存在
+  [INCOMPLETE] hud_telemetry_settings_test 文件不存在
+  [INCOMPLETE] hud_status_settings_test 文件不存在
+  [INCOMPLETE] hud_batch16_killfx_test  文件不存在
+  [INCOMPLETE] hud_batch17_crosshair_test 文件不存在
+  [INCOMPLETE] hud_batch18_powerguard_test 文件不存在
+  [INCOMPLETE] hud_batch19_bufftimeline_test 文件不存在
+  [INCOMPLETE] hud_batch20_robotoverlay_color_test 文件不存在
+  [INCOMPLETE] hud_batch21_radaroverlay_map_test 文件不存在
+  [INCOMPLETE] settings_doc_consistency_test 文件不存在
+  [INCOMPLETE] hud_batch14_settings_test 文件不存在
+  [INCOMPLETE] hud_batch13_settings_test 文件不存在
+  [INCOMPLETE] hud_batch10_settings_test 文件不存在
+  [INCOMPLETE] hud_batch9_settings_test 文件不存在
+  [INCOMPLETE] hud_batch8_settings_test 文件不存在
+  [INCOMPLETE] hud_overlay_settings_test 文件不存在
+  [INCOMPLETE] backend_protocol_test    文件不存在
+  [INCOMPLETE] referee_integration_test 文件不存在
+  [OK] api_freeze_test          通过
+
+[固件补丁编译与行为校验]
+  [INCOMPLETE] Issue 10 angle firmware: exact source, independent timeout and sender bounds 文件不存在
+  [INCOMPLETE] 真实 USB 回调队列与有界外层解析（匹配源码 / CRC / 竞态 / 溢出） 文件不存在
+  [INCOMPLETE] 真实裁判分派长度边界（固定载荷 / 可变交互 / 未接收不更新新鲜度） 文件不存在
+  [INCOMPLETE] 便携串口解析器（编译生成 C / 分片 / 噪声 / 长度 / PRM1 校验） 文件不存在
+  [INCOMPLETE] 补丁代码用固件真实头文件编译 文件不存在
+  [INCOMPLETE] 补丁代码行为断言（含 tick 回绕、竞态） 文件不存在
+  [INCOMPLETE] 自转桥接（0x04/0x1F）编译 + 行为断言 文件不存在
+  [INCOMPLETE] 速度回读桥（0x1E）编译 + 运动学往返断言 文件不存在
+  [INCOMPLETE] 云台直控桥（0x04 param0）结构 + 编译 + 真值表断言 文件不存在
+  [INCOMPLETE] 驾驶键位账本（DT7 不被抹 / 松键能归零）8 组行为断言 文件不存在
+  [INCOMPLETE] DT7 官方 18 字节帧位序 == 固件真实解码（逐字段 + 常量守卫） 文件不存在
+  [INCOMPLETE] PRM1 键鼠载荷：C 结构体偏移 == 客户端 struct 打包（逐字段） 文件不存在
+  [INCOMPLETE] 图传键鼠五档仲裁 + 摇杆底线 + 开火权限（喂客户端真字节） 文件不存在
+  [INCOMPLETE] 无线键鼠出口客户端侧（默认关 / 不粘键 / 载荷 26B / UI 开关三道闸） 文件不存在
+  [INCOMPLETE] DT7 VCP 旁听：空闲线分帧 + 键位 bit 跳变双位序判读 文件不存在
+  [INCOMPLETE] DT7 抓包差分：键位字节/位序 判定（合成样本，含两类不许乱判） 文件不存在
+  [INCOMPLETE] 自定义控制器 0x0306 出口（帧被固件 CRC 验收 + 三道闸 + 不静默丢键） 文件不存在
+  [INCOMPLETE] DT7 直连出口（5A/22B 帧对厂商反汇编 + 两族 CRC 互不认 + 真发闸/互斥/松手） 文件不存在
+  [INCOMPLETE] 设置项接线审计（每个 RobotLink 项都被取用 + Port/Baud 优先级规则） 文件不存在
+  [INCOMPLETE] Auto 挑口（DT7 只认 DJI VCOM / CC 只认 FTDI / 车的口一律判负） 文件不存在
+  [INCOMPLETE] 车端桥裸管道（分片到达不改字节 / 上行拼回帧 / 断开后不再写串口） 文件不存在
+  [INCOMPLETE] D 路接进传输层（tcp 模式不被 Stub 端口挡住 / 意图落到串口 / 连不上报错清楚） 文件不存在
+  [INCOMPLETE] C 路端到端离线（按键到车上键位 / 松手 / 急停交还 / 互斥 / 鼠标截断） 文件不存在
+  [INCOMPLETE] C 路扫帧型（只认得出那一种 / 清零帧 / 无回读不结论 / 未定案不写字节） 文件不存在
+  [INCOMPLETE] prepare_hero_build 新选项（--mouse-sens 改得动且幂等 / 注释吞 define 能被体检抓住） 文件不存在
+  [INCOMPLETE] C 路界面自检（X 探针无消费者 / 把手作用到发送 / 按钮不是空壳） 文件不存在
+  [INCOMPLETE] C 路闭环自检（假车真回环 / NO-CHANGE 与 PARTIAL 不误判 / 假阳性防线） 文件不存在
+  [INCOMPLETE] C 路复查三个坑（reserved=通道中值 / 限流不吃鼠标 / 镜头灵敏度量级） 文件不存在
+  [INCOMPLETE] C 路松手帧（限流不许吃掉零键 / 写失败要补发 / 暂停与关出口不许空转 / 水印说实话） 文件不存在
+  [INCOMPLETE] MQTT broker 地址接线（改设置就换地址 / 已连接会重连 / 非法值回写不骗人） 文件不存在
+
+[前后端对齐审计]
+  [INCOMPLETE] 二级界面设置项孤儿数不超基线 文件不存在
+
+==================================================================
+结论：NO-GO —— 0 FAIL, 78 INCOMPLETE / 98 checks
+  - Missing test: test_controller_angle_integration
+  - Missing test: test_controller_angle_safety_review
+  - Missing test: test_build_safety_regressions
+  - Missing test: test_transport_safety_regressions
+  - Missing test: test_serial_codec_regressions
+  - Missing test: test_serial_lifecycle_regressions
+  - Missing test: test_controller_frame_regressions
+  - Missing test: test_api_freeze_platform_regressions
+  - Missing test: test_polar_async_connect
+  - Missing test: test_device_manager_nonblocking
+  - Missing test: test_dt7_worker_dispatch
+  - Missing test: test_cc_worker_dispatch
+  - Missing test: test_background_display_locale
+  - Missing test: test_hero_display_locale
+  - Missing test: test_hud_display_locale
+  - Missing test: test_status_display_locale
+  - Missing test: test_match_strip_locale
+  - Missing test: test_economy_display_locale
+  - Missing test: test_ui_localization
+  - Missing test: test_kill_selector_regressions
+  - Missing test: test_kill_asset_filtering
+  - Missing test: student_frontend_test
+  - Missing test: polar_spec_test
+  - Missing test: robot_roles_test
+  - Missing test: polar_link_test
+  - Missing test: polar_bridge_test
+  - Missing test: polar_selftest_test
+  - Missing test: startup_black_hole_test
+  - Missing test: gimbal_host_request_test
+  - Missing test: autoaim_settings_test
+  - Missing test: hud_telemetry_settings_test
+  - Missing test: hud_status_settings_test
+  - Missing test: hud_batch16_killfx_test
+  - Missing test: hud_batch17_crosshair_test
+  - Missing test: hud_batch18_powerguard_test
+  - Missing test: hud_batch19_bufftimeline_test
+  - Missing test: hud_batch20_robotoverlay_color_test
+  - Missing test: hud_batch21_radaroverlay_map_test
+  - Missing test: settings_doc_consistency_test
+  - Missing test: hud_batch14_settings_test
+  - Missing test: hud_batch13_settings_test
+  - Missing test: hud_batch10_settings_test
+  - Missing test: hud_batch9_settings_test
+  - Missing test: hud_batch8_settings_test
+  - Missing test: hud_overlay_settings_test
+  - Missing test: backend_protocol_test
+  - Missing test: referee_integration_test
+  - Missing check: Issue 10 angle firmware: exact source, independent timeout and sender bounds
+  - Missing check: 真实 USB 回调队列与有界外层解析（匹配源码 / CRC / 竞态 / 溢出）
+  - Missing check: 真实裁判分派长度边界（固定载荷 / 可变交互 / 未接收不更新新鲜度）
+  - Missing check: 便携串口解析器（编译生成 C / 分片 / 噪声 / 长度 / PRM1 校验）
+  - Missing check: 补丁代码用固件真实头文件编译
+  - Missing check: 补丁代码行为断言（含 tick 回绕、竞态）
+  - Missing check: 自转桥接（0x04/0x1F）编译 + 行为断言
+  - Missing check: 速度回读桥（0x1E）编译 + 运动学往返断言
+  - Missing check: 云台直控桥（0x04 param0）结构 + 编译 + 真值表断言
+  - Missing check: 驾驶键位账本（DT7 不被抹 / 松键能归零）8 组行为断言
+  - Missing check: DT7 官方 18 字节帧位序 == 固件真实解码（逐字段 + 常量守卫）
+  - Missing check: PRM1 键鼠载荷：C 结构体偏移 == 客户端 struct 打包（逐字段）
+  - Missing check: 图传键鼠五档仲裁 + 摇杆底线 + 开火权限（喂客户端真字节）
+  - Missing check: 无线键鼠出口客户端侧（默认关 / 不粘键 / 载荷 26B / UI 开关三道闸）
+  - Missing check: DT7 VCP 旁听：空闲线分帧 + 键位 bit 跳变双位序判读
+  - Missing check: DT7 抓包差分：键位字节/位序 判定（合成样本，含两类不许乱判）
+  - Missing check: 自定义控制器 0x0306 出口（帧被固件 CRC 验收 + 三道闸 + 不静默丢键）
+  - Missing check: DT7 直连出口（5A/22B 帧对厂商反汇编 + 两族 CRC 互不认 + 真发闸/互斥/松手）
+  - Missing check: 设置项接线审计（每个 RobotLink 项都被取用 + Port/Baud 优先级规则）
+  - Missing check: Auto 挑口（DT7 只认 DJI VCOM / CC 只认 FTDI / 车的口一律判负）
+  - Missing check: 车端桥裸管道（分片到达不改字节 / 上行拼回帧 / 断开后不再写串口）
+  - Missing check: D 路接进传输层（tcp 模式不被 Stub 端口挡住 / 意图落到串口 / 连不上报错清楚）
+  - Missing check: C 路端到端离线（按键到车上键位 / 松手 / 急停交还 / 互斥 / 鼠标截断）
+  - Missing check: C 路扫帧型（只认得出那一种 / 清零帧 / 无回读不结论 / 未定案不写字节）
+  - Missing check: prepare_hero_build 新选项（--mouse-sens 改得动且幂等 / 注释吞 define 能被体检抓住）
+  - Missing check: C 路界面自检（X 探针无消费者 / 把手作用到发送 / 按钮不是空壳）
+  - Missing check: C 路闭环自检（假车真回环 / NO-CHANGE 与 PARTIAL 不误判 / 假阳性防线）
+  - Missing check: C 路复查三个坑（reserved=通道中值 / 限流不吃鼠标 / 镜头灵敏度量级）
+  - Missing check: C 路松手帧（限流不许吃掉零键 / 写失败要补发 / 暂停与关出口不许空转 / 水印说实话）
+  - Missing check: MQTT broker 地址接线（改设置就换地址 / 已连接会重连 / 非法值回写不骗人）
+  - Missing check: 二级界面设置项孤儿数不超基线
+
+先解决上面这些，再去 Keil 编译。

@@ -18,7 +18,8 @@ def methods(*names):
     selected = [n for n in window.body if isinstance(n, ast.FunctionDef) and n.name in names]
     cls = ast.ClassDef(name='Window', bases=[], keywords=[], body=selected, decorator_list=[])
     module = ast.Module(body=[ast.ImportFrom(module='__future__', names=[ast.alias(name='annotations')], level=0), cls], type_ignores=[])
-    scope = {'time': time, 'math': math, 'QTimer': NS(singleShot=lambda delay, callback: callback())}
+    scope = {'time': time, 'math': math, 'QTimer': NS(singleShot=lambda delay, callback: callback()),
+             'QApplication': NS(activeModalWidget=lambda: None)}
     exec(compile(ast.fix_missing_locations(module), str(SOURCE), 'exec'), scope)
     return scope['Window']
 
@@ -27,6 +28,7 @@ class WarmupTests(unittest.TestCase):
     def make_window(self):
         w = methods('prewarm_gpu_clickgui_resources', '_run_gpu_prewarm_slice')()
         w.calls = []
+        w.escape_menu_visible = False
         w.clickgui_gpu = NS(available=True, prewarm=lambda *a, **k: w.calls.append(('text', a)),
                            prewarm_images=lambda *a: w.calls.append(('image', a)))
         w.gpu_compositor = NS(available=True)
@@ -59,6 +61,21 @@ class WarmupTests(unittest.TestCase):
             if hidden: w.isVisible = lambda: False
             else: w.context = lambda: NS(isValid=lambda: False)
             w._run_gpu_prewarm_slice(); self.assertEqual(w.calls, [])
+
+    def test_escape_and_modal_pause_then_resume_same_queue(self):
+        for modal in (False, True):
+            w = self.make_window(); w.prewarm_gpu_clickgui_resources(); w.calls.clear()
+            jobs = w._gpu_prewarm_jobs_pending
+            w.escape_menu_visible = not modal
+            app = w._run_gpu_prewarm_slice.__globals__["QApplication"]
+            app.activeModalWidget = lambda: object() if modal else None
+            w._run_gpu_prewarm_slice()
+            self.assertEqual(w.calls, [])
+            self.assertIs(w._gpu_prewarm_jobs_pending, jobs)
+            w.escape_menu_visible = False
+            app.activeModalWidget = lambda: None
+            w._run_gpu_prewarm_slice()
+            self.assertEqual(sum(isinstance(c, tuple) and c[0] == "text" for c in w.calls), 1)
 
     def test_failed_upload_cancels_queue_and_releases_context(self):
         w = self.make_window(); w.prewarm_gpu_clickgui_resources()

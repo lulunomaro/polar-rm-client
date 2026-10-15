@@ -16,11 +16,14 @@ from PySide6.QtGui import (
     QPainter,
     QPainterPath,
     QPen,
+    QTextLayout,
+    QTextOption,
 )
 
 from ..model import CATEGORIES, LEGACY_GUI_MODES, Module, Setting
 from .animation import Easings, step_damped_spring
 from .clickgui_gpu import ClickGuiDrawList, GpuImage, GpuRect, GpuText
+from .fonts import ui_font_key, ui_text_layout
 from .jello_locale import (
     action_label,
     category_label,
@@ -162,6 +165,8 @@ class JelloClickGuiState:
     hovered_setting_name: str = ""
     hovered_setting_description: str = ""
     _setting_hovered_this_frame: bool = False
+    _setting_hint_hovered: bool = False
+    _setting_hint_rect: QRectF = field(default_factory=QRectF)
     setting_hint_animation: JelloReversibleAnimation = field(
         default_factory=lambda: JelloReversibleAnimation(0.114, 0.114)
     )
@@ -197,6 +202,8 @@ class JelloClickGuiState:
         self.hovered_setting_name = ""
         self.hovered_setting_description = ""
         self._setting_hovered_this_frame = False
+        self._setting_hint_hovered = False
+        self._setting_hint_rect = QRectF()
         self._checkbox_animations.clear()
         self._hover_animations.clear()
         self._button_hover_progress.clear()
@@ -218,6 +225,11 @@ class JelloClickGuiState:
         if self.settings_module != str(module_name):
             self.settings_panel_animation.reset(0.0)
             self.settings_background_animation.reset(0.0)
+            self.setting_hint_animation.reset(0.0)
+            self.hovered_setting_name = ""
+            self.hovered_setting_description = ""
+            self._setting_hint_rect = QRectF()
+            self._setting_hint_hovered = False
         self.settings_module = str(module_name)
         self.settings_closing = False
         self.settings_panel_animation.set_target(1.0)
@@ -231,6 +243,9 @@ class JelloClickGuiState:
         if self.settings_module is None:
             return
         self.settings_closing = True
+        self._setting_hint_hovered = False
+        self._setting_hint_rect = QRectF()
+        self.setting_hint_animation.set_target(0.0)
         self.settings_panel_animation.set_target(0.0)
         self.settings_background_animation.set_target(0.0)
         self.old_clickguis_expanded = False
@@ -487,6 +502,7 @@ class JelloClickGuiRenderer:
         )
         self._compat_images: dict[str, QImage] = {}
         self._font_cache: dict[tuple[int, str, float], QFont] = {}
+        self._wrapped_description_cache = {}
         self._elided_name_cache: dict[tuple[str, float, int, str, float], str] = {}
         self._module_cache_key: tuple[int, int] | None = None
         self._modules_by_category: dict[str, tuple[Module, ...]] = {}
@@ -1057,6 +1073,60 @@ class JelloClickGuiRenderer:
         )
 
     @staticmethod
+    def _description_line_height(font: QFont, texts, minimum: float) -> float:
+        heights = [float(minimum)]
+        for text in texts:
+            layout = ui_text_layout(font, text)
+            if layout.lineCount():
+                heights.append(layout.lineAt(0).height() + 2.0)
+        return max(heights)
+
+    def wrapped_description(self, font: QFont, text: str, width: float) -> tuple[str, ...]:
+        """Lossless, grapheme-safe lines shared by presentation and prewarm.
+
+        Qt returns UTF-16 offsets. Never slice Python strings with those offsets,
+        or a supplementary character can disappear or split a following word.
+        Only line breaks change; the original font and render density stay intact.
+        """
+        text = str(text or "")
+        width = max(1.0, float(width))
+        key = (ui_font_key(font), text, width)
+        cached = self._wrapped_description_cache.get(key)
+        if cached is not None:
+            return cached
+        lines = []
+        for paragraph in text.splitlines(keepends=True) or [""]:
+            body = paragraph.rstrip("\r\n\u2028\u2029")
+            ending = paragraph[len(body):]
+            if not body:
+                lines.append(ending)
+                continue
+            layout = QTextLayout(body, font)
+            # Match the renderer's Regular CJK fallback while retaining Latin
+            # Light shaping. The source layout is shared; this one is private.
+            layout.setFormats(ui_text_layout(font, body).formats())
+            option = QTextOption()
+            option.setWrapMode(QTextOption.WrapMode.WrapAtWordBoundaryOrAnywhere)
+            option.setUseDesignMetrics(False)
+            layout.setTextOption(option)
+            encoded = body.encode("utf-16-le")
+            layout.beginLayout()
+            while True:
+                line = layout.createLine()
+                if not line.isValid():
+                    break
+                line.setLineWidth(width)
+                start, stop = line.textStart(), line.textStart() + line.textLength()
+                lines.append(encoded[start * 2:stop * 2].decode("utf-16-le"))
+            layout.endLayout()
+            lines[-1] += ending
+        result = tuple(lines)
+        if len(self._wrapped_description_cache) >= 1024:
+            self._wrapped_description_cache.pop(next(iter(self._wrapped_description_cache)))
+        self._wrapped_description_cache[key] = result
+        return result
+
+    @staticmethod
     def _setting_height(setting: Setting, old_group_progress: float) -> float:
         if setting.kind in {"bool", "number"}:
             return 44.0
@@ -1121,33 +1191,22 @@ class JelloClickGuiRenderer:
             render_scale=scale,
         )
 
-        description_clip = self._scale_about_screen(
-            QRectF(base_panel.left(), base_panel.top(), 470.0 * gui_scale, modal_h),
-            own_scale,
-            width,
-            height,
-        )
-        description_rect = self._scale_about_screen(
-            QRectF(base_panel.left() + 30.0 * gui_scale, base_panel.top() + 30.0 * gui_scale, 440.0 * gui_scale, 30.0 * gui_scale),
-            own_scale,
-            width,
-            height,
-        )
-        commands.text(
-            description_rect,
+        description_font = self._font(host, "jello_light", 20.0)
+        description_lines = self.wrapped_description(
+            description_font,
             description_label(module.description or "", chinese_enabled(host.registry)),
-            self._font(host, "jello_light", 20.0),
-            self._argb(DEEP_TEAL, 0.7 * raw),
-            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop,
-            description_clip,
-            render_scale=scale,
+            440.0,
         )
-
+        description_line_height = self._description_line_height(description_font, description_lines, 30.0)
+        description_height = len(description_lines) * description_line_height
+        settings_start = description_height + 19.0
+        # Include every description line in the ordinary scroll range. A long
+        # header must not squeeze controls out of the viewport or hide its tail.
         base_content = QRectF(
             base_panel.left() + 10.0 * gui_scale,
-            base_panel.top() + 59.0 * gui_scale,
+            base_panel.top() + 30.0 * gui_scale,
             480.0 * gui_scale,
-            modal_h - 69.0 * gui_scale,
+            modal_h - 40.0 * gui_scale,
         )
         content = self._scale_about_screen(base_content, own_scale, width, height)
         old_progress = (
@@ -1157,14 +1216,14 @@ class JelloClickGuiRenderer:
         )
         # SettingPanel starts at y=20 and appends its literal 20 px
         # "extentionhack" spacer after the final control.
-        total = 40.0 + sum(self._setting_height(setting, old_progress) for setting in module.settings)
+        total = settings_start + 20.0 + sum(self._setting_height(setting, old_progress) for setting in module.settings)
         maximum = max(0.0, total * scale - content.height())
         scroll = state.settings_scroll_value(module.name, maximum)
         # Sigma normally reveals mode options below their header.  Move the
         # settings viewport first so a low row remains fully visible; only a
         # physically too-short viewport is allowed to use the upward fallback.
         if state.dropdown_key is not None and state.dropdown_animation.target >= 0.5:
-            active_y = 20.0
+            active_y = settings_start
             for candidate in module.settings:
                 candidate_key = f"{module.name}:{candidate.name}"
                 if candidate_key == state.dropdown_key and candidate.kind == "mode":
@@ -1201,12 +1260,31 @@ class JelloClickGuiRenderer:
             {"mode": "jello_settings", "key": module.name, "maximum": maximum, "rect": QRectF(content)}
         )
 
+        for index, text in enumerate(description_lines):
+            line_rect = self._scale_about_screen(
+                QRectF(base_panel.left() + 30.0 * gui_scale,
+                       base_content.top() + index * description_line_height * gui_scale,
+                       440.0 * gui_scale, description_line_height * gui_scale),
+                own_scale, width, height,
+            )
+            line_rect.translate(0.0, -scroll)
+            commands.text(line_rect, text, description_font,
+                          self._argb(DEEP_TEAL, 0.7 * raw),
+                          Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop,
+                          content, render_scale=scale)
+
         # SettingPanel retains the last hovered strings while its 114 ms
         # animation reverses.  Clearing them here would make the hint vanish
         # immediately instead of fading out like Sigma.
+        previous_hint = getattr(state, "_setting_hint_rect", QRectF())
+        state._setting_hint_hovered = bool(
+            not state.settings_closing
+            and state.setting_hint_animation.progress > 0.001
+            and previous_hint.contains(host.hover_point)
+        )
         state._setting_hovered_this_frame = False
         dropdown: _DropdownRequest | None = None
-        logical_y = 20.0
+        logical_y = settings_start
         for setting in module.settings:
             row_h = self._setting_height(setting, old_progress)
             logical_row = QRectF(
@@ -1244,33 +1322,54 @@ class JelloClickGuiRenderer:
             scale,
         )
 
-        has_hint = state._setting_hovered_this_frame
+        has_hint = not state.settings_closing and (state._setting_hovered_this_frame or state._setting_hint_hovered)
         state.setting_hint_animation.set_target(1.0 if has_hint else 0.0)
         hint_alpha = state.setting_hint_animation.progress
         if hint_alpha > 0.001:
             hint_font = self._font(host, "jello_light", 14.0)
             name = state.hovered_setting_name
-            hint_y = content.bottom() + 24.0 * scale
-            name_x = content.left() + 10.0 * scale
-            name_width = QFontMetricsF(hint_font).horizontalAdvance(name) * scale
-            hint_color = self._argb(LIGHT_GREYISH_BLUE, 0.5 * hint_alpha)
+            card_width = min(480.0 * scale, max(1.0, width - 16.0 * scale))
+            inner_width = max(1.0, card_width / scale - 20.0)
+            hint_lines = self.wrapped_description(hint_font, state.hovered_setting_description, inner_width)
+            line_height = self._description_line_height(hint_font, hint_lines, 18.0)
+            title_height = self._description_line_height(hint_font, (name,), 22.0)
+            body_height = len(hint_lines) * line_height * scale
+            card_height = min((len(hint_lines) * line_height + title_height + 22.0) * scale,
+                              max(1.0, height - 16.0 * scale))
+            left = max(8.0 * scale, min(panel.left() + 10.0 * scale,
+                                      width - 8.0 * scale - card_width))
+            top = max(8.0 * scale, min(content.bottom() + 18.0 * scale,
+                                     height - 8.0 * scale - card_height))
+            card = QRectF(left, top, card_width, card_height)
+            state._setting_hint_rect = card
+            commands.rect(card, 6.0 * scale, self._argb(DEEP_TEAL, 0.94 * hint_alpha))
+            host.add_hotspot(card, "jello_noop")
+            hint_color = self._argb(LIGHT_GREYISH_BLUE, 0.8 * hint_alpha)
+            title_rect = QRectF(left + 10.0 * scale, top + 8.0 * scale,
+                                card_width - 20.0 * scale, title_height * scale)
             for dx in (0.0, 1.0 * scale):
-                commands.text(
-                    QRectF(name_x + dx, hint_y, name_width + 4.0 * scale, 24.0 * scale),
-                    name,
-                    hint_font,
-                    hint_color,
-                    Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop,
-                    render_scale=scale,
-                )
-            commands.text(
-                QRectF(name_x + name_width + 6.0 * scale, hint_y, panel.width() - name_width - 34.0 * scale, 24.0 * scale),
-                state.hovered_setting_description,
-                hint_font,
-                hint_color,
-                Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop,
-                render_scale=scale,
+                commands.text(title_rect.translated(dx, 0.0), name, hint_font, hint_color,
+                              Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop,
+                              card, render_scale=scale)
+            hint_view = card.adjusted(10.0 * scale, (title_height + 12.0) * scale, -10.0 * scale, -10.0 * scale)
+            hint_maximum = max(0.0, body_height - hint_view.height())
+            hint_key = f"hint:{module.name}:{name}"
+            hint_scroll = state.settings_scroll_value(hint_key, hint_maximum)
+            # The whole topmost card owns wheel input, even when its body
+            # fits. Otherwise its title/padding can scroll obscured controls.
+            # Reuse the settings spring for unusually long, hover-held help.
+            host.gui_scroll_viewports.append(
+                {"mode": "jello_settings", "key": hint_key,
+                 "maximum": hint_maximum, "rect": QRectF(card)}
             )
+            for index, text in enumerate(hint_lines):
+                rect = QRectF(hint_view.left(), hint_view.top() + index * line_height * scale - hint_scroll,
+                              hint_view.width(), line_height * scale)
+                commands.text(rect, text, hint_font, hint_color,
+                              Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop,
+                              hint_view, render_scale=scale)
+        else:
+            state._setting_hint_rect = QRectF()
 
         if dropdown is not None:
             self._build_dropdown_popup(host, state, commands, dropdown)
@@ -1304,7 +1403,7 @@ class JelloClickGuiRenderer:
             clip,
             render_scale=scale,
         )
-        if rect.contains(host.hover_point):
+        if not getattr(state, "_setting_hint_hovered", False) and rect.contains(host.hover_point):
             state._setting_hovered_this_frame = True
             state.hovered_setting_name = localized_name
             state.hovered_setting_description = description_label(setting.description or "", chinese_enabled(host.registry))

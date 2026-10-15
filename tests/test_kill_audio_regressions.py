@@ -9,13 +9,16 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
-from PySide6.QtCore import QCoreApplication
+from unittest.mock import Mock, patch
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QGuiApplication
+from rm_client.audio_preferences import AudioPreferences
 from rm_client.kill_audio import KillSoundPool, PcmCueCache, _valid_pcm
 from rm_client.kill_fx import KillFxRenderer
 from rm_client.ui_audio import ReliableAudioPool
 
-APP = QCoreApplication.instance() or QCoreApplication([])
+# The audio pool observes application focus, just as it does in production.
+APP = QGuiApplication.instance() or QGuiApplication([])
 
 def wav(path):
     with wave.open(str(path), 'wb') as out:
@@ -51,6 +54,57 @@ class AudioTests(unittest.TestCase):
         with patch.object(self.pool, '_queue_decode') as decode, patch.object(ReliableAudioPool, 'play') as media:
             self.assertTrue(self.pool.play('cue.ogg', 0))
             decode.assert_not_called(); media.assert_not_called()
+    def test_master_muted_cold_request_does_not_enter_decode_queue(self):
+        with patch('rm_client.audio_preferences.current_audio', return_value=AudioPreferences(master_volume=0)), patch.object(self.pool, '_queue_decode') as decode, patch.object(ReliableAudioPool, 'play') as play:
+            self.assertTrue(self.pool.play('cue.ogg', 55))
+            decode.assert_not_called(); play.assert_not_called()
+            self.assertFalse(self.pool._waiting)
+    def test_focus_muted_cold_request_does_not_enter_decode_queue(self):
+        with patch('rm_client.audio_preferences.current_audio', return_value=AudioPreferences(mute_unfocused=True)), patch.object(QGuiApplication, 'applicationState', return_value=Qt.ApplicationState.ApplicationInactive), patch.object(self.pool, '_queue_decode') as decode, patch.object(ReliableAudioPool, 'play') as play:
+            self.assertTrue(self.pool.play('cue.ogg', 55))
+            decode.assert_not_called(); play.assert_not_called()
+            self.assertFalse(self.pool._waiting)
+    def test_audio_apply_cancels_cold_requests_before_later_unmute(self):
+        with patch.object(self.pool, '_queue_decode', return_value=True), patch.object(ReliableAudioPool, 'play') as play, patch.object(ReliableAudioPool, 'preload'):
+            self.pool.play('cue.ogg', 55)
+            self.assertTrue(self.pool._waiting)
+            self.pool.apply_audio_preferences()
+            self.assertFalse(self.pool._waiting)
+            self.pool._converted('cue.ogg', wav(self.root/'cached.wav'), '')
+            play.assert_not_called()
+            self.assertIn('cue.ogg', self.pool._decoded)  # Keep useful cache work.
+    def test_focus_loss_cancels_cold_requests_before_focus_returns(self):
+        with patch.object(self.pool, '_queue_decode', return_value=True), patch.object(ReliableAudioPool, 'play') as play, patch.object(ReliableAudioPool, 'preload'):
+            self.pool.play('cue.ogg', 55)
+            with patch('rm_client.audio_preferences.current_audio', return_value=AudioPreferences(mute_unfocused=True)), patch.object(QGuiApplication, 'applicationState', return_value=Qt.ApplicationState.ApplicationInactive):
+                self.pool._on_focus_changed(Qt.ApplicationState.ApplicationInactive)
+            self.assertFalse(self.pool._waiting)
+            self.pool._converted('cue.ogg', wav(self.root/'cached.wav'), '')
+            play.assert_not_called()
+    def test_focus_loss_without_background_mute_preserves_cold_request(self):
+        with patch('rm_client.audio_preferences.current_audio', return_value=AudioPreferences()), patch.object(self.pool, '_queue_decode', return_value=True), patch.object(ReliableAudioPool, 'play', return_value=True) as play, patch.object(ReliableAudioPool, 'preload'):
+            self.pool.play('cue.ogg', 55)
+            self.pool._on_focus_changed(Qt.ApplicationState.ApplicationInactive)
+            self.pool._converted('cue.ogg', wav(self.root/'cached.wav'), '')
+            play.assert_called_once_with('cue.ogg', 55)
+    def test_master_gain_is_not_applied_twice_by_early_policy_gate(self):
+        with patch('rm_client.audio_preferences.current_audio', return_value=AudioPreferences(master_volume=50)), patch.object(self.pool, '_queue_decode', return_value=False), patch.object(ReliableAudioPool, 'play', return_value=True) as play:
+            self.assertTrue(self.pool.play('cue.ogg', 55))
+            play.assert_called_once_with('cue.ogg', 55)
+    def test_close_cancels_all_pending_stops_players_and_rejects_new_requests(self):
+        effect, player, preloaded = Mock(), Mock(), Mock()
+        self.pool._effects['cue.wav'] = [effect]
+        self.pool._fallback.append((player, object()))
+        self.pool._media_effects['cue.ogg'] = [(preloaded, object())]
+        self.pool._pending['cue.wav'] = [55]
+        self.pool._waiting['cue.ogg'] = [(time.monotonic(), 55)]
+        self.pool.close()
+        self.assertFalse(self.pool._waiting)
+        self.assertFalse(self.pool._pending)
+        effect.stop.assert_called_once(); player.stop.assert_called_once(); preloaded.stop.assert_called_once()
+        with patch.object(self.pool, '_queue_decode') as decode, patch.object(ReliableAudioPool, 'play') as play:
+            self.assertFalse(self.pool.play('cue.ogg', 55))
+            decode.assert_not_called(); play.assert_not_called()
     def test_missing_output_is_reported_without_play(self):
         with patch('rm_client.kill_audio.QMediaDevices', SimpleNamespace(defaultAudioOutput=lambda: SimpleNamespace(isNull=lambda: True))), patch.object(ReliableAudioPool, 'play') as media:
             self.assertFalse(self.pool.play('cue.ogg', 55))
@@ -147,3 +201,4 @@ class AudioTests(unittest.TestCase):
         self.assertEqual(list(cache.root.iterdir()), [])
 
 if __name__ == '__main__': unittest.main()
+

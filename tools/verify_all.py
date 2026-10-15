@@ -47,6 +47,16 @@ PYTHON_SUITES = (
     "test_dt7_worker_dispatch",  # bounded UI-safe DT7 mailbox and fault lifecycle
     "test_cc_worker_dispatch",   # bounded UI-safe custom-controller worker
     "test_gpu_warmup_budget",  # queued warmup and UI-thread timing ownership
+    "test_fullscreen_composition",  # Windows style guard and pre-resize cache invalidation
+    "test_settings_cold_start",  # lazy settings, bounded rows, first-Esc warmup pause
+    "test_lazy_settings_state",  # independent drafts, dirty refresh and reset
+    "test_cs_crosshair_visibility",  # physical pixel floor and preview/HUD scale
+    "test_cs_crosshair_target_bounds",  # CS-only 2x sizing and bounded GPU uploads
+    "test_framebuffer_generation",  # DPR/storage replacement never reuses old pixels
+    "test_jello_atlas_pages",  # bounded text history and atomic atlas coverage
+    "test_jello_description_wrapping",  # full module/help text at original DPR
+    "test_fullscreen_input_extended",  # repeated modal/F11 and gesture ownership
+    "test_audio_replay_regressions",  # repeated preview cues and media voice ownership
     "test_background_display_locale",  # text-bearing GPU backgrounds/blur invalidate on locale
     "test_hero_display_locale",  # display-only Hero safety/phase text and invariant controls
     "test_hud_display_locale",  # HUD/map labels with immutable raw state and commands
@@ -56,6 +66,7 @@ PYTHON_SUITES = (
     "test_ui_localization",  # Chinese labels, stable stored IDs and explicit English
     "test_startup_display_locale",  # production startup geometry, cache and toast display
     "test_clickgui_background_dismiss",  # issue #8: blank clicks, controls, drag and hotkeys
+    "test_startup_settings_fullscreen",  # issue #12: launcher settings and window-owned F11
     "test_escape_menu",  # modal input precedence, safe Esc actions and real Qt rendering
     "test_kill_selector_regressions",  # clipped preset popup wheel/touchpad routing
     "test_kill_audio_regressions",  # nonblocking PCM cache, Ready gating and errors; no audio output

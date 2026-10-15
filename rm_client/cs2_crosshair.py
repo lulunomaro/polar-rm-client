@@ -30,6 +30,8 @@ INTEGERS = frozenset({"Red", "Green", "Blue", "Alpha", "Outline Red", "Outline G
 BOOLS = frozenset({"Center Dot", "T Shape", "Use Alpha", "Follow Recoil", "Weapon Gap", "Scope Dot Uses Color"})
 FORMATS = ("Custom", "legacy-v1", "legacy-v3", "legacy-v4", "cs2-v1")
 DISPLAY_SCALE_RANGE = (.5, 8.0)
+# Local CS-only presentation baseline; never encoded into imported/exported data.
+CS2_PRESENTATION_SCALE = 2.0
 DEFAULTS = {
     "Length": 5.0, "Gap": 3.0, "Thickness": 1.0, "Red": 80, "Green": 255, "Blue": 80, "Alpha": 255,
     "Outline Red": 0, "Outline Green": 0, "Outline Blue": 0, "Outline Alpha": 255,
@@ -357,7 +359,7 @@ def display_scale_from_module(module):
     return max(DISPLAY_SCALE_RANGE[0], min(DISPLAY_SCALE_RANGE[1], value))
 
 
-def paint_crosshair(p, module, width, height, *, display_scale=None):
+def paint_crosshair(p, module, width, height, *, display_scale=None, preview_zoom=1.0):
     """Paint ten modern static signatures, without simulating gameplay input."""
     from PySide6.QtCore import QRectF, Qt
     from PySide6.QtGui import QColor, QPainter, QPainterPath
@@ -370,8 +372,20 @@ def paint_crosshair(p, module, width, height, *, display_scale=None):
     multiplier = display_scale_from_module(module) if display_scale is None else display_scale
     if type(multiplier) not in (int, float) or not DISPLAY_SCALE_RANGE[0] <= multiplier <= DISPLAY_SCALE_RANGE[1]:
         return False
-    scale = height / v["Reference Height"] * multiplier
+    if type(preview_zoom) not in (int, float) or not 1 <= preview_zoom <= 8:
+        return False
+    scale = height / v["Reference Height"] * multiplier * CS2_PRESENTATION_SCALE
     length, gap, thick = (v[k] * scale for k in ("Length", "Gap", "Thickness"))
+    # Aliased subpixel strips can disappear entirely at 720p or small local
+    # scales. Keep a positive stroke at least one physical destination pixel,
+    # accounting for HUD and device DPR. Preview inspection magnifies this
+    # target-pixel floor together with the geometry, rather than thinning it.
+    # An explicitly zero thickness remains invisible.
+    if thick > 0:
+        transform = p.deviceTransform()
+        pixel_scale = min(math.hypot(transform.m11(), transform.m12()),
+                          math.hypot(transform.m21(), transform.m22()))
+        thick = max(thick, preview_zoom / max(0.001, pixel_scale))
     legacy = v["Geometry Units"] == "Legacy"
     if legacy:
         gap += 4 * scale  # Approximation; engine math is not in UI CSS.
@@ -663,7 +677,9 @@ def _create_editor(host, *, embedded=False):
                 painter.drawText(QRectF(12, 8, self.width() - 24, 24), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
                                  painter.fontMetrics().elidedText(caption, Qt.TextElideMode.ElideRight, self.width() - 24))
                 v = self.editor.draft()
-                ref_height = int(self.editor.resolution.currentText())
+                # The selector names physical target pixels. Convert to this
+                # preview widget's logical coordinates before Qt applies DPR.
+                ref_height = int(self.editor.resolution.currentText()) / max(0.001, self.devicePixelRatioF())
                 ref_width = round(ref_height * 16 / 9)
                 zoom = self.editor.zoom.value()
                 # Reserve the caption and clip before applying the virtual
@@ -674,7 +690,8 @@ def _create_editor(host, *, embedded=False):
                 painter.translate(canvas.center().x() - ref_width * zoom / 2, canvas.center().y() - ref_height * zoom / 2)
                 painter.scale(zoom, zoom)
                 module = SimpleNamespace(get_setting=lambda key: SimpleNamespace(value=v[key]))
-                paint_crosshair(painter, module, ref_width, ref_height, display_scale=self.editor.display_scale.value())
+                paint_crosshair(painter, module, ref_width, ref_height,
+                                display_scale=self.editor.display_scale.value(), preview_zoom=zoom)
             except ValueError:
                 pass  # Error label describes invalid drafts, never changes host.
             finally:
@@ -787,7 +804,7 @@ def _create_editor(host, *, embedded=False):
             self.display_scale.setValue(display_scale_from_module(host.registry.get('Crosshair')))
             self.display_scale.valueChanged.connect(self.refresh)
             display_form.addRow(label('Crosshair Scale'), self.display_scale)
-            display_note = QLabel('同时放大长度、间距、粗细和描边；不影响自瞄FOV。\n仅保存在本客户端设置中，导入或复制CS2分享码不会改变这个倍率。')
+            display_note = QLabel('CS样式采用2×本地显示基准；将整体大小设为0.5×可恢复原参考尺寸。\n同时缩放长度、间距、粗细和描边，不影响自瞄FOV；不修改导入或导出的分享码。')
             display_note.setWordWrap(True)
             display_form.addRow(display_note)
             groups.addWidget(display_group)
@@ -851,14 +868,17 @@ def _create_editor(host, *, embedded=False):
             preview_options.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows)
             self.resolution = QComboBox()
             self.resolution.addItems(('720', '1080', '1440', '2160'))
-            self.resolution.setCurrentText('1080')
+            current_height = str(max(1, round(host.height() * host.devicePixelRatioF())))
+            if self.resolution.findText(current_height) < 0:
+                self.resolution.addItem(current_height)
+            self.resolution.setCurrentText(current_height)
             self.resolution.currentIndexChanged.connect(self.refresh)
             self.zoom = QDoubleSpinBox()
             self.zoom.setRange(1, 8)
-            self.zoom.setValue(3)
+            self.zoom.setValue(1)
             self.zoom.setSuffix(' ×')
             self.zoom.valueChanged.connect(self.refresh)
-            preview_options.addRow('Preview height / 预览高度', self.resolution)
+            preview_options.addRow('Target height / 目标高度（物理px）', self.resolution)
             preview_options.addRow('Preview zoom / 预览倍数', self.zoom)
             right.addLayout(preview_options)
             for name, colors, grid in (('DARK', ('#152d3c', '#4b6976'), False), ('LIGHT', ('#c4ccd0', '#f4e8c8'), False), ('GRID', ('#282b30', '#4b4741'), True)):

@@ -86,7 +86,7 @@ class AtlasCacheTests(unittest.TestCase):
         r.atlases[self.key] = self.page
         with self.assertRaisesRegex(RuntimeError, "glyph atlas mutation"):
             r._ensure_atlas(self.font, "AB新")
-        self.assertEqual(r._atlas_chars[self.key], set("ABC新"))
+        self.assertEqual(r._atlas_chars[self.key], set("ABC"))
         self.assertEqual(r.atlas_hits, 0)
         self.assertIs(r.atlases[self.key], self.page)
 
@@ -96,7 +96,7 @@ class AtlasCacheTests(unittest.TestCase):
         r.shaped_atlases[self.key] = self.page
         with self.assertRaisesRegex(RuntimeError, "shaped text atlas mutation"):
             r._ensure_shaped_atlas(self.font, ["new"])
-        self.assertEqual(r._shaped_texts[self.key], {"old", "new"})
+        self.assertEqual(r._shaped_texts[self.key], {"old"})
         self.assertEqual(r.atlas_hits, 0)
 
     def test_known_text_without_published_texture_is_not_a_hit(self):
@@ -108,24 +108,24 @@ class AtlasCacheTests(unittest.TestCase):
                 method(self.font, value)
         self.assertEqual(r.atlas_hits, 0)
 
-    def test_oversized_glyph_page_still_takes_original_eviction_path(self):
+    def test_oversized_glyph_page_does_not_evict_during_render_pass(self):
         r = self.renderer
         chars = {chr(0x400 + index) for index in range(1026)}
         r._atlas_chars[self.key] = chars
         r.atlases[self.key] = self.page
         with self.assertRaisesRegex(RuntimeError, "atlas mutation"):
-            r._ensure_atlas(self.font, chr(0x400))
-        self.assertEqual(chars, {chr(0x400 + index) for index in range(1024)})
+            r._ensure_atlas(self.font, "新")
+        self.assertEqual(chars, {chr(0x400 + index) for index in range(1026)})
         self.assertEqual(r.atlas_hits, 0)
 
-    def test_oversized_shaped_page_still_retains_requested_lines(self):
+    def test_oversized_shaped_page_does_not_evict_during_render_pass(self):
         r = self.renderer
         known = {f"line {index:04}" for index in range(2050)}
         r._shaped_texts[self.key] = known
         r.shaped_atlases[self.key] = self.page
         with self.assertRaisesRegex(RuntimeError, "atlas mutation"):
-            r._ensure_shaped_atlas(self.font, ["line 2049"])
-        self.assertEqual(len(known), 2048)
+            r._ensure_shaped_atlas(self.font, ["new line"])
+        self.assertEqual(len(known), 2050)
         self.assertIn("line 2049", known)
         self.assertEqual(r.atlas_hits, 0)
 

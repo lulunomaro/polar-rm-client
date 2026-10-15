@@ -1,0 +1,6676 @@
+[
+  {
+    "source": "combined PR13-16 baseline",
+    "dpr": 1,
+    "hardware": false,
+    "gl_context_created": false,
+    "bundled_fonts": {
+      "poppins_regular": "Poppins",
+      "poppins_medium": "Poppins",
+      "poppins_bold": "Poppins",
+      "material": "Material Icons Outlined",
+      "polaricon": "zen-icon",
+      "tahoma": "Tahoma",
+      "jello_light": "Helvetica Neue",
+      "jello_medium": "HelveticaNeue",
+      "jello_regular": "My Font"
+    },
+    "jobs": [
+      {
+        "job": 0,
+        "kind": "prepare",
+        "generator_ms": 0.14176900003803894
+      },
+      {
+        "job": 1,
+        "kind": "prepare",
+        "generator_ms": 0.04420500044943765
+      },
+      {
+        "job": 2,
+        "kind": "prepare",
+        "generator_ms": 0.03764500070246868
+      },
+      {
+        "job": 3,
+        "kind": "prepare",
+        "generator_ms": 0.022784002794651315
+      },
+      {
+        "job": 4,
+        "kind": "prepare",
+        "generator_ms": 0.0865379988681525
+      },
+      {
+        "job": 5,
+        "kind": "prepare",
+        "generator_ms": 0.05248800152912736
+      },
+      {
+        "job": 6,
+        "kind": "prepare",
+        "generator_ms": 0.022573000023839995
+      },
+      {
+        "job": 7,
+        "kind": "prepare",
+        "generator_ms": 0.01529300061520189
+      },
+      {
+        "job": 8,
+        "kind": "prepare",
+        "generator_ms": 0.014190998626872897
+      },
+      {
+        "job": 9,
+        "kind": "prepare",
+        "generator_ms": 9.442390997719485
+      },
+      {
+        "job": 10,
+        "kind": "prepare",
+        "generator_ms": 0.8109689988486934
+      },
+      {
+        "job": 11,
+        "kind": "prepare",
+        "generator_ms": 1.0928450028586667
+      },
+      {
+        "job": 12,
+        "kind": "prepare",
+        "generator_ms": 0.9813210017455276
+      },
+      {
+        "job": 13,
+        "kind": "prepare",
+        "generator_ms": 1.1267250010860153
+      },
+      {
+        "job": 14,
+        "kind": "prepare",
+        "generator_ms": 0.7605440005136188
+      },
+      {
+        "job": 15,
+        "kind": "prepare",
+        "generator_ms": 0.3927209982066415
+      },
+      {
+        "job": 16,
+        "kind": "prepare",
+        "generator_ms": 0.9376059970236383
+      },
+      {
+        "job": 17,
+        "kind": "prepare",
+        "generator_ms": 0.6314529964583926
+      },
+      {
+        "job": 18,
+        "kind": "text",
+        "generator_ms": 0.12080899978172965,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 18.054264997772407
+      },
+      {
+        "job": 19,
+        "kind": "text",
+        "generator_ms": 0.006889997166581452,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 0.2424990016152151
+      },
+      {
+        "job": 20,
+        "kind": "text",
+        "generator_ms": 0.0013019998732488602,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 22.577010000532027
+      },
+      {
+        "job": 21,
+        "kind": "text",
+        "generator_ms": 0.0034850017982535064,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 14.16391499878955
+      },
+      {
+        "job": 22,
+        "kind": "text",
+        "generator_ms": 0.006018999556545168,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 14.241270000638906
+      },
+      {
+        "job": 23,
+        "kind": "text",
+        "generator_ms": 0.052336999942781404,
+        "font": "Poppins",
+        "size": 18.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 14.451140003075125
+      },
+      {
+        "job": 24,
+        "kind": "text",
+        "generator_ms": 0.0037659992813132703,
+        "font": "Segoe UI",
+        "size": 28.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 24.60558399980073
+      },
+      {
+        "job": 25,
+        "kind": "text",
+        "generator_ms": 0.005337999027688056,
+        "font": "Material Icons Outlined",
+        "size": 12.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 17.53013100096723
+      },
+      {
+        "job": 26,
+        "kind": "text",
+        "generator_ms": 5.6181239997386,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 1,
+        "shaped": false,
+        "cpu_raster_ms": 2.3552920029032975
+      },
+      {
+        "job": 27,
+        "kind": "text",
+        "generator_ms": 0.0038959988160058856,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 102,
+        "shaped": true,
+        "cpu_raster_ms": 23.533989002316957
+      },
+      {
+        "job": 28,
+        "kind": "text",
+        "generator_ms": 0.005687998054781929,
+        "font": "Helvetica Neue",
+        "size": 13.5,
+        "labels": 91,
+        "shaped": true,
+        "cpu_raster_ms": 9.339765001641354
+      },
+      {
+        "job": 29,
+        "kind": "text",
+        "generator_ms": 0.00409600033890456,
+        "font": "Helvetica Neue",
+        "size": 15.0,
+        "labels": 166,
+        "shaped": true,
+        "cpu_raster_ms": 22.026817001460586
+      },
+      {
+        "job": 30,
+        "kind": "text",
+        "generator_ms": 0.0067399996623862535,
+        "font": "Helvetica Neue",
+        "size": 18.75,
+        "labels": 24,
+        "shaped": true,
+        "cpu_raster_ms": 7.285939002031228
+      },
+      {
+        "job": 31,
+        "kind": "text",
+        "generator_ms": 0.003655997716123238,
+        "font": "HelveticaNeue",
+        "size": 30.0,
+        "labels": 2,
+        "shaped": true,
+        "cpu_raster_ms": 6.000909001159016
+      },
+      {
+        "job": 32,
+        "kind": "text",
+        "generator_ms": 0.003555996954673901,
+        "font": "Helvetica Neue",
+        "size": 11.25,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 16.474771000503097
+      },
+      {
+        "job": 33,
+        "kind": "text",
+        "generator_ms": 0.005527999746846035,
+        "font": "Helvetica Neue",
+        "size": 10.125,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 14.818633000686532
+      },
+      {
+        "job": 34,
+        "kind": "text",
+        "generator_ms": 0.005387999408412725,
+        "font": "Helvetica Neue",
+        "size": 7.875,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 14.368477997777518
+      },
+      {
+        "job": 35,
+        "kind": "image",
+        "generator_ms": 0.021492000087164342,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/options.png'),),)"
+      },
+      {
+        "job": 36,
+        "kind": "image",
+        "generator_ms": 0.00059100057114847,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/check.png'),),)"
+      },
+      {
+        "job": 37,
+        "kind": "image",
+        "generator_ms": 0.0004309986252337694,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/verticalscrollbartop.png'),),)"
+      },
+      {
+        "job": 38,
+        "kind": "image",
+        "generator_ms": 0.0002800006768666208,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/verticalscrollbarbottom.png'),),)"
+      },
+      {
+        "job": 39,
+        "kind": "image",
+        "generator_ms": 0.00025999906938523054,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_corner.png'),),)"
+      },
+      {
+        "job": 40,
+        "kind": "image",
+        "generator_ms": 0.00021999949240125716,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_corner_2.png'),),)"
+      },
+      {
+        "job": 41,
+        "kind": "image",
+        "generator_ms": 0.00024100154405459762,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_corner_3.png'),),)"
+      },
+      {
+        "job": 42,
+        "kind": "image",
+        "generator_ms": 0.00023000029614195228,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_corner_4.png'),),)"
+      },
+      {
+        "job": 43,
+        "kind": "image",
+        "generator_ms": 0.000281001121038571,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_left.png'),),)"
+      },
+      {
+        "job": 44,
+        "kind": "image",
+        "generator_ms": 0.0002310007403139025,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_right.png'),),)"
+      },
+      {
+        "job": 45,
+        "kind": "image",
+        "generator_ms": 0.0003300010575912893,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_top.png'),),)"
+      },
+      {
+        "job": 46,
+        "kind": "image",
+        "generator_ms": 0.0002309971023350954,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_bottom.png'),),)"
+      },
+      {
+        "job": 47,
+        "kind": "image",
+        "generator_ms": 0.0052579998737201095,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_icon.png'),),)"
+      },
+      {
+        "job": 48,
+        "kind": "image",
+        "generator_ms": 0.10582699906080961,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_ammo.png'),),)"
+      },
+      {
+        "job": 49,
+        "kind": "image",
+        "generator_ms": 0.0017429993022233248,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_recovery.png'),),)"
+      },
+      {
+        "job": 50,
+        "kind": "image",
+        "generator_ms": 0.0008620008884463459,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_revive.png'),),)"
+      },
+      {
+        "job": 51,
+        "kind": "image",
+        "generator_ms": 0.016813999536680058,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/ui/cs2_buy/support.svg'),),)"
+      },
+      {
+        "job": 52,
+        "kind": "image",
+        "generator_ms": 0.012237996998010203,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/minecraft/hotbar.png'),),)"
+      },
+      {
+        "job": 53,
+        "kind": "image",
+        "generator_ms": 0.0004809990059584379,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/minecraft/hotbar_selection.png'),),)"
+      },
+      {
+        "job": 54,
+        "kind": "image",
+        "generator_ms": 0.00034999902709387243,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/hud_shadow.png'),),)"
+      },
+      {
+        "job": 55,
+        "kind": "text",
+        "generator_ms": 0.9097649999603163,
+        "font": "Poppins",
+        "size": 17.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 14.44515000184765
+      },
+      {
+        "job": 56,
+        "kind": "text",
+        "generator_ms": 0.003335000656079501,
+        "font": "Poppins",
+        "size": 15.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.47466699735378
+      },
+      {
+        "job": 57,
+        "kind": "text",
+        "generator_ms": 0.004417001036927104,
+        "font": "Poppins",
+        "size": 13.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 20.654754000133835
+      },
+      {
+        "job": 58,
+        "kind": "text",
+        "generator_ms": 0.005628000508295372,
+        "font": "Poppins",
+        "size": 12.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 15.158564998273505
+      },
+      {
+        "job": 59,
+        "kind": "text",
+        "generator_ms": 0.005498000973602757,
+        "font": "Poppins",
+        "size": 10.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.84487600059947
+      },
+      {
+        "job": 60,
+        "kind": "text",
+        "generator_ms": 0.0049769987526815385,
+        "font": "Poppins",
+        "size": 10.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.318537999817636
+      },
+      {
+        "job": 61,
+        "kind": "text",
+        "generator_ms": 0.005238001904217526,
+        "font": "Poppins",
+        "size": 9.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.201874997117557
+      },
+      {
+        "job": 62,
+        "kind": "text",
+        "generator_ms": 0.004296998667996377,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.455241000367096
+      },
+      {
+        "job": 63,
+        "kind": "text",
+        "generator_ms": 0.003144999936921522,
+        "font": "Poppins",
+        "size": 8.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 11.886879001394846
+      },
+      {
+        "job": 64,
+        "kind": "text",
+        "generator_ms": 0.003945999196730554,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.09067299956223
+      },
+      {
+        "job": 65,
+        "kind": "text",
+        "generator_ms": 0.0031039999157655984,
+        "font": "Poppins",
+        "size": 6.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.835392000852153
+      },
+      {
+        "job": 66,
+        "kind": "text",
+        "generator_ms": 0.004886998794972897,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.09926700295181945
+      },
+      {
+        "job": 67,
+        "kind": "text",
+        "generator_ms": 0.0008210008672904223,
+        "font": "Poppins",
+        "size": 8.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.762042000540532
+      },
+      {
+        "job": 68,
+        "kind": "text",
+        "generator_ms": 0.0018930004443973303,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.0776150009187404
+      },
+      {
+        "job": 69,
+        "kind": "text",
+        "generator_ms": 0.0008520000847056508,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.743110000883462
+      },
+      {
+        "job": 70,
+        "kind": "text",
+        "generator_ms": 0.004747002094518393,
+        "font": "Poppins",
+        "size": 7.8,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 3.36370099830674
+      },
+      {
+        "job": 71,
+        "kind": "text",
+        "generator_ms": 0.001972999598365277,
+        "font": "Poppins",
+        "size": 7.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.484670998877846
+      },
+      {
+        "job": 72,
+        "kind": "text",
+        "generator_ms": 0.004197001544525847,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.815163000283064
+      },
+      {
+        "job": 73,
+        "kind": "text",
+        "generator_ms": 0.002944001607829705,
+        "font": "Poppins",
+        "size": 7.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.4757289975241292
+      },
+      {
+        "job": 74,
+        "kind": "text",
+        "generator_ms": 0.3148559990222566,
+        "font": "Poppins",
+        "size": 16.53333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 16.314874003001023
+      },
+      {
+        "job": 75,
+        "kind": "text",
+        "generator_ms": 0.0355929987563286,
+        "font": "Poppins",
+        "size": 11.573333333333334,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 14.570946001185803
+      },
+      {
+        "job": 76,
+        "kind": "text",
+        "generator_ms": 0.034480999602237716,
+        "font": "Poppins",
+        "size": 7.522666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 7.585932999063516
+      },
+      {
+        "job": 77,
+        "kind": "text",
+        "generator_ms": 0.02480700277374126,
+        "font": "Poppins",
+        "size": 7.605333333333332,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 3.629083999840077
+      },
+      {
+        "job": 78,
+        "kind": "text",
+        "generator_ms": 0.01756600249791518,
+        "font": "Poppins",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 7.943100998090813
+      },
+      {
+        "job": 79,
+        "kind": "text",
+        "generator_ms": 0.020179999410174787,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 3.652028000942664
+      },
+      {
+        "job": 80,
+        "kind": "text",
+        "generator_ms": 0.016353998944396153,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 0.03463200118858367
+      },
+      {
+        "job": 81,
+        "kind": "text",
+        "generator_ms": 0.006930000381544232,
+        "font": "Poppins",
+        "size": 11.16,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 8.071750999079086
+      },
+      {
+        "job": 82,
+        "kind": "text",
+        "generator_ms": 0.023904998670332134,
+        "font": "Poppins",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 8.177648000128102
+      },
+      {
+        "job": 83,
+        "kind": "text",
+        "generator_ms": 0.02230199970654212,
+        "font": "Poppins",
+        "size": 7.4399999999999995,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 4.130615998292342
+      },
+      {
+        "job": 84,
+        "kind": "text",
+        "generator_ms": 0.017485999705968425,
+        "font": "Poppins",
+        "size": 8.266666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 12.627703999896767
+      },
+      {
+        "job": 85,
+        "kind": "text",
+        "generator_ms": 0.02606899943202734,
+        "font": "Poppins",
+        "size": 7.109333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 12.900127003376838
+      },
+      {
+        "job": 86,
+        "kind": "text",
+        "generator_ms": 0.1587939987075515,
+        "font": "Sans Serif",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 17.08489300290239
+      },
+      {
+        "job": 87,
+        "kind": "text",
+        "generator_ms": 0.10873100109165534,
+        "font": "Sans Serif",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 3.370332000486087
+      },
+      {
+        "job": 88,
+        "kind": "text",
+        "generator_ms": 0.030986000638222322,
+        "font": "Sans Serif",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 13.777574000414461
+      }
+    ],
+    "modules": [
+      {
+        "module": "Scenario",
+        "cpu_raster_ms": 18.152690998249454,
+        "error": null
+      },
+      {
+        "module": "StartupVisual",
+        "cpu_raster_ms": 23.844883999117883,
+        "error": null
+      },
+      {
+        "module": "MatchMode",
+        "cpu_raster_ms": 18.86961000127485,
+        "error": null
+      },
+      {
+        "module": "RobotProfile",
+        "cpu_raster_ms": 24.569084998802282,
+        "error": null
+      },
+      {
+        "module": "AllianceProfile",
+        "cpu_raster_ms": 18.814908999047475,
+        "error": null
+      },
+      {
+        "module": "ConfigManager",
+        "cpu_raster_ms": 28.42933000283665,
+        "error": null
+      },
+      {
+        "module": "EmergencyStop",
+        "cpu_raster_ms": 22.996992000116734,
+        "error": null
+      },
+      {
+        "module": "MatchReadiness",
+        "cpu_raster_ms": 39.852093999797944,
+        "error": null
+      },
+      {
+        "module": "ArmorAutoAim",
+        "cpu_raster_ms": 40.00656199787045,
+        "error": null
+      },
+      {
+        "module": "EliminationFX",
+        "cpu_raster_ms": 61.90423900261521,
+        "error": null
+      },
+      {
+        "module": "AudioFeedback",
+        "cpu_raster_ms": 45.33938499662327,
+        "error": null
+      },
+      {
+        "module": "EnergyAutoAim",
+        "cpu_raster_ms": 45.55881900159875,
+        "error": null
+      },
+      {
+        "module": "ArmorLock",
+        "cpu_raster_ms": 45.284043000719976,
+        "error": null
+      },
+      {
+        "module": "HeroLob",
+        "cpu_raster_ms": 87.60337899730075,
+        "error": null
+      },
+      {
+        "module": "FireControlStub",
+        "cpu_raster_ms": 68.896192999091,
+        "error": null
+      },
+      {
+        "module": "SpinMode",
+        "cpu_raster_ms": 78.93699399937759,
+        "error": null
+      },
+      {
+        "module": "AutoSpinOnHit",
+        "cpu_raster_ms": 64.33191700125462,
+        "error": null
+      },
+      {
+        "module": "ChassisAssist",
+        "cpu_raster_ms": 57.34156600010465,
+        "error": null
+      },
+      {
+        "module": "PowerGuard",
+        "cpu_raster_ms": 53.71098799878382,
+        "error": null
+      },
+      {
+        "module": "CameraFeed",
+        "cpu_raster_ms": 61.364100001810584,
+        "error": null
+      },
+      {
+        "module": "TongjiVisionBridge",
+        "cpu_raster_ms": 104.71773999961442,
+        "error": null
+      },
+      {
+        "module": "CameraCalibration",
+        "cpu_raster_ms": 83.45168799860403,
+        "error": null
+      },
+      {
+        "module": "Armor3DESP",
+        "cpu_raster_ms": 73.5866659997555,
+        "error": null
+      },
+      {
+        "module": "RobotOverlay",
+        "cpu_raster_ms": 90.15535099752015,
+        "error": null
+      },
+      {
+        "module": "RadarOverlay",
+        "cpu_raster_ms": 84.17439000186278,
+        "error": null
+      },
+      {
+        "module": "MapMarker",
+        "cpu_raster_ms": 90.75746099915705,
+        "error": null
+      },
+      {
+        "module": "TacticalMap",
+        "cpu_raster_ms": 95.51171299972339,
+        "error": null
+      },
+      {
+        "module": "LiquidTacticalMap",
+        "cpu_raster_ms": 112.79518800074584,
+        "error": null
+      },
+      {
+        "module": "SentinelCommand",
+        "cpu_raster_ms": 99.71384399977978,
+        "error": null
+      },
+      {
+        "module": "AirSupport",
+        "cpu_raster_ms": 102.84599900114699,
+        "error": null
+      },
+      {
+        "module": "TopMatchBar",
+        "cpu_raster_ms": 112.42198699983419,
+        "error": null
+      },
+      {
+        "module": "MatchTimer",
+        "cpu_raster_ms": 105.06434200215153,
+        "error": null
+      },
+      {
+        "module": "BaseOutpostStatus",
+        "cpu_raster_ms": 94.2502580001019,
+        "error": null
+      },
+      {
+        "module": "VictoryPointStatus",
+        "cpu_raster_ms": 100.37621299852617,
+        "error": null
+      },
+      {
+        "module": "EconomyPanel",
+        "cpu_raster_ms": 104.47470999861252,
+        "error": null
+      },
+      {
+        "module": "ProjectileShop",
+        "cpu_raster_ms": 104.42722100196988,
+        "error": null
+      },
+      {
+        "module": "MatchChat",
+        "cpu_raster_ms": 105.63962700325646,
+        "error": null
+      },
+      {
+        "module": "QuickActionWheel",
+        "cpu_raster_ms": 130.4831679990457,
+        "error": null
+      },
+      {
+        "module": "ThermalPowerPanel",
+        "cpu_raster_ms": 115.94313700334169,
+        "error": null
+      },
+      {
+        "module": "BuffTimeline",
+        "cpu_raster_ms": 111.08240699832095,
+        "error": null
+      },
+      {
+        "module": "MQTTLink",
+        "cpu_raster_ms": 119.92644000201835,
+        "error": null
+      },
+      {
+        "module": "UDPVideo",
+        "cpu_raster_ms": 123.98212400148623,
+        "error": null
+      },
+      {
+        "module": "SerialBridge",
+        "cpu_raster_ms": 130.2486169988697,
+        "error": null
+      },
+      {
+        "module": "ControllerAngles",
+        "cpu_raster_ms": 135.99961799991434,
+        "error": null
+      },
+      {
+        "module": "RobotLink",
+        "cpu_raster_ms": 231.47599799995078,
+        "error": null
+      },
+      {
+        "module": "HUD",
+        "cpu_raster_ms": 183.58122899735463,
+        "error": null
+      },
+      {
+        "module": "UIScale",
+        "cpu_raster_ms": 151.35083199857036,
+        "error": null
+      },
+      {
+        "module": "Crosshair",
+        "cpu_raster_ms": 173.86064200036344,
+        "error": null
+      },
+      {
+        "module": "CombatTargetHUD",
+        "cpu_raster_ms": 171.05501500191167,
+        "error": null
+      },
+      {
+        "module": "MinecraftCombatHUD",
+        "cpu_raster_ms": 198.15714099968318,
+        "error": null
+      },
+      {
+        "module": "ChassisGimbalIndicator",
+        "cpu_raster_ms": 247.6319240013254,
+        "error": null
+      },
+      {
+        "module": "ClickGui",
+        "cpu_raster_ms": 0.327343001117697,
+        "error": null
+      },
+      {
+        "module": "GimbalPower",
+        "cpu_raster_ms": 224.3757620017277,
+        "error": null
+      },
+      {
+        "module": "PowerLimit",
+        "cpu_raster_ms": 217.960526002571,
+        "error": null
+      },
+      {
+        "module": "SpeedLimit",
+        "cpu_raster_ms": 206.98722200177144,
+        "error": null
+      },
+      {
+        "module": "Capacitor",
+        "cpu_raster_ms": 177.15758499980439,
+        "error": null
+      },
+      {
+        "module": "FrictionWheel",
+        "cpu_raster_ms": 174.40597300083027,
+        "error": null
+      },
+      {
+        "module": "LockState",
+        "cpu_raster_ms": 224.51899500083528,
+        "error": null
+      },
+      {
+        "module": "BuffStatus",
+        "cpu_raster_ms": 176.4576899986423,
+        "error": null
+      },
+      {
+        "module": "ProjectileAllowance",
+        "cpu_raster_ms": 57.60009100049501,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      },
+      {
+        "module": "JumpPTEWheelLES",
+        "cpu_raster_ms": 77.56741300181602,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      },
+      {
+        "module": "InjuryStatistics",
+        "cpu_raster_ms": 79.54481600245344,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      },
+      {
+        "module": "MatchSettlement",
+        "cpu_raster_ms": 72.46284400025615,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      },
+      {
+        "module": "DartPanel",
+        "cpu_raster_ms": 68.82065500030876,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      },
+      {
+        "module": "SkillConfiguration",
+        "cpu_raster_ms": 92.38009100226918,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      },
+      {
+        "module": "MinecraftInventory",
+        "cpu_raster_ms": 68.29798299804679,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      },
+      {
+        "module": "ReloadingPanel",
+        "cpu_raster_ms": 65.5016649980098,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      },
+      {
+        "module": "RuneRingStatus",
+        "cpu_raster_ms": 81.90321600341122,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      },
+      {
+        "module": "ResourceIsland",
+        "cpu_raster_ms": 74.34027199997217,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      },
+      {
+        "module": "GainZone",
+        "cpu_raster_ms": 92.83491799942567,
+        "error": null
+      },
+      {
+        "module": "UWBStatus",
+        "cpu_raster_ms": 102.97254100078135,
+        "error": null
+      },
+      {
+        "module": "ArmorStatus",
+        "cpu_raster_ms": 114.42634899867699,
+        "error": null
+      },
+      {
+        "module": "WirelessCharging",
+        "cpu_raster_ms": 121.30888199681067,
+        "error": null
+      },
+      {
+        "module": "MinecraftBuffs",
+        "cpu_raster_ms": 81.40406600068673,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 18.75pt"
+      }
+    ],
+    "phase": "combined",
+    "qt": "6.8.2"
+  },
+  {
+    "source": "combined PR13-16 baseline",
+    "dpr": 2.0,
+    "hardware": false,
+    "gl_context_created": false,
+    "bundled_fonts": {
+      "poppins_regular": "Poppins",
+      "poppins_medium": "Poppins",
+      "poppins_bold": "Poppins",
+      "material": "Material Icons Outlined",
+      "polaricon": "zen-icon",
+      "tahoma": "Tahoma",
+      "jello_light": "Helvetica Neue",
+      "jello_medium": "HelveticaNeue",
+      "jello_regular": "My Font"
+    },
+    "jobs": [
+      {
+        "job": 0,
+        "kind": "prepare",
+        "generator_ms": 0.16420300016761757
+      },
+      {
+        "job": 1,
+        "kind": "prepare",
+        "generator_ms": 0.05314900045050308
+      },
+      {
+        "job": 2,
+        "kind": "prepare",
+        "generator_ms": 0.04315300247981213
+      },
+      {
+        "job": 3,
+        "kind": "prepare",
+        "generator_ms": 0.025387998903170228
+      },
+      {
+        "job": 4,
+        "kind": "prepare",
+        "generator_ms": 0.03044500044779852
+      },
+      {
+        "job": 5,
+        "kind": "prepare",
+        "generator_ms": 0.06395499804057181
+      },
+      {
+        "job": 6,
+        "kind": "prepare",
+        "generator_ms": 0.043954998545814306
+      },
+      {
+        "job": 7,
+        "kind": "prepare",
+        "generator_ms": 0.01979999797185883
+      },
+      {
+        "job": 8,
+        "kind": "prepare",
+        "generator_ms": 0.018498001736588776
+      },
+      {
+        "job": 9,
+        "kind": "prepare",
+        "generator_ms": 10.117834000993753
+      },
+      {
+        "job": 10,
+        "kind": "prepare",
+        "generator_ms": 0.8095159973890986
+      },
+      {
+        "job": 11,
+        "kind": "prepare",
+        "generator_ms": 0.620145998254884
+      },
+      {
+        "job": 12,
+        "kind": "prepare",
+        "generator_ms": 0.5237639998085797
+      },
+      {
+        "job": 13,
+        "kind": "prepare",
+        "generator_ms": 0.7288269989658147
+      },
+      {
+        "job": 14,
+        "kind": "prepare",
+        "generator_ms": 0.8178380012395792
+      },
+      {
+        "job": 15,
+        "kind": "prepare",
+        "generator_ms": 0.7639589966856875
+      },
+      {
+        "job": 16,
+        "kind": "prepare",
+        "generator_ms": 0.442344000475714
+      },
+      {
+        "job": 17,
+        "kind": "prepare",
+        "generator_ms": 1.1898190023202915
+      },
+      {
+        "job": 18,
+        "kind": "text",
+        "generator_ms": 0.19926500317524187,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 21.83865699771559
+      },
+      {
+        "job": 19,
+        "kind": "text",
+        "generator_ms": 0.006869999197078869,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 0.42903400026261806
+      },
+      {
+        "job": 20,
+        "kind": "text",
+        "generator_ms": 0.0012419986887834966,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 21.416587998828618
+      },
+      {
+        "job": 21,
+        "kind": "text",
+        "generator_ms": 0.004908000846626237,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 30.39115199862863
+      },
+      {
+        "job": 22,
+        "kind": "text",
+        "generator_ms": 0.0057390025176573545,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 14.350368997838814
+      },
+      {
+        "job": 23,
+        "kind": "text",
+        "generator_ms": 0.004527002602117136,
+        "font": "Poppins",
+        "size": 18.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 20.69660499910242
+      },
+      {
+        "job": 24,
+        "kind": "text",
+        "generator_ms": 0.006119000317994505,
+        "font": "Segoe UI",
+        "size": 28.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 25.750599001185037
+      },
+      {
+        "job": 25,
+        "kind": "text",
+        "generator_ms": 0.005689002136932686,
+        "font": "Material Icons Outlined",
+        "size": 12.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 14.755838998098625
+      },
+      {
+        "job": 26,
+        "kind": "text",
+        "generator_ms": 4.334967001341283,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 1,
+        "shaped": false,
+        "cpu_raster_ms": 3.411781999602681
+      },
+      {
+        "job": 27,
+        "kind": "text",
+        "generator_ms": 0.00563799767405726,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 102,
+        "shaped": true,
+        "cpu_raster_ms": 20.351289000245742
+      },
+      {
+        "job": 28,
+        "kind": "text",
+        "generator_ms": 0.007139999070204794,
+        "font": "Helvetica Neue",
+        "size": 13.5,
+        "labels": 91,
+        "shaped": true,
+        "cpu_raster_ms": 75.12485400002333
+      },
+      {
+        "job": 29,
+        "kind": "text",
+        "generator_ms": 0.008172002708306536,
+        "font": "Helvetica Neue",
+        "size": 15.0,
+        "labels": 166,
+        "shaped": true,
+        "cpu_raster_ms": 139.2379519966198
+      },
+      {
+        "job": 30,
+        "kind": "text",
+        "generator_ms": 0.008271999831777066,
+        "font": "Helvetica Neue",
+        "size": 18.75,
+        "labels": 24,
+        "shaped": true,
+        "cpu_raster_ms": 19.060041002376238
+      },
+      {
+        "job": 31,
+        "kind": "text",
+        "generator_ms": 0.007490998541470617,
+        "font": "HelveticaNeue",
+        "size": 30.0,
+        "labels": 2,
+        "shaped": true,
+        "cpu_raster_ms": 3.7510340007429477
+      },
+      {
+        "job": 32,
+        "kind": "text",
+        "generator_ms": 0.005148001946508884,
+        "font": "Helvetica Neue",
+        "size": 11.25,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 25.271750997490017
+      },
+      {
+        "job": 33,
+        "kind": "text",
+        "generator_ms": 0.00831199940876104,
+        "font": "Helvetica Neue",
+        "size": 10.125,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 25.55958700031624
+      },
+      {
+        "job": 34,
+        "kind": "text",
+        "generator_ms": 0.008433002221863717,
+        "font": "Helvetica Neue",
+        "size": 7.875,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 18.451389998517698
+      },
+      {
+        "job": 35,
+        "kind": "image",
+        "generator_ms": 0.021502000890905038,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/options.png'),),)"
+      },
+      {
+        "job": 36,
+        "kind": "image",
+        "generator_ms": 0.0006310001481324434,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/check.png'),),)"
+      },
+      {
+        "job": 37,
+        "kind": "image",
+        "generator_ms": 0.0004310022632125765,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/verticalscrollbartop.png'),),)"
+      },
+      {
+        "job": 38,
+        "kind": "image",
+        "generator_ms": 0.0002999986463692039,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/verticalscrollbarbottom.png'),),)"
+      },
+      {
+        "job": 39,
+        "kind": "image",
+        "generator_ms": 0.0002899978426285088,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_corner.png'),),)"
+      },
+      {
+        "job": 40,
+        "kind": "image",
+        "generator_ms": 0.00022099993657320738,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_corner_2.png'),),)"
+      },
+      {
+        "job": 41,
+        "kind": "image",
+        "generator_ms": 0.0002400010998826474,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_corner_3.png'),),)"
+      },
+      {
+        "job": 42,
+        "kind": "image",
+        "generator_ms": 0.000200001522898674,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_corner_4.png'),),)"
+      },
+      {
+        "job": 43,
+        "kind": "image",
+        "generator_ms": 0.0002400010998826474,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_left.png'),),)"
+      },
+      {
+        "job": 44,
+        "kind": "image",
+        "generator_ms": 0.0001900007191579789,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_right.png'),),)"
+      },
+      {
+        "job": 45,
+        "kind": "image",
+        "generator_ms": 0.00024100154405459762,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_top.png'),),)"
+      },
+      {
+        "job": 46,
+        "kind": "image",
+        "generator_ms": 0.00025099870981648564,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/shadow_bottom.png'),),)"
+      },
+      {
+        "job": 47,
+        "kind": "image",
+        "generator_ms": 0.0049770023906603456,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_icon.png'),),)"
+      },
+      {
+        "job": 48,
+        "kind": "image",
+        "generator_ms": 0.03271800233051181,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_ammo.png'),),)"
+      },
+      {
+        "job": 49,
+        "kind": "image",
+        "generator_ms": 0.0018219980120193213,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_recovery.png'),),)"
+      },
+      {
+        "job": 50,
+        "kind": "image",
+        "generator_ms": 0.0014420002116821706,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_revive.png'),),)"
+      },
+      {
+        "job": 51,
+        "kind": "image",
+        "generator_ms": 0.016324000171152875,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/ui/cs2_buy/support.svg'),),)"
+      },
+      {
+        "job": 52,
+        "kind": "image",
+        "generator_ms": 0.013099001080263406,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/minecraft/hotbar.png'),),)"
+      },
+      {
+        "job": 53,
+        "kind": "image",
+        "generator_ms": 0.000481002643937245,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/minecraft/hotbar_selection.png'),),)"
+      },
+      {
+        "job": 54,
+        "kind": "image",
+        "generator_ms": 0.0003400018613319844,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/jello/hud_shadow.png'),),)"
+      },
+      {
+        "job": 55,
+        "kind": "text",
+        "generator_ms": 0.910956001462182,
+        "font": "Poppins",
+        "size": 17.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 15.848783998080762
+      },
+      {
+        "job": 56,
+        "kind": "text",
+        "generator_ms": 0.007161001121858135,
+        "font": "Poppins",
+        "size": 15.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 14.775357998587424
+      },
+      {
+        "job": 57,
+        "kind": "text",
+        "generator_ms": 0.005728001269744709,
+        "font": "Poppins",
+        "size": 13.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 20.841784997173818
+      },
+      {
+        "job": 58,
+        "kind": "text",
+        "generator_ms": 0.00658000135445036,
+        "font": "Poppins",
+        "size": 12.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 19.600808998802677
+      },
+      {
+        "job": 59,
+        "kind": "text",
+        "generator_ms": 0.00717100192559883,
+        "font": "Poppins",
+        "size": 10.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 14.459059999353485
+      },
+      {
+        "job": 60,
+        "kind": "text",
+        "generator_ms": 0.005838999641127884,
+        "font": "Poppins",
+        "size": 10.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.554393000958953
+      },
+      {
+        "job": 61,
+        "kind": "text",
+        "generator_ms": 0.005489000614034012,
+        "font": "Poppins",
+        "size": 9.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.93952400010312
+      },
+      {
+        "job": 62,
+        "kind": "text",
+        "generator_ms": 0.005829002475365996,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 7.2244069997395854
+      },
+      {
+        "job": 63,
+        "kind": "text",
+        "generator_ms": 0.0059689991758205,
+        "font": "Poppins",
+        "size": 8.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.9265560026397
+      },
+      {
+        "job": 64,
+        "kind": "text",
+        "generator_ms": 0.005127996701048687,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.749736003257567
+      },
+      {
+        "job": 65,
+        "kind": "text",
+        "generator_ms": 0.0034949989640153944,
+        "font": "Poppins",
+        "size": 6.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.707008998608217
+      },
+      {
+        "job": 66,
+        "kind": "text",
+        "generator_ms": 0.00482700124848634,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.10230100087937899
+      },
+      {
+        "job": 67,
+        "kind": "text",
+        "generator_ms": 0.0010519979696255177,
+        "font": "Poppins",
+        "size": 8.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 3.5759550009970553
+      },
+      {
+        "job": 68,
+        "kind": "text",
+        "generator_ms": 0.0039049991755746305,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.0873889985086862
+      },
+      {
+        "job": 69,
+        "kind": "text",
+        "generator_ms": 0.0010119983926415443,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 7.385475000774022
+      },
+      {
+        "job": 70,
+        "kind": "text",
+        "generator_ms": 0.003735000063898042,
+        "font": "Poppins",
+        "size": 7.8,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.9178620025049895
+      },
+      {
+        "job": 71,
+        "kind": "text",
+        "generator_ms": 0.0032140014809556305,
+        "font": "Poppins",
+        "size": 7.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.793840000085765
+      },
+      {
+        "job": 72,
+        "kind": "text",
+        "generator_ms": 0.004716999683296308,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.8699440016644076
+      },
+      {
+        "job": 73,
+        "kind": "text",
+        "generator_ms": 0.004716999683296308,
+        "font": "Poppins",
+        "size": 7.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.6167870018980466
+      },
+      {
+        "job": 74,
+        "kind": "text",
+        "generator_ms": 0.2290679985890165,
+        "font": "Poppins",
+        "size": 16.53333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 73.54886500252178
+      },
+      {
+        "job": 75,
+        "kind": "text",
+        "generator_ms": 0.06446499901358038,
+        "font": "Poppins",
+        "size": 11.573333333333334,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 18.612113999552093
+      },
+      {
+        "job": 76,
+        "kind": "text",
+        "generator_ms": 0.04290400102036074,
+        "font": "Poppins",
+        "size": 7.522666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 11.950511998293223
+      },
+      {
+        "job": 77,
+        "kind": "text",
+        "generator_ms": 0.03238800127292052,
+        "font": "Poppins",
+        "size": 7.605333333333332,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 17.123227000411134
+      },
+      {
+        "job": 78,
+        "kind": "text",
+        "generator_ms": 0.04006899689557031,
+        "font": "Poppins",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 4.942575000313809
+      },
+      {
+        "job": 79,
+        "kind": "text",
+        "generator_ms": 0.02741100252023898,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 15.730423998320475
+      },
+      {
+        "job": 80,
+        "kind": "text",
+        "generator_ms": 0.05802599844173528,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 0.05337900074664503
+      },
+      {
+        "job": 81,
+        "kind": "text",
+        "generator_ms": 0.011496998922666535,
+        "font": "Poppins",
+        "size": 11.16,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 17.189771999255754
+      },
+      {
+        "job": 82,
+        "kind": "text",
+        "generator_ms": 0.04990399975213222,
+        "font": "Poppins",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 21.96650100086117
+      },
+      {
+        "job": 83,
+        "kind": "text",
+        "generator_ms": 0.17009199655149132,
+        "font": "Poppins",
+        "size": 7.4399999999999995,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 6.925095000042347
+      },
+      {
+        "job": 84,
+        "kind": "text",
+        "generator_ms": 0.03245799962314777,
+        "font": "Poppins",
+        "size": 8.266666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 21.264588998747058
+      },
+      {
+        "job": 85,
+        "kind": "text",
+        "generator_ms": 0.0467589998152107,
+        "font": "Poppins",
+        "size": 7.109333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 16.95619100064505
+      },
+      {
+        "job": 86,
+        "kind": "text",
+        "generator_ms": 0.17886400019051507,
+        "font": "Sans Serif",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 20.738090999657288
+      },
+      {
+        "job": 87,
+        "kind": "text",
+        "generator_ms": 0.05441100074676797,
+        "font": "Sans Serif",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 17.866135996882804
+      },
+      {
+        "job": 88,
+        "kind": "text",
+        "generator_ms": 0.059037000028183684,
+        "font": "Sans Serif",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 16.468018999148626
+      }
+    ],
+    "modules": [
+      {
+        "module": "Scenario",
+        "cpu_raster_ms": 242.01055899902713,
+        "error": null
+      },
+      {
+        "module": "StartupVisual",
+        "cpu_raster_ms": 295.7494049987872,
+        "error": null
+      },
+      {
+        "module": "MatchMode",
+        "cpu_raster_ms": 299.98618600075133,
+        "error": null
+      },
+      {
+        "module": "RobotProfile",
+        "cpu_raster_ms": 340.87350700065144,
+        "error": null
+      },
+      {
+        "module": "AllianceProfile",
+        "cpu_raster_ms": 245.5304810027883,
+        "error": null
+      },
+      {
+        "module": "ConfigManager",
+        "cpu_raster_ms": 313.87872000050265,
+        "error": null
+      },
+      {
+        "module": "EmergencyStop",
+        "cpu_raster_ms": 221.9261739992362,
+        "error": null
+      },
+      {
+        "module": "MatchReadiness",
+        "cpu_raster_ms": 272.86387999993167,
+        "error": null
+      },
+      {
+        "module": "ArmorAutoAim",
+        "cpu_raster_ms": 396.882947999984,
+        "error": null
+      },
+      {
+        "module": "EliminationFX",
+        "cpu_raster_ms": 505.73657199856825,
+        "error": null
+      },
+      {
+        "module": "AudioFeedback",
+        "cpu_raster_ms": 502.1259220011416,
+        "error": null
+      },
+      {
+        "module": "EnergyAutoAim",
+        "cpu_raster_ms": 528.5119289983413,
+        "error": null
+      },
+      {
+        "module": "ArmorLock",
+        "cpu_raster_ms": 567.22445700143,
+        "error": null
+      },
+      {
+        "module": "HeroLob",
+        "cpu_raster_ms": 4.634750999684911,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "FireControlStub",
+        "cpu_raster_ms": 1.1905800020031165,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "SpinMode",
+        "cpu_raster_ms": 1.2214550006319769,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "AutoSpinOnHit",
+        "cpu_raster_ms": 1.219202000356745,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "ChassisAssist",
+        "cpu_raster_ms": 1.1872350005432963,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "PowerGuard",
+        "cpu_raster_ms": 0.865548998262966,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "CameraFeed",
+        "cpu_raster_ms": 1.4080010005272925,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "TongjiVisionBridge",
+        "cpu_raster_ms": 2.121195000654552,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "CameraCalibration",
+        "cpu_raster_ms": 1.7686640021565836,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "Armor3DESP",
+        "cpu_raster_ms": 1.64900699746795,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "RobotOverlay",
+        "cpu_raster_ms": 2.331406001758296,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "RadarOverlay",
+        "cpu_raster_ms": 1.8324880002182908,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "MapMarker",
+        "cpu_raster_ms": 1.9938269979320467,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "TacticalMap",
+        "cpu_raster_ms": 3.4315820012125187,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "LiquidTacticalMap",
+        "cpu_raster_ms": 2.1179899995331652,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "SentinelCommand",
+        "cpu_raster_ms": 1.0934560013993178,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "AirSupport",
+        "cpu_raster_ms": 1.0733660019468516,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "TopMatchBar",
+        "cpu_raster_ms": 2.0014490000903606,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "MatchTimer",
+        "cpu_raster_ms": 1.071974002115894,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "BaseOutpostStatus",
+        "cpu_raster_ms": 1.1877149991050828,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "VictoryPointStatus",
+        "cpu_raster_ms": 1.0742479971668217,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "EconomyPanel",
+        "cpu_raster_ms": 2.1922289997746702,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "ProjectileShop",
+        "cpu_raster_ms": 1.1534549994394183,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "MatchChat",
+        "cpu_raster_ms": 1.4591770013794303,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "QuickActionWheel",
+        "cpu_raster_ms": 4.443757999979425,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "ThermalPowerPanel",
+        "cpu_raster_ms": 1.6031090017349925,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "BuffTimeline",
+        "cpu_raster_ms": 1.6695779995643534,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "MQTTLink",
+        "cpu_raster_ms": 1.4519360011036042,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "UDPVideo",
+        "cpu_raster_ms": 1.011085001664469,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "SerialBridge",
+        "cpu_raster_ms": 1.0296820000803564,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "ControllerAngles",
+        "cpu_raster_ms": 2.2323600023810286,
+        "error": "shaped Jello atlas exceeds 4096px for Helvetica Neue 10.5pt"
+      },
+      {
+        "module": "RobotLink",
+        "cpu_raster_ms": 15.437224999914179,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "HUD",
+        "cpu_raster_ms": 3.6317270023573656,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "UIScale",
+        "cpu_raster_ms": 0.7943439995869994,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "Crosshair",
+        "cpu_raster_ms": 2.1872229990549386,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "CombatTargetHUD",
+        "cpu_raster_ms": 0.8938610008044634,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "MinecraftCombatHUD",
+        "cpu_raster_ms": 11.383494002075167,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "ChassisGimbalIndicator",
+        "cpu_raster_ms": 1.2489959990489297,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "ClickGui",
+        "cpu_raster_ms": 0.19623999833129346,
+        "error": null
+      },
+      {
+        "module": "GimbalPower",
+        "cpu_raster_ms": 0.9535190001770388,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "PowerLimit",
+        "cpu_raster_ms": 0.907149998965906,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "SpeedLimit",
+        "cpu_raster_ms": 1.0121759987669066,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "Capacitor",
+        "cpu_raster_ms": 0.633075997029664,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "FrictionWheel",
+        "cpu_raster_ms": 0.559287000214681,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "LockState",
+        "cpu_raster_ms": 0.6712219983455725,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "BuffStatus",
+        "cpu_raster_ms": 0.7146759999159258,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "ProjectileAllowance",
+        "cpu_raster_ms": 0.6920529995113611,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "JumpPTEWheelLES",
+        "cpu_raster_ms": 1.5260949985531624,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "InjuryStatistics",
+        "cpu_raster_ms": 0.5847850006830413,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "MatchSettlement",
+        "cpu_raster_ms": 0.7293580019904766,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "DartPanel",
+        "cpu_raster_ms": 0.5784749992017169,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "SkillConfiguration",
+        "cpu_raster_ms": 1.1306609994790051,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "MinecraftInventory",
+        "cpu_raster_ms": 0.7047809995128773,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "ReloadingPanel",
+        "cpu_raster_ms": 0.6341469998005778,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "RuneRingStatus",
+        "cpu_raster_ms": 0.6441520017688163,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "ResourceIsland",
+        "cpu_raster_ms": 0.8396309967793059,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "GainZone",
+        "cpu_raster_ms": 351.9799220011919,
+        "error": null
+      },
+      {
+        "module": "UWBStatus",
+        "cpu_raster_ms": 212.28634700310067,
+        "error": null
+      },
+      {
+        "module": "ArmorStatus",
+        "cpu_raster_ms": 216.58992200173088,
+        "error": null
+      },
+      {
+        "module": "WirelessCharging",
+        "cpu_raster_ms": 245.03105400071945,
+        "error": null
+      },
+      {
+        "module": "MinecraftBuffs",
+        "cpu_raster_ms": 1.4622109993069898,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      }
+    ],
+    "phase": "combined",
+    "qt": "6.8.2"
+  },
+  {
+    "source": "immutable shaped pages candidate",
+    "dpr": 1,
+    "hardware": false,
+    "gl_context_created": false,
+    "bundled_fonts": {
+      "poppins_regular": "Poppins",
+      "poppins_medium": "Poppins",
+      "poppins_bold": "Poppins",
+      "material": "Material Icons Outlined",
+      "polaricon": "zen-icon",
+      "tahoma": "Tahoma",
+      "jello_light": "Helvetica Neue",
+      "jello_medium": "HelveticaNeue",
+      "jello_regular": "My Font"
+    },
+    "jobs": [
+      {
+        "job": 0,
+        "kind": "prepare",
+        "generator_ms": 0.13242500062915497
+      },
+      {
+        "job": 1,
+        "kind": "prepare",
+        "generator_ms": 0.1115140003093984
+      },
+      {
+        "job": 2,
+        "kind": "prepare",
+        "generator_ms": 0.04102999810129404
+      },
+      {
+        "job": 3,
+        "kind": "prepare",
+        "generator_ms": 0.022123000235296786
+      },
+      {
+        "job": 4,
+        "kind": "prepare",
+        "generator_ms": 0.023593998776050285
+      },
+      {
+        "job": 5,
+        "kind": "prepare",
+        "generator_ms": 0.04945299951941706
+      },
+      {
+        "job": 6,
+        "kind": "prepare",
+        "generator_ms": 0.024095999833662063
+      },
+      {
+        "job": 7,
+        "kind": "prepare",
+        "generator_ms": 0.015782999980729073
+      },
+      {
+        "job": 8,
+        "kind": "prepare",
+        "generator_ms": 0.013670000043930486
+      },
+      {
+        "job": 9,
+        "kind": "prepare",
+        "generator_ms": 9.729241999593796
+      },
+      {
+        "job": 10,
+        "kind": "prepare",
+        "generator_ms": 0.9696289998828433
+      },
+      {
+        "job": 11,
+        "kind": "prepare",
+        "generator_ms": 0.7368400001723785
+      },
+      {
+        "job": 12,
+        "kind": "prepare",
+        "generator_ms": 0.5275599978631362
+      },
+      {
+        "job": 13,
+        "kind": "prepare",
+        "generator_ms": 1.0382549990026746
+      },
+      {
+        "job": 14,
+        "kind": "prepare",
+        "generator_ms": 0.7059239978843834
+      },
+      {
+        "job": 15,
+        "kind": "prepare",
+        "generator_ms": 0.4307060007704422
+      },
+      {
+        "job": 16,
+        "kind": "prepare",
+        "generator_ms": 0.47078599891392514
+      },
+      {
+        "job": 17,
+        "kind": "prepare",
+        "generator_ms": 0.7664229997317307
+      },
+      {
+        "job": 18,
+        "kind": "text",
+        "generator_ms": 0.12257100024726242,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 18.454842000210192
+      },
+      {
+        "job": 19,
+        "kind": "text",
+        "generator_ms": 0.00622999868937768,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 0.26490099844522774
+      },
+      {
+        "job": 20,
+        "kind": "text",
+        "generator_ms": 0.0016429985407739878,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 19.49374800096848
+      },
+      {
+        "job": 21,
+        "kind": "text",
+        "generator_ms": 0.004326000635046512,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 16.781479000201216
+      },
+      {
+        "job": 22,
+        "kind": "text",
+        "generator_ms": 0.005427998985396698,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 15.241532000800362
+      },
+      {
+        "job": 23,
+        "kind": "text",
+        "generator_ms": 0.004637000529328361,
+        "font": "Poppins",
+        "size": 18.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 14.994055996794486
+      },
+      {
+        "job": 24,
+        "kind": "text",
+        "generator_ms": 0.004426998202688992,
+        "font": "Segoe UI",
+        "size": 28.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 29.235920002975035
+      },
+      {
+        "job": 25,
+        "kind": "text",
+        "generator_ms": 0.08059900210355408,
+        "font": "Material Icons Outlined",
+        "size": 12.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 16.405461999966064
+      },
+      {
+        "job": 26,
+        "kind": "text",
+        "generator_ms": 5.159115997230401,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 1,
+        "shaped": false,
+        "cpu_raster_ms": 1.9531580001057591
+      },
+      {
+        "job": 27,
+        "kind": "text",
+        "generator_ms": 0.004457000613911077,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 102,
+        "shaped": true,
+        "cpu_raster_ms": 15.8930750003492
+      },
+      {
+        "job": 28,
+        "kind": "text",
+        "generator_ms": 0.005318001058185473,
+        "font": "Helvetica Neue",
+        "size": 13.5,
+        "labels": 91,
+        "shaped": true,
+        "cpu_raster_ms": 13.227293999079848
+      },
+      {
+        "job": 29,
+        "kind": "text",
+        "generator_ms": 0.004457000613911077,
+        "font": "Helvetica Neue",
+        "size": 15.0,
+        "labels": 166,
+        "shaped": true,
+        "cpu_raster_ms": 22.961413997109048
+      },
+      {
+        "job": 30,
+        "kind": "text",
+        "generator_ms": 0.004998000804334879,
+        "font": "Helvetica Neue",
+        "size": 18.75,
+        "labels": 24,
+        "shaped": true,
+        "cpu_raster_ms": 6.8766250005865
+      },
+      {
+        "job": 31,
+        "kind": "text",
+        "generator_ms": 0.004956997145200148,
+        "font": "HelveticaNeue",
+        "size": 30.0,
+        "labels": 2,
+        "shaped": true,
+        "cpu_raster_ms": 6.0712449994753115
+      },
+      {
+        "job": 32,
+        "kind": "text",
+        "generator_ms": 0.003364999429322779,
+        "font": "Helvetica Neue",
+        "size": 11.25,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 16.3606960013567
+      },
+      {
+        "job": 33,
+        "kind": "text",
+        "generator_ms": 0.0040859995351638645,
+        "font": "Helvetica Neue",
+        "size": 10.125,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 15.421949003211921
+      },
+      {
+        "job": 34,
+        "kind": "text",
+        "generator_ms": 0.005146997864358127,
+        "font": "Helvetica Neue",
+        "size": 7.875,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 15.650997000193456
+      },
+      {
+        "job": 35,
+        "kind": "image",
+        "generator_ms": 0.016223999409703538,
+        "path": "((PosixPath('assets/jello/options.png'),),)"
+      },
+      {
+        "job": 36,
+        "kind": "image",
+        "generator_ms": 0.0005809997674077749,
+        "path": "((PosixPath('assets/jello/check.png'),),)"
+      },
+      {
+        "job": 37,
+        "kind": "image",
+        "generator_ms": 0.00045100023271515965,
+        "path": "((PosixPath('assets/jello/verticalscrollbartop.png'),),)"
+      },
+      {
+        "job": 38,
+        "kind": "image",
+        "generator_ms": 0.0004210014594718814,
+        "path": "((PosixPath('assets/jello/verticalscrollbarbottom.png'),),)"
+      },
+      {
+        "job": 39,
+        "kind": "image",
+        "generator_ms": 0.000381001882487908,
+        "path": "((PosixPath('assets/jello/shadow_corner.png'),),)"
+      },
+      {
+        "job": 40,
+        "kind": "image",
+        "generator_ms": 0.0002310007403139025,
+        "path": "((PosixPath('assets/jello/shadow_corner_2.png'),),)"
+      },
+      {
+        "job": 41,
+        "kind": "image",
+        "generator_ms": 0.0002310007403139025,
+        "path": "((PosixPath('assets/jello/shadow_corner_3.png'),),)"
+      },
+      {
+        "job": 42,
+        "kind": "image",
+        "generator_ms": 0.0002710003172978759,
+        "path": "((PosixPath('assets/jello/shadow_corner_4.png'),),)"
+      },
+      {
+        "job": 43,
+        "kind": "image",
+        "generator_ms": 0.00025999906938523054,
+        "path": "((PosixPath('assets/jello/shadow_left.png'),),)"
+      },
+      {
+        "job": 44,
+        "kind": "image",
+        "generator_ms": 0.00024099790607579052,
+        "path": "((PosixPath('assets/jello/shadow_right.png'),),)"
+      },
+      {
+        "job": 45,
+        "kind": "image",
+        "generator_ms": 0.00021000232663936913,
+        "path": "((PosixPath('assets/jello/shadow_top.png'),),)"
+      },
+      {
+        "job": 46,
+        "kind": "image",
+        "generator_ms": 0.00019999788491986692,
+        "path": "((PosixPath('assets/jello/shadow_bottom.png'),),)"
+      },
+      {
+        "job": 47,
+        "kind": "image",
+        "generator_ms": 0.005808997229905799,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_icon.png'),),)"
+      },
+      {
+        "job": 48,
+        "kind": "image",
+        "generator_ms": 0.10261199713568203,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_ammo.png'),),)"
+      },
+      {
+        "job": 49,
+        "kind": "image",
+        "generator_ms": 0.00175300010596402,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_recovery.png'),),)"
+      },
+      {
+        "job": 50,
+        "kind": "image",
+        "generator_ms": 0.0008309980330523103,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_revive.png'),),)"
+      },
+      {
+        "job": 51,
+        "kind": "image",
+        "generator_ms": 0.018948001525131986,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/jello-atlas-pages/assets/ui/cs2_buy/support.svg'),),)"
+      },
+      {
+        "job": 52,
+        "kind": "image",
+        "generator_ms": 0.013349999790079892,
+        "path": "((PosixPath('assets/minecraft/hotbar.png'),),)"
+      },
+      {
+        "job": 53,
+        "kind": "image",
+        "generator_ms": 0.0004309986252337694,
+        "path": "((PosixPath('assets/minecraft/hotbar_selection.png'),),)"
+      },
+      {
+        "job": 54,
+        "kind": "image",
+        "generator_ms": 0.0002809974830597639,
+        "path": "((PosixPath('assets/jello/hud_shadow.png'),),)"
+      },
+      {
+        "job": 55,
+        "kind": "text",
+        "generator_ms": 1.414239999576239,
+        "font": "Poppins",
+        "size": 17.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.709449001704343
+      },
+      {
+        "job": 56,
+        "kind": "text",
+        "generator_ms": 0.003914999979315326,
+        "font": "Poppins",
+        "size": 15.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.369198997679632
+      },
+      {
+        "job": 57,
+        "kind": "text",
+        "generator_ms": 0.003615998139139265,
+        "font": "Poppins",
+        "size": 13.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.75395400080015
+      },
+      {
+        "job": 58,
+        "kind": "text",
+        "generator_ms": 0.004426998202688992,
+        "font": "Poppins",
+        "size": 12.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 11.795137001172407
+      },
+      {
+        "job": 59,
+        "kind": "text",
+        "generator_ms": 0.0046770001063123345,
+        "font": "Poppins",
+        "size": 10.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.610149999294663
+      },
+      {
+        "job": 60,
+        "kind": "text",
+        "generator_ms": 0.0048080000851769,
+        "font": "Poppins",
+        "size": 10.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 11.415855999075575
+      },
+      {
+        "job": 61,
+        "kind": "text",
+        "generator_ms": 0.004255998646840453,
+        "font": "Poppins",
+        "size": 9.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.357659001281718
+      },
+      {
+        "job": 62,
+        "kind": "text",
+        "generator_ms": 0.004165998689131811,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 8.504932000505505
+      },
+      {
+        "job": 63,
+        "kind": "text",
+        "generator_ms": 0.004175999492872506,
+        "font": "Poppins",
+        "size": 8.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.357998999505071
+      },
+      {
+        "job": 64,
+        "kind": "text",
+        "generator_ms": 0.003994999133283272,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 8.88220100023318
+      },
+      {
+        "job": 65,
+        "kind": "text",
+        "generator_ms": 0.004587000148603693,
+        "font": "Poppins",
+        "size": 6.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.309417001233669
+      },
+      {
+        "job": 66,
+        "kind": "text",
+        "generator_ms": 0.004797002475243062,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.1373229970340617
+      },
+      {
+        "job": 67,
+        "kind": "text",
+        "generator_ms": 0.0020330007828306407,
+        "font": "Poppins",
+        "size": 8.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 3.4935549992951564
+      },
+      {
+        "job": 68,
+        "kind": "text",
+        "generator_ms": 0.003925997589249164,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.0830429999041371
+      },
+      {
+        "job": 69,
+        "kind": "text",
+        "generator_ms": 0.0008210008672904223,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 7.121127000573324
+      },
+      {
+        "job": 70,
+        "kind": "text",
+        "generator_ms": 0.003254997864132747,
+        "font": "Poppins",
+        "size": 7.8,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.5386230008734856
+      },
+      {
+        "job": 71,
+        "kind": "text",
+        "generator_ms": 0.0026840025384444743,
+        "font": "Poppins",
+        "size": 7.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 11.790991000452777
+      },
+      {
+        "job": 72,
+        "kind": "text",
+        "generator_ms": 0.004275996616343036,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.3648390023445245
+      },
+      {
+        "job": 73,
+        "kind": "text",
+        "generator_ms": 0.0030039991543162614,
+        "font": "Poppins",
+        "size": 7.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.577540999482153
+      },
+      {
+        "job": 74,
+        "kind": "text",
+        "generator_ms": 0.23536799926660024,
+        "font": "Poppins",
+        "size": 16.53333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 21.566701998381177
+      },
+      {
+        "job": 75,
+        "kind": "text",
+        "generator_ms": 0.03504200140014291,
+        "font": "Poppins",
+        "size": 11.573333333333334,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 15.54530000066734
+      },
+      {
+        "job": 76,
+        "kind": "text",
+        "generator_ms": 0.030504997994285077,
+        "font": "Poppins",
+        "size": 7.522666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 8.195565002097283
+      },
+      {
+        "job": 77,
+        "kind": "text",
+        "generator_ms": 0.021791998733533546,
+        "font": "Poppins",
+        "size": 7.605333333333332,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 3.6877820020890795
+      },
+      {
+        "job": 78,
+        "kind": "text",
+        "generator_ms": 0.01671499921940267,
+        "font": "Poppins",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 7.593536000058521
+      },
+      {
+        "job": 79,
+        "kind": "text",
+        "generator_ms": 0.04818200250156224,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 3.8707019994035363
+      },
+      {
+        "job": 80,
+        "kind": "text",
+        "generator_ms": 0.01865800004452467,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 0.03361900235177018
+      },
+      {
+        "job": 81,
+        "kind": "text",
+        "generator_ms": 0.007621001714142039,
+        "font": "Poppins",
+        "size": 11.16,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 9.384613997099223
+      },
+      {
+        "job": 82,
+        "kind": "text",
+        "generator_ms": 0.022973999875830486,
+        "font": "Poppins",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 7.669697999517666
+      },
+      {
+        "job": 83,
+        "kind": "text",
+        "generator_ms": 0.019619001250248402,
+        "font": "Poppins",
+        "size": 7.4399999999999995,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 3.465393001533812
+      },
+      {
+        "job": 84,
+        "kind": "text",
+        "generator_ms": 0.01614400025573559,
+        "font": "Poppins",
+        "size": 8.266666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 13.280491999466904
+      },
+      {
+        "job": 85,
+        "kind": "text",
+        "generator_ms": 0.022031999833416194,
+        "font": "Poppins",
+        "size": 7.109333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 11.077257000579266
+      },
+      {
+        "job": 86,
+        "kind": "text",
+        "generator_ms": 0.16687700190232135,
+        "font": "Sans Serif",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 17.461682997236494
+      },
+      {
+        "job": 87,
+        "kind": "text",
+        "generator_ms": 0.055170999985421076,
+        "font": "Sans Serif",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 3.0930829998396803
+      },
+      {
+        "job": 88,
+        "kind": "text",
+        "generator_ms": 0.02779100032057613,
+        "font": "Sans Serif",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 13.858387999789556
+      }
+    ],
+    "modules": [
+      {
+        "module": "Scenario",
+        "cpu_raster_ms": 5.463656998472288,
+        "error": null
+      },
+      {
+        "module": "StartupVisual",
+        "cpu_raster_ms": 11.034811999707017,
+        "error": null
+      },
+      {
+        "module": "MatchMode",
+        "cpu_raster_ms": 4.000423999968916,
+        "error": null
+      },
+      {
+        "module": "RobotProfile",
+        "cpu_raster_ms": 8.275493997643935,
+        "error": null
+      },
+      {
+        "module": "AllianceProfile",
+        "cpu_raster_ms": 2.9935560014564544,
+        "error": null
+      },
+      {
+        "module": "ConfigManager",
+        "cpu_raster_ms": 8.671538998896722,
+        "error": null
+      },
+      {
+        "module": "EmergencyStop",
+        "cpu_raster_ms": 4.266167001333088,
+        "error": null
+      },
+      {
+        "module": "MatchReadiness",
+        "cpu_raster_ms": 17.06942400051048,
+        "error": null
+      },
+      {
+        "module": "ArmorAutoAim",
+        "cpu_raster_ms": 7.259311998495832,
+        "error": null
+      },
+      {
+        "module": "EliminationFX",
+        "cpu_raster_ms": 27.23814700220828,
+        "error": null
+      },
+      {
+        "module": "AudioFeedback",
+        "cpu_raster_ms": 6.969873997149989,
+        "error": null
+      },
+      {
+        "module": "EnergyAutoAim",
+        "cpu_raster_ms": 6.545225998706883,
+        "error": null
+      },
+      {
+        "module": "ArmorLock",
+        "cpu_raster_ms": 2.6461519992153626,
+        "error": null
+      },
+      {
+        "module": "HeroLob",
+        "cpu_raster_ms": 11.905899998964742,
+        "error": null
+      },
+      {
+        "module": "FireControlStub",
+        "cpu_raster_ms": 2.814219998981571,
+        "error": null
+      },
+      {
+        "module": "SpinMode",
+        "cpu_raster_ms": 3.6629150017688517,
+        "error": null
+      },
+      {
+        "module": "AutoSpinOnHit",
+        "cpu_raster_ms": 4.373204999865266,
+        "error": null
+      },
+      {
+        "module": "ChassisAssist",
+        "cpu_raster_ms": 3.6596909994841553,
+        "error": null
+      },
+      {
+        "module": "PowerGuard",
+        "cpu_raster_ms": 2.4585649989603553,
+        "error": null
+      },
+      {
+        "module": "CameraFeed",
+        "cpu_raster_ms": 4.230163998727221,
+        "error": null
+      },
+      {
+        "module": "TongjiVisionBridge",
+        "cpu_raster_ms": 8.15736900040065,
+        "error": null
+      },
+      {
+        "module": "CameraCalibration",
+        "cpu_raster_ms": 5.942284999036929,
+        "error": null
+      },
+      {
+        "module": "Armor3DESP",
+        "cpu_raster_ms": 5.211544001213042,
+        "error": null
+      },
+      {
+        "module": "RobotOverlay",
+        "cpu_raster_ms": 6.995231000473723,
+        "error": null
+      },
+      {
+        "module": "RadarOverlay",
+        "cpu_raster_ms": 4.613641001924407,
+        "error": null
+      },
+      {
+        "module": "MapMarker",
+        "cpu_raster_ms": 3.6702460020023864,
+        "error": null
+      },
+      {
+        "module": "TacticalMap",
+        "cpu_raster_ms": 6.755697002517991,
+        "error": null
+      },
+      {
+        "module": "LiquidTacticalMap",
+        "cpu_raster_ms": 6.159355998534011,
+        "error": null
+      },
+      {
+        "module": "SentinelCommand",
+        "cpu_raster_ms": 3.1228469997586217,
+        "error": null
+      },
+      {
+        "module": "AirSupport",
+        "cpu_raster_ms": 2.342733001569286,
+        "error": null
+      },
+      {
+        "module": "TopMatchBar",
+        "cpu_raster_ms": 7.093265998264542,
+        "error": null
+      },
+      {
+        "module": "MatchTimer",
+        "cpu_raster_ms": 2.358897003432503,
+        "error": null
+      },
+      {
+        "module": "BaseOutpostStatus",
+        "cpu_raster_ms": 4.529245001322124,
+        "error": null
+      },
+      {
+        "module": "VictoryPointStatus",
+        "cpu_raster_ms": 3.2261089982057456,
+        "error": null
+      },
+      {
+        "module": "EconomyPanel",
+        "cpu_raster_ms": 5.547171000216622,
+        "error": null
+      },
+      {
+        "module": "ProjectileShop",
+        "cpu_raster_ms": 3.162454999255715,
+        "error": null
+      },
+      {
+        "module": "MatchChat",
+        "cpu_raster_ms": 2.468368998961523,
+        "error": null
+      },
+      {
+        "module": "QuickActionWheel",
+        "cpu_raster_ms": 7.373410000582226,
+        "error": null
+      },
+      {
+        "module": "ThermalPowerPanel",
+        "cpu_raster_ms": 2.941688999271719,
+        "error": null
+      },
+      {
+        "module": "BuffTimeline",
+        "cpu_raster_ms": 2.4606869992567226,
+        "error": null
+      },
+      {
+        "module": "MQTTLink",
+        "cpu_raster_ms": 2.932645002147183,
+        "error": null
+      },
+      {
+        "module": "UDPVideo",
+        "cpu_raster_ms": 1.9299529994896147,
+        "error": null
+      },
+      {
+        "module": "SerialBridge",
+        "cpu_raster_ms": 2.797706001729239,
+        "error": null
+      },
+      {
+        "module": "ControllerAngles",
+        "cpu_raster_ms": 6.299341999692842,
+        "error": null
+      },
+      {
+        "module": "RobotLink",
+        "cpu_raster_ms": 38.9137269994535,
+        "error": null
+      },
+      {
+        "module": "HUD",
+        "cpu_raster_ms": 15.382540001155576,
+        "error": null
+      },
+      {
+        "module": "UIScale",
+        "cpu_raster_ms": 4.46269699750701,
+        "error": null
+      },
+      {
+        "module": "Crosshair",
+        "cpu_raster_ms": 15.111089000129141,
+        "error": null
+      },
+      {
+        "module": "CombatTargetHUD",
+        "cpu_raster_ms": 4.507452998950612,
+        "error": null
+      },
+      {
+        "module": "MinecraftCombatHUD",
+        "cpu_raster_ms": 24.815205000777496,
+        "error": null
+      },
+      {
+        "module": "ChassisGimbalIndicator",
+        "cpu_raster_ms": 5.006139999750303,
+        "error": null
+      },
+      {
+        "module": "ClickGui",
+        "cpu_raster_ms": 3.5697869971045293,
+        "error": null
+      },
+      {
+        "module": "GimbalPower",
+        "cpu_raster_ms": 2.908579997892957,
+        "error": null
+      },
+      {
+        "module": "PowerLimit",
+        "cpu_raster_ms": 2.651319999131374,
+        "error": null
+      },
+      {
+        "module": "SpeedLimit",
+        "cpu_raster_ms": 2.36805099848425,
+        "error": null
+      },
+      {
+        "module": "Capacitor",
+        "cpu_raster_ms": 2.4303129976033233,
+        "error": null
+      },
+      {
+        "module": "FrictionWheel",
+        "cpu_raster_ms": 2.8652559994952753,
+        "error": null
+      },
+      {
+        "module": "LockState",
+        "cpu_raster_ms": 2.6097080008185003,
+        "error": null
+      },
+      {
+        "module": "BuffStatus",
+        "cpu_raster_ms": 2.128787000401644,
+        "error": null
+      },
+      {
+        "module": "ProjectileAllowance",
+        "cpu_raster_ms": 2.8214819976710714,
+        "error": null
+      },
+      {
+        "module": "JumpPTEWheelLES",
+        "cpu_raster_ms": 3.3405780013708863,
+        "error": null
+      },
+      {
+        "module": "InjuryStatistics",
+        "cpu_raster_ms": 3.1226259998220485,
+        "error": null
+      },
+      {
+        "module": "MatchSettlement",
+        "cpu_raster_ms": 3.0527330018230714,
+        "error": null
+      },
+      {
+        "module": "DartPanel",
+        "cpu_raster_ms": 2.1876949977013282,
+        "error": null
+      },
+      {
+        "module": "SkillConfiguration",
+        "cpu_raster_ms": 5.237253000814235,
+        "error": null
+      },
+      {
+        "module": "MinecraftInventory",
+        "cpu_raster_ms": 3.1114090015762486,
+        "error": null
+      },
+      {
+        "module": "ReloadingPanel",
+        "cpu_raster_ms": 3.9166099995782133,
+        "error": null
+      },
+      {
+        "module": "RuneRingStatus",
+        "cpu_raster_ms": 2.6998110006388742,
+        "error": null
+      },
+      {
+        "module": "ResourceIsland",
+        "cpu_raster_ms": 2.229025001724949,
+        "error": null
+      },
+      {
+        "module": "GainZone",
+        "cpu_raster_ms": 1.0752199996204581,
+        "error": null
+      },
+      {
+        "module": "UWBStatus",
+        "cpu_raster_ms": 1.6724530032661278,
+        "error": null
+      },
+      {
+        "module": "ArmorStatus",
+        "cpu_raster_ms": 1.4584860000468325,
+        "error": null
+      },
+      {
+        "module": "WirelessCharging",
+        "cpu_raster_ms": 1.951214002474444,
+        "error": null
+      },
+      {
+        "module": "MinecraftBuffs",
+        "cpu_raster_ms": 2.5018289998115506,
+        "error": null
+      }
+    ],
+    "phase": "fixed",
+    "qt": "6.8.2"
+  },
+  {
+    "source": "immutable shaped pages candidate",
+    "dpr": 2.0,
+    "hardware": false,
+    "gl_context_created": false,
+    "bundled_fonts": {
+      "poppins_regular": "Poppins",
+      "poppins_medium": "Poppins",
+      "poppins_bold": "Poppins",
+      "material": "Material Icons Outlined",
+      "polaricon": "zen-icon",
+      "tahoma": "Tahoma",
+      "jello_light": "Helvetica Neue",
+      "jello_medium": "HelveticaNeue",
+      "jello_regular": "My Font"
+    },
+    "jobs": [
+      {
+        "job": 0,
+        "kind": "prepare",
+        "generator_ms": 0.16494400188094005
+      },
+      {
+        "job": 1,
+        "kind": "prepare",
+        "generator_ms": 0.05017399962525815
+      },
+      {
+        "job": 2,
+        "kind": "prepare",
+        "generator_ms": 0.07208700117189437
+      },
+      {
+        "job": 3,
+        "kind": "prepare",
+        "generator_ms": 0.023043998226057738
+      },
+      {
+        "job": 4,
+        "kind": "prepare",
+        "generator_ms": 0.026818997866939753
+      },
+      {
+        "job": 5,
+        "kind": "prepare",
+        "generator_ms": 0.06267299977480434
+      },
+      {
+        "job": 6,
+        "kind": "prepare",
+        "generator_ms": 0.025538000045344234
+      },
+      {
+        "job": 7,
+        "kind": "prepare",
+        "generator_ms": 0.0165940000442788
+      },
+      {
+        "job": 8,
+        "kind": "prepare",
+        "generator_ms": 0.015613000869052485
+      },
+      {
+        "job": 9,
+        "kind": "prepare",
+        "generator_ms": 8.438976998149883
+      },
+      {
+        "job": 10,
+        "kind": "prepare",
+        "generator_ms": 1.0328669995942619
+      },
+      {
+        "job": 11,
+        "kind": "prepare",
+        "generator_ms": 0.7577699980174657
+      },
+      {
+        "job": 12,
+        "kind": "prepare",
+        "generator_ms": 0.6702200007566717
+      },
+      {
+        "job": 13,
+        "kind": "prepare",
+        "generator_ms": 0.6768810017092619
+      },
+      {
+        "job": 14,
+        "kind": "prepare",
+        "generator_ms": 0.45445199793903157
+      },
+      {
+        "job": 15,
+        "kind": "prepare",
+        "generator_ms": 0.4065510001964867
+      },
+      {
+        "job": 16,
+        "kind": "prepare",
+        "generator_ms": 0.4787680009030737
+      },
+      {
+        "job": 17,
+        "kind": "prepare",
+        "generator_ms": 0.44952400276088156
+      },
+      {
+        "job": 18,
+        "kind": "text",
+        "generator_ms": 0.11288700261502527,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 16.570538999076234
+      },
+      {
+        "job": 19,
+        "kind": "text",
+        "generator_ms": 0.003854998794849962,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 0.24117700013448484
+      },
+      {
+        "job": 20,
+        "kind": "text",
+        "generator_ms": 0.0009610012057237327,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 15.182376999291591
+      },
+      {
+        "job": 21,
+        "kind": "text",
+        "generator_ms": 0.002945002052001655,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 14.047387998289196
+      },
+      {
+        "job": 22,
+        "kind": "text",
+        "generator_ms": 0.0037849968066439033,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 32.651223002176266
+      },
+      {
+        "job": 23,
+        "kind": "text",
+        "generator_ms": 0.0046670029405504465,
+        "font": "Poppins",
+        "size": 18.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 19.02345599955879
+      },
+      {
+        "job": 24,
+        "kind": "text",
+        "generator_ms": 0.005016998329665512,
+        "font": "Segoe UI",
+        "size": 28.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 30.806606002443004
+      },
+      {
+        "job": 25,
+        "kind": "text",
+        "generator_ms": 0.005387999408412725,
+        "font": "Material Icons Outlined",
+        "size": 12.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 16.125751000799937
+      },
+      {
+        "job": 26,
+        "kind": "text",
+        "generator_ms": 4.44813600188354,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 1,
+        "shaped": false,
+        "cpu_raster_ms": 2.3115679978218395
+      },
+      {
+        "job": 27,
+        "kind": "text",
+        "generator_ms": 0.0031849995139054954,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 102,
+        "shaped": true,
+        "cpu_raster_ms": 15.397323997603962
+      },
+      {
+        "job": 28,
+        "kind": "text",
+        "generator_ms": 0.005488000169862062,
+        "font": "Helvetica Neue",
+        "size": 13.5,
+        "labels": 91,
+        "shaped": true,
+        "cpu_raster_ms": 73.59297199946013
+      },
+      {
+        "job": 29,
+        "kind": "text",
+        "generator_ms": 0.0057489996834192425,
+        "font": "Helvetica Neue",
+        "size": 15.0,
+        "labels": 166,
+        "shaped": true,
+        "cpu_raster_ms": 138.89697199920192
+      },
+      {
+        "job": 30,
+        "kind": "text",
+        "generator_ms": 0.006119000317994505,
+        "font": "Helvetica Neue",
+        "size": 18.75,
+        "labels": 24,
+        "shaped": true,
+        "cpu_raster_ms": 19.79948300140677
+      },
+      {
+        "job": 31,
+        "kind": "text",
+        "generator_ms": 0.006629998097196221,
+        "font": "HelveticaNeue",
+        "size": 30.0,
+        "labels": 2,
+        "shaped": true,
+        "cpu_raster_ms": 3.3251360000576824
+      },
+      {
+        "job": 32,
+        "kind": "text",
+        "generator_ms": 0.004747002094518393,
+        "font": "Helvetica Neue",
+        "size": 11.25,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 19.557293999241665
+      },
+      {
+        "job": 33,
+        "kind": "text",
+        "generator_ms": 0.006169000698719174,
+        "font": "Helvetica Neue",
+        "size": 10.125,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 20.814493000216316
+      },
+      {
+        "job": 34,
+        "kind": "text",
+        "generator_ms": 0.005608002538792789,
+        "font": "Helvetica Neue",
+        "size": 7.875,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 18.854524998459965
+      },
+      {
+        "job": 35,
+        "kind": "image",
+        "generator_ms": 0.0179069975274615,
+        "path": "((PosixPath('assets/jello/options.png'),),)"
+      },
+      {
+        "job": 36,
+        "kind": "image",
+        "generator_ms": 0.000691001332597807,
+        "path": "((PosixPath('assets/jello/check.png'),),)"
+      },
+      {
+        "job": 37,
+        "kind": "image",
+        "generator_ms": 0.0005009969754610211,
+        "path": "((PosixPath('assets/jello/verticalscrollbartop.png'),),)"
+      },
+      {
+        "job": 38,
+        "kind": "image",
+        "generator_ms": 0.00030099909054115415,
+        "path": "((PosixPath('assets/jello/verticalscrollbarbottom.png'),),)"
+      },
+      {
+        "job": 39,
+        "kind": "image",
+        "generator_ms": 0.0002400010998826474,
+        "path": "((PosixPath('assets/jello/shadow_corner.png'),),)"
+      },
+      {
+        "job": 40,
+        "kind": "image",
+        "generator_ms": 0.0002310007403139025,
+        "path": "((PosixPath('assets/jello/shadow_corner_2.png'),),)"
+      },
+      {
+        "job": 41,
+        "kind": "image",
+        "generator_ms": 0.00030099909054115415,
+        "path": "((PosixPath('assets/jello/shadow_corner_3.png'),),)"
+      },
+      {
+        "job": 42,
+        "kind": "image",
+        "generator_ms": 0.00044100306695327163,
+        "path": "((PosixPath('assets/jello/shadow_corner_4.png'),),)"
+      },
+      {
+        "job": 43,
+        "kind": "image",
+        "generator_ms": 0.0003400018613319844,
+        "path": "((PosixPath('assets/jello/shadow_left.png'),),)"
+      },
+      {
+        "job": 44,
+        "kind": "image",
+        "generator_ms": 0.000281001121038571,
+        "path": "((PosixPath('assets/jello/shadow_right.png'),),)"
+      },
+      {
+        "job": 45,
+        "kind": "image",
+        "generator_ms": 0.00030100272851996124,
+        "path": "((PosixPath('assets/jello/shadow_top.png'),),)"
+      },
+      {
+        "job": 46,
+        "kind": "image",
+        "generator_ms": 0.00034099866752512753,
+        "path": "((PosixPath('assets/jello/shadow_bottom.png'),),)"
+      },
+      {
+        "job": 47,
+        "kind": "image",
+        "generator_ms": 0.005818001227453351,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_icon.png'),),)"
+      },
+      {
+        "job": 48,
+        "kind": "image",
+        "generator_ms": 0.03321899930597283,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_ammo.png'),),)"
+      },
+      {
+        "job": 49,
+        "kind": "image",
+        "generator_ms": 0.0018130012904293835,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_recovery.png'),),)"
+      },
+      {
+        "job": 50,
+        "kind": "image",
+        "generator_ms": 0.0010110015864484012,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_revive.png'),),)"
+      },
+      {
+        "job": 51,
+        "kind": "image",
+        "generator_ms": 0.01756600249791518,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/jello-atlas-pages/assets/ui/cs2_buy/support.svg'),),)"
+      },
+      {
+        "job": 52,
+        "kind": "image",
+        "generator_ms": 0.07378900045296177,
+        "path": "((PosixPath('assets/minecraft/hotbar.png'),),)"
+      },
+      {
+        "job": 53,
+        "kind": "image",
+        "generator_ms": 0.0005900001269765198,
+        "path": "((PosixPath('assets/minecraft/hotbar_selection.png'),),)"
+      },
+      {
+        "job": 54,
+        "kind": "image",
+        "generator_ms": 0.00035100310924462974,
+        "path": "((PosixPath('assets/jello/hud_shadow.png'),),)"
+      },
+      {
+        "job": 55,
+        "kind": "text",
+        "generator_ms": 2.3142319987528026,
+        "font": "Poppins",
+        "size": 17.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 15.904964002402266
+      },
+      {
+        "job": 56,
+        "kind": "text",
+        "generator_ms": 0.004065997927682474,
+        "font": "Poppins",
+        "size": 15.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.790831002348568
+      },
+      {
+        "job": 57,
+        "kind": "text",
+        "generator_ms": 0.002754000888671726,
+        "font": "Poppins",
+        "size": 13.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.36072399863042
+      },
+      {
+        "job": 58,
+        "kind": "text",
+        "generator_ms": 0.0030240007617976516,
+        "font": "Poppins",
+        "size": 12.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.728949001029832
+      },
+      {
+        "job": 59,
+        "kind": "text",
+        "generator_ms": 0.005026999133406207,
+        "font": "Poppins",
+        "size": 10.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.557876998471329
+      },
+      {
+        "job": 60,
+        "kind": "text",
+        "generator_ms": 0.004045999958179891,
+        "font": "Poppins",
+        "size": 10.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 14.076461000513518
+      },
+      {
+        "job": 61,
+        "kind": "text",
+        "generator_ms": 0.004637000529328361,
+        "font": "Poppins",
+        "size": 9.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.655368999025086
+      },
+      {
+        "job": 62,
+        "kind": "text",
+        "generator_ms": 0.004666999302571639,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.994911000219872
+      },
+      {
+        "job": 63,
+        "kind": "text",
+        "generator_ms": 0.0035859993658959866,
+        "font": "Poppins",
+        "size": 8.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.987441001314437
+      },
+      {
+        "job": 64,
+        "kind": "text",
+        "generator_ms": 0.0044670014176517725,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.717961998219835
+      },
+      {
+        "job": 65,
+        "kind": "text",
+        "generator_ms": 0.0024840010155458003,
+        "font": "Poppins",
+        "size": 6.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 14.649097000074107
+      },
+      {
+        "job": 66,
+        "kind": "text",
+        "generator_ms": 0.004556000931188464,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.1082399976439774
+      },
+      {
+        "job": 67,
+        "kind": "text",
+        "generator_ms": 0.0008210008672904223,
+        "font": "Poppins",
+        "size": 8.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.643768999405438
+      },
+      {
+        "job": 68,
+        "kind": "text",
+        "generator_ms": 0.0016329977370332927,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.34113400033675134
+      },
+      {
+        "job": 69,
+        "kind": "text",
+        "generator_ms": 0.0012919990695081651,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 8.229216000472661
+      },
+      {
+        "job": 70,
+        "kind": "text",
+        "generator_ms": 0.0026940033421851695,
+        "font": "Poppins",
+        "size": 7.8,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.5165799997921567
+      },
+      {
+        "job": 71,
+        "kind": "text",
+        "generator_ms": 0.0018719983927439898,
+        "font": "Poppins",
+        "size": 7.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 14.017375000548782
+      },
+      {
+        "job": 72,
+        "kind": "text",
+        "generator_ms": 0.0036249984987080097,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 7.331849999900442
+      },
+      {
+        "job": 73,
+        "kind": "text",
+        "generator_ms": 0.002873999619623646,
+        "font": "Poppins",
+        "size": 7.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.5229499988199677
+      },
+      {
+        "job": 74,
+        "kind": "text",
+        "generator_ms": 0.2914809992944356,
+        "font": "Poppins",
+        "size": 16.53333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 63.595292001991766
+      },
+      {
+        "job": 75,
+        "kind": "text",
+        "generator_ms": 0.11597200136748143,
+        "font": "Poppins",
+        "size": 11.573333333333334,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 15.570740000839578
+      },
+      {
+        "job": 76,
+        "kind": "text",
+        "generator_ms": 0.03084600029978901,
+        "font": "Poppins",
+        "size": 7.522666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 10.626840001350502
+      },
+      {
+        "job": 77,
+        "kind": "text",
+        "generator_ms": 0.027380003302823752,
+        "font": "Poppins",
+        "size": 7.605333333333332,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 14.07978699717205
+      },
+      {
+        "job": 78,
+        "kind": "text",
+        "generator_ms": 0.02786100230878219,
+        "font": "Poppins",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 4.4880559980811086
+      },
+      {
+        "job": 79,
+        "kind": "text",
+        "generator_ms": 0.01766599962138571,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 9.10347899844055
+      },
+      {
+        "job": 80,
+        "kind": "text",
+        "generator_ms": 0.022313000954454765,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 0.06079900049371645
+      },
+      {
+        "job": 81,
+        "kind": "text",
+        "generator_ms": 0.008723000064492226,
+        "font": "Poppins",
+        "size": 11.16,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 9.909570999298012
+      },
+      {
+        "job": 82,
+        "kind": "text",
+        "generator_ms": 0.02817100175889209,
+        "font": "Poppins",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 14.839208997727837
+      },
+      {
+        "job": 83,
+        "kind": "text",
+        "generator_ms": 0.028071000997442752,
+        "font": "Poppins",
+        "size": 7.4399999999999995,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 4.725847000372596
+      },
+      {
+        "job": 84,
+        "kind": "text",
+        "generator_ms": 0.015212997823255137,
+        "font": "Poppins",
+        "size": 8.266666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 14.137060003122315
+      },
+      {
+        "job": 85,
+        "kind": "text",
+        "generator_ms": 0.024676999601069838,
+        "font": "Poppins",
+        "size": 7.109333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 13.60058700083755
+      },
+      {
+        "job": 86,
+        "kind": "text",
+        "generator_ms": 0.15687199993408285,
+        "font": "Sans Serif",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 18.389659002423286
+      },
+      {
+        "job": 87,
+        "kind": "text",
+        "generator_ms": 0.04056000034324825,
+        "font": "Sans Serif",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 14.283737000369001
+      },
+      {
+        "job": 88,
+        "kind": "text",
+        "generator_ms": 0.04192200140096247,
+        "font": "Sans Serif",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 15.484171999560203
+      }
+    ],
+    "modules": [
+      {
+        "module": "Scenario",
+        "cpu_raster_ms": 21.51802300068084,
+        "error": null
+      },
+      {
+        "module": "StartupVisual",
+        "cpu_raster_ms": 38.92080299920053,
+        "error": null
+      },
+      {
+        "module": "MatchMode",
+        "cpu_raster_ms": 14.985946003434947,
+        "error": null
+      },
+      {
+        "module": "RobotProfile",
+        "cpu_raster_ms": 30.445363001490477,
+        "error": null
+      },
+      {
+        "module": "AllianceProfile",
+        "cpu_raster_ms": 9.694432999822311,
+        "error": null
+      },
+      {
+        "module": "ConfigManager",
+        "cpu_raster_ms": 16.714741999749094,
+        "error": null
+      },
+      {
+        "module": "EmergencyStop",
+        "cpu_raster_ms": 9.128456000325968,
+        "error": null
+      },
+      {
+        "module": "MatchReadiness",
+        "cpu_raster_ms": 30.191596000804566,
+        "error": null
+      },
+      {
+        "module": "ArmorAutoAim",
+        "cpu_raster_ms": 23.077628000464756,
+        "error": null
+      },
+      {
+        "module": "EliminationFX",
+        "cpu_raster_ms": 91.30079399983515,
+        "error": null
+      },
+      {
+        "module": "AudioFeedback",
+        "cpu_raster_ms": 43.98074300115695,
+        "error": null
+      },
+      {
+        "module": "EnergyAutoAim",
+        "cpu_raster_ms": 24.06009200058179,
+        "error": null
+      },
+      {
+        "module": "ArmorLock",
+        "cpu_raster_ms": 11.829940001916839,
+        "error": null
+      },
+      {
+        "module": "HeroLob",
+        "cpu_raster_ms": 60.97592000151053,
+        "error": null
+      },
+      {
+        "module": "FireControlStub",
+        "cpu_raster_ms": 10.641824002959765,
+        "error": null
+      },
+      {
+        "module": "SpinMode",
+        "cpu_raster_ms": 16.755322001699824,
+        "error": null
+      },
+      {
+        "module": "AutoSpinOnHit",
+        "cpu_raster_ms": 1.8357939989073202,
+        "error": "shaped Jello line exceeds 4096px: 'A new RobotInjuryStat 17/42 mm damage delta temporarily enables SpinMode; cumula'"
+      },
+      {
+        "module": "ChassisAssist",
+        "cpu_raster_ms": 12.965710000571562,
+        "error": null
+      },
+      {
+        "module": "PowerGuard",
+        "cpu_raster_ms": 8.498824998241616,
+        "error": null
+      },
+      {
+        "module": "CameraFeed",
+        "cpu_raster_ms": 18.323761003557593,
+        "error": null
+      },
+      {
+        "module": "TongjiVisionBridge",
+        "cpu_raster_ms": 35.37901600066107,
+        "error": null
+      },
+      {
+        "module": "CameraCalibration",
+        "cpu_raster_ms": 23.73405999969691,
+        "error": null
+      },
+      {
+        "module": "Armor3DESP",
+        "cpu_raster_ms": 23.77116499701515,
+        "error": null
+      },
+      {
+        "module": "RobotOverlay",
+        "cpu_raster_ms": 28.77972900023451,
+        "error": null
+      },
+      {
+        "module": "RadarOverlay",
+        "cpu_raster_ms": 11.485680999612669,
+        "error": null
+      },
+      {
+        "module": "MapMarker",
+        "cpu_raster_ms": 10.65097700120532,
+        "error": null
+      },
+      {
+        "module": "TacticalMap",
+        "cpu_raster_ms": 29.366597002081107,
+        "error": null
+      },
+      {
+        "module": "LiquidTacticalMap",
+        "cpu_raster_ms": 14.471646001766203,
+        "error": null
+      },
+      {
+        "module": "SentinelCommand",
+        "cpu_raster_ms": 7.945916997414315,
+        "error": null
+      },
+      {
+        "module": "AirSupport",
+        "cpu_raster_ms": 6.279625002207467,
+        "error": null
+      },
+      {
+        "module": "TopMatchBar",
+        "cpu_raster_ms": 36.628372999985004,
+        "error": null
+      },
+      {
+        "module": "MatchTimer",
+        "cpu_raster_ms": 7.746102000965038,
+        "error": null
+      },
+      {
+        "module": "BaseOutpostStatus",
+        "cpu_raster_ms": 9.924041998601751,
+        "error": null
+      },
+      {
+        "module": "VictoryPointStatus",
+        "cpu_raster_ms": 8.417514000029769,
+        "error": null
+      },
+      {
+        "module": "EconomyPanel",
+        "cpu_raster_ms": 21.86598800108186,
+        "error": null
+      },
+      {
+        "module": "ProjectileShop",
+        "cpu_raster_ms": 12.772002999554388,
+        "error": null
+      },
+      {
+        "module": "MatchChat",
+        "cpu_raster_ms": 14.377516999957152,
+        "error": null
+      },
+      {
+        "module": "QuickActionWheel",
+        "cpu_raster_ms": 32.706154001061805,
+        "error": null
+      },
+      {
+        "module": "ThermalPowerPanel",
+        "cpu_raster_ms": 11.316232001263415,
+        "error": null
+      },
+      {
+        "module": "BuffTimeline",
+        "cpu_raster_ms": 11.854917000164278,
+        "error": null
+      },
+      {
+        "module": "MQTTLink",
+        "cpu_raster_ms": 14.897696000844007,
+        "error": null
+      },
+      {
+        "module": "UDPVideo",
+        "cpu_raster_ms": 7.392860003164969,
+        "error": null
+      },
+      {
+        "module": "SerialBridge",
+        "cpu_raster_ms": 8.156888998200884,
+        "error": null
+      },
+      {
+        "module": "ControllerAngles",
+        "cpu_raster_ms": 29.00132699869573,
+        "error": null
+      },
+      {
+        "module": "RobotLink",
+        "cpu_raster_ms": 13.299532001838088,
+        "error": "shaped Jello line exceeds 4096px: '一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判'"
+      },
+      {
+        "module": "HUD",
+        "cpu_raster_ms": 82.42073300061747,
+        "error": null
+      },
+      {
+        "module": "UIScale",
+        "cpu_raster_ms": 18.698915002460126,
+        "error": null
+      },
+      {
+        "module": "Crosshair",
+        "cpu_raster_ms": 84.81513399965479,
+        "error": null
+      },
+      {
+        "module": "CombatTargetHUD",
+        "cpu_raster_ms": 12.405530997057213,
+        "error": null
+      },
+      {
+        "module": "MinecraftCombatHUD",
+        "cpu_raster_ms": 91.27392300069914,
+        "error": null
+      },
+      {
+        "module": "ChassisGimbalIndicator",
+        "cpu_raster_ms": 13.265811998280697,
+        "error": null
+      },
+      {
+        "module": "ClickGui",
+        "cpu_raster_ms": 17.851411997980904,
+        "error": null
+      },
+      {
+        "module": "GimbalPower",
+        "cpu_raster_ms": 8.795625002676388,
+        "error": null
+      },
+      {
+        "module": "PowerLimit",
+        "cpu_raster_ms": 7.695297001191648,
+        "error": null
+      },
+      {
+        "module": "SpeedLimit",
+        "cpu_raster_ms": 6.7719209982897155,
+        "error": null
+      },
+      {
+        "module": "Capacitor",
+        "cpu_raster_ms": 6.673646999843186,
+        "error": null
+      },
+      {
+        "module": "FrictionWheel",
+        "cpu_raster_ms": 10.094974997628015,
+        "error": null
+      },
+      {
+        "module": "LockState",
+        "cpu_raster_ms": 12.42241599902627,
+        "error": null
+      },
+      {
+        "module": "BuffStatus",
+        "cpu_raster_ms": 10.5688959993131,
+        "error": null
+      },
+      {
+        "module": "ProjectileAllowance",
+        "cpu_raster_ms": 7.151953999709804,
+        "error": null
+      },
+      {
+        "module": "JumpPTEWheelLES",
+        "cpu_raster_ms": 9.16067300204304,
+        "error": null
+      },
+      {
+        "module": "InjuryStatistics",
+        "cpu_raster_ms": 11.366445000021486,
+        "error": null
+      },
+      {
+        "module": "MatchSettlement",
+        "cpu_raster_ms": 10.277634999511065,
+        "error": null
+      },
+      {
+        "module": "DartPanel",
+        "cpu_raster_ms": 8.772238998062676,
+        "error": null
+      },
+      {
+        "module": "SkillConfiguration",
+        "cpu_raster_ms": 23.124557999835815,
+        "error": null
+      },
+      {
+        "module": "MinecraftInventory",
+        "cpu_raster_ms": 11.374666999472538,
+        "error": null
+      },
+      {
+        "module": "ReloadingPanel",
+        "cpu_raster_ms": 12.866471999586793,
+        "error": null
+      },
+      {
+        "module": "RuneRingStatus",
+        "cpu_raster_ms": 9.785927999473643,
+        "error": null
+      },
+      {
+        "module": "ResourceIsland",
+        "cpu_raster_ms": 8.90100000106031,
+        "error": null
+      },
+      {
+        "module": "GainZone",
+        "cpu_raster_ms": 6.709149998641806,
+        "error": null
+      },
+      {
+        "module": "UWBStatus",
+        "cpu_raster_ms": 6.846702999609988,
+        "error": null
+      },
+      {
+        "module": "ArmorStatus",
+        "cpu_raster_ms": 6.623432000196772,
+        "error": null
+      },
+      {
+        "module": "WirelessCharging",
+        "cpu_raster_ms": 7.141308000427671,
+        "error": null
+      },
+      {
+        "module": "MinecraftBuffs",
+        "cpu_raster_ms": 8.876162999513326,
+        "error": null
+      }
+    ],
+    "phase": "fixed",
+    "qt": "6.8.2"
+  },
+  {
+    "source": "bounded immutable pages with lossless panel-width descriptions",
+    "dpr": 1.0,
+    "hardware": false,
+    "gl_context_created": false,
+    "bundled_fonts": {
+      "poppins_regular": "Poppins",
+      "poppins_medium": "Poppins",
+      "poppins_bold": "Poppins",
+      "material": "Material Icons Outlined",
+      "polaricon": "zen-icon",
+      "tahoma": "Tahoma",
+      "jello_light": "Helvetica Neue",
+      "jello_medium": "HelveticaNeue",
+      "jello_regular": "My Font"
+    },
+    "jobs": [
+      {
+        "job": 0,
+        "kind": "prepare",
+        "generator_ms": 0.13898499673814513
+      },
+      {
+        "job": 1,
+        "kind": "prepare",
+        "generator_ms": 0.07259699850692414
+      },
+      {
+        "job": 2,
+        "kind": "prepare",
+        "generator_ms": 0.03899700095644221
+      },
+      {
+        "job": 3,
+        "kind": "prepare",
+        "generator_ms": 0.02287399911438115
+      },
+      {
+        "job": 4,
+        "kind": "prepare",
+        "generator_ms": 0.02391599991824478
+      },
+      {
+        "job": 5,
+        "kind": "prepare",
+        "generator_ms": 0.049113001296063885
+      },
+      {
+        "job": 6,
+        "kind": "prepare",
+        "generator_ms": 0.020641000446630642
+      },
+      {
+        "job": 7,
+        "kind": "prepare",
+        "generator_ms": 0.013680997653864324
+      },
+      {
+        "job": 8,
+        "kind": "prepare",
+        "generator_ms": 0.013470002159010619
+      },
+      {
+        "job": 9,
+        "kind": "prepare",
+        "generator_ms": 8.218815997679485
+      },
+      {
+        "job": 10,
+        "kind": "prepare",
+        "generator_ms": 0.6679670004814398
+      },
+      {
+        "job": 11,
+        "kind": "prepare",
+        "generator_ms": 0.7101390001480468
+      },
+      {
+        "job": 12,
+        "kind": "prepare",
+        "generator_ms": 0.5640640010824427
+      },
+      {
+        "job": 13,
+        "kind": "prepare",
+        "generator_ms": 0.5696820007869974
+      },
+      {
+        "job": 14,
+        "kind": "prepare",
+        "generator_ms": 0.4261389985913411
+      },
+      {
+        "job": 15,
+        "kind": "prepare",
+        "generator_ms": 0.3735919999598991
+      },
+      {
+        "job": 16,
+        "kind": "prepare",
+        "generator_ms": 0.45101700015948154
+      },
+      {
+        "job": 17,
+        "kind": "prepare",
+        "generator_ms": 0.5784050008514896
+      },
+      {
+        "job": 18,
+        "kind": "text",
+        "generator_ms": 0.11438899673521519,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 16.444931003206875
+      },
+      {
+        "job": 19,
+        "kind": "text",
+        "generator_ms": 0.0066399989009369165,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 0.2406150015303865
+      },
+      {
+        "job": 20,
+        "kind": "text",
+        "generator_ms": 0.0009619980119168758,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 14.2063320017769
+      },
+      {
+        "job": 21,
+        "kind": "text",
+        "generator_ms": 0.004246001481078565,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 11.47461700020358
+      },
+      {
+        "job": 22,
+        "kind": "text",
+        "generator_ms": 0.004787001671502367,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 12.615742001798935
+      },
+      {
+        "job": 23,
+        "kind": "text",
+        "generator_ms": 0.005187001079320908,
+        "font": "Poppins",
+        "size": 18.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 19.59362399793463
+      },
+      {
+        "job": 24,
+        "kind": "text",
+        "generator_ms": 0.0052679970394819975,
+        "font": "Segoe UI",
+        "size": 28.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 23.782448002748424
+      },
+      {
+        "job": 25,
+        "kind": "text",
+        "generator_ms": 0.007370999810518697,
+        "font": "Material Icons Outlined",
+        "size": 12.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 20.64230299947667
+      },
+      {
+        "job": 26,
+        "kind": "text",
+        "generator_ms": 23.81796699773986,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 1,
+        "shaped": false,
+        "cpu_raster_ms": 2.501837003364926
+      },
+      {
+        "job": 27,
+        "kind": "text",
+        "generator_ms": 0.005297999450704083,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 102,
+        "shaped": true,
+        "cpu_raster_ms": 12.285544999031117
+      },
+      {
+        "job": 28,
+        "kind": "text",
+        "generator_ms": 0.004665998858399689,
+        "font": "Helvetica Neue",
+        "size": 13.5,
+        "labels": 91,
+        "shaped": true,
+        "cpu_raster_ms": 10.545863999141147
+      },
+      {
+        "job": 29,
+        "kind": "text",
+        "generator_ms": 0.005709000106435269,
+        "font": "Helvetica Neue",
+        "size": 15.0,
+        "labels": 167,
+        "shaped": true,
+        "cpu_raster_ms": 23.728694002784323
+      },
+      {
+        "job": 30,
+        "kind": "text",
+        "generator_ms": 0.006930000381544232,
+        "font": "Helvetica Neue",
+        "size": 18.75,
+        "labels": 24,
+        "shaped": true,
+        "cpu_raster_ms": 7.536265999078751
+      },
+      {
+        "job": 31,
+        "kind": "text",
+        "generator_ms": 0.004417001036927104,
+        "font": "HelveticaNeue",
+        "size": 30.0,
+        "labels": 2,
+        "shaped": true,
+        "cpu_raster_ms": 6.053544999303995
+      },
+      {
+        "job": 32,
+        "kind": "text",
+        "generator_ms": 0.004156001523369923,
+        "font": "Helvetica Neue",
+        "size": 11.25,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 17.99878699966939
+      },
+      {
+        "job": 33,
+        "kind": "text",
+        "generator_ms": 0.006119000317994505,
+        "font": "Helvetica Neue",
+        "size": 10.125,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 17.609341997740557
+      },
+      {
+        "job": 34,
+        "kind": "text",
+        "generator_ms": 0.006990001566009596,
+        "font": "Helvetica Neue",
+        "size": 7.875,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 17.01881899862201
+      },
+      {
+        "job": 35,
+        "kind": "image",
+        "generator_ms": 0.019688999600475654,
+        "path": "((PosixPath('<source>/assets/jello/options.png'),),)"
+      },
+      {
+        "job": 36,
+        "kind": "image",
+        "generator_ms": 0.0006110021786298603,
+        "path": "((PosixPath('<source>/assets/jello/check.png'),),)"
+      },
+      {
+        "job": 37,
+        "kind": "image",
+        "generator_ms": 0.00039999940781854093,
+        "path": "((PosixPath('<source>/assets/jello/verticalscrollbartop.png'),),)"
+      },
+      {
+        "job": 38,
+        "kind": "image",
+        "generator_ms": 0.0004299981810618192,
+        "path": "((PosixPath('<source>/assets/jello/verticalscrollbarbottom.png'),),)"
+      },
+      {
+        "job": 39,
+        "kind": "image",
+        "generator_ms": 0.00025099870981648564,
+        "path": "((PosixPath('<source>/assets/jello/shadow_corner.png'),),)"
+      },
+      {
+        "job": 40,
+        "kind": "image",
+        "generator_ms": 0.0001910011633299291,
+        "path": "((PosixPath('<source>/assets/jello/shadow_corner_2.png'),),)"
+      },
+      {
+        "job": 41,
+        "kind": "image",
+        "generator_ms": 0.00023000029614195228,
+        "path": "((PosixPath('<source>/assets/jello/shadow_corner_3.png'),),)"
+      },
+      {
+        "job": 42,
+        "kind": "image",
+        "generator_ms": 0.00025099870981648564,
+        "path": "((PosixPath('<source>/assets/jello/shadow_corner_4.png'),),)"
+      },
+      {
+        "job": 43,
+        "kind": "image",
+        "generator_ms": 0.00021999949240125716,
+        "path": "((PosixPath('<source>/assets/jello/shadow_left.png'),),)"
+      },
+      {
+        "job": 44,
+        "kind": "image",
+        "generator_ms": 0.00020999868866056204,
+        "path": "((PosixPath('<source>/assets/jello/shadow_right.png'),),)"
+      },
+      {
+        "job": 45,
+        "kind": "image",
+        "generator_ms": 0.00021099913283251226,
+        "path": "((PosixPath('<source>/assets/jello/shadow_top.png'),),)"
+      },
+      {
+        "job": 46,
+        "kind": "image",
+        "generator_ms": 0.00021099913283251226,
+        "path": "((PosixPath('<source>/assets/jello/shadow_bottom.png'),),)"
+      },
+      {
+        "job": 47,
+        "kind": "image",
+        "generator_ms": 0.005437999789137393,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_icon.png'),),)"
+      },
+      {
+        "job": 48,
+        "kind": "image",
+        "generator_ms": 0.0364439983968623,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_ammo.png'),),)"
+      },
+      {
+        "job": 49,
+        "kind": "image",
+        "generator_ms": 0.0014619981811847538,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_recovery.png'),),)"
+      },
+      {
+        "job": 50,
+        "kind": "image",
+        "generator_ms": 0.0012319978850428015,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_revive.png'),),)"
+      },
+      {
+        "job": 51,
+        "kind": "image",
+        "generator_ms": 0.019158000213792548,
+        "path": "((PosixPath('<source>/assets/ui/cs2_buy/support.svg'),),)"
+      },
+      {
+        "job": 52,
+        "kind": "image",
+        "generator_ms": 0.013169999874662608,
+        "path": "((PosixPath('<source>/assets/minecraft/hotbar.png'),),)"
+      },
+      {
+        "job": 53,
+        "kind": "image",
+        "generator_ms": 0.00041100065573118627,
+        "path": "((PosixPath('<source>/assets/minecraft/hotbar_selection.png'),),)"
+      },
+      {
+        "job": 54,
+        "kind": "image",
+        "generator_ms": 0.00031099989428184927,
+        "path": "((PosixPath('<source>/assets/jello/hud_shadow.png'),),)"
+      },
+      {
+        "job": 55,
+        "kind": "text",
+        "generator_ms": 0.8334520025528036,
+        "font": "Poppins",
+        "size": 17.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 15.687650997278979
+      },
+      {
+        "job": 56,
+        "kind": "text",
+        "generator_ms": 0.006048998329788446,
+        "font": "Poppins",
+        "size": 15.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 15.419035000377335
+      },
+      {
+        "job": 57,
+        "kind": "text",
+        "generator_ms": 0.007179998647188768,
+        "font": "Poppins",
+        "size": 13.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 16.238495998550206
+      },
+      {
+        "job": 58,
+        "kind": "text",
+        "generator_ms": 0.008342001819983125,
+        "font": "Poppins",
+        "size": 12.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 15.607784000167158
+      },
+      {
+        "job": 59,
+        "kind": "text",
+        "generator_ms": 0.008052000339375809,
+        "font": "Poppins",
+        "size": 10.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 18.751769999653334
+      },
+      {
+        "job": 60,
+        "kind": "text",
+        "generator_ms": 0.0069400011852849275,
+        "font": "Poppins",
+        "size": 10.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.554709999880288
+      },
+      {
+        "job": 61,
+        "kind": "text",
+        "generator_ms": 0.005788999260403216,
+        "font": "Poppins",
+        "size": 9.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.622469999972964
+      },
+      {
+        "job": 62,
+        "kind": "text",
+        "generator_ms": 0.0072499969974160194,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 7.048076000501169
+      },
+      {
+        "job": 63,
+        "kind": "text",
+        "generator_ms": 0.0035150005714967847,
+        "font": "Poppins",
+        "size": 8.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.29135299945483
+      },
+      {
+        "job": 64,
+        "kind": "text",
+        "generator_ms": 0.0031340023269876838,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.903541998326546
+      },
+      {
+        "job": 65,
+        "kind": "text",
+        "generator_ms": 0.0024139990273397416,
+        "font": "Poppins",
+        "size": 6.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.018460001854692
+      },
+      {
+        "job": 66,
+        "kind": "text",
+        "generator_ms": 0.003255001502111554,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.08781900032772683
+      },
+      {
+        "job": 67,
+        "kind": "text",
+        "generator_ms": 0.0008610004442743957,
+        "font": "Poppins",
+        "size": 8.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.80593700153986
+      },
+      {
+        "job": 68,
+        "kind": "text",
+        "generator_ms": 0.002052998752333224,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.07535099939559586
+      },
+      {
+        "job": 69,
+        "kind": "text",
+        "generator_ms": 0.0007109993021003902,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.255945001612417
+      },
+      {
+        "job": 70,
+        "kind": "text",
+        "generator_ms": 0.002553999365773052,
+        "font": "Poppins",
+        "size": 7.8,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.571860997704789
+      },
+      {
+        "job": 71,
+        "kind": "text",
+        "generator_ms": 0.0016620033420622349,
+        "font": "Poppins",
+        "size": 7.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.885290998383425
+      },
+      {
+        "job": 72,
+        "kind": "text",
+        "generator_ms": 0.005138001142768189,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 7.601792996865697
+      },
+      {
+        "job": 73,
+        "kind": "text",
+        "generator_ms": 0.0037659992813132703,
+        "font": "Poppins",
+        "size": 7.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.535517000069376
+      },
+      {
+        "job": 74,
+        "kind": "text",
+        "generator_ms": 0.23778100148774683,
+        "font": "Poppins",
+        "size": 16.53333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 16.928075998293934
+      },
+      {
+        "job": 75,
+        "kind": "text",
+        "generator_ms": 0.032258001738227904,
+        "font": "Poppins",
+        "size": 11.573333333333334,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 14.674954996735323
+      },
+      {
+        "job": 76,
+        "kind": "text",
+        "generator_ms": 0.028613001632038504,
+        "font": "Poppins",
+        "size": 7.522666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 9.092365999094909
+      },
+      {
+        "job": 77,
+        "kind": "text",
+        "generator_ms": 0.025858000299194828,
+        "font": "Poppins",
+        "size": 7.605333333333332,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 4.1939980001188815
+      },
+      {
+        "job": 78,
+        "kind": "text",
+        "generator_ms": 0.02015000063693151,
+        "font": "Poppins",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 9.017054999276297
+      },
+      {
+        "job": 79,
+        "kind": "text",
+        "generator_ms": 0.026749999960884452,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 3.9766560003045015
+      },
+      {
+        "job": 80,
+        "kind": "text",
+        "generator_ms": 0.01709500065771863,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 0.03136600207653828
+      },
+      {
+        "job": 81,
+        "kind": "text",
+        "generator_ms": 0.008582999726058915,
+        "font": "Poppins",
+        "size": 11.16,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 10.261802999593783
+      },
+      {
+        "job": 82,
+        "kind": "text",
+        "generator_ms": 0.022524000087287277,
+        "font": "Poppins",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 8.871850001014536
+      },
+      {
+        "job": 83,
+        "kind": "text",
+        "generator_ms": 0.021040999854449183,
+        "font": "Poppins",
+        "size": 7.4399999999999995,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 6.32244299777085
+      },
+      {
+        "job": 84,
+        "kind": "text",
+        "generator_ms": 0.032608000765321776,
+        "font": "Poppins",
+        "size": 8.266666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 15.01765200009686
+      },
+      {
+        "job": 85,
+        "kind": "text",
+        "generator_ms": 0.028783000743715093,
+        "font": "Poppins",
+        "size": 7.109333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 12.744773001031717
+      },
+      {
+        "job": 86,
+        "kind": "text",
+        "generator_ms": 0.03733499761437997,
+        "font": "Sans Serif",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 16.430629999376833
+      },
+      {
+        "job": 87,
+        "kind": "text",
+        "generator_ms": 0.049682999815559015,
+        "font": "Sans Serif",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 4.8610740013828035
+      },
+      {
+        "job": 88,
+        "kind": "text",
+        "generator_ms": 0.03360900154802948,
+        "font": "Sans Serif",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 14.29139899846632
+      }
+    ],
+    "modules": [
+      {
+        "module": "Scenario",
+        "cpu_raster_ms": 7.800136001606006,
+        "error": null
+      },
+      {
+        "module": "StartupVisual",
+        "cpu_raster_ms": 12.892791997728636,
+        "error": null
+      },
+      {
+        "module": "MatchMode",
+        "cpu_raster_ms": 5.595427999651292,
+        "error": null
+      },
+      {
+        "module": "RobotProfile",
+        "cpu_raster_ms": 8.642029999464285,
+        "error": null
+      },
+      {
+        "module": "AllianceProfile",
+        "cpu_raster_ms": 3.5122000008414034,
+        "error": null
+      },
+      {
+        "module": "ConfigManager",
+        "cpu_raster_ms": 10.746170002676081,
+        "error": null
+      },
+      {
+        "module": "EmergencyStop",
+        "cpu_raster_ms": 4.609121002431493,
+        "error": null
+      },
+      {
+        "module": "MatchReadiness",
+        "cpu_raster_ms": 16.53998199981288,
+        "error": null
+      },
+      {
+        "module": "ArmorAutoAim",
+        "cpu_raster_ms": 10.436561999085825,
+        "error": null
+      },
+      {
+        "module": "EliminationFX",
+        "cpu_raster_ms": 33.975276001001475,
+        "error": null
+      },
+      {
+        "module": "AudioFeedback",
+        "cpu_raster_ms": 11.013384999387199,
+        "error": null
+      },
+      {
+        "module": "EnergyAutoAim",
+        "cpu_raster_ms": 19.71840899932431,
+        "error": null
+      },
+      {
+        "module": "ArmorLock",
+        "cpu_raster_ms": 3.2519550004508346,
+        "error": null
+      },
+      {
+        "module": "HeroLob",
+        "cpu_raster_ms": 26.055733000248438,
+        "error": null
+      },
+      {
+        "module": "FireControlStub",
+        "cpu_raster_ms": 4.547741002170369,
+        "error": null
+      },
+      {
+        "module": "SpinMode",
+        "cpu_raster_ms": 5.189248997339746,
+        "error": null
+      },
+      {
+        "module": "AutoSpinOnHit",
+        "cpu_raster_ms": 5.411467001977144,
+        "error": null
+      },
+      {
+        "module": "ChassisAssist",
+        "cpu_raster_ms": 4.442174002178945,
+        "error": null
+      },
+      {
+        "module": "PowerGuard",
+        "cpu_raster_ms": 2.9393740005616564,
+        "error": null
+      },
+      {
+        "module": "CameraFeed",
+        "cpu_raster_ms": 5.147214997123228,
+        "error": null
+      },
+      {
+        "module": "TongjiVisionBridge",
+        "cpu_raster_ms": 11.164447998453397,
+        "error": null
+      },
+      {
+        "module": "CameraCalibration",
+        "cpu_raster_ms": 8.801225998467999,
+        "error": null
+      },
+      {
+        "module": "Armor3DESP",
+        "cpu_raster_ms": 9.849584999756189,
+        "error": null
+      },
+      {
+        "module": "RobotOverlay",
+        "cpu_raster_ms": 13.599395999335684,
+        "error": null
+      },
+      {
+        "module": "RadarOverlay",
+        "cpu_raster_ms": 5.414019997260766,
+        "error": null
+      },
+      {
+        "module": "MapMarker",
+        "cpu_raster_ms": 4.2584530019667,
+        "error": null
+      },
+      {
+        "module": "TacticalMap",
+        "cpu_raster_ms": 6.774290999601362,
+        "error": null
+      },
+      {
+        "module": "LiquidTacticalMap",
+        "cpu_raster_ms": 5.879767999431351,
+        "error": null
+      },
+      {
+        "module": "SentinelCommand",
+        "cpu_raster_ms": 3.4568980008771177,
+        "error": null
+      },
+      {
+        "module": "AirSupport",
+        "cpu_raster_ms": 2.751526000793092,
+        "error": null
+      },
+      {
+        "module": "TopMatchBar",
+        "cpu_raster_ms": 9.271601000364171,
+        "error": null
+      },
+      {
+        "module": "MatchTimer",
+        "cpu_raster_ms": 3.1943899994075764,
+        "error": null
+      },
+      {
+        "module": "BaseOutpostStatus",
+        "cpu_raster_ms": 4.6887290009181015,
+        "error": null
+      },
+      {
+        "module": "VictoryPointStatus",
+        "cpu_raster_ms": 4.675238000345416,
+        "error": null
+      },
+      {
+        "module": "EconomyPanel",
+        "cpu_raster_ms": 7.023348000075202,
+        "error": null
+      },
+      {
+        "module": "ProjectileShop",
+        "cpu_raster_ms": 3.6922159997629933,
+        "error": null
+      },
+      {
+        "module": "MatchChat",
+        "cpu_raster_ms": 2.9941649991087615,
+        "error": null
+      },
+      {
+        "module": "QuickActionWheel",
+        "cpu_raster_ms": 7.7502919994003605,
+        "error": null
+      },
+      {
+        "module": "ThermalPowerPanel",
+        "cpu_raster_ms": 4.0075819997582585,
+        "error": null
+      },
+      {
+        "module": "BuffTimeline",
+        "cpu_raster_ms": 3.079050002270378,
+        "error": null
+      },
+      {
+        "module": "MQTTLink",
+        "cpu_raster_ms": 3.814856998360483,
+        "error": null
+      },
+      {
+        "module": "UDPVideo",
+        "cpu_raster_ms": 2.227191002020845,
+        "error": null
+      },
+      {
+        "module": "SerialBridge",
+        "cpu_raster_ms": 3.306696002255194,
+        "error": null
+      },
+      {
+        "module": "ControllerAngles",
+        "cpu_raster_ms": 17.727287002344383,
+        "error": null
+      },
+      {
+        "module": "RobotLink",
+        "cpu_raster_ms": 82.037879001291,
+        "error": null
+      },
+      {
+        "module": "HUD",
+        "cpu_raster_ms": 36.870264000754105,
+        "error": null
+      },
+      {
+        "module": "UIScale",
+        "cpu_raster_ms": 10.99539799906779,
+        "error": null
+      },
+      {
+        "module": "Crosshair",
+        "cpu_raster_ms": 25.264924002840417,
+        "error": null
+      },
+      {
+        "module": "CombatTargetHUD",
+        "cpu_raster_ms": 5.742355999245774,
+        "error": null
+      },
+      {
+        "module": "MinecraftCombatHUD",
+        "cpu_raster_ms": 33.298504997219425,
+        "error": null
+      },
+      {
+        "module": "ChassisGimbalIndicator",
+        "cpu_raster_ms": 5.732521000027191,
+        "error": null
+      },
+      {
+        "module": "ClickGui",
+        "cpu_raster_ms": 4.5240660001582,
+        "error": null
+      },
+      {
+        "module": "GimbalPower",
+        "cpu_raster_ms": 3.46126500153332,
+        "error": null
+      },
+      {
+        "module": "PowerLimit",
+        "cpu_raster_ms": 3.203254000254674,
+        "error": null
+      },
+      {
+        "module": "SpeedLimit",
+        "cpu_raster_ms": 3.7495899996429216,
+        "error": null
+      },
+      {
+        "module": "Capacitor",
+        "cpu_raster_ms": 3.647159002866829,
+        "error": null
+      },
+      {
+        "module": "FrictionWheel",
+        "cpu_raster_ms": 6.311065997579135,
+        "error": null
+      },
+      {
+        "module": "LockState",
+        "cpu_raster_ms": 3.5306569989188574,
+        "error": null
+      },
+      {
+        "module": "BuffStatus",
+        "cpu_raster_ms": 2.6492149991099723,
+        "error": null
+      },
+      {
+        "module": "ProjectileAllowance",
+        "cpu_raster_ms": 3.487623998807976,
+        "error": null
+      },
+      {
+        "module": "JumpPTEWheelLES",
+        "cpu_raster_ms": 4.745091999211581,
+        "error": null
+      },
+      {
+        "module": "InjuryStatistics",
+        "cpu_raster_ms": 4.397819000587333,
+        "error": null
+      },
+      {
+        "module": "MatchSettlement",
+        "cpu_raster_ms": 3.9790199989511166,
+        "error": null
+      },
+      {
+        "module": "DartPanel",
+        "cpu_raster_ms": 4.205413999443408,
+        "error": null
+      },
+      {
+        "module": "SkillConfiguration",
+        "cpu_raster_ms": 6.814799999119714,
+        "error": null
+      },
+      {
+        "module": "MinecraftInventory",
+        "cpu_raster_ms": 4.113728999072919,
+        "error": null
+      },
+      {
+        "module": "ReloadingPanel",
+        "cpu_raster_ms": 4.635549998056376,
+        "error": null
+      },
+      {
+        "module": "RuneRingStatus",
+        "cpu_raster_ms": 4.297630999644753,
+        "error": null
+      },
+      {
+        "module": "ResourceIsland",
+        "cpu_raster_ms": 2.793318002659362,
+        "error": null
+      },
+      {
+        "module": "GainZone",
+        "cpu_raster_ms": 1.588066999829607,
+        "error": null
+      },
+      {
+        "module": "UWBStatus",
+        "cpu_raster_ms": 2.5053829995158594,
+        "error": null
+      },
+      {
+        "module": "ArmorStatus",
+        "cpu_raster_ms": 2.1085359985590912,
+        "error": null
+      },
+      {
+        "module": "WirelessCharging",
+        "cpu_raster_ms": 3.0648489992017858,
+        "error": null
+      },
+      {
+        "module": "MinecraftBuffs",
+        "cpu_raster_ms": 3.3747769994079135,
+        "error": null
+      }
+    ]
+  },
+  {
+    "source": "bounded immutable pages with lossless panel-width descriptions",
+    "dpr": 2.0,
+    "hardware": false,
+    "gl_context_created": false,
+    "bundled_fonts": {
+      "poppins_regular": "Poppins",
+      "poppins_medium": "Poppins",
+      "poppins_bold": "Poppins",
+      "material": "Material Icons Outlined",
+      "polaricon": "zen-icon",
+      "tahoma": "Tahoma",
+      "jello_light": "Helvetica Neue",
+      "jello_medium": "HelveticaNeue",
+      "jello_regular": "My Font"
+    },
+    "jobs": [
+      {
+        "job": 0,
+        "kind": "prepare",
+        "generator_ms": 0.13518000196199864
+      },
+      {
+        "job": 1,
+        "kind": "prepare",
+        "generator_ms": 0.043413998355390504
+      },
+      {
+        "job": 2,
+        "kind": "prepare",
+        "generator_ms": 0.035171997296856716
+      },
+      {
+        "job": 3,
+        "kind": "prepare",
+        "generator_ms": 0.02069100082735531
+      },
+      {
+        "job": 4,
+        "kind": "prepare",
+        "generator_ms": 0.023534001229563728
+      },
+      {
+        "job": 5,
+        "kind": "prepare",
+        "generator_ms": 0.05061499905423261
+      },
+      {
+        "job": 6,
+        "kind": "prepare",
+        "generator_ms": 0.02121200304827653
+      },
+      {
+        "job": 7,
+        "kind": "prepare",
+        "generator_ms": 0.013389999367063865
+      },
+      {
+        "job": 8,
+        "kind": "prepare",
+        "generator_ms": 0.015152996638789773
+      },
+      {
+        "job": 9,
+        "kind": "prepare",
+        "generator_ms": 8.34628400116344
+      },
+      {
+        "job": 10,
+        "kind": "prepare",
+        "generator_ms": 0.6112230003054719
+      },
+      {
+        "job": 11,
+        "kind": "prepare",
+        "generator_ms": 0.5724559996451717
+      },
+      {
+        "job": 12,
+        "kind": "prepare",
+        "generator_ms": 0.5381549999583513
+      },
+      {
+        "job": 13,
+        "kind": "prepare",
+        "generator_ms": 0.7049819978419691
+      },
+      {
+        "job": 14,
+        "kind": "prepare",
+        "generator_ms": 0.4635760014934931
+      },
+      {
+        "job": 15,
+        "kind": "prepare",
+        "generator_ms": 0.7066739999572746
+      },
+      {
+        "job": 16,
+        "kind": "prepare",
+        "generator_ms": 0.49295799908577465
+      },
+      {
+        "job": 17,
+        "kind": "prepare",
+        "generator_ms": 0.5382449999160599
+      },
+      {
+        "job": 18,
+        "kind": "text",
+        "generator_ms": 0.15492899910896085,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 16.769491998275043
+      },
+      {
+        "job": 19,
+        "kind": "text",
+        "generator_ms": 0.006750000466126949,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 0.2571799996076152
+      },
+      {
+        "job": 20,
+        "kind": "text",
+        "generator_ms": 0.0010110015864484012,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 15.418835999298608
+      },
+      {
+        "job": 21,
+        "kind": "text",
+        "generator_ms": 0.005157002306077629,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 16.112691999296658
+      },
+      {
+        "job": 22,
+        "kind": "text",
+        "generator_ms": 0.00553800055058673,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 18.812761001754552
+      },
+      {
+        "job": 23,
+        "kind": "text",
+        "generator_ms": 0.006930000381544232,
+        "font": "Poppins",
+        "size": 18.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 15.698638999310788
+      },
+      {
+        "job": 24,
+        "kind": "text",
+        "generator_ms": 0.07147599899326451,
+        "font": "Segoe UI",
+        "size": 28.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 24.904703997890465
+      },
+      {
+        "job": 25,
+        "kind": "text",
+        "generator_ms": 0.005428002623375505,
+        "font": "Material Icons Outlined",
+        "size": 12.0,
+        "labels": 779,
+        "shaped": false,
+        "cpu_raster_ms": 13.72845699734171
+      },
+      {
+        "job": 26,
+        "kind": "text",
+        "generator_ms": 19.10172900170437,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 1,
+        "shaped": false,
+        "cpu_raster_ms": 3.4458820009604096
+      },
+      {
+        "job": 27,
+        "kind": "text",
+        "generator_ms": 0.005198002327233553,
+        "font": "Helvetica Neue",
+        "size": 10.5,
+        "labels": 102,
+        "shaped": true,
+        "cpu_raster_ms": 13.448703997710254
+      },
+      {
+        "job": 28,
+        "kind": "text",
+        "generator_ms": 0.005097001121612266,
+        "font": "Helvetica Neue",
+        "size": 13.5,
+        "labels": 91,
+        "shaped": true,
+        "cpu_raster_ms": 64.59327099946677
+      },
+      {
+        "job": 29,
+        "kind": "text",
+        "generator_ms": 0.007201000698842108,
+        "font": "Helvetica Neue",
+        "size": 15.0,
+        "labels": 167,
+        "shaped": true,
+        "cpu_raster_ms": 135.0328789994819
+      },
+      {
+        "job": 30,
+        "kind": "text",
+        "generator_ms": 0.007341001037275419,
+        "font": "Helvetica Neue",
+        "size": 18.75,
+        "labels": 24,
+        "shaped": true,
+        "cpu_raster_ms": 17.37287300056778
+      },
+      {
+        "job": 31,
+        "kind": "text",
+        "generator_ms": 0.006981001206440851,
+        "font": "HelveticaNeue",
+        "size": 30.0,
+        "labels": 2,
+        "shaped": true,
+        "cpu_raster_ms": 2.665078001882648
+      },
+      {
+        "job": 32,
+        "kind": "text",
+        "generator_ms": 0.002654000127222389,
+        "font": "Helvetica Neue",
+        "size": 11.25,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 18.576973001472652
+      },
+      {
+        "job": 33,
+        "kind": "text",
+        "generator_ms": 0.005038000381318852,
+        "font": "Helvetica Neue",
+        "size": 10.125,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 18.59638099995209
+      },
+      {
+        "job": 34,
+        "kind": "text",
+        "generator_ms": 0.005147998308530077,
+        "font": "Helvetica Neue",
+        "size": 7.875,
+        "labels": 148,
+        "shaped": true,
+        "cpu_raster_ms": 16.70865200139815
+      },
+      {
+        "job": 35,
+        "kind": "image",
+        "generator_ms": 0.018908001948148012,
+        "path": "((PosixPath('<source>/assets/jello/options.png'),),)"
+      },
+      {
+        "job": 36,
+        "kind": "image",
+        "generator_ms": 0.0006609989213757217,
+        "path": "((PosixPath('<source>/assets/jello/check.png'),),)"
+      },
+      {
+        "job": 37,
+        "kind": "image",
+        "generator_ms": 0.00045100023271515965,
+        "path": "((PosixPath('<source>/assets/jello/verticalscrollbartop.png'),),)"
+      },
+      {
+        "job": 38,
+        "kind": "image",
+        "generator_ms": 0.0002400010998826474,
+        "path": "((PosixPath('<source>/assets/jello/verticalscrollbarbottom.png'),),)"
+      },
+      {
+        "job": 39,
+        "kind": "image",
+        "generator_ms": 0.0002800006768666208,
+        "path": "((PosixPath('<source>/assets/jello/shadow_corner.png'),),)"
+      },
+      {
+        "job": 40,
+        "kind": "image",
+        "generator_ms": 0.00022099993657320738,
+        "path": "((PosixPath('<source>/assets/jello/shadow_corner_2.png'),),)"
+      },
+      {
+        "job": 41,
+        "kind": "image",
+        "generator_ms": 0.00023000029614195228,
+        "path": "((PosixPath('<source>/assets/jello/shadow_corner_3.png'),),)"
+      },
+      {
+        "job": 42,
+        "kind": "image",
+        "generator_ms": 0.00025999906938523054,
+        "path": "((PosixPath('<source>/assets/jello/shadow_corner_4.png'),),)"
+      },
+      {
+        "job": 43,
+        "kind": "image",
+        "generator_ms": 0.0002309971023350954,
+        "path": "((PosixPath('<source>/assets/jello/shadow_left.png'),),)"
+      },
+      {
+        "job": 44,
+        "kind": "image",
+        "generator_ms": 0.0002500019036233425,
+        "path": "((PosixPath('<source>/assets/jello/shadow_right.png'),),)"
+      },
+      {
+        "job": 45,
+        "kind": "image",
+        "generator_ms": 0.0002400010998826474,
+        "path": "((PosixPath('<source>/assets/jello/shadow_top.png'),),)"
+      },
+      {
+        "job": 46,
+        "kind": "image",
+        "generator_ms": 0.00023000029614195228,
+        "path": "((PosixPath('<source>/assets/jello/shadow_bottom.png'),),)"
+      },
+      {
+        "job": 47,
+        "kind": "image",
+        "generator_ms": 0.00537799860467203,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_icon.png'),),)"
+      },
+      {
+        "job": 48,
+        "kind": "image",
+        "generator_ms": 0.03572299829102121,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_ammo.png'),),)"
+      },
+      {
+        "job": 49,
+        "kind": "image",
+        "generator_ms": 0.001791999238776043,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_recovery.png'),),)"
+      },
+      {
+        "job": 50,
+        "kind": "image",
+        "generator_ms": 0.0007310009095817804,
+        "path": "((PosixPath('/workspace/scratch/8fc313400f06/combined-pr13-16/assets/cs2_ui_pack/buy_revive.png'),),)"
+      },
+      {
+        "job": 51,
+        "kind": "image",
+        "generator_ms": 0.02069000038318336,
+        "path": "((PosixPath('<source>/assets/ui/cs2_buy/support.svg'),),)"
+      },
+      {
+        "job": 52,
+        "kind": "image",
+        "generator_ms": 0.013460001355269924,
+        "path": "((PosixPath('<source>/assets/minecraft/hotbar.png'),),)"
+      },
+      {
+        "job": 53,
+        "kind": "image",
+        "generator_ms": 0.0004399989848025143,
+        "path": "((PosixPath('<source>/assets/minecraft/hotbar_selection.png'),),)"
+      },
+      {
+        "job": 54,
+        "kind": "image",
+        "generator_ms": 0.00040099985199049115,
+        "path": "((PosixPath('<source>/assets/jello/hud_shadow.png'),),)"
+      },
+      {
+        "job": 55,
+        "kind": "text",
+        "generator_ms": 0.8267520024674013,
+        "font": "Poppins",
+        "size": 17.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 15.357385000243085
+      },
+      {
+        "job": 56,
+        "kind": "text",
+        "generator_ms": 0.005216999852564186,
+        "font": "Poppins",
+        "size": 15.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 14.280523999332217
+      },
+      {
+        "job": 57,
+        "kind": "text",
+        "generator_ms": 0.006880000000819564,
+        "font": "Poppins",
+        "size": 13.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 14.65912300045602
+      },
+      {
+        "job": 58,
+        "kind": "text",
+        "generator_ms": 0.0060589991335291415,
+        "font": "Poppins",
+        "size": 12.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.041242000326747
+      },
+      {
+        "job": 59,
+        "kind": "text",
+        "generator_ms": 0.003454999387031421,
+        "font": "Poppins",
+        "size": 10.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.219608001032611
+      },
+      {
+        "job": 60,
+        "kind": "text",
+        "generator_ms": 0.003335000656079501,
+        "font": "Poppins",
+        "size": 10.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.586419998115161
+      },
+      {
+        "job": 61,
+        "kind": "text",
+        "generator_ms": 0.003664998075691983,
+        "font": "Poppins",
+        "size": 9.5,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 12.027895001665456
+      },
+      {
+        "job": 62,
+        "kind": "text",
+        "generator_ms": 0.0040859995351638645,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 7.28560599964112
+      },
+      {
+        "job": 63,
+        "kind": "text",
+        "generator_ms": 0.002373999450355768,
+        "font": "Poppins",
+        "size": 8.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 11.812556000222685
+      },
+      {
+        "job": 64,
+        "kind": "text",
+        "generator_ms": 0.0030340015655383468,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 7.350341998971999
+      },
+      {
+        "job": 65,
+        "kind": "text",
+        "generator_ms": 0.0028940012271050364,
+        "font": "Poppins",
+        "size": 6.6,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 13.030566999077564
+      },
+      {
+        "job": 66,
+        "kind": "text",
+        "generator_ms": 0.004326000635046512,
+        "font": "Poppins",
+        "size": 9.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.11116500172647648
+      },
+      {
+        "job": 67,
+        "kind": "text",
+        "generator_ms": 0.0009420000424142927,
+        "font": "Poppins",
+        "size": 8.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.466204001393635
+      },
+      {
+        "job": 68,
+        "kind": "text",
+        "generator_ms": 0.0018419996195007116,
+        "font": "Poppins",
+        "size": 8.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 0.0674599978083279
+      },
+      {
+        "job": 69,
+        "kind": "text",
+        "generator_ms": 0.0007509988790843636,
+        "font": "Poppins",
+        "size": 8.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 6.850644000223838
+      },
+      {
+        "job": 70,
+        "kind": "text",
+        "generator_ms": 0.0021939995349384844,
+        "font": "Poppins",
+        "size": 7.8,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.4357990005228203
+      },
+      {
+        "job": 71,
+        "kind": "text",
+        "generator_ms": 0.0017329984984826297,
+        "font": "Poppins",
+        "size": 7.4,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 11.716323999280576
+      },
+      {
+        "job": 72,
+        "kind": "text",
+        "generator_ms": 0.00246399940806441,
+        "font": "Poppins",
+        "size": 7.2,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 7.481405998987611
+      },
+      {
+        "job": 73,
+        "kind": "text",
+        "generator_ms": 0.002764001692412421,
+        "font": "Poppins",
+        "size": 7.0,
+        "labels": 63,
+        "shaped": false,
+        "cpu_raster_ms": 2.4491699987265747
+      },
+      {
+        "job": 74,
+        "kind": "text",
+        "generator_ms": 0.26912799876299687,
+        "font": "Poppins",
+        "size": 16.53333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 63.80715300110751
+      },
+      {
+        "job": 75,
+        "kind": "text",
+        "generator_ms": 0.09604200022295117,
+        "font": "Poppins",
+        "size": 11.573333333333334,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 16.165269000339322
+      },
+      {
+        "job": 76,
+        "kind": "text",
+        "generator_ms": 0.03524200292304158,
+        "font": "Poppins",
+        "size": 7.522666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 9.367544000269845
+      },
+      {
+        "job": 77,
+        "kind": "text",
+        "generator_ms": 0.028451999241951853,
+        "font": "Poppins",
+        "size": 7.605333333333332,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 13.828055001795292
+      },
+      {
+        "job": 78,
+        "kind": "text",
+        "generator_ms": 0.025887999072438106,
+        "font": "Poppins",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 4.83352300216211
+      },
+      {
+        "job": 79,
+        "kind": "text",
+        "generator_ms": 0.01754600089043379,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 9.169049997581169
+      },
+      {
+        "job": 80,
+        "kind": "text",
+        "generator_ms": 0.07672300125705078,
+        "font": "Poppins",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 0.037845999031560495
+      },
+      {
+        "job": 81,
+        "kind": "text",
+        "generator_ms": 0.008982999133877456,
+        "font": "Poppins",
+        "size": 11.16,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 11.034997998649487
+      },
+      {
+        "job": 82,
+        "kind": "text",
+        "generator_ms": 0.029694001568714157,
+        "font": "Poppins",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 14.300442999228835
+      },
+      {
+        "job": 83,
+        "kind": "text",
+        "generator_ms": 0.02779100032057613,
+        "font": "Poppins",
+        "size": 7.4399999999999995,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 5.005677001463482
+      },
+      {
+        "job": 84,
+        "kind": "text",
+        "generator_ms": 0.021201001800363883,
+        "font": "Poppins",
+        "size": 8.266666666666666,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 13.252984997961903
+      },
+      {
+        "job": 85,
+        "kind": "text",
+        "generator_ms": 0.028851998649770394,
+        "font": "Poppins",
+        "size": 7.109333333333333,
+        "labels": 79,
+        "shaped": true,
+        "cpu_raster_ms": 12.277434001589427
+      },
+      {
+        "job": 86,
+        "kind": "text",
+        "generator_ms": 0.03572200148482807,
+        "font": "Sans Serif",
+        "size": 7.688000000000001,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 16.28483599779429
+      },
+      {
+        "job": 87,
+        "kind": "text",
+        "generator_ms": 0.0924259984458331,
+        "font": "Sans Serif",
+        "size": 7.8533333333333335,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 14.568199003406335
+      },
+      {
+        "job": 88,
+        "kind": "text",
+        "generator_ms": 0.04906300091533922,
+        "font": "Sans Serif",
+        "size": 8.68,
+        "labels": 79,
+        "shaped": false,
+        "cpu_raster_ms": 14.936923998902785
+      }
+    ],
+    "modules": [
+      {
+        "module": "Scenario",
+        "cpu_raster_ms": 20.465693000005558,
+        "error": null
+      },
+      {
+        "module": "StartupVisual",
+        "cpu_raster_ms": 39.32202900250559,
+        "error": null
+      },
+      {
+        "module": "MatchMode",
+        "cpu_raster_ms": 14.981768999859923,
+        "error": null
+      },
+      {
+        "module": "RobotProfile",
+        "cpu_raster_ms": 25.061676002223976,
+        "error": null
+      },
+      {
+        "module": "AllianceProfile",
+        "cpu_raster_ms": 10.962831001961604,
+        "error": null
+      },
+      {
+        "module": "ConfigManager",
+        "cpu_raster_ms": 23.223228999995627,
+        "error": null
+      },
+      {
+        "module": "EmergencyStop",
+        "cpu_raster_ms": 9.674767999968026,
+        "error": null
+      },
+      {
+        "module": "MatchReadiness",
+        "cpu_raster_ms": 27.583571998547995,
+        "error": null
+      },
+      {
+        "module": "ArmorAutoAim",
+        "cpu_raster_ms": 25.826656001299853,
+        "error": null
+      },
+      {
+        "module": "EliminationFX",
+        "cpu_raster_ms": 89.38176700030454,
+        "error": null
+      },
+      {
+        "module": "AudioFeedback",
+        "cpu_raster_ms": 41.01969799739891,
+        "error": null
+      },
+      {
+        "module": "EnergyAutoAim",
+        "cpu_raster_ms": 25.156064999464434,
+        "error": null
+      },
+      {
+        "module": "ArmorLock",
+        "cpu_raster_ms": 11.395569999876898,
+        "error": null
+      },
+      {
+        "module": "HeroLob",
+        "cpu_raster_ms": 62.48042299921508,
+        "error": null
+      },
+      {
+        "module": "FireControlStub",
+        "cpu_raster_ms": 11.644067999441177,
+        "error": null
+      },
+      {
+        "module": "SpinMode",
+        "cpu_raster_ms": 15.938304000883363,
+        "error": null
+      },
+      {
+        "module": "AutoSpinOnHit",
+        "cpu_raster_ms": 28.2802020010422,
+        "error": null
+      },
+      {
+        "module": "ChassisAssist",
+        "cpu_raster_ms": 12.326775999099482,
+        "error": null
+      },
+      {
+        "module": "PowerGuard",
+        "cpu_raster_ms": 8.581280999351293,
+        "error": null
+      },
+      {
+        "module": "CameraFeed",
+        "cpu_raster_ms": 16.315700999257388,
+        "error": null
+      },
+      {
+        "module": "TongjiVisionBridge",
+        "cpu_raster_ms": 33.05341599843814,
+        "error": null
+      },
+      {
+        "module": "CameraCalibration",
+        "cpu_raster_ms": 24.288263000926236,
+        "error": null
+      },
+      {
+        "module": "Armor3DESP",
+        "cpu_raster_ms": 24.53543800220359,
+        "error": null
+      },
+      {
+        "module": "RobotOverlay",
+        "cpu_raster_ms": 30.10024199829786,
+        "error": null
+      },
+      {
+        "module": "RadarOverlay",
+        "cpu_raster_ms": 13.386292001086986,
+        "error": null
+      },
+      {
+        "module": "MapMarker",
+        "cpu_raster_ms": 12.781477998942137,
+        "error": null
+      },
+      {
+        "module": "TacticalMap",
+        "cpu_raster_ms": 31.130013998335926,
+        "error": null
+      },
+      {
+        "module": "LiquidTacticalMap",
+        "cpu_raster_ms": 16.301610001391964,
+        "error": null
+      },
+      {
+        "module": "SentinelCommand",
+        "cpu_raster_ms": 7.711846003076062,
+        "error": null
+      },
+      {
+        "module": "AirSupport",
+        "cpu_raster_ms": 6.909971998538822,
+        "error": null
+      },
+      {
+        "module": "TopMatchBar",
+        "cpu_raster_ms": 37.292180000804365,
+        "error": null
+      },
+      {
+        "module": "MatchTimer",
+        "cpu_raster_ms": 7.816400997398887,
+        "error": null
+      },
+      {
+        "module": "BaseOutpostStatus",
+        "cpu_raster_ms": 10.29835900044418,
+        "error": null
+      },
+      {
+        "module": "VictoryPointStatus",
+        "cpu_raster_ms": 9.189230000629323,
+        "error": null
+      },
+      {
+        "module": "EconomyPanel",
+        "cpu_raster_ms": 23.69571799863479,
+        "error": null
+      },
+      {
+        "module": "ProjectileShop",
+        "cpu_raster_ms": 13.376367001910694,
+        "error": null
+      },
+      {
+        "module": "MatchChat",
+        "cpu_raster_ms": 13.819482002872974,
+        "error": null
+      },
+      {
+        "module": "QuickActionWheel",
+        "cpu_raster_ms": 31.20172900162288,
+        "error": null
+      },
+      {
+        "module": "ThermalPowerPanel",
+        "cpu_raster_ms": 9.028792999743018,
+        "error": null
+      },
+      {
+        "module": "BuffTimeline",
+        "cpu_raster_ms": 8.571317001042189,
+        "error": null
+      },
+      {
+        "module": "MQTTLink",
+        "cpu_raster_ms": 13.236720998975215,
+        "error": null
+      },
+      {
+        "module": "UDPVideo",
+        "cpu_raster_ms": 8.068683000601595,
+        "error": null
+      },
+      {
+        "module": "SerialBridge",
+        "cpu_raster_ms": 8.679575999849476,
+        "error": null
+      },
+      {
+        "module": "ControllerAngles",
+        "cpu_raster_ms": 30.292896000901237,
+        "error": null
+      },
+      {
+        "module": "RobotLink",
+        "cpu_raster_ms": 108.08253300274373,
+        "error": null
+      },
+      {
+        "module": "HUD",
+        "cpu_raster_ms": 84.79392699882737,
+        "error": null
+      },
+      {
+        "module": "UIScale",
+        "cpu_raster_ms": 21.854376002011122,
+        "error": null
+      },
+      {
+        "module": "Crosshair",
+        "cpu_raster_ms": 92.88103799917735,
+        "error": null
+      },
+      {
+        "module": "CombatTargetHUD",
+        "cpu_raster_ms": 12.458380999305518,
+        "error": null
+      },
+      {
+        "module": "MinecraftCombatHUD",
+        "cpu_raster_ms": 90.86314600062906,
+        "error": null
+      },
+      {
+        "module": "ChassisGimbalIndicator",
+        "cpu_raster_ms": 14.952516998164356,
+        "error": null
+      },
+      {
+        "module": "ClickGui",
+        "cpu_raster_ms": 15.545012000075076,
+        "error": null
+      },
+      {
+        "module": "GimbalPower",
+        "cpu_raster_ms": 9.906199000397464,
+        "error": null
+      },
+      {
+        "module": "PowerLimit",
+        "cpu_raster_ms": 7.5440479995450005,
+        "error": null
+      },
+      {
+        "module": "SpeedLimit",
+        "cpu_raster_ms": 6.768422001186991,
+        "error": null
+      },
+      {
+        "module": "Capacitor",
+        "cpu_raster_ms": 6.926807000127155,
+        "error": null
+      },
+      {
+        "module": "FrictionWheel",
+        "cpu_raster_ms": 9.29111000004923,
+        "error": null
+      },
+      {
+        "module": "LockState",
+        "cpu_raster_ms": 9.057063998625381,
+        "error": null
+      },
+      {
+        "module": "BuffStatus",
+        "cpu_raster_ms": 9.902574001898756,
+        "error": null
+      },
+      {
+        "module": "ProjectileAllowance",
+        "cpu_raster_ms": 7.714119998126989,
+        "error": null
+      },
+      {
+        "module": "JumpPTEWheelLES",
+        "cpu_raster_ms": 9.678462000010768,
+        "error": null
+      },
+      {
+        "module": "InjuryStatistics",
+        "cpu_raster_ms": 10.50632600163226,
+        "error": null
+      },
+      {
+        "module": "MatchSettlement",
+        "cpu_raster_ms": 8.398339999985183,
+        "error": null
+      },
+      {
+        "module": "DartPanel",
+        "cpu_raster_ms": 7.3480190003465395,
+        "error": null
+      },
+      {
+        "module": "SkillConfiguration",
+        "cpu_raster_ms": 23.5626699977729,
+        "error": null
+      },
+      {
+        "module": "MinecraftInventory",
+        "cpu_raster_ms": 9.859449997748015,
+        "error": null
+      },
+      {
+        "module": "ReloadingPanel",
+        "cpu_raster_ms": 12.60191199980909,
+        "error": null
+      },
+      {
+        "module": "RuneRingStatus",
+        "cpu_raster_ms": 9.77429399790708,
+        "error": null
+      },
+      {
+        "module": "ResourceIsland",
+        "cpu_raster_ms": 9.261677001632052,
+        "error": null
+      },
+      {
+        "module": "GainZone",
+        "cpu_raster_ms": 5.9643640015565325,
+        "error": null
+      },
+      {
+        "module": "UWBStatus",
+        "cpu_raster_ms": 6.879886997921858,
+        "error": null
+      },
+      {
+        "module": "ArmorStatus",
+        "cpu_raster_ms": 6.461469001806108,
+        "error": null
+      },
+      {
+        "module": "WirelessCharging",
+        "cpu_raster_ms": 6.879005999508081,
+        "error": null
+      },
+      {
+        "module": "MinecraftBuffs",
+        "cpu_raster_ms": 8.907673000067007,
+        "error": null
+      }
+    ]
+  }
+]

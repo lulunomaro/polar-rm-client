@@ -1,0 +1,63 @@
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+.F..F..击杀音效 PCM 解码失败: cue.ogg: bad decoder
+...F.F.F音效播放失败: /cue.ogg: Unsupported codec
+.Kill audio: 没有可用的音频输出设备
+.....Kill audio PCM decoder unavailable; using Qt media backend
+.
+======================================================================
+FAIL: test_audio_apply_cancels_cold_requests_before_later_unmute (__main__.AudioTests.test_audio_apply_cancels_cold_requests_before_later_unmute)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8fc313400f06/audio-policy-interactions/tests/test_kill_audio_regressions.py", line 72, in test_audio_apply_cancels_cold_requests_before_later_unmute
+    self.assertFalse(self.pool._waiting)
+AssertionError: defaultdict(<class 'list'>, {'cue.ogg': [(27945.640620725, 55)]}) is not false
+
+======================================================================
+FAIL: test_close_cancels_all_pending_stops_players_and_rejects_new_requests (__main__.AudioTests.test_close_cancels_all_pending_stops_players_and_rejects_new_requests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8fc313400f06/audio-policy-interactions/tests/test_kill_audio_regressions.py", line 103, in test_close_cancels_all_pending_stops_players_and_rejects_new_requests
+    self.assertFalse(self.pool._pending)
+AssertionError: defaultdict(<class 'list'>, {'cue.wav': [55]}) is not false
+
+======================================================================
+FAIL: test_focus_loss_cancels_cold_requests_before_focus_returns (__main__.AudioTests.test_focus_loss_cancels_cold_requests_before_focus_returns)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8fc313400f06/audio-policy-interactions/tests/test_kill_audio_regressions.py", line 81, in test_focus_loss_cancels_cold_requests_before_focus_returns
+    self.assertFalse(self.pool._waiting)
+AssertionError: defaultdict(<class 'list'>, {'cue.ogg': [(27945.655982258, 55)]}) is not false
+
+======================================================================
+FAIL: test_focus_muted_cold_request_does_not_enter_decode_queue (__main__.AudioTests.test_focus_muted_cold_request_does_not_enter_decode_queue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8fc313400f06/audio-policy-interactions/tests/test_kill_audio_regressions.py", line 65, in test_focus_muted_cold_request_does_not_enter_decode_queue
+    decode.assert_not_called(); play.assert_not_called()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 910, in assert_not_called
+    raise AssertionError(msg)
+AssertionError: Expected '_queue_decode' to not have been called. Called 1 times.
+Calls: [call('cue.ogg'), call().__bool__()].
+
+======================================================================
+FAIL: test_master_muted_cold_request_does_not_enter_decode_queue (__main__.AudioTests.test_master_muted_cold_request_does_not_enter_decode_queue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8fc313400f06/audio-policy-interactions/tests/test_kill_audio_regressions.py", line 60, in test_master_muted_cold_request_does_not_enter_decode_queue
+    decode.assert_not_called(); play.assert_not_called()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 910, in assert_not_called
+    raise AssertionError(msg)
+AssertionError: Expected '_queue_decode' to not have been called. Called 1 times.
+Calls: [call('cue.ogg'), call().__bool__()].
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.058s
+
+FAILED (failures=5)
