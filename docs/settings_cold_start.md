@@ -84,11 +84,12 @@ startup labels, ClickGUI dismissal, UI state and compositor logic. Dedicated
 checks cover selection during preparation, F12, draft persistence, search,
 ready-only application, cancellation, fresh reopen, stage boundaries, hidden
 owners and destruction of a crosshair editor before attachment. API freeze also
-passes without a baseline update. Independent review found no blocking defect.
+passes without a baseline update. Standalone startup and integration checks
+pass 73 and 51 assertions respectively. Independent review found no blocking defect.
 
 The repository-wide aggregate is **not a complete pass** in the isolated source
-subset: most firmware and unrelated test scripts are not materialized. Its exact
-result is recorded in the PR. No real Windows/GPU latency, display-driver,
+subset: most firmware and unrelated test scripts are not materialized. The
+aggregate reports **0 FAIL, 79 INCOMPLETE / 88 checks** (exit 1), not GO. No real Windows/GPU latency, display-driver,
 DPR/refresh-rate, audio-device or vehicle acceptance is claimed.
 
 On the target computer, compare first Esc immediately after startup, first Esc
@@ -96,3 +97,15 @@ after atlas warmup completes, subsequent Esc, and first/settings tab opens.
 Keep `ui_tick_timing`, `frame_timing`, warmup maxima and compositor dynamic/blur
 stages distinct. A remaining GPU-specific first-Esc hitch needs that evidence;
 this patch deliberately does not invalidate less scene state without proof.
+
+
+## Compatibility with the separate startup/F11 PR
+
+A disposable local composition with PR #15 passed all 82 combined startup/F11,
+settings, keyboard, Escape and warmup tests. It did not merge or change either
+published branch. There is one adjacent-line Git conflict in the keyboard hint:
+retain PR #15's `F11全屏、F12急停...` text **and** this patch's following
+`apply_jello_widgets(note, stylesheet=False)` call. The PolarRMWindow changes
+and aggregate-test registration combine cleanly. PR #15's fullscreen shortcut,
+startup settings entry and reserved-key behavior are not included in this
+independent PR against main.
