@@ -176,8 +176,14 @@ class ReliableAudioPool(QObject):
             player.setAudioOutput(output)
             player.errorOccurred.connect(lambda error, message, voice=player: self._on_media_error(voice, message))
             self._fallback.append((player, output))
-        player, output = self._fallback[self._fallback_index % len(self._fallback)]
-        self._fallback_index = (self._fallback_index + 1) % len(self._fallback)
+            # Use the voice we just created. Taking the old cursor modulo a
+            # growing pool selects voice 0 twice, interrupting the first kill
+            # (or its pending decoder load) while the new voice stays unused.
+            index = len(self._fallback) - 1
+        else:
+            index = self._fallback_index % len(self._fallback)
+        player, output = self._fallback[index]
+        self._fallback_index = (index + 1) % len(self._fallback)
         player.stop()
         output.setVolume(max(0.0, min(1.0, volume / 100.0)))
         source = QUrl.fromLocalFile(str(path.resolve()))

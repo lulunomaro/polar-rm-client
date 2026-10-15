@@ -10,12 +10,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtGui import QGuiApplication
 from rm_client.kill_audio import KillSoundPool, PcmCueCache, _valid_pcm
 from rm_client.kill_fx import KillFxRenderer
 from rm_client.ui_audio import ReliableAudioPool
 
-APP = QCoreApplication.instance() or QCoreApplication([])
+# The audio pool observes application focus, just as it does in production.
+APP = QGuiApplication.instance() or QGuiApplication([])
 
 def wav(path):
     with wave.open(str(path), 'wb') as out:
@@ -147,3 +148,4 @@ class AudioTests(unittest.TestCase):
         self.assertEqual(list(cache.root.iterdir()), [])
 
 if __name__ == '__main__': unittest.main()
+

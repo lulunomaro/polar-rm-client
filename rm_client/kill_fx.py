@@ -1394,11 +1394,12 @@ class KillFxRenderer:
     def _play_sound(self, context: TriggerContext, preset: str, volume: float) -> None:
         if preset == "CS2 Native" and self.cs2.assets.play("kill", volume / 100.0):
             return
-        if any(str(tag).lower() == LOCKED_TARGET_TAG for tag in context.tags):
-            # LOCKED_TARGET 加分提示音优先（消化原零引用资产 addscore_df.ogg）。
-            self.sounds.play("addscore_df.ogg", volume)
-            return
         self.sounds.play(self._sound_name(context.kill_type, context.combo, preset), volume)
+        if any(str(tag).lower() == LOCKED_TARGET_TAG for tag in context.tags):
+            # The quiet score bonus is an extra layer, not a replacement for
+            # the selected kill cue. Repeated victims can get this tag from
+            # the second kill onward; replacing the cue makes them seem silent.
+            self.sounds.play("addscore_df.ogg", volume)
 
     def _sound_name(self, kill_type: str, combo: int, preset: str) -> str:
         key = TYPE_TEXTURE.get(kill_type, "default")
