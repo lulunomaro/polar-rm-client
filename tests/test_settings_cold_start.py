@@ -9,7 +9,7 @@ from PySide6.QtCore import QCoreApplication, QEvent, QTimer, Qt
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QWidget
 from test_cs2_settings_center import APP, Host, ready_page
-from rm_client.ui.cs2_settings_center import build_settings_center
+from rm_client.ui.cs2_settings_center import build_settings_center, CrosshairSettingsPage
 from rm_client.ui.settings_preparation import SettingsBuildQueue
 from rm_client.ui.fonts import FontBook
 from rm_client.ui import jello_widgets
@@ -132,6 +132,44 @@ class QueueTests(unittest.TestCase):
         self.assertGreater(len(values), 4)
         self.assertFalse(queue.timer.isActive())
         owner.deleteLater(); QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+
+    def test_explicit_stage_boundary_yields_even_on_a_fast_clock(self):
+        owner = QWidget(); owner.show(); APP.processEvents()
+        values = []
+        def steps():
+            for i in range(3):
+                values.append(i); yield True
+        queue = SettingsBuildQueue(owner, steps()); queue.active = True
+        with patch('rm_client.ui.settings_preparation.time.perf_counter', return_value=1):
+            for expected in range(1, 4):
+                queue._run_slice()
+                self.assertEqual(len(values), expected)
+        queue.cancel(); owner.deleteLater()
+        QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+
+    def test_hidden_owner_pauses_without_consuming_a_step(self):
+        owner = QWidget(); values = []
+        def steps():
+            values.append(1); yield
+        queue = SettingsBuildQueue(owner, steps()); queue.active = True
+        queue._run_slice()
+        self.assertEqual(values, [])
+        self.assertEqual(queue.slices, 0)
+        queue.cancel(); owner.deleteLater()
+        QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+
+    def test_crosshair_cancel_before_attachment_releases_temporary_editor(self):
+        from shiboken6 import isValid
+        host = Host(); page = CrosshairSettingsPage(host)
+        next(page.builder.steps)  # Real editor exists but is not adopted yet.
+        editor = page.editor
+        self.assertTrue(isValid(editor))
+        self.assertIs(editor.parent(), host)
+        page.builder.cancel(); page.deleteLater()
+        QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+        QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+        self.assertFalse(isValid(editor))
+        host.deleteLater(); QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
     def test_failure_stops_queue_and_reports_error(self):
         owner = QWidget(); owner.show(); APP.processEvents()

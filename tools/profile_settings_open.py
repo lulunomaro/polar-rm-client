@@ -57,6 +57,7 @@ class Host(QWidget):
 host = Host(); host.show(); app.processEvents()
 report = {'qt': qt_version, 'platform': app.platformName(), 'source': str(args.source.resolve()),
           'bundled_fonts_present': (args.source/'assets/fonts').is_dir(),
+          'registered_font_families': dict(host.fonts.loaded),
           'hardware': False, 'opens': []}
 for index in range(args.opens):
     profile = cProfile.Profile() if args.profile and index == 0 else None
