@@ -47,6 +47,7 @@ PYTHON_SUITES = (
     "test_dt7_worker_dispatch",  # bounded UI-safe DT7 mailbox and fault lifecycle
     "test_cc_worker_dispatch",   # bounded UI-safe custom-controller worker
     "test_gpu_warmup_budget",  # queued warmup and UI-thread timing ownership
+    "test_fullscreen_composition",  # Windows style guard and pre-resize cache invalidation
     "test_background_display_locale",  # text-bearing GPU backgrounds/blur invalidate on locale
     "test_hero_display_locale",  # display-only Hero safety/phase text and invariant controls
     "test_hud_display_locale",  # HUD/map labels with immutable raw state and commands
