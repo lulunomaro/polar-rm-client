@@ -118,12 +118,13 @@ def apply_window_settings(host,prefs):
     # Changing focus/size never resumes stale controls or re-arms a vehicle.
     host.backend.lock_control("video settings applied")
     host.control.release_all(host.state,host.registry)
-    if prefs.window_mode=="Borderless":
-        host.showFullScreen()  # Uses the real desktop resolution/refresh.
-    else:
+    host._control_mouse_point = None
+    host.invalidate_transient_overlay_scene()
+    from .window_shortcuts import set_fullscreen
+    set_fullscreen(host, prefs.window_mode == "Borderless")
+    if prefs.window_mode == "Windowed" and logical is not None:
         host.showNormal()
-        if logical is not None:
-            host.resize(*logical)
+        host.resize(*logical)
     host.invalidate_transient_overlay_scene()
     host.frame_scheduler.force()
 
@@ -147,7 +148,7 @@ def open_video_settings(host, embedded=False):
     if not embedded:
         host.backend.lock_control("video settings opened")
         host.control.release_all(host.state,host.registry)
-    prefs=current_preferences()
+    prefs=replace(current_preferences(), window_mode="Borderless" if host.isFullScreen() else "Windowed")
     dialog=QDialog(host);dialog.setWindowTitle("POLAR · 视频设置")
     if embedded:
         dialog.setWindowFlags(Qt.WindowType.Widget)

@@ -457,6 +457,9 @@ class StartupSceneMixin:
         style_setting = scenario_module.get_setting("Startup Style") if scenario_module else None
         if style_setting is not None and str(style_setting.value) == "PolarLauncher":
             self.draw_startup_scene_launcher(p, width, height, active)
+            self.draw_liquid_small_action_button(p, QRectF(48, height - 55, 110, 34),
+                                                "Settings", "startup_open_settings", None,
+                                                THEME.cyan, 1.0, "Settings")
         else:
             self.draw_liquid_startup_scene_launcher(p, width, height, active)
         return
@@ -527,6 +530,9 @@ class StartupSceneMixin:
         self.draw_liquid_glass_panel(p, back, 11 * scale, accent=THEME.cyan, hover=0.0, scale=scale)
         self.draw_text(p, back, ui_text("<  BACK", chinese_enabled(self.registry)), self.font("poppins_bold", 7.5 * scale), THEME.text, Qt.AlignmentFlag.AlignCenter)
         self.add_hotspot(back, "startup_back_match")
+        settings = QRectF(back.right() + 14 * scale, back.top(), 110 * scale, back.height())
+        self.draw_liquid_small_action_button(p, settings, "Settings", "startup_open_settings", None,
+                                            THEME.cyan, scale, "Settings")
 
     def draw_match_mode_screen(self, p: QPainter, width: int, height: int) -> None:
         active = self.anim.value("startup.match.open", 1.0, self.anim_duration(0.34), Easings.ease_out_pow4, initial=0.0)
@@ -534,6 +540,9 @@ class StartupSceneMixin:
         style_setting = scenario_module.get_setting("Startup Style") if scenario_module else None
         if style_setting is not None and str(style_setting.value) == "PolarLauncher":
             self.draw_startup_match_launcher(p, width, height, active)
+            self.draw_liquid_small_action_button(p, QRectF(48, height - 55, 110, 34),
+                                                "Settings", "startup_open_settings", None,
+                                                THEME.cyan, 1.0, "Settings")
         else:
             self.draw_liquid_startup_match_launcher(p, width, height, active)
         return
@@ -1044,6 +1053,7 @@ class StartupSceneMixin:
     def draw_liquid_bottom_bar(self, p: QPainter, width: int, height: int, scale: float, active: float) -> None:
         enter = self.startup_stagger_value(0, 0.70, 0.22)
         actions: list[tuple[str, str, Any, QColor, str]] = [
+            ("Settings", "startup_open_settings", None, THEME.cyan, "Settings"),
             ("Config", "startup_open_config", None, THEME.cyan, "Open ConfigManager in ClickGUI."),
             ("Import", "config_action", "Import Config", THEME.pink, "Import a config json."),
             ("Wallpaper", "startup_open_wallpaper", None, color("#4677ff"), "Open StartupVisual wallpaper settings."),

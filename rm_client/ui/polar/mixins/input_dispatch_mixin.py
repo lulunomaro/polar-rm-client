@@ -364,6 +364,13 @@ def _on_action_startup_back_match(self, payload: Any, point: QPointF, button: in
     self.begin_startup_page_transition(back_page)
 
 
+def _on_action_startup_open_settings(self, payload: Any, point: QPointF, button: int, rect: QRectF) -> None:
+    # Reuse the genuine modal preferences without entering a scenario/HUD.
+    # The settings lifecycle preserves the current launcher page and choices.
+    from ...cs2_settings_center import open_settings_center
+    open_settings_center(self)
+
+
 def _on_action_startup_open_gui(self, payload: Any, point: QPointF, button: int, rect: QRectF) -> None:
     # 启动页快捷入口与正常场景入口必须启动同一套真实后端。
     self.backend.apply_scenario(self.scenario_manager.current.key, registry=self.registry)
@@ -519,6 +526,7 @@ _DISPATCH_HANDLERS = {
     "config_action": _on_action_config_action,
     "startup_back": _on_action_startup_back,
     "startup_back_match": _on_action_startup_back_match,
+    "startup_open_settings": _on_action_startup_open_settings,
     "startup_open_gui": _on_action_startup_open_gui,
     "startup_open_config": _on_action_startup_open_config,
     "startup_open_wallpaper": _on_action_startup_open_wallpaper,

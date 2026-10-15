@@ -270,7 +270,7 @@ class RegistrySettingsPage(QScrollArea):
             keyboard_button.clicked.connect(lambda: open_keyboard_manager(host,self))
             root.insertWidget(0,keyboard_button)
             note = QLabel("驾驶键发送的仍是官方协议槽位；不会改固件。鼠标倍率只作用于本客户端输入，不修改NUC自瞄或DT7原始输入。\n"
-                          "F12急停、RightShift/Tab等界面保留键不能改绑。已有快捷键与驾驶键的历史重叠保留；新绑定会检查冲突。")
+                          "F11全屏、F12急停、RightShift/Tab等界面保留键不能改绑。已有快捷键与驾驶键的历史重叠保留；新绑定会检查冲突。")
             note.setWordWrap(True); root.insertWidget(0, note)
             box = QGroupBox("模块快捷键"); root.addWidget(box)
             form = QFormLayout(box); form.setSpacing(15); self.groups.append((box, []))
