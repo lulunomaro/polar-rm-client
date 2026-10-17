@@ -1,24 +1,35 @@
-"""rm_client.ui.polar 子包（REFACTOR_BLUEPRINT §5 阶段 1 起逐步承接 polar_app.py 外迁符号）。
+"""Lazy compatibility exports for the decomposed window package.
 
-兼容面以 ``rm_client.ui.polar_app`` 为准；本包当前只做最小 re-export。
+Pure policy/controller modules do not require Qt just because they share this
+package. Explicit historical exports still resolve to the original objects;
+loading a renderer or Qt helper is deferred until that export is requested.
 """
+from __future__ import annotations
 
-from .primitives import (
-    EconomyScenePhase,
-    FrameScheduler,
-    Hotspot,
-    InertialScroll,
-    ModuleListLayout,
-    StartupLayerCache,
-)
-from .text_metrics import TextMetricsMixin
+from importlib import import_module
+from typing import Any
 
-__all__ = [
-    "EconomyScenePhase",
-    "FrameScheduler",
-    "Hotspot",
-    "InertialScroll",
-    "ModuleListLayout",
-    "StartupLayerCache",
-    "TextMetricsMixin",
-]
+
+_EXPORT_MODULES = {
+    "EconomyScenePhase": "primitives",
+    "FrameScheduler": "primitives",
+    "Hotspot": "primitives",
+    "InertialScroll": "primitives",
+    "ModuleListLayout": "primitives",
+    "StartupLayerCache": "primitives",
+    "TextMetricsMixin": "text_metrics",
+}
+__all__ = list(_EXPORT_MODULES)
+
+
+def __getattr__(name: str) -> Any:
+    module_name = _EXPORT_MODULES.get(name)
+    if module_name is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = getattr(import_module(f".{module_name}", package=__name__), name)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | _EXPORT_MODULES.keys())

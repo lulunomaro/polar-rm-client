@@ -44,7 +44,7 @@ class Host(InputDispatchMixin, EscapeMenuMixin, QWidget):
         self.state = RobotState()
         self.control = KeyboardControlBridge()
         self.control.release_all = Mock(wraps=self.control.release_all)
-        self.backend = Mock(mqtt=NS(mock_output=True))
+        self.backend = Mock(mqtt=NS(mock_output=True), lifecycle_pending=False)
         self.backend.trigger_estop.return_value = (True, "")
         self.frame_scheduler = Mock()
         self.invalidate_transient_overlay_scene = Mock()

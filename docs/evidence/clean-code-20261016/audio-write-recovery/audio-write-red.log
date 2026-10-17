@@ -1,0 +1,66 @@
+FFFFF..F
+======================================================================
+FAIL: test_failed_restoration_remains_observable_and_retryable (__main__.AudioWriteAdmissionTests.test_failed_restoration_remains_observable_and_retryable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audio-recovery/tests/test_audio_write_admission.py", line 156, in test_failed_restoration_remains_observable_and_retryable
+    self.assertFalse(caught.exception.restored)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_post_replace_cleanup_failure_restores_exact_disk_cache_pool_and_registry (__main__.AudioWriteAdmissionTests.test_post_replace_cleanup_failure_restores_exact_disk_cache_pool_and_registry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audio-recovery/tests/test_audio_write_admission.py", line 86, in test_post_replace_cleanup_failure_restores_exact_disk_cache_pool_and_registry
+    self.assert_restored(caught.exception)
+  File "/workspace/shared/clean-audio-recovery/tests/test_audio_write_admission.py", line 74, in assert_restored
+    self.assertEqual(self.path.read_bytes(), self.before)
+AssertionError: b'{\n  "device_id": "default",\n  "master_vo[36 chars]e\n}' != b'{ "master_volume": 66, "device_id": "defau[28 chars] }\n'
+
+======================================================================
+FAIL: test_post_replace_cleanup_restores_prior_absence (__main__.AudioWriteAdmissionTests.test_post_replace_cleanup_restores_prior_absence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audio-recovery/tests/test_audio_write_admission.py", line 96, in test_post_replace_cleanup_restores_prior_absence
+    self.assertFalse(self.path.exists())
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_pre_replace_failure_conservatively_restores_snapshot (__main__.AudioWriteAdmissionTests.test_pre_replace_failure_conservatively_restores_snapshot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audio-recovery/tests/test_audio_write_admission.py", line 127, in test_pre_replace_failure_conservatively_restores_snapshot
+    self.assert_restored(caught.exception)
+  File "/workspace/shared/clean-audio-recovery/tests/test_audio_write_admission.py", line 76, in assert_restored
+    self.assertEqual(self.pool.volumes, [66])
+AssertionError: Lists differ: [] != [66]
+
+Second list contains 1 additional elements.
+First extra element 0:
+66
+
+- []
++ [66]
+
+======================================================================
+FAIL: test_replace_then_raise_wrapper_retains_original_failure_and_rolls_back (__main__.AudioWriteAdmissionTests.test_replace_then_raise_wrapper_retains_original_failure_and_rolls_back)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audio-recovery/tests/test_audio_write_admission.py", line 113, in test_replace_then_raise_wrapper_retains_original_failure_and_rolls_back
+    self.assert_restored(caught.exception)
+  File "/workspace/shared/clean-audio-recovery/tests/test_audio_write_admission.py", line 74, in assert_restored
+    self.assertEqual(self.path.read_bytes(), self.before)
+AssertionError: b'{\n  "device_id": "default",\n  "master_vo[36 chars]e\n}' != b'{ "master_volume": 66, "device_id": "defau[28 chars] }\n'
+
+======================================================================
+FAIL: test_write_and_cleanup_failures_are_both_structurally_preserved (__main__.AudioWriteAdmissionTests.test_write_and_cleanup_failures_are_both_structurally_preserved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audio-recovery/tests/test_audio_write_admission.py", line 135, in test_write_and_cleanup_failures_are_both_structurally_preserved
+    self.assertIs(getattr(caught.exception, "cause", None), primary)
+AssertionError: None is not OSError('replace failed')
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.046s
+
+FAILED (failures=6)

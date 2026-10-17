@@ -1,0 +1,10 @@
+.............TopMatchBar hidden after presentation error: UnprintableError
+.TopMatchBar hidden after presentation error: RuntimeError: visibility failed
+..discarding malformed referee message GameStatus: GameStatus: ValueError: invalid packet
+....read-only referee view observer failed: RuntimeError: display only
+..read-only referee view observer failed: UnprintableError
+.
+----------------------------------------------------------------------
+Ran 23 tests in 0.485s
+
+OK

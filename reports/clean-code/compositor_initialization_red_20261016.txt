@@ -1,0 +1,92 @@
+FFFFFFF.F
+======================================================================
+FAIL: test_bind_false_does_not_allocate_and_unbinds_before_retirement (__main__.CompositorInitializationOwnershipTests.test_bind_false_does_not_allocate_and_unbinds_before_retirement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_initialization_ownership.py", line 113, in test_bind_false_does_not_allocate_and_unbinds_before_retirement
+    self.c.vertex_buffer.release.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'release' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_partial_bind_fault_attempts_both_unbinds (__main__.CompositorInitializationOwnershipTests.test_each_partial_bind_fault_attempts_both_unbinds) (boundary='array')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_initialization_ownership.py", line 124, in test_each_partial_bind_fault_attempts_both_unbinds
+    self.c.vertex_buffer.release.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'release' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_partial_bind_fault_attempts_both_unbinds (__main__.CompositorInitializationOwnershipTests.test_each_partial_bind_fault_attempts_both_unbinds) (boundary='buffer')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_initialization_ownership.py", line 124, in test_each_partial_bind_fault_attempts_both_unbinds
+    self.c.vertex_buffer.release.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'release' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_failed_buffer_retirement_blocks_recreation_even_without_programs (__main__.CompositorInitializationOwnershipTests.test_failed_buffer_retirement_blocks_recreation_even_without_programs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_initialization_ownership.py", line 73, in test_failed_buffer_retirement_blocks_recreation_even_without_programs
+    self.assertFalse(self.c.initialize())
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_failed_resize_retires_existing_programs_before_reinitialization (__main__.CompositorInitializationOwnershipTests.test_failed_resize_retires_existing_programs_before_reinitialization)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_initialization_ownership.py", line 87, in test_failed_resize_retires_existing_programs_before_reinitialization
+    original.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_failed_retirement_blocks_new_programs_until_original_owner_releases (__main__.CompositorInitializationOwnershipTests.test_failed_retirement_blocks_new_programs_until_original_owner_releases)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_initialization_ownership.py", line 55, in test_failed_retirement_blocks_new_programs_until_original_owner_releases
+    self.assertFalse(self.c.initialize())
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_setup_fault_unbinds_both_handles_before_destroy_and_preserves_all_causes (__main__.CompositorInitializationOwnershipTests.test_setup_fault_unbinds_both_handles_before_destroy_and_preserves_all_causes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_initialization_ownership.py", line 103, in test_setup_fault_unbinds_both_handles_before_destroy_and_preserves_all_causes
+    self.assertEqual(order, ["allocate", "buffer.release", "array.release", "buffer.destroy", "array.destroy"])
+AssertionError: Lists differ: ['allocate', 'buffer.destroy', 'array.destroy'] != ['allocate', 'buffer.release', 'array.release', 'buffer.destro[15 chars]roy']
+
+First differing element 1:
+'buffer.destroy'
+'buffer.release'
+
+Second list contains 2 additional elements.
+First extra element 3:
+'buffer.destroy'
+
+- ['allocate', 'buffer.destroy', 'array.destroy']
++ ['allocate',
++  'buffer.release',
++  'array.release',
++  'buffer.destroy',
++  'array.destroy']
+
+======================================================================
+FAIL: test_unbind_false_rejects_setup_without_inventing_exception (__main__.CompositorInitializationOwnershipTests.test_unbind_false_rejects_setup_without_inventing_exception)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_initialization_ownership.py", line 131, in test_unbind_false_rejects_setup_without_inventing_exception
+    self.assertFalse(self.c.initialize())
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.031s
+
+FAILED (failures=8)

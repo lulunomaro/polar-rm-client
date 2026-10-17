@@ -1,0 +1,689 @@
+{
+  "source_sha256": {
+    "rm_client/model.py": "d662ee61059837e73f6031d7d634ded4cdd6e2b2e726a2964fed4194d19081c4",
+    "rm_client/student_ui.py": "4baa4a95c4bca57fac80470538764a2b7a99715e9fb934cc11a6bd701ebc5294",
+    "rm_client/scenarios.py": "ab4c2fc487a1558a18e2f24554e53afec5e987f959a1ee2154f2934094ce6c3d",
+    "rm_client/match_modes.py": "069e275d055b08a7ba33735b575814768bcb29845a92f52ba46bb0ac45bb1019",
+    "rm_client/robot_profiles.py": "6519c60f875470b49405e871d04756d499b1e318d009e976af9988185f25b8f4"
+  },
+  "scope": "All default dataclass fields and order; fake profile/port discovery; no hardware",
+  "discovery_calls": [
+    [
+      "profiles",
+      {}
+    ],
+    [
+      "polar",
+      {}
+    ],
+    [
+      "polar",
+      {}
+    ],
+    [
+      "polar",
+      {
+        "nonblocking": true
+      }
+    ],
+    [
+      "dt7",
+      {
+        "nonblocking": true
+      }
+    ],
+    [
+      "polar",
+      {
+        "nonblocking": true
+      }
+    ],
+    [
+      "student_modules",
+      {}
+    ]
+  ],
+  "legacy_shared_options": [
+    "Scenario.Mode",
+    "MatchMode.Mode",
+    "TacticalMap.Status Display",
+    "RobotLink.Bind W",
+    "RobotLink.Bind S",
+    "RobotLink.Bind A",
+    "RobotLink.Bind D",
+    "RobotLink.Bind SHIFT",
+    "RobotLink.Bind CTRL",
+    "RobotLink.Bind Q",
+    "RobotLink.Bind E",
+    "RobotLink.Bind R",
+    "RobotLink.Bind F",
+    "RobotLink.Bind G",
+    "RobotLink.Bind Z",
+    "RobotLink.Bind X",
+    "RobotLink.Bind C",
+    "RobotLink.Bind V",
+    "RobotLink.Bind B",
+    "HUD.Right Display",
+    "HUD.ModuleList Style"
+  ],
+  "modules": [
+    {"name": "Scenario", "category": "System", "keybind": "None", "enabled": true, "description": "启动场景和连接配置选择器。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Mode", "kind": "mode", "value": "LabDebug", "min_value": null, "max_value": null, "step": 1.0, "options": ["OfficialEvent", "CampusSimulation", "LabDebug"], "unit": "", "description": ""},
+      {"name": "Show Startup", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Startup Style", "kind": "mode", "value": "LiquidMenu", "min_value": null, "max_value": null, "step": 1.0, "options": ["LiquidMenu", "PolarLauncher"], "unit": "", "description": ""},
+      {"name": "Mock Writes", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "默认禁用真实串口和机器人输出。"},
+      {"name": "Official Limits", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "应用官方频率和载荷限制。"}
+    ]},
+    {"name": "StartupVisual", "category": "System", "keybind": "None", "enabled": true, "description": "启动页背景、pkg 壁纸、MP4 导入、视差和暗角管理。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Background Mode", "kind": "mode", "value": "VideoParallax", "min_value": null, "max_value": null, "step": 1.0, "options": ["PkgScene", "VideoParallax", "ParticleGrid", "Static"], "unit": "", "description": ""},
+      {"name": "Wallpaper Profile", "kind": "mode", "value": "BlackHole", "min_value": null, "max_value": null, "step": 1.0, "options": ["BlackHole", "TexasMP4", "VendingMachine4K", "Default3000925581Pkg", "ParticleGrid"], "unit": "", "description": ""},
+      {"name": "Motion Quality", "kind": "mode", "value": "Smooth60", "min_value": null, "max_value": null, "step": 1.0, "options": ["Smooth60", "Balanced30", "Source"], "unit": "", "description": ""},
+      {"name": "Glass Style", "kind": "mode", "value": "LiquidGlass", "min_value": null, "max_value": null, "step": 1.0, "options": ["LiquidGlass", "Legacy"], "unit": "", "description": ""},
+      {"name": "Glass Strength", "kind": "number", "value": 1.0, "min_value": 0.4, "max_value": 1.4, "step": 0.05, "options": [], "unit": "", "description": ""},
+      {"name": "Parallax Strength", "kind": "number", "value": 22, "min_value": 0, "max_value": 60, "step": 1, "options": [], "unit": "px", "description": ""},
+      {"name": "Background Zoom", "kind": "number", "value": 1.0, "min_value": 1.0, "max_value": 1.35, "step": 0.01, "options": [], "unit": "", "description": ""},
+      {"name": "Dim Overlay", "kind": "number", "value": 0.28, "min_value": 0.0, "max_value": 0.8, "step": 0.01, "options": [], "unit": "", "description": ""},
+      {"name": "Import Wallpaper", "kind": "action", "value": "Import Wallpaper", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "导入 MP4/GIF/图片壁纸到客户端壁纸目录。"},
+      {"name": "Reset Wallpaper", "kind": "action", "value": "Reset Wallpaper", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "恢复默认黑洞壁纸。"}
+    ]},
+    {"name": "MatchMode", "category": "System", "keybind": "None", "enabled": true, "description": "比赛制式选择器，用于切换官方地图、HUD 默认值和协议状态映射。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Mode", "kind": "mode", "value": "RMUC7v7", "min_value": null, "max_value": null, "step": 1.0, "options": ["RMUC7v7", "RMUL3v3"], "unit": "", "description": ""},
+      {"name": "Alliance", "kind": "mode", "value": "Red", "min_value": null, "max_value": null, "step": 1.0, "options": ["Red", "Blue"], "unit": "", "description": ""},
+      {"name": "Second Step", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "场景选择后显示 RMUC/RMUL 二级选择页。"}
+    ]},
+    {"name": "RobotProfile", "category": "System", "keybind": "None", "enabled": true, "description": "按官方规则选择机器人角色、等级与性能分支，并驱动血量、热量、冷却和功率上限。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Role", "kind": "mode", "value": "Infantry1", "min_value": null, "max_value": null, "step": 1.0, "options": ["Hero", "Engineer", "Infantry1", "Infantry2", "Aerial", "Sentinel", "Dart", "Radar"], "unit": "", "description": ""},
+      {"name": "Level", "kind": "number", "value": 1, "min_value": 1, "max_value": 10, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Hero Type", "kind": "mode", "value": "Melee", "min_value": null, "max_value": null, "step": 1.0, "options": ["Melee", "Range"], "unit": "", "description": ""},
+      {"name": "Infantry Chassis", "kind": "mode", "value": "Power", "min_value": null, "max_value": null, "step": 1.0, "options": ["Power", "Health"], "unit": "", "description": ""},
+      {"name": "Infantry Shooter", "kind": "mode", "value": "Burst", "min_value": null, "max_value": null, "step": 1.0, "options": ["Burst", "Cooling"], "unit": "", "description": ""},
+      {"name": "Sentinel Control", "kind": "mode", "value": "Automatic", "min_value": null, "max_value": null, "step": 1.0, "options": ["Automatic", "SemiAuto"], "unit": "", "description": ""}
+    ]},
+    {"name": "AllianceProfile", "category": "System", "keybind": "None", "enabled": true, "description": "本机阵营档案。统一驱动战术地图、雷达、ESP 与自瞄的红蓝敌我关系。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Side", "kind": "mode", "value": "Red", "min_value": null, "max_value": null, "step": 1.0, "options": ["Red", "Blue"], "unit": "", "description": ""},
+      {"name": "Mirror Tactical Map", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "ConfigManager", "category": "System", "keybind": "None", "enabled": true, "description": "本地客户端配置保存、加载和导入管理器。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Profile", "kind": "mode", "value": "default", "min_value": null, "max_value": null, "step": 1.0, "options": ["default"], "unit": "", "description": "configs/ 目录中的客户端配置文件。"},
+      {"name": "Auto Save", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Load On Start", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Save Current", "kind": "action", "value": "Save Current", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "保存当前模块、按键绑定、GUI、HUD 和布局。"},
+      {"name": "Reload Profile", "kind": "action", "value": "Reload Profile", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "重新读取当前选择的配置文件。"},
+      {"name": "Import Config", "kind": "action", "value": "Import Config", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "导入外部 .json 配置到 configs/。"}
+    ]},
+    {"name": "EmergencyStop", "category": "System", "keybind": "F12", "enabled": true, "description": "赛事控制急停：F12 触发，Ctrl+Shift+F12 解除。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Trigger E-Stop", "kind": "action", "value": "Trigger E-Stop", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "立即发送全零键鼠帧并锁止全部上行。"},
+      {"name": "Release E-Stop", "kind": "action", "value": "Release E-Stop", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "仅在确认机器人安全后解除；快捷键 Ctrl+Shift+F12。"}
+    ]},
+    {"name": "MatchReadiness", "category": "System", "keybind": "None", "enabled": true, "description": "Fail-closed 现场资格、证据导出和比赛控制硬闸门。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Qualification Actions", "kind": "action_group", "value": null, "min_value": null, "max_value": null, "step": 1.0, "options": ["New Qualification Session", "Reset Qualification Session", "Run Preflight", "Run Video Test", "Run KMC Test", "Record DT7 Safety Test", "Run Economy Send Test", "Record E-Stop Test", "Observe Firmware Zero", "Record Firmware Zero Test", "Run Loss Recovery Test", "Record Hero Test", "Record Economy Test", "Review PRM1 Vision Schema", "Run PRM1 Vision Bench", "Review PRM1 Spin Schema", "Run PRM1 Spin Bench", "Start Match Soak", "Stop Match Soak", "Export Evidence", "Field Sign-off", "Arm Match Control", "Lock Match Control"], "unit": "", "description": "现场资格证据与双人签字；没有真车、裁判与正式图传证据时保持 NOT READY。"}
+    ]},
+    {"name": "ArmorAutoAim", "category": "Combat", "keybind": "V", "enabled": true, "description": "装甲板自瞄 UI。荧光白圆限制锁定范围；3D ESP 全屏可见。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Mock Output", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "云台输出保持在模拟模式。"},
+      {"name": "Fov", "kind": "number", "value": 85, "min_value": 10, "max_value": 180, "step": 1, "options": [], "unit": "deg", "description": ""},
+      {"name": "Smooth", "kind": "number", "value": 0.28, "min_value": 0.01, "max_value": 1.0, "step": 0.01, "options": [], "unit": "", "description": ""},
+      {"name": "Priority", "kind": "mode", "value": "Armor", "min_value": null, "max_value": null, "step": 1.0, "options": ["Armor", "Distance", "Health", "Radar"], "unit": "", "description": ""},
+      {"name": "Lock Style", "kind": "mode", "value": "White Outline", "min_value": null, "max_value": null, "step": 1.0, "options": ["Polar Corner", "White Outline", "Minimal Bracket", "Rune Ring", "Heli Gimbal"], "unit": "", "description": ""},
+      {"name": "Draw Fov", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "绘制中心荧光白自瞄圆（仅圆内可锁定）。"},
+      {"name": "Circle Size", "kind": "number", "value": 160, "min_value": 32, "max_value": 480, "step": 2, "options": [], "unit": "px", "description": "自瞄锁定半径（逻辑像素）。只有圆心距落在此圆内的装甲才会被锁定；全屏 3D ESP 仍照常绘制。"}
+    ]},
+    {"name": "EliminationFX", "category": "Render", "keybind": "None", "enabled": true, "description": "GD656 击杀图标、音效与官方/视觉双轨战果显示。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Preset", "kind": "mode", "value": "Default Scrolling", "min_value": null, "max_value": null, "step": 1.0, "options": ["Default Scrolling", "Combo", "Card", "CS2 Native", "Battlefield 1", "Minimal", "PUBG Subtitle", "Battlefield 5", "Battlefield 6", "Total Battlefield", "Valorant Prime", "Valorant Glitchpop", "Valorant Singularity V1", "Valorant Singularity V2", "Valorant Singularity V3", "Valorant Gaia", "Valorant Gaia V1", "Valorant Gaia V2", "Valorant Gaia V3", "Valorant Bubblegum", "Valorant Bubblegum V1", "Valorant Bubblegum V2", "Valorant Bubblegum V3", "Valorant Champions 2021", "Valorant Prelude V1", "Valorant Prelude V2", "Valorant Prelude V3", "Valorant Primordium", "Valorant Primordium V1", "Valorant Primordium V2", "Valorant Primordium V3", "Valorant Radiant Crisis 001", "Valorant RGX", "Valorant RGX V1", "Valorant RGX V2", "Valorant RGX V3"], "unit": "", "description": ""},
+      {"name": "Element Visibility", "kind": "mode", "value": "Preset", "min_value": null, "max_value": null, "step": 1.0, "options": ["Preset", "Full HUD", "Icons Only"], "unit": "", "description": ""},
+      {"name": "Kill Feed", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "击杀信息流（ELIMINATED x N）。"},
+      {"name": "Score Popup", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "击杀 +分数 弹字。"},
+      {"name": "Bonus Tags", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "加分项标签行（gd656 bonus_list）。"},
+      {"name": "Lock Target Bonus", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "锁定目标加分：持续交战同一目标后的击杀追加“锁定目标”标签与提示音（gd656 LOCKED_TARGET）。"},
+      {"name": "Combo Subtitle", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "连杀字幕（N KILL COMBO）。"},
+      {"name": "Scrolling Icons", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "滚动击杀图标条（默认/BF5/BF6 通用）。"},
+      {"name": "Combo Icons", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "CF 连杀图标。"},
+      {"name": "Card Icons", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "CS2 卡牌图标与卡池条。"},
+      {"name": "Battlefield Icons", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "战地 1 大图标。"},
+      {"name": "Valorant Icons", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "无畏契约系图标。"},
+      {"name": "Honor Badges", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "荣誉徽章：特殊战况（爆头/远程/连杀/载具等）点亮 gd656 honor 图标。"},
+      {"name": "Hit Info", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "命中信息：受击伤害弹字 + 命中音效（gd656 hit_info）。"},
+      {"name": "Match Progress", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "顶部基地推进条：双方基地血量消耗进度与红蓝比分。"},
+      {"name": "Team Theme", "kind": "mode", "value": "Alliance", "min_value": null, "max_value": null, "step": 1.0, "options": ["Alliance", "CT Blue", "T Gold"], "unit": "", "description": ""},
+      {"name": "Sound Enabled", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Sound Volume", "kind": "number", "value": 55, "min_value": 0, "max_value": 100, "step": 1, "options": [], "unit": "%", "description": ""},
+      {"name": "Scale", "kind": "number", "value": 1.0, "min_value": 0.45, "max_value": 2.0, "step": 0.05, "options": [], "unit": "", "description": ""},
+      {"name": "Responsive Scale", "kind": "mode", "value": "Auto", "min_value": null, "max_value": null, "step": 1.0, "options": ["Auto", "Fixed"], "unit": "", "description": ""},
+      {"name": "Anchor Policy", "kind": "mode", "value": "Combat Focus", "min_value": null, "max_value": null, "step": 1.0, "options": ["Combat Focus", "Original Bottom", "Manual"], "unit": "", "description": ""},
+      {"name": "X Offset", "kind": "number", "value": 0, "min_value": -800, "max_value": 800, "step": 1, "options": [], "unit": "px", "description": ""},
+      {"name": "Y Offset", "kind": "number", "value": 0, "min_value": -500, "max_value": 500, "step": 1, "options": [], "unit": "px", "description": ""},
+      {"name": "Combo Window", "kind": "number", "value": 5.0, "min_value": 1.0, "max_value": 12.0, "step": 0.5, "options": [], "unit": "s", "description": ""},
+      {"name": "Evidence Mode", "kind": "mode", "value": "Auto", "min_value": null, "max_value": null, "step": 1.0, "options": ["Auto", "Referee Only", "Vision Only"], "unit": "", "description": ""},
+      {"name": "Preview Sequence", "kind": "mode", "value": "Normal 1-6", "min_value": null, "max_value": null, "step": 1.0, "options": ["Normal 1-6", "All Kill Types", "Single"], "unit": "", "description": ""},
+      {"name": "Preview FX", "kind": "action", "value": "Preview FX", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "按当前官方预设播放完整预览序列。"},
+      {"name": "Test Elimination", "kind": "action", "value": "Test Elimination", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "注入一条本地测试击杀事件。"}
+    ]},
+    {"name": "AudioFeedback", "category": "System", "keybind": "None", "enabled": true, "description": "统一管理模块切换和界面交互音效。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Enabled", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "客户端交互音效总开关。"},
+      {"name": "Module Toggle Sounds", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "点击或按键切换模块时播放反馈音。"},
+      {"name": "Sound Theme", "kind": "mode", "value": "Polar UI", "min_value": null, "max_value": null, "step": 1.0, "options": ["Custom", "Polar UI", "Polar Classic", "LiquidBounce"], "unit": "", "description": ""},
+      {"name": "Custom Enable Sound", "kind": "mode", "value": "No Sound", "min_value": null, "max_value": null, "step": 1.0, "options": ["No Sound"], "unit": "", "description": "自定义主题的模块开启音效。"},
+      {"name": "Custom Disable Sound", "kind": "mode", "value": "No Sound", "min_value": null, "max_value": null, "step": 1.0, "options": ["No Sound"], "unit": "", "description": "自定义主题的模块关闭音效。"},
+      {"name": "Custom Invalid Sound", "kind": "mode", "value": "No Sound", "min_value": null, "max_value": null, "step": 1.0, "options": ["No Sound"], "unit": "", "description": "自定义主题的无效操作提示音。"},
+      {"name": "UI Volume", "kind": "number", "value": 45, "min_value": 0, "max_value": 100, "step": 1, "options": [], "unit": "%", "description": ""},
+      {"name": "Import Enable Sound", "kind": "action", "value": "Import Enable Sound", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "导入模块开启音效。"},
+      {"name": "Import Disable Sound", "kind": "action", "value": "Import Disable Sound", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "导入模块关闭音效。"},
+      {"name": "Import Invalid Sound", "kind": "action", "value": "Import Invalid Sound", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "导入无效操作音效。"},
+      {"name": "Preview Enable", "kind": "action", "value": "Preview Enable", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "试听模块开启音效。"},
+      {"name": "Preview Disable", "kind": "action", "value": "Preview Disable", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "试听模块关闭音效。"},
+      {"name": "Preview Invalid", "kind": "action", "value": "Preview Invalid", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "试听无效操作提示音。"}
+    ]},
+    {"name": "EnergyAutoAim", "category": "Combat", "keybind": "G", "enabled": false, "description": "7v7 能量机关自瞄 UI，并预留打符预测接口。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Mock Output", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "能量机关输出保持在模拟模式。"},
+      {"name": "Rune Type", "kind": "mode", "value": "Auto", "min_value": null, "max_value": null, "step": 1.0, "options": ["Auto", "Small", "Large"], "unit": "", "description": ""},
+      {"name": "Predict", "kind": "mode", "value": "Adaptive", "min_value": null, "max_value": null, "step": 1.0, "options": ["Off", "Fixed", "Adaptive"], "unit": "", "description": ""},
+      {"name": "Lead Time", "kind": "number", "value": 0.18, "min_value": 0.0, "max_value": 0.6, "step": 0.01, "options": [], "unit": "s", "description": ""},
+      {"name": "Fov", "kind": "number", "value": 58, "min_value": 10, "max_value": 140, "step": 1, "options": [], "unit": "deg", "description": ""},
+      {"name": "Lock Style", "kind": "mode", "value": "Rune Ring", "min_value": null, "max_value": null, "step": 1.0, "options": ["Polar Corner", "White Outline", "Minimal Bracket", "Rune Ring", "Heli Gimbal"], "unit": "", "description": ""},
+      {"name": "Show Progress", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "ArmorLock", "category": "Combat", "keybind": "B", "enabled": false, "description": "装甲板目标选择和锁定策略预留模块。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Lock Point", "kind": "mode", "value": "Center", "min_value": null, "max_value": null, "step": 1.0, "options": ["Center", "Top", "Predict"], "unit": "", "description": ""},
+      {"name": "Predict", "kind": "number", "value": 0.12, "min_value": 0.0, "max_value": 0.5, "step": 0.01, "options": [], "unit": "s", "description": ""},
+      {"name": "Heat Guard", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "HeroLob", "category": "Combat", "keybind": "K", "enabled": false, "description": "英雄吊射辅助：雷达定位、偏航/俯仰标定与弹道预览。严格失效保护，绝不自动开火。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Mode", "kind": "mode", "value": "Radar Assisted", "min_value": null, "max_value": null, "step": 1.0, "options": ["Radar Assisted", "Manual"], "unit": "", "description": ""},
+      {"name": "Target", "kind": "mode", "value": "Enemy Base", "min_value": null, "max_value": null, "step": 1.0, "options": ["Enemy Base", "Enemy Outpost", "Manual"], "unit": "", "description": ""},
+      {"name": "Distance", "kind": "number", "value": 18.0, "min_value": 1.0, "max_value": 60.0, "step": 0.1, "options": [], "unit": "m", "description": ""},
+      {"name": "Height Delta", "kind": "number", "value": 0.0, "min_value": -12.0, "max_value": 12.0, "step": 0.05, "options": [], "unit": "m", "description": ""},
+      {"name": "Bearing", "kind": "number", "value": 0.0, "min_value": -180.0, "max_value": 180.0, "step": 0.1, "options": [], "unit": "deg", "description": ""},
+      {"name": "Arc", "kind": "mode", "value": "High", "min_value": null, "max_value": null, "step": 1.0, "options": ["High", "Low"], "unit": "", "description": ""},
+      {"name": "Muzzle Speed", "kind": "number", "value": 16.0, "min_value": 5.0, "max_value": 35.0, "step": 0.1, "options": [], "unit": "m/s", "description": ""},
+      {"name": "Gravity", "kind": "number", "value": 9.80665, "min_value": 8.0, "max_value": 11.0, "step": 0.001, "options": [], "unit": "m/s2", "description": ""},
+      {"name": "Yaw Offset", "kind": "number", "value": 0.0, "min_value": -20.0, "max_value": 20.0, "step": 0.05, "options": [], "unit": "deg", "description": ""},
+      {"name": "Pitch Offset", "kind": "number", "value": 0.0, "min_value": -20.0, "max_value": 20.0, "step": 0.05, "options": [], "unit": "deg", "description": ""},
+      {"name": "Muzzle Length", "kind": "number", "value": 0.35, "min_value": 0.0, "max_value": 1.0, "step": 0.01, "options": [], "unit": "m", "description": ""},
+      {"name": "Yaw Calibration Tolerance", "kind": "number", "value": 1.0, "min_value": 0.1, "max_value": 5.0, "step": 0.1, "options": [], "unit": "deg", "description": ""},
+      {"name": "Pitch Calibration Tolerance", "kind": "number", "value": 1.5, "min_value": 0.1, "max_value": 5.0, "step": 0.1, "options": [], "unit": "deg", "description": ""},
+      {"name": "Max Roll", "kind": "number", "value": 8.0, "min_value": 1.0, "max_value": 20.0, "step": 0.5, "options": [], "unit": "deg", "description": ""},
+      {"name": "Require Fresh Telemetry", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Telemetry Timeout", "kind": "number", "value": 0.5, "min_value": 0.1, "max_value": 2.0, "step": 0.05, "options": [], "unit": "s", "description": ""},
+      {"name": "Heat Guard", "kind": "number", "value": 0.88, "min_value": 0.4, "max_value": 1.0, "step": 0.01, "options": [], "unit": "", "description": ""},
+      {"name": "Mock Output", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "Decision support only; this module never fires automatically."},
+      {"name": "Calibrate Lob Yaw", "kind": "action", "value": "Calibrate Lob Yaw", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "Align yaw against a known field line."},
+      {"name": "Calibrate Lob Pitch", "kind": "action", "value": "Calibrate Lob Pitch", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "Store the operator-confirmed iterative pitch calibration."},
+      {"name": "Confirm Relocalization", "kind": "action", "value": "Confirm Relocalization", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "Confirm radar/map relocalization after every reset."},
+      {"name": "Invalidate Relocalization", "kind": "action", "value": "Invalidate Relocalization", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "Fail closed after a localisation discontinuity."},
+      {"name": "Open Deploy Interface", "kind": "action", "value": "Open Deploy Interface", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "Open the dedicated deployment/lob operator console."},
+      {"name": "Preview Lob", "kind": "action", "value": "Preview Lob", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "Calculate yaw, pitch and flight time without sending a command."},
+      {"name": "Arm Assisted Lob", "kind": "action", "value": "Arm Assisted Lob", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "Arm decision support only; no fire command is emitted."},
+      {"name": "Disarm Assisted Lob", "kind": "action", "value": "Disarm Assisted Lob", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "FireControlStub", "category": "Combat", "keybind": "None", "enabled": false, "description": "不输出真实发射命令，仅保留接口占位。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Safety Lock", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Max Rate", "kind": "number", "value": 8, "min_value": 1, "max_value": 20, "step": 1, "options": [], "unit": "Hz", "description": ""},
+      {"name": "Mode", "kind": "mode", "value": "Manual", "min_value": null, "max_value": null, "step": 1.0, "options": ["Manual", "Confirm", "Disabled"], "unit": "", "description": ""}
+    ]},
+    {"name": "SpinMode", "category": "Movement", "keybind": "X", "enabled": true, "description": "RM 底盘小陀螺模式；真实输出仅走官方 MQTT CustomControl，默认安全模拟。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Direction", "kind": "mode", "value": "Auto", "min_value": null, "max_value": null, "step": 1.0, "options": ["Auto", "CW", "CCW"], "unit": "", "description": ""},
+      {"name": "Spin Speed", "kind": "number", "value": 420, "min_value": 120, "max_value": 720, "step": 10, "options": [], "unit": "dps", "description": ""},
+      {"name": "Power Guard", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Mock Output", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "关闭后才会通过 MQTT CustomControl 发送 PRM1 kind=2；机器人固件必须实现同一 schema。"}
+    ]},
+    {"name": "AutoSpinOnHit", "category": "Movement", "keybind": "None", "enabled": false, "description": "A new RobotInjuryStat 17/42 mm damage delta temporarily enables SpinMode; cumulative baselines and other damage do not trigger it.", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Minimum Damage", "kind": "number", "value": 1, "min_value": 1, "max_value": 500, "step": 1, "options": [], "unit": "HP", "description": ""},
+      {"name": "Duration", "kind": "number", "value": 2.5, "min_value": 0.2, "max_value": 8.0, "step": 0.1, "options": [], "unit": "s", "description": ""},
+      {"name": "Cooldown", "kind": "number", "value": 1.0, "min_value": 0.0, "max_value": 10.0, "step": 0.1, "options": [], "unit": "s", "description": ""},
+      {"name": "Only During Match", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Require Referee Link", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Power Guard", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Minimum Buffer", "kind": "number", "value": 10, "min_value": 0, "max_value": 100, "step": 1, "options": [], "unit": "%", "description": ""},
+      {"name": "Auto Disable", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "ChassisAssist", "category": "Movement", "keybind": "C", "enabled": false, "description": "底盘辅助模块，预留串口和控制输出钩子。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Power Limit", "kind": "number", "value": 70, "min_value": 30, "max_value": 120, "step": 1, "options": [], "unit": "W", "description": ""},
+      {"name": "Buffer Protect", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Follow", "kind": "mode", "value": "Gimbal", "min_value": null, "max_value": null, "step": 1.0, "options": ["Gimbal", "Field", "Free"], "unit": "", "description": ""}
+    ]},
+    {"name": "PowerGuard", "category": "Movement", "keybind": "None", "enabled": false, "description": "底盘与发射机构功率、热量保护辅助模块。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Heat Warn", "kind": "number", "value": 180, "min_value": 60, "max_value": 240, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Energy Warn", "kind": "number", "value": 20, "min_value": 0, "max_value": 100, "step": 1, "options": [], "unit": "%", "description": ""},
+      {"name": "Auto Limit", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "CameraFeed", "category": "Vision", "keybind": "None", "enabled": true, "description": "使用电脑摄像头作为当前机器人图传。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Source", "kind": "mode", "value": "Webcam", "min_value": null, "max_value": null, "step": 1.0, "options": ["Webcam", "Shark UDP", "UDP HEVC", "Native 0x0310", "Synthetic"], "unit": "", "description": ""},
+      {"name": "Camera ID", "kind": "number", "value": 0, "min_value": 0, "max_value": 5, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Capture Width", "kind": "number", "value": 960, "min_value": 320, "max_value": 1920, "step": 16, "options": [], "unit": "px", "description": ""},
+      {"name": "Capture Height", "kind": "number", "value": 540, "min_value": 240, "max_value": 1080, "step": 16, "options": [], "unit": "px", "description": ""},
+      {"name": "Mirror", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "TongjiVisionBridge", "category": "Vision", "keybind": "None", "enabled": true, "description": "同济视觉源配置：Local 同帧 YOLO 或外部 UDP rm.vision.tongji.v1。桌面联调只缓存云台建议，不发送控制。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Vision Source", "kind": "mode", "value": "Local", "min_value": null, "max_value": null, "step": 1.0, "options": ["Local", "Tongji", "Auto", "Mock"], "unit": "", "description": "Local 直接使用同济 YOLO 权重；Tongji 接收 UDP 9871；Auto 优先外部同济。"},
+      {"name": "Listen", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "接收外部同济检测器发到本机的 UDP JSON。"},
+      {"name": "UDP Port", "kind": "number", "value": 9871, "min_value": 1024, "max_value": 65535, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "UDP Timeout", "kind": "number", "value": 250, "min_value": 80, "max_value": 2000, "step": 10, "options": [], "unit": "ms", "description": ""},
+      {"name": "Local Device", "kind": "mode", "value": "AUTO", "min_value": null, "max_value": null, "step": 1.0, "options": ["AUTO", "GPU", "CPU"], "unit": "", "description": ""},
+      {"name": "External Device", "kind": "mode", "value": "AUTO", "min_value": null, "max_value": null, "step": 1.0, "options": ["AUTO", "GPU", "CPU"], "unit": "", "description": ""},
+      {"name": "Local Model", "kind": "mode", "value": "Tongji YOLOv5", "min_value": null, "max_value": null, "step": 1.0, "options": ["Tongji YOLOv5"], "unit": "", "description": ""},
+      {"name": "Vision Kill Sensitivity", "kind": "mode", "value": "Lab Responsive", "min_value": null, "max_value": null, "step": 1.0, "options": ["Lab Responsive", "Balanced", "Match Reliable"], "unit": "", "description": "控制视觉灯灭、低亮与丢检击杀的灵敏度；实验室优先联调，官方优先可靠。"},
+      {"name": "Desktop Safe", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "CameraCalibration", "category": "Vision", "keybind": "None", "enabled": true, "description": "电脑摄像头棋盘格标定。未标定时只允许检测，不允许可信预测装甲显示。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Profile", "kind": "mode", "value": "polar_webcam", "min_value": null, "max_value": null, "step": 1.0, "options": ["polar_webcam"], "unit": "", "description": ""},
+      {"name": "Board Columns", "kind": "number", "value": 9, "min_value": 4, "max_value": 14, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Board Rows", "kind": "number", "value": 6, "min_value": 3, "max_value": 10, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Square Size", "kind": "number", "value": 25, "min_value": 10, "max_value": 80, "step": 1, "options": [], "unit": "mm", "description": ""},
+      {"name": "Capture Chessboard", "kind": "action", "value": "Capture Chessboard", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "从当前电脑摄像头帧采集一组棋盘格角点。"},
+      {"name": "Solve Calibration", "kind": "action", "value": "Solve Calibration", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "使用已采集的角点计算内参和畸变参数。"},
+      {"name": "Export Tongji YAML", "kind": "action", "value": "Export Tongji YAML", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "导出同济桥接器使用的桌面相机配置。"}
+    ]},
+    {"name": "Armor3DESP", "category": "Vision", "keybind": "None", "enabled": true, "description": "使用同济 Tracker 的真实装甲四点与多装甲重投影结果渲染预测 ESP。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Style", "kind": "mode", "value": "JelloShadow", "min_value": null, "max_value": null, "step": 1.0, "options": ["JelloShadow", "Wireframe3D", "PolarOutline2D", "Prediction Rack"], "unit": "", "description": ""},
+      {"name": "Renderer", "kind": "mode", "value": "GPU Auto", "min_value": null, "max_value": null, "step": 1.0, "options": ["GPU Auto", "CPU"], "unit": "", "description": ""},
+      {"name": "Show Prediction", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Show Labels", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Prediction Labels", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Show Depth", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Line Width", "kind": "number", "value": 2.0, "min_value": 1.0, "max_value": 5.0, "step": 0.25, "options": [], "unit": "px", "description": ""},
+      {"name": "Opacity", "kind": "number", "value": 0.82, "min_value": 0.15, "max_value": 1.0, "step": 0.05, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "RobotOverlay", "category": "Vision", "keybind": "R", "enabled": true, "description": "将 ESP 视觉职责映射为 RM 机器人/装甲板覆盖层。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Armor Boxes", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Robot ID", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Distance", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Color", "kind": "mode", "value": "White", "min_value": null, "max_value": null, "step": 1.0, "options": ["White", "Team", "Accent", "Threat"], "unit": "", "description": "装甲盒配色。默认 White = 接线前的实际画面（纯白）；Team 按视觉识别到的装甲板颜色分红蓝；Threat 需威胁度数据，拿不到时降级回 Team 并在诊断里记原因。"},
+      {"name": "ESP Style", "kind": "mode", "value": "3D Wire", "min_value": null, "max_value": null, "step": 1.0, "options": ["3D Wire", "3D Glass", "Polar Outline", "Flat 2D"], "unit": "", "description": ""},
+      {"name": "3D Depth", "kind": "number", "value": 0.22, "min_value": 0.05, "max_value": 0.5, "step": 0.01, "options": [], "unit": "", "description": ""},
+      {"name": "Predict Plates", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Armor Count", "kind": "number", "value": 4, "min_value": 2, "max_value": 4, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Radius M", "kind": "number", "value": 0.23, "min_value": 0.1, "max_value": 0.45, "step": 0.01, "options": [], "unit": "m", "description": ""},
+      {"name": "Predict Horizon", "kind": "number", "value": 0.06, "min_value": 0.0, "max_value": 0.3, "step": 0.01, "options": [], "unit": "s", "description": ""},
+      {"name": "Max Targets", "kind": "number", "value": 6, "min_value": 1, "max_value": 12, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Only Secondary", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "RadarOverlay", "category": "Vision", "keybind": "None", "enabled": false, "description": "雷达信息显示，并预留地图点击联动接口。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "High Light", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Fade", "kind": "number", "value": 0.65, "min_value": 0.1, "max_value": 1.0, "step": 0.05, "options": [], "unit": "", "description": ""},
+      {"name": "Map", "kind": "mode", "value": "Both", "min_value": null, "max_value": null, "step": 1.0, "options": ["Both", "Mini", "Full", "Hidden"], "unit": "", "description": "雷达标记画在哪种形态的地图上。默认 Both = 接线前的实际画面（缩略与展开态都画）；Mini 只在缩略态画，Full 只在长按展开态画，Hidden 都不画。"}
+    ]},
+    {"name": "MapMarker", "category": "Strategy", "keybind": "M", "enabled": false, "description": "MapClickInfo/MapClickCmd 的 UI 预留模块。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Mark Type", "kind": "mode", "value": "Attack", "min_value": null, "max_value": null, "step": 1.0, "options": ["Attack", "Defense", "Warning", "Custom"], "unit": "", "description": ""},
+      {"name": "Send All", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "广播给全队。默认开启以匹配接线前的实际发送行为。"},
+      {"name": "Repeat", "kind": "number", "value": 1, "min_value": 1, "max_value": 5, "step": 1, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "TacticalMap", "category": "Strategy", "keybind": "Tab", "enabled": true, "description": "基于官方地图的小地图，支持 RM 坐标、雷达高亮和地图点击预留位。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Map Size", "kind": "mode", "value": "Wide", "min_value": null, "max_value": null, "step": 1.0, "options": ["Compact", "Wide", "Full Tactical"], "unit": "", "description": ""},
+      {"name": "Chrome", "kind": "mode", "value": "Minimal", "min_value": null, "max_value": null, "step": 1.0, "options": ["Minimal", "Thin", "Full"], "unit": "", "description": ""},
+      {"name": "Status Display", "kind": "mode", "value": "LiquidAuto", "min_value": null, "max_value": null, "step": 1.0, "options": ["LiquidAuto", "LiquidBars", "LiquidCards", "LegacyOrbit", "LegacyBars", "Off"], "unit": "", "description": ""},
+      {"name": "Palette", "kind": "mode", "value": "RM Tactical", "min_value": null, "max_value": null, "step": 1.0, "options": ["RM Tactical", "Liquid Neutral"], "unit": "", "description": ""},
+      {"name": "Official Map", "kind": "mode", "value": "RMUC 7v7 Official Map", "min_value": null, "max_value": null, "step": 1.0, "options": ["RMUC 7v7 Official Map", "RMUL 3v3 Official Map"], "unit": "", "description": ""},
+      {"name": "Mirror Blue", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Robot Dots", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Map Marks", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Radar Pulse", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Opacity", "kind": "number", "value": 0.72, "min_value": 0.35, "max_value": 1.0, "step": 0.05, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "LiquidTacticalMap", "category": "Render", "keybind": "None", "enabled": true, "description": "官方 RM 小地图的 Liquid 风格视觉皮肤。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Pointer Style", "kind": "mode", "value": "Triangle", "min_value": null, "max_value": null, "step": 1.0, "options": ["Triangle", "Wedge", "Dot"], "unit": "", "description": ""},
+      {"name": "Entity Color", "kind": "mode", "value": "Team", "min_value": null, "max_value": null, "step": 1.0, "options": ["Team", "Distance", "Health"], "unit": "", "description": ""},
+      {"name": "Show Labels", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Show Values", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Dock Animation", "kind": "mode", "value": "Fly", "min_value": null, "max_value": null, "step": 1.0, "options": ["Fly", "Flip", "Fade"], "unit": "", "description": ""}
+    ]},
+    {"name": "SentinelCommand", "category": "Strategy", "keybind": "None", "enabled": false, "description": "哨兵/守卫控制指令 UI 预留模块。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Posture", "kind": "mode", "value": "Attack", "min_value": null, "max_value": null, "step": 1.0, "options": ["Attack", "Defense", "Move"], "unit": "", "description": ""},
+      {"name": "Confirm Prompt", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "AirSupport", "category": "Strategy", "keybind": "None", "enabled": false, "description": "空中支援指令接口。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Command", "kind": "mode", "value": "Free", "min_value": null, "max_value": null, "step": 1.0, "options": ["Free", "Paid", "Abort"], "unit": "", "description": ""},
+      {"name": "Require Confirm", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "TopMatchBar", "category": "Render", "keybind": "None", "enabled": true, "description": "CS式RM比赛顶部：车辆HP、独立系统状态和原BF6基地进度；缺失遥测保持未知。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Scale", "kind": "number", "value": 0.72, "min_value": 0.35, "max_value": 1.4, "step": 0.05, "options": [], "unit": "", "description": ""},
+      {"name": "Match Scope", "kind": "mode", "value": "RMUC Only", "min_value": null, "max_value": null, "step": 1.0, "options": ["RMUC Only", "All Match Modes"], "unit": "", "description": ""},
+      {"name": "Roster Scope", "kind": "mode", "value": "Match Roles", "min_value": null, "max_value": null, "step": 1.0, "options": ["Match Roles", "Ground Robots", "All Roles"], "unit": "", "description": ""},
+      {"name": "Score Metric", "kind": "mode", "value": "Referee Score", "min_value": null, "max_value": null, "step": 1.0, "options": ["Unavailable", "Referee Score"], "unit": "", "description": ""},
+      {"name": "Show Scores", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Show Kills", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Show Health", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "BF6 Progress", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Source Motion Preview", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "原样式0.3s击杀标记缩放预览，尚未完成原版实录逐帧验收。"},
+      {"name": "Local CS2 Assets", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "使用本机私有CS2图标、纹理与字体；无素材包时回退原创绘制。"}
+    ]},
+    {"name": "MatchTimer", "category": "Strategy", "keybind": "None", "enabled": true, "description": "GameStatus 阶段、倒计时、分数和回合信息显示。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Stage", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Show Scores", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Pulse Last 30s", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "BaseOutpostStatus", "category": "Strategy", "keybind": "None", "enabled": true, "description": "7v7 GlobalUnitStatus 基地与前哨站血量/护盾显示。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Own Base", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Enemy Base", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Outposts", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Shield", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "VictoryPointStatus", "category": "Strategy", "keybind": "None", "enabled": false, "description": "3v3 胜利点和控制区状态显示。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Victory Points", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Control Zone", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Team Status", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "EconomyPanel", "category": "Strategy", "keybind": "B", "enabled": true, "description": "按比赛模式与机器人状态提供弹丸、恢复、复活和支援操作。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Gold", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Tech Level", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Radar Level", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Open Style", "kind": "mode", "value": "Dynamic Island", "min_value": null, "max_value": null, "step": 1.0, "options": ["Dynamic Island", "Full Sheet"], "unit": "", "description": ""},
+      {"name": "Shop Layout", "kind": "mode", "value": "CS2 Grid", "min_value": null, "max_value": null, "step": 1.0, "options": ["CS2 Grid", "Classic"], "unit": "", "description": ""},
+      {"name": "CS2 Feedback", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "CS2购买悬停、确认闪亮与本机原生音效；不改变液态玻璃或交易确认。"},
+      {"name": "Mock Requests", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "正式赛事默认通过 MQTT 发送；实验室/模拟场景仍强制 Mock。"}
+    ]},
+    {"name": "ProjectileShop", "category": "Strategy", "keybind": "None", "enabled": true, "description": "直接打开经济工作区弹丸页；正式请求等待裁判状态确认。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Ammo Type", "kind": "mode", "value": "17mm", "min_value": null, "max_value": null, "step": 1.0, "options": ["17mm", "42mm"], "unit": "", "description": ""},
+      {"name": "Mock Request", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "正式赛事默认通过 MQTT 发送；实验室/模拟场景仍强制 Mock。"},
+      {"name": "Show Cost", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "MatchChat", "category": "Strategy", "keybind": "T", "enabled": true, "description": "Minecraft-style local match chat and referee event feed.", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Referee Notices", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Fade Seconds", "kind": "number", "value": 10, "min_value": 3, "max_value": 30, "step": 1, "options": [], "unit": "s", "description": ""},
+      {"name": "Closed Lines", "kind": "number", "value": 6, "min_value": 1, "max_value": 10, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Open Lines", "kind": "number", "value": 16, "min_value": 6, "max_value": 24, "step": 1, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "QuickActionWheel", "category": "System", "keybind": "Q", "enabled": true, "description": "Hold Q, point at an existing client action, then release to execute it.", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Sectors", "kind": "mode", "value": "8", "min_value": null, "max_value": null, "step": 1.0, "options": ["4", "6", "8"], "unit": "", "description": ""},
+      {"name": "Radius", "kind": "number", "value": 118, "min_value": 72, "max_value": 180, "step": 2, "options": [], "unit": "px", "description": ""},
+      {"name": "Dead Zone", "kind": "number", "value": 38, "min_value": 18, "max_value": 96, "step": 2, "options": [], "unit": "px", "description": ""},
+      {"name": "Show Labels", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Label Style", "kind": "mode", "value": "Action", "min_value": null, "max_value": null, "step": 1.0, "options": ["Action", "Compact", "Off"], "unit": "", "description": ""},
+      {"name": "Icon Style", "kind": "mode", "value": "Initials", "min_value": null, "max_value": null, "step": 1.0, "options": ["Initials", "Dot", "Off"], "unit": "", "description": ""},
+      {"name": "Up", "kind": "mode", "value": "Economy", "min_value": null, "max_value": null, "step": 1.0, "options": ["Economy", "Ammo", "Auto Aim", "Armor Lock", "Match Chat", "Spin Mode", "Friction Wheel", "ClickGUI"], "unit": "", "description": ""},
+      {"name": "Upper Right", "kind": "mode", "value": "Ammo", "min_value": null, "max_value": null, "step": 1.0, "options": ["Economy", "Ammo", "Auto Aim", "Armor Lock", "Match Chat", "Spin Mode", "Friction Wheel", "ClickGUI"], "unit": "", "description": ""},
+      {"name": "Right", "kind": "mode", "value": "Auto Aim", "min_value": null, "max_value": null, "step": 1.0, "options": ["Economy", "Ammo", "Auto Aim", "Armor Lock", "Match Chat", "Spin Mode", "Friction Wheel", "ClickGUI"], "unit": "", "description": ""},
+      {"name": "Lower Right", "kind": "mode", "value": "Armor Lock", "min_value": null, "max_value": null, "step": 1.0, "options": ["Economy", "Ammo", "Auto Aim", "Armor Lock", "Match Chat", "Spin Mode", "Friction Wheel", "ClickGUI"], "unit": "", "description": ""},
+      {"name": "Down", "kind": "mode", "value": "Match Chat", "min_value": null, "max_value": null, "step": 1.0, "options": ["Economy", "Ammo", "Auto Aim", "Armor Lock", "Match Chat", "Spin Mode", "Friction Wheel", "ClickGUI"], "unit": "", "description": ""},
+      {"name": "Lower Left", "kind": "mode", "value": "Spin Mode", "min_value": null, "max_value": null, "step": 1.0, "options": ["Economy", "Ammo", "Auto Aim", "Armor Lock", "Match Chat", "Spin Mode", "Friction Wheel", "ClickGUI"], "unit": "", "description": ""},
+      {"name": "Left", "kind": "mode", "value": "Friction Wheel", "min_value": null, "max_value": null, "step": 1.0, "options": ["Economy", "Ammo", "Auto Aim", "Armor Lock", "Match Chat", "Spin Mode", "Friction Wheel", "ClickGUI"], "unit": "", "description": ""},
+      {"name": "Upper Left", "kind": "mode", "value": "ClickGUI", "min_value": null, "max_value": null, "step": 1.0, "options": ["Economy", "Ammo", "Auto Aim", "Armor Lock", "Match Chat", "Spin Mode", "Friction Wheel", "ClickGUI"], "unit": "", "description": ""}
+    ]},
+    {"name": "ThermalPowerPanel", "category": "Render", "keybind": "None", "enabled": true, "description": "RobotDynamicStatus 热量、底盘功率、缓冲能量和弹丸数量显示。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Heat", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Chassis Power", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Buffer", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "BuffTimeline", "category": "Render", "keybind": "None", "enabled": true, "description": "Buff 和特殊机制状态标签。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Buffs", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Special Mechanism", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Timeline", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "MQTTLink", "category": "System", "keybind": "None", "enabled": false, "description": "裁判系统 MQTT/protobuf；年度协议显式选择，未知版本禁止回退。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Host", "kind": "mode", "value": "127.0.0.1", "min_value": null, "max_value": null, "step": 1.0, "options": ["127.0.0.1", "192.168.12.1"], "unit": "", "description": ""},
+      {"name": "Port", "kind": "number", "value": 3333, "min_value": 1000, "max_value": 9999, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Auto Connect", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Referee Profile", "kind": "mode", "value": "rm2026-v1.3.1", "min_value": null, "max_value": null, "step": 1.0, "options": ["fixture-current", "fixture-readonly"], "unit": "", "description": ""}
+    ]},
+    {"name": "UDPVideo", "category": "System", "keybind": "None", "enabled": false, "description": "SharkDataSever UDP HEVC 分片重组接口。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Host", "kind": "mode", "value": "127.0.0.1", "min_value": null, "max_value": null, "step": 1.0, "options": ["127.0.0.1", "0.0.0.0", "192.168.12.2"], "unit": "", "description": ""},
+      {"name": "Port", "kind": "number", "value": 3334, "min_value": 1000, "max_value": 9999, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Reassemble", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "SerialBridge", "category": "System", "keybind": "None", "enabled": false, "description": "RS232/串口桥接 stub，用于后续接入真实机器人。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Port", "kind": "mode", "value": "Stub", "min_value": null, "max_value": null, "step": 1.0, "options": ["Stub", "COM1", "COM3", "COM5"], "unit": "", "description": ""},
+      {"name": "Baud", "kind": "number", "value": 115200, "min_value": 9600, "max_value": 921600, "step": 9600, "options": [], "unit": "", "description": ""},
+      {"name": "Mock Writes", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "ControllerAngles", "category": "System", "keybind": "None", "enabled": false, "description": "工程实体控制器六轴角度：A5/0x0302/30 字节，115200。默认关闭及 mock；300ms 独立超时。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Angle RX Port", "kind": "mode", "value": "Stub", "min_value": null, "max_value": null, "step": 1.0, "options": ["Stub", "POLAR_2", "POLAR_2", "SECOND"], "unit": "", "description": ""},
+      {"name": "Angle TX Port", "kind": "mode", "value": "Stub", "min_value": null, "max_value": null, "step": 1.0, "options": ["Stub", "POLAR_3", "POLAR_3", "SECOND"], "unit": "", "description": ""},
+      {"name": "Forward Angles", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Angle Mock Writes", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Arm Angle Forward", "kind": "action", "value": "Arm Angle Forward", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "只授权本次进程。需新鲜六轴数据、RobotLink 和 Allow Drive；断流后必须重新授权。"},
+      {"name": "Disarm Angle Forward", "kind": "action", "value": "Disarm Angle Forward", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "停止角度转发，等待车端独立超时；不发送全零目标角度。"},
+      {"name": "Show Angle Status", "kind": "action", "value": "Show Angle Status", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "显示六轴角度接收有效性、转发状态和拦截原因。"},
+      {"name": "Rescan Serial Ports", "kind": "action", "value": "Rescan Serial Ports", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "重新扫描显式 RX/TX 串口；不会自动选择设备。"}
+    ]},
+    {"name": "RobotLink", "category": "System", "keybind": "None", "enabled": false, "description": "队内 StandardRobot++ 0x5A 链路：读取机器人自身遥测驱动 HUD，并上发云台角度与底盘速度。fire 位始终为 0。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Port", "kind": "mode", "value": "Auto", "min_value": null, "max_value": null, "step": 1.0, "options": ["Auto", "Stub", "POLAR_4", "POLAR_4", "SECOND"], "unit": "", "description": ""},
+      {"name": "Baud", "kind": "number", "value": 115200, "min_value": 9600, "max_value": 921600, "step": 9600, "options": [], "unit": "", "description": ""},
+      {"name": "Send Hz", "kind": "number", "value": 50, "min_value": 10, "max_value": 100, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Allow Drive", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Mock Writes", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Allow Spin Key", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Radio KM Egress", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Direct DT7 Egress", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "DT7 Port", "kind": "mode", "value": "Auto", "min_value": null, "max_value": null, "step": 1.0, "options": ["Auto", "Stub", "DT7_5", "DT7_5", "SECOND"], "unit": "", "description": ""},
+      {"name": "Rescan Serial Ports", "kind": "action", "value": "Rescan Serial Ports", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "重新枚举 Port / DT7 Port / CC Port 三个下拉的候选口。只换候选、不改当前值；当前值即使暂时不在列表里也会被保住。"},
+      {"name": "DT7 Real TX", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "DT7 Allow Fire Keys", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Custom Controller Egress", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "CC Port", "kind": "mode", "value": "Auto", "min_value": null, "max_value": null, "step": 1.0, "options": ["Auto", "Stub", "POLAR_6", "POLAR_6", "SECOND"], "unit": "", "description": ""},
+      {"name": "CC Hz", "kind": "number", "value": 30, "min_value": 5, "max_value": 30, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "CC Mock Writes", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Run DT7 Link Selftest", "kind": "action", "value": "Run DT7 Link Selftest", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "一键验证 C 路（PC→DT7→DR16→C 板）通不通 + DT7 会不会粘键。刻意用固件**没有任何消费者**的 X 键当探针：链路再通也不会让车动一下。判据只认车上合并后的最终键位 km_key（需插着 C 板 USB 0x5A 读回读）。"},
+      {"name": "Run Wireless KM Selftest", "kind": "action", "value": "Run Wireless KM Selftest", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "观察 2.5 秒车上回读的 0x0311 到达计数（km_rx）是否增长；判据来自车那一侧，不是客户端自证。需插着 USB 0x5A 才能读回读。"},
+      {"name": "Link Mode", "kind": "mode", "value": "serial", "min_value": null, "max_value": null, "step": 1.0, "options": ["serial", "tcp"], "unit": "", "description": ""},
+      {"name": "Bridge Host", "kind": "mode", "value": "", "min_value": null, "max_value": null, "step": 1.0, "options": ["", "10.50.0.10", "192.168.12.10"], "unit": "", "description": "车端 bridge_server 所在小电脑的 IP（Link Mode=tcp 才用）"},
+      {"name": "Bridge Port", "kind": "number", "value": 50570, "min_value": 1024, "max_value": 65535, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Client Chassis Drive", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Client Gimbal Control", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Vision NUC Occupied", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Speed Scale %", "kind": "number", "value": 100, "min_value": 10, "max_value": 100, "step": 5, "options": [], "unit": "", "description": ""},
+      {"name": "Yaw Scale %", "kind": "number", "value": 100, "min_value": 10, "max_value": 100, "step": 5, "options": [], "unit": "", "description": ""},
+      {"name": "Gimbal Slew", "kind": "number", "value": 8, "min_value": 1, "max_value": 45, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Mouse Sensitivity", "kind": "number", "value": 1.0, "min_value": 0.05, "max_value": 10.0, "step": 0.05, "options": [], "unit": "", "description": "本客户端鼠标位移倍率；不是车辆NUC的自瞄增益，不改变DT7原始输入。"},
+      {"name": "Invert Mouse Y", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "反转本客户端鼠标垂直控制方向。"},
+      {"name": "Mouse Wheel Scale", "kind": "number", "value": 1.0, "min_value": 0.1, "max_value": 4.0, "step": 0.1, "options": [], "unit": "", "description": ""},
+      {"name": "Drive Channel", "kind": "mode", "value": "robot_cmd", "min_value": null, "max_value": null, "step": 1.0, "options": ["robot_cmd", "virtual_rc", "both"], "unit": "", "description": ""},
+      {"name": "Bind W", "kind": "mode", "value": "W", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind S", "kind": "mode", "value": "S", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind A", "kind": "mode", "value": "A", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind D", "kind": "mode", "value": "D", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind SHIFT", "kind": "mode", "value": "SHIFT", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind CTRL", "kind": "mode", "value": "CTRL", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind Q", "kind": "mode", "value": "Q", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind E", "kind": "mode", "value": "E", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind R", "kind": "mode", "value": "R", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind F", "kind": "mode", "value": "F", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind G", "kind": "mode", "value": "G", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind Z", "kind": "mode", "value": "Z", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind X", "kind": "mode", "value": "X", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind C", "kind": "mode", "value": "C", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind V", "kind": "mode", "value": "V", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""},
+      {"name": "Bind B", "kind": "mode", "value": "B", "min_value": null, "max_value": null, "step": 1.0, "options": ["W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B", "Shift", "Ctrl", "Space", "Enter", "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F10", "None"], "unit": "", "description": ""}
+    ]},
+    {"name": "HUD", "category": "Render", "keybind": "H", "enabled": true, "description": "将 POLAR HUD 职责映射为 RM 状态覆盖层。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Watermark", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Module List", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Dynamic Island", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Target HUD", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "KeyBinds", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Robot List", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Status Cards", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "RM Indicators", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Combat Preset", "kind": "mode", "value": "Polar", "min_value": null, "max_value": null, "step": 1.0, "options": ["Polar", "Minecraft 1.21.11"], "unit": "", "description": ""},
+      {"name": "Density", "kind": "mode", "value": "CombatCompact", "min_value": null, "max_value": null, "step": 1.0, "options": ["CombatCompact", "Balanced", "DebugFull"], "unit": "", "description": ""},
+      {"name": "Visual Tone", "kind": "mode", "value": "LiquidClean", "min_value": null, "max_value": null, "step": 1.0, "options": ["LiquidClean", "PolarLegacy"], "unit": "", "description": ""},
+      {"name": "Target Style", "kind": "mode", "value": "RoundCompact", "min_value": null, "max_value": null, "step": 1.0, "options": ["RoundCompact", "BarOnly", "FullCard"], "unit": "", "description": ""},
+      {"name": "Right Display", "kind": "mode", "value": "ModuleListHud", "min_value": null, "max_value": null, "step": 1.0, "options": ["ModuleListHud", "TacticalMapHud", "KeyBindsHud", "RobotListHud", "TargetHud", "StatusCardsHud", "RMIndicatorsHud"], "unit": "", "description": ""},
+      {"name": "ModuleList Style", "kind": "mode", "value": "JelloActiveMods", "min_value": null, "max_value": null, "step": 1.0, "options": ["PolarTextList", "PolarRainbowRight", "GlowRows", "Segmented", "DynamicIsland", "KeyBindsRows", "StatusBars", "RobotCards", "LiquidArrayList", "LiquidArrayTags", "LiquidArrayCompact", "LiquidArrayDock", "JelloActiveMods"], "unit": "", "description": ""},
+      {"name": "Jello List Size", "kind": "mode", "value": "Normal", "min_value": null, "max_value": null, "step": 1.0, "options": ["Normal", "Small", "Tiny"], "unit": "", "description": ""},
+      {"name": "Jello List Animations", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Jello List Sound", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "Sigma ActiveMods toggle sound."},
+      {"name": "ModuleList Surface", "kind": "mode", "value": "LiquidGlass", "min_value": null, "max_value": null, "step": 1.0, "options": ["Native", "LiquidGlass"], "unit": "", "description": ""},
+      {"name": "ModuleList Alignment", "kind": "mode", "value": "Right", "min_value": null, "max_value": null, "step": 1.0, "options": ["Right", "Left"], "unit": "", "description": ""},
+      {"name": "ModuleList Order", "kind": "mode", "value": "Descending", "min_value": null, "max_value": null, "step": 1.0, "options": ["Descending", "Ascending"], "unit": "", "description": ""},
+      {"name": "Module Tags", "kind": "mode", "value": "Category", "min_value": null, "max_value": null, "step": 1.0, "options": ["Category", "Keybind", "Off"], "unit": "", "description": ""},
+      {"name": "Module Animation", "kind": "mode", "value": "FlyFlip", "min_value": null, "max_value": null, "step": 1.0, "options": ["FlyFlip", "Slide", "Fade"], "unit": "", "description": ""},
+      {"name": "Restore Compact HUD", "kind": "action", "value": "Restore Compact HUD", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "仅恢复紧凑 HUD、小地图边框和目标面板，不修改模块开关、按键、连接或比赛配置。"}
+    ]},
+    {"name": "UIScale", "category": "Render", "keybind": "None", "enabled": true, "description": "适配不同显示器尺寸的响应式 UI 缩放控制器。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Auto Scale", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "根据当前窗口尺寸缩放 UI。"},
+      {"name": "High Res Optimize", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "HUD Scale", "kind": "number", "value": 1.0, "min_value": 0.6, "max_value": 2.5, "step": 0.05, "options": [], "unit": "", "description": ""},
+      {"name": "GUI Scale", "kind": "number", "value": 1.0, "min_value": 0.6, "max_value": 2.5, "step": 0.05, "options": [], "unit": "", "description": ""},
+      {"name": "Animation Speed", "kind": "number", "value": 1.0, "min_value": 0.5, "max_value": 1.8, "step": 0.05, "options": [], "unit": "", "description": ""},
+      {"name": "HUD Refresh Rate", "kind": "mode", "value": "144", "min_value": null, "max_value": null, "step": 1.0, "options": ["120", "144", "165", "240"], "unit": "", "description": ""},
+      {"name": "Reference Width", "kind": "number", "value": 1280, "min_value": 960, "max_value": 3840, "step": 80, "options": [], "unit": "px", "description": ""},
+      {"name": "Reference Height", "kind": "number", "value": 720, "min_value": 540, "max_value": 2160, "step": 60, "options": [], "unit": "px", "description": ""}
+    ]},
+    {"name": "Crosshair", "category": "Render", "keybind": "None", "enabled": true, "description": "", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Style", "kind": "mode", "value": "RM Dot", "min_value": null, "max_value": null, "step": 1.0, "options": ["RM Dot", "Circle", "Cross", "CS2"], "unit": "", "description": "CS2为静态近似；动态散布、后坐力和开镜效果没有RM遥测，不会模拟。"},
+      {"name": "Size", "kind": "number", "value": 18, "min_value": 4, "max_value": 48, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Crosshair Scale", "kind": "number", "value": 1, "min_value": 0.5, "max_value": 8, "step": 0.1, "options": [], "unit": "x", "description": "整体缩放准星（包括导入的CS2准星）；不改分享码参数或自瞄FOV。"},
+      {"name": "Heat Color", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Open Crosshair Editor", "kind": "action", "value": "Open Crosshair Editor", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "CS式分组参数与多背景实时预览；支持双向分享码/JSON/CFG。"},
+      {"name": "Import Crosshair Code", "kind": "action", "value": "Import Crosshair Code", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "读取CS/CSGO分享码、准星JSON或白名单CFG，不执行命令。"},
+      {"name": "Import Crosshair File", "kind": "action", "value": "Import Crosshair File", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "读取外部准星JSON/CFG/TXT；未知字段拒绝，不静默忽略。"},
+      {"name": "Crosshair Import Details", "kind": "action", "value": "Crosshair Import Details", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "查看保留的动态/scope参数、原始分享码及限幅说明。"},
+      {"name": "CS2 Style", "kind": "number", "value": 4, "min_value": 0, "max_value": 9, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Length", "kind": "number", "value": 5, "min_value": 0, "max_value": 255, "step": 0.1, "options": [], "unit": "", "description": ""},
+      {"name": "Gap", "kind": "number", "value": 3, "min_value": -3840, "max_value": 3840, "step": 0.1, "options": [], "unit": "", "description": ""},
+      {"name": "Thickness", "kind": "number", "value": 1, "min_value": 0, "max_value": 32, "step": 0.1, "options": [], "unit": "", "description": ""},
+      {"name": "Reference Height", "kind": "number", "value": 1080, "min_value": 240, "max_value": 65535, "step": 1, "options": [], "unit": "px", "description": ""},
+      {"name": "Geometry Units", "kind": "mode", "value": "Pixels", "min_value": null, "max_value": null, "step": 1.0, "options": ["Pixels", "Legacy"], "unit": "", "description": ""},
+      {"name": "Center Dot", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "T Shape", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Red", "kind": "number", "value": 80, "min_value": 0, "max_value": 255, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Green", "kind": "number", "value": 255, "min_value": 0, "max_value": 255, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Blue", "kind": "number", "value": 80, "min_value": 0, "max_value": 255, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Alpha", "kind": "number", "value": 255, "min_value": 0, "max_value": 255, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Color Mode", "kind": "number", "value": 5, "min_value": 0, "max_value": 5, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Use Alpha", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Outline Mode", "kind": "number", "value": 1, "min_value": 0, "max_value": 2, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Outline Width", "kind": "number", "value": 1, "min_value": 0, "max_value": 127.5, "step": 0.5, "options": [], "unit": "", "description": ""},
+      {"name": "Outline Red", "kind": "number", "value": 0, "min_value": 0, "max_value": 255, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Outline Green", "kind": "number", "value": 0, "min_value": 0, "max_value": 255, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Outline Blue", "kind": "number", "value": 0, "min_value": 0, "max_value": 255, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Outline Alpha", "kind": "number", "value": 255, "min_value": 0, "max_value": 255, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Follow Recoil", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "仅保留外部参数；无CS后坐力遥测，不驱动RM控制。"},
+      {"name": "Dynamic Spread Limit", "kind": "number", "value": 0, "min_value": 0, "max_value": 255, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Split Distance", "kind": "number", "value": 7, "min_value": 0, "max_value": 127, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Inner Split Alpha", "kind": "number", "value": 1, "min_value": 0, "max_value": 1, "step": 0.01, "options": [], "unit": "", "description": ""},
+      {"name": "Outer Split Alpha", "kind": "number", "value": 0.5, "min_value": 0, "max_value": 1, "step": 0.01, "options": [], "unit": "", "description": ""},
+      {"name": "Split Size Ratio", "kind": "number", "value": 0.3, "min_value": 0, "max_value": 1, "step": 0.01, "options": [], "unit": "", "description": ""},
+      {"name": "Fixed Gap", "kind": "number", "value": 3, "min_value": -12.8, "max_value": 12.7, "step": 0.1, "options": [], "unit": "", "description": ""},
+      {"name": "Weapon Gap", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Scope Dot Scale", "kind": "number", "value": 1, "min_value": 0.1, "max_value": 2, "step": 0.01, "options": [], "unit": "", "description": ""},
+      {"name": "Scope Dot Uses Color", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Source Format", "kind": "text", "value": "Custom", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Imported Code", "kind": "text", "value": "", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Import Notes", "kind": "text", "value": "", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "CombatTargetHUD", "category": "Render", "keybind": "None", "enabled": true, "description": "围绕中心准星显示本机血量、射击热量、自瞄状态和弹丸余量。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Visual", "kind": "mode", "value": "Clear", "min_value": null, "max_value": null, "step": 1.0, "options": ["Classic", "Clear", "Enhanced"], "unit": "", "description": ""},
+      {"name": "Show Bars", "kind": "bool", "value": false, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Show Status Line", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "MinecraftCombatHUD", "category": "Render", "keybind": "None", "enabled": false, "description": "Minecraft 1.21.11 战斗 HUD 与九格自定义功能栏；可从 Jello ClickGUI 拖放模块。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "GUI Scale", "kind": "mode", "value": "Auto", "min_value": null, "max_value": null, "step": 1.0, "options": ["Auto", "1x", "2x", "3x", "4x", "5x", "6x", "7x", "8x"], "unit": "", "description": ""},
+      {"name": "Scale Multiplier", "kind": "number", "value": 1.0, "min_value": 0.5, "max_value": 2.0, "step": 0.05, "options": [], "unit": "", "description": "仅缩放原版 Minecraft HUD 像素层；外挂覆盖层保持独立缩放。"},
+      {"name": "Slot 1", "kind": "mode", "value": "ArmorAutoAim", "min_value": null, "max_value": null, "step": 1.0, "options": ["Empty", "Scenario", "StartupVisual", "MatchMode", "RobotProfile", "AllianceProfile", "ConfigManager", "EmergencyStop", "MatchReadiness", "ArmorAutoAim", "EliminationFX", "AudioFeedback", "EnergyAutoAim", "ArmorLock", "HeroLob", "FireControlStub", "SpinMode", "AutoSpinOnHit", "ChassisAssist", "PowerGuard", "CameraFeed", "TongjiVisionBridge", "CameraCalibration", "Armor3DESP", "RobotOverlay", "RadarOverlay", "MapMarker", "TacticalMap", "LiquidTacticalMap", "SentinelCommand", "AirSupport", "TopMatchBar", "MatchTimer", "BaseOutpostStatus", "VictoryPointStatus", "EconomyPanel", "ProjectileShop", "MatchChat", "QuickActionWheel", "ThermalPowerPanel", "BuffTimeline", "MQTTLink", "UDPVideo", "SerialBridge", "ControllerAngles", "RobotLink", "HUD", "UIScale", "Crosshair", "CombatTargetHUD", "ChassisGimbalIndicator", "ClickGui", "GimbalPower", "PowerLimit", "SpeedLimit", "Capacitor", "FrictionWheel", "LockState", "BuffStatus", "ProjectileAllowance", "JumpPTEWheelLES", "InjuryStatistics", "MatchSettlement", "DartPanel", "SkillConfiguration", "MinecraftInventory", "ReloadingPanel", "RuneRingStatus", "ResourceIsland", "GainZone", "UWBStatus", "ArmorStatus", "WirelessCharging", "MinecraftBuffs"], "unit": "", "description": ""},
+      {"name": "Slot 2", "kind": "mode", "value": "ArmorLock", "min_value": null, "max_value": null, "step": 1.0, "options": ["Empty", "Scenario", "StartupVisual", "MatchMode", "RobotProfile", "AllianceProfile", "ConfigManager", "EmergencyStop", "MatchReadiness", "ArmorAutoAim", "EliminationFX", "AudioFeedback", "EnergyAutoAim", "ArmorLock", "HeroLob", "FireControlStub", "SpinMode", "AutoSpinOnHit", "ChassisAssist", "PowerGuard", "CameraFeed", "TongjiVisionBridge", "CameraCalibration", "Armor3DESP", "RobotOverlay", "RadarOverlay", "MapMarker", "TacticalMap", "LiquidTacticalMap", "SentinelCommand", "AirSupport", "TopMatchBar", "MatchTimer", "BaseOutpostStatus", "VictoryPointStatus", "EconomyPanel", "ProjectileShop", "MatchChat", "QuickActionWheel", "ThermalPowerPanel", "BuffTimeline", "MQTTLink", "UDPVideo", "SerialBridge", "ControllerAngles", "RobotLink", "HUD", "UIScale", "Crosshair", "CombatTargetHUD", "ChassisGimbalIndicator", "ClickGui", "GimbalPower", "PowerLimit", "SpeedLimit", "Capacitor", "FrictionWheel", "LockState", "BuffStatus", "ProjectileAllowance", "JumpPTEWheelLES", "InjuryStatistics", "MatchSettlement", "DartPanel", "SkillConfiguration", "MinecraftInventory", "ReloadingPanel", "RuneRingStatus", "ResourceIsland", "GainZone", "UWBStatus", "ArmorStatus", "WirelessCharging", "MinecraftBuffs"], "unit": "", "description": ""},
+      {"name": "Slot 3", "kind": "mode", "value": "FrictionWheel", "min_value": null, "max_value": null, "step": 1.0, "options": ["Empty", "Scenario", "StartupVisual", "MatchMode", "RobotProfile", "AllianceProfile", "ConfigManager", "EmergencyStop", "MatchReadiness", "ArmorAutoAim", "EliminationFX", "AudioFeedback", "EnergyAutoAim", "ArmorLock", "HeroLob", "FireControlStub", "SpinMode", "AutoSpinOnHit", "ChassisAssist", "PowerGuard", "CameraFeed", "TongjiVisionBridge", "CameraCalibration", "Armor3DESP", "RobotOverlay", "RadarOverlay", "MapMarker", "TacticalMap", "LiquidTacticalMap", "SentinelCommand", "AirSupport", "TopMatchBar", "MatchTimer", "BaseOutpostStatus", "VictoryPointStatus", "EconomyPanel", "ProjectileShop", "MatchChat", "QuickActionWheel", "ThermalPowerPanel", "BuffTimeline", "MQTTLink", "UDPVideo", "SerialBridge", "ControllerAngles", "RobotLink", "HUD", "UIScale", "Crosshair", "CombatTargetHUD", "ChassisGimbalIndicator", "ClickGui", "GimbalPower", "PowerLimit", "SpeedLimit", "Capacitor", "FrictionWheel", "LockState", "BuffStatus", "ProjectileAllowance", "JumpPTEWheelLES", "InjuryStatistics", "MatchSettlement", "DartPanel", "SkillConfiguration", "MinecraftInventory", "ReloadingPanel", "RuneRingStatus", "ResourceIsland", "GainZone", "UWBStatus", "ArmorStatus", "WirelessCharging", "MinecraftBuffs"], "unit": "", "description": ""},
+      {"name": "Slot 4", "kind": "mode", "value": "SpinMode", "min_value": null, "max_value": null, "step": 1.0, "options": ["Empty", "Scenario", "StartupVisual", "MatchMode", "RobotProfile", "AllianceProfile", "ConfigManager", "EmergencyStop", "MatchReadiness", "ArmorAutoAim", "EliminationFX", "AudioFeedback", "EnergyAutoAim", "ArmorLock", "HeroLob", "FireControlStub", "SpinMode", "AutoSpinOnHit", "ChassisAssist", "PowerGuard", "CameraFeed", "TongjiVisionBridge", "CameraCalibration", "Armor3DESP", "RobotOverlay", "RadarOverlay", "MapMarker", "TacticalMap", "LiquidTacticalMap", "SentinelCommand", "AirSupport", "TopMatchBar", "MatchTimer", "BaseOutpostStatus", "VictoryPointStatus", "EconomyPanel", "ProjectileShop", "MatchChat", "QuickActionWheel", "ThermalPowerPanel", "BuffTimeline", "MQTTLink", "UDPVideo", "SerialBridge", "ControllerAngles", "RobotLink", "HUD", "UIScale", "Crosshair", "CombatTargetHUD", "ChassisGimbalIndicator", "ClickGui", "GimbalPower", "PowerLimit", "SpeedLimit", "Capacitor", "FrictionWheel", "LockState", "BuffStatus", "ProjectileAllowance", "JumpPTEWheelLES", "InjuryStatistics", "MatchSettlement", "DartPanel", "SkillConfiguration", "MinecraftInventory", "ReloadingPanel", "RuneRingStatus", "ResourceIsland", "GainZone", "UWBStatus", "ArmorStatus", "WirelessCharging", "MinecraftBuffs"], "unit": "", "description": ""},
+      {"name": "Slot 5", "kind": "mode", "value": "EconomyPanel", "min_value": null, "max_value": null, "step": 1.0, "options": ["Empty", "Scenario", "StartupVisual", "MatchMode", "RobotProfile", "AllianceProfile", "ConfigManager", "EmergencyStop", "MatchReadiness", "ArmorAutoAim", "EliminationFX", "AudioFeedback", "EnergyAutoAim", "ArmorLock", "HeroLob", "FireControlStub", "SpinMode", "AutoSpinOnHit", "ChassisAssist", "PowerGuard", "CameraFeed", "TongjiVisionBridge", "CameraCalibration", "Armor3DESP", "RobotOverlay", "RadarOverlay", "MapMarker", "TacticalMap", "LiquidTacticalMap", "SentinelCommand", "AirSupport", "TopMatchBar", "MatchTimer", "BaseOutpostStatus", "VictoryPointStatus", "EconomyPanel", "ProjectileShop", "MatchChat", "QuickActionWheel", "ThermalPowerPanel", "BuffTimeline", "MQTTLink", "UDPVideo", "SerialBridge", "ControllerAngles", "RobotLink", "HUD", "UIScale", "Crosshair", "CombatTargetHUD", "ChassisGimbalIndicator", "ClickGui", "GimbalPower", "PowerLimit", "SpeedLimit", "Capacitor", "FrictionWheel", "LockState", "BuffStatus", "ProjectileAllowance", "JumpPTEWheelLES", "InjuryStatistics", "MatchSettlement", "DartPanel", "SkillConfiguration", "MinecraftInventory", "ReloadingPanel", "RuneRingStatus", "ResourceIsland", "GainZone", "UWBStatus", "ArmorStatus", "WirelessCharging", "MinecraftBuffs"], "unit": "", "description": ""},
+      {"name": "Slot 6", "kind": "mode", "value": "ProjectileShop", "min_value": null, "max_value": null, "step": 1.0, "options": ["Empty", "Scenario", "StartupVisual", "MatchMode", "RobotProfile", "AllianceProfile", "ConfigManager", "EmergencyStop", "MatchReadiness", "ArmorAutoAim", "EliminationFX", "AudioFeedback", "EnergyAutoAim", "ArmorLock", "HeroLob", "FireControlStub", "SpinMode", "AutoSpinOnHit", "ChassisAssist", "PowerGuard", "CameraFeed", "TongjiVisionBridge", "CameraCalibration", "Armor3DESP", "RobotOverlay", "RadarOverlay", "MapMarker", "TacticalMap", "LiquidTacticalMap", "SentinelCommand", "AirSupport", "TopMatchBar", "MatchTimer", "BaseOutpostStatus", "VictoryPointStatus", "EconomyPanel", "ProjectileShop", "MatchChat", "QuickActionWheel", "ThermalPowerPanel", "BuffTimeline", "MQTTLink", "UDPVideo", "SerialBridge", "ControllerAngles", "RobotLink", "HUD", "UIScale", "Crosshair", "CombatTargetHUD", "ChassisGimbalIndicator", "ClickGui", "GimbalPower", "PowerLimit", "SpeedLimit", "Capacitor", "FrictionWheel", "LockState", "BuffStatus", "ProjectileAllowance", "JumpPTEWheelLES", "InjuryStatistics", "MatchSettlement", "DartPanel", "SkillConfiguration", "MinecraftInventory", "ReloadingPanel", "RuneRingStatus", "ResourceIsland", "GainZone", "UWBStatus", "ArmorStatus", "WirelessCharging", "MinecraftBuffs"], "unit": "", "description": ""},
+      {"name": "Slot 7", "kind": "mode", "value": "TacticalMap", "min_value": null, "max_value": null, "step": 1.0, "options": ["Empty", "Scenario", "StartupVisual", "MatchMode", "RobotProfile", "AllianceProfile", "ConfigManager", "EmergencyStop", "MatchReadiness", "ArmorAutoAim", "EliminationFX", "AudioFeedback", "EnergyAutoAim", "ArmorLock", "HeroLob", "FireControlStub", "SpinMode", "AutoSpinOnHit", "ChassisAssist", "PowerGuard", "CameraFeed", "TongjiVisionBridge", "CameraCalibration", "Armor3DESP", "RobotOverlay", "RadarOverlay", "MapMarker", "TacticalMap", "LiquidTacticalMap", "SentinelCommand", "AirSupport", "TopMatchBar", "MatchTimer", "BaseOutpostStatus", "VictoryPointStatus", "EconomyPanel", "ProjectileShop", "MatchChat", "QuickActionWheel", "ThermalPowerPanel", "BuffTimeline", "MQTTLink", "UDPVideo", "SerialBridge", "ControllerAngles", "RobotLink", "HUD", "UIScale", "Crosshair", "CombatTargetHUD", "ChassisGimbalIndicator", "ClickGui", "GimbalPower", "PowerLimit", "SpeedLimit", "Capacitor", "FrictionWheel", "LockState", "BuffStatus", "ProjectileAllowance", "JumpPTEWheelLES", "InjuryStatistics", "MatchSettlement", "DartPanel", "SkillConfiguration", "MinecraftInventory", "ReloadingPanel", "RuneRingStatus", "ResourceIsland", "GainZone", "UWBStatus", "ArmorStatus", "WirelessCharging", "MinecraftBuffs"], "unit": "", "description": ""},
+      {"name": "Slot 8", "kind": "mode", "value": "MatchChat", "min_value": null, "max_value": null, "step": 1.0, "options": ["Empty", "Scenario", "StartupVisual", "MatchMode", "RobotProfile", "AllianceProfile", "ConfigManager", "EmergencyStop", "MatchReadiness", "ArmorAutoAim", "EliminationFX", "AudioFeedback", "EnergyAutoAim", "ArmorLock", "HeroLob", "FireControlStub", "SpinMode", "AutoSpinOnHit", "ChassisAssist", "PowerGuard", "CameraFeed", "TongjiVisionBridge", "CameraCalibration", "Armor3DESP", "RobotOverlay", "RadarOverlay", "MapMarker", "TacticalMap", "LiquidTacticalMap", "SentinelCommand", "AirSupport", "TopMatchBar", "MatchTimer", "BaseOutpostStatus", "VictoryPointStatus", "EconomyPanel", "ProjectileShop", "MatchChat", "QuickActionWheel", "ThermalPowerPanel", "BuffTimeline", "MQTTLink", "UDPVideo", "SerialBridge", "ControllerAngles", "RobotLink", "HUD", "UIScale", "Crosshair", "CombatTargetHUD", "ChassisGimbalIndicator", "ClickGui", "GimbalPower", "PowerLimit", "SpeedLimit", "Capacitor", "FrictionWheel", "LockState", "BuffStatus", "ProjectileAllowance", "JumpPTEWheelLES", "InjuryStatistics", "MatchSettlement", "DartPanel", "SkillConfiguration", "MinecraftInventory", "ReloadingPanel", "RuneRingStatus", "ResourceIsland", "GainZone", "UWBStatus", "ArmorStatus", "WirelessCharging", "MinecraftBuffs"], "unit": "", "description": ""},
+      {"name": "Slot 9", "kind": "mode", "value": "ClickGui", "min_value": null, "max_value": null, "step": 1.0, "options": ["Empty", "Scenario", "StartupVisual", "MatchMode", "RobotProfile", "AllianceProfile", "ConfigManager", "EmergencyStop", "MatchReadiness", "ArmorAutoAim", "EliminationFX", "AudioFeedback", "EnergyAutoAim", "ArmorLock", "HeroLob", "FireControlStub", "SpinMode", "AutoSpinOnHit", "ChassisAssist", "PowerGuard", "CameraFeed", "TongjiVisionBridge", "CameraCalibration", "Armor3DESP", "RobotOverlay", "RadarOverlay", "MapMarker", "TacticalMap", "LiquidTacticalMap", "SentinelCommand", "AirSupport", "TopMatchBar", "MatchTimer", "BaseOutpostStatus", "VictoryPointStatus", "EconomyPanel", "ProjectileShop", "MatchChat", "QuickActionWheel", "ThermalPowerPanel", "BuffTimeline", "MQTTLink", "UDPVideo", "SerialBridge", "ControllerAngles", "RobotLink", "HUD", "UIScale", "Crosshair", "CombatTargetHUD", "ChassisGimbalIndicator", "ClickGui", "GimbalPower", "PowerLimit", "SpeedLimit", "Capacitor", "FrictionWheel", "LockState", "BuffStatus", "ProjectileAllowance", "JumpPTEWheelLES", "InjuryStatistics", "MatchSettlement", "DartPanel", "SkillConfiguration", "MinecraftInventory", "ReloadingPanel", "RuneRingStatus", "ResourceIsland", "GainZone", "UWBStatus", "ArmorStatus", "WirelessCharging", "MinecraftBuffs"], "unit": "", "description": ""}
+    ]},
+    {"name": "ChassisGimbalIndicator", "category": "Render", "keybind": "None", "enabled": true, "description": "底盘-云台相对角方向指示器，显示车体方向、炮塔方向和 yaw 差。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Style", "kind": "mode", "value": "Minimal", "min_value": null, "max_value": null, "step": 1.0, "options": ["Minimal", "Tank", "Compass"], "unit": "", "description": ""},
+      {"name": "Show Angle", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Show Mode", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Size", "kind": "number", "value": 56, "min_value": 42, "max_value": 120, "step": 2, "options": [], "unit": "px", "description": ""},
+      {"name": "Smooth", "kind": "number", "value": 0.35, "min_value": 0.05, "max_value": 1.0, "step": 0.05, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "ClickGui", "category": "Render", "keybind": "RightShift", "enabled": false, "description": "Jello Sigma 5.1.0 主 ClickGUI 一比一复刻；旧界面收纳在 Old ClickGUIs 中。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Scale", "kind": "number", "value": 1.0, "min_value": 0.5, "max_value": 2.0, "step": 0.05, "options": [], "unit": "", "description": ""},
+      {"name": "Language", "kind": "mode", "value": "简体中文", "min_value": null, "max_value": null, "step": 1.0, "options": ["English", "简体中文"], "unit": "", "description": "切换界面显示语言；不改变配置键和协议值。"},
+      {"name": "Render Backend", "kind": "mode", "value": "Unified GPU", "min_value": null, "max_value": null, "step": 1.0, "options": ["Unified GPU", "Compatibility Painter"], "unit": "", "description": ""},
+      {"name": "Save Layout", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Open Keybind Manager", "kind": "action", "value": "Open Keybind Manager", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": "打开 Jello 完整键盘；按键弹层查看、删除并添加模块快捷键。"},
+      {"name": "Old ClickGUIs", "kind": "action_group", "value": null, "min_value": null, "max_value": null, "step": 1.0, "options": ["PolarOld", "PolarPanel", "PolarNew", "PolarDropdown", "PolarUnified", "PolarMulti"], "unit": "", "description": "显示所有旧 ClickGUI"}
+    ]},
+    {"name": "GimbalPower", "category": "Render", "keybind": "None", "enabled": true, "description": "把 RMUI GIMPOWER 元素转换为 POLAR 右侧 HUD。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Voltage", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Glow Alert", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Warn Below", "kind": "number", "value": 18, "min_value": 0, "max_value": 30, "step": 1, "options": [], "unit": "V", "description": ""}
+    ]},
+    {"name": "PowerLimit", "category": "Render", "keybind": "None", "enabled": true, "description": "把 RMUI POWERLIM 元素转换为 POLAR 状态卡片。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Limit", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Limit", "kind": "number", "value": 80, "min_value": 30, "max_value": 120, "step": 1, "options": [], "unit": "W", "description": ""},
+      {"name": "Pulse Overrun", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "SpeedLimit", "category": "Render", "keybind": "None", "enabled": true, "description": "把 RMUI SPEEDLIM 元素转换为 POLAR 状态卡片。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Speed", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Limit", "kind": "number", "value": 420, "min_value": 120, "max_value": 720, "step": 10, "options": [], "unit": "dps", "description": ""},
+      {"name": "Unit", "kind": "mode", "value": "dps", "min_value": null, "max_value": null, "step": 1.0, "options": ["dps", "rpm", "%"], "unit": "", "description": ""}
+    ]},
+    {"name": "Capacitor", "category": "Render", "keybind": "None", "enabled": true, "description": "把 RMUI CAP 元素转换为 POLAR 进度卡片。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Bar", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Warn", "kind": "number", "value": 25, "min_value": 0, "max_value": 100, "step": 1, "options": [], "unit": "%", "description": ""},
+      {"name": "Use Glow", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "FrictionWheel", "category": "Combat", "keybind": "F", "enabled": false, "description": "把 RMUI FRIC 元素作为摩擦轮状态模块。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show State", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Spin Preview", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Target RPM", "kind": "number", "value": 5200, "min_value": 1000, "max_value": 9000, "step": 100, "options": [], "unit": "rpm", "description": ""}
+    ]},
+    {"name": "LockState", "category": "Combat", "keybind": "L", "enabled": true, "description": "把 RMUI LOCK 元素转换为 POLAR 目标锁定指示器。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Lock", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Lock Source", "kind": "mode", "value": "Vision", "min_value": null, "max_value": null, "step": 1.0, "options": ["Vision", "Radar", "Manual"], "unit": "", "description": ""},
+      {"name": "Pulse Locked", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "BuffStatus", "category": "Strategy", "keybind": "None", "enabled": true, "description": "把 RMUI SMLBUFF/LARBUFF/ANTIRO 转换为 POLAR 状态标签。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Small Buff", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Large Buff", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Anti Rotation", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "ProjectileAllowance", "category": "Strategy", "keybind": "None", "enabled": true, "description": "POLAR HUD 风格的发弹允许量显示。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "17mm", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "42mm", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Warn Low", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "JumpPTEWheelLES", "category": "System", "keybind": "None", "enabled": true, "description": "把 RMUI JUP/PTE/WHE/LES 状态元素转换为 POLAR 指示器。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "JUP", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "PTE", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "WHE", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "LES", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "InjuryStatistics", "category": "Strategy", "keybind": "None", "enabled": true, "description": "按住 ~ 查看 Minecraft 服务器式受伤害计分板；裁判累计数据，不重复相加。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Open Injury Statistics", "kind": "action", "value": "Open Injury Statistics", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "MatchSettlement", "category": "Strategy", "keybind": "None", "enabled": true, "description": "Jello 结算面板：血量、击杀、伤害、能量机关及破甲；未知字段不伪造。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Open Settlement", "kind": "action", "value": "Open Settlement", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Auto Open", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "DartPanel", "category": "Strategy", "keybind": "None", "enabled": true, "description": "Jello 飞镖目标、闸门、初速度和冷却面板；操作只保存前端草稿。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Open Dart Panel", "kind": "action", "value": "Open Dart Panel", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "SkillConfiguration", "category": "Strategy", "keybind": "None", "enabled": true, "description": "性能点 / 技能配置；草稿不下发，不改变已同步的性能选择。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Open Skill Configuration", "kind": "action", "value": "Open Skill Configuration", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Chassis Points", "kind": "number", "value": 0, "min_value": 0, "max_value": 100, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Shooter Points", "kind": "number", "value": 0, "min_value": 0, "max_value": 100, "step": 1, "options": [], "unit": "", "description": ""},
+      {"name": "Shooter Draft", "kind": "mode", "value": "Cooling", "min_value": null, "max_value": null, "step": 1.0, "options": ["Cooling", "Rate", "Burst"], "unit": "", "description": ""},
+      {"name": "Chassis Draft", "kind": "mode", "value": "Power", "min_value": null, "max_value": null, "step": 1.0, "options": ["Power", "Energy"], "unit": "", "description": ""}
+    ]},
+    {"name": "MinecraftInventory", "category": "Render", "keybind": "None", "enabled": true, "description": "E 打开 Minecraft 背包；模块拖入九格栏，合成台为技能 / 性能配置。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Open Minecraft Inventory", "kind": "action", "value": "Open Minecraft Inventory", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "ReloadingPanel", "category": "Strategy", "keybind": "None", "enabled": true, "description": "O / I 进入买弹区：实体储备、允许发弹量、左右闸口和补弹草稿。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Open Reloading Panel", "kind": "action", "value": "Open Reloading Panel", "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""},
+      {"name": "Gate Draft", "kind": "mode", "value": "Left", "min_value": null, "max_value": null, "step": 1.0, "options": ["Left", "Right"], "unit": "", "description": ""},
+      {"name": "Quantity Draft", "kind": "number", "value": 50, "min_value": 1, "max_value": 500, "step": 1, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "RuneRingStatus", "category": "Strategy", "keybind": "None", "enabled": true, "description": "官方平均环数 / 灯臂数显示在现有灵动岛；总环数仅作标注推算。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show in Island", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "ResourceIsland", "category": "Strategy", "keybind": "None", "enabled": false, "description": "资源岛状态覆盖层；等待官方数据时不显示假在线。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Status", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "GainZone", "category": "Strategy", "keybind": "None", "enabled": false, "description": "增益点状态覆盖层；等待官方数据时不显示假在线。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Status", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "UWBStatus", "category": "Vision", "keybind": "None", "enabled": false, "description": "UWB 定位状态覆盖层；等待官方数据时不显示假在线。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Status", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "ArmorStatus", "category": "Vision", "keybind": "None", "enabled": false, "description": "装甲模块状态覆盖层；等待官方数据时不显示假在线。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Status", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "WirelessCharging", "category": "Strategy", "keybind": "None", "enabled": false, "description": "无线充电状态覆盖层；等待官方数据时不显示假在线。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Show Status", "kind": "bool", "value": true, "min_value": null, "max_value": null, "step": 1.0, "options": [], "unit": "", "description": ""}
+    ]},
+    {"name": "MinecraftBuffs", "category": "Render", "keybind": "None", "enabled": true, "description": "Minecraft 状态效果图标与持续时间；只显示本机有效官方 Buff。", "bind_capture_hint": "右键模块或使用绑定行", "settings": [
+      {"name": "Icon Scale", "kind": "number", "value": 1.0, "min_value": 0.5, "max_value": 2.0, "step": 0.1, "options": [], "unit": "", "description": ""}
+    ]}
+  ]
+}

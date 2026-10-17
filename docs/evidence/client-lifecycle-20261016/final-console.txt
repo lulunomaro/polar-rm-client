@@ -1,0 +1,264 @@
+RUN [offline] tests/api_freeze_test.py
+[PASS] tests/api_freeze_test.py: 1 explicit assertions passed
+RUN [offline] tests/autoaim_settings_test.py
+[PASS] tests/autoaim_settings_test.py: 31 explicit assertions passed
+RUN [offline] tests/backend_protocol_test.py
+[PASS] tests/backend_protocol_test.py: declared script completion verified (198 counted assertions)
+RUN [offline] tests/dt7_alignment_test.py
+[PASS] tests/dt7_alignment_test.py: declared script completion verified (112 counted assertions)
+RUN [offline] tests/field_candidate_test.py
+[PASS] tests/field_candidate_test.py: declared script completion verified; assertion count unavailable
+RUN [offline] tests/gimbal_host_request_test.py
+[PASS] tests/gimbal_host_request_test.py: 9 explicit assertions passed
+RUN [offline] tests/gpu_compositor_test.py
+[PASS] tests/gpu_compositor_test.py: declared script completion verified; assertion count unavailable
+RUN [offline] tests/hud_batch10_settings_test.py
+[PASS] tests/hud_batch10_settings_test.py: 29 explicit assertions passed
+RUN [offline] tests/hud_batch13_settings_test.py
+[PASS] tests/hud_batch13_settings_test.py: 18 explicit assertions passed
+RUN [offline] tests/hud_batch14_settings_test.py
+[PASS] tests/hud_batch14_settings_test.py: 24 explicit assertions passed
+RUN [offline] tests/hud_batch16_killfx_test.py
+[PASS] tests/hud_batch16_killfx_test.py: 16 explicit assertions passed
+RUN [offline] tests/hud_batch17_crosshair_test.py
+[PASS] tests/hud_batch17_crosshair_test.py: 28 explicit assertions passed
+RUN [offline] tests/hud_batch18_powerguard_test.py
+[PASS] tests/hud_batch18_powerguard_test.py: 39 explicit assertions passed
+RUN [offline] tests/hud_batch19_bufftimeline_test.py
+[PASS] tests/hud_batch19_bufftimeline_test.py: 38 explicit assertions passed
+RUN [offline] tests/hud_batch20_robotoverlay_color_test.py
+[PASS] tests/hud_batch20_robotoverlay_color_test.py: 15 explicit assertions passed
+RUN [offline] tests/hud_batch21_radaroverlay_map_test.py
+[PASS] tests/hud_batch21_radaroverlay_map_test.py: 18 explicit assertions passed
+RUN [offline] tests/hud_batch8_settings_test.py
+[PASS] tests/hud_batch8_settings_test.py: 20 explicit assertions passed
+RUN [offline] tests/hud_batch9_settings_test.py
+[PASS] tests/hud_batch9_settings_test.py: 27 explicit assertions passed
+RUN [offline] tests/hud_overlay_settings_test.py
+[PASS] tests/hud_overlay_settings_test.py: 30 explicit assertions passed
+RUN [offline] tests/hud_status_settings_test.py
+[PASS] tests/hud_status_settings_test.py: 56 explicit assertions passed
+RUN [offline] tests/hud_telemetry_settings_test.py
+[PASS] tests/hud_telemetry_settings_test.py: 26 explicit assertions passed
+RUN [offline] tests/polar_bridge_test.py
+[PASS] tests/polar_bridge_test.py: 185 explicit assertions passed
+RUN [offline] tests/polar_integration_test.py
+[PASS] tests/polar_integration_test.py: 51 explicit assertions passed
+RUN [offline] tests/polar_link_test.py
+[INCOMPLETE] tests/polar_link_test.py: [SKIP] 未找到队内 CRC8_CRC16.py 参考实现，跳过三方对拍
+RUN [offline] tests/polar_selftest_test.py
+[PASS] tests/polar_selftest_test.py: 43 explicit assertions passed
+RUN [offline] tests/polar_spec_test.py
+[PASS] tests/polar_spec_test.py: 43 explicit assertions passed
+RUN [offline] tests/polar_startup_test.py
+[PASS] tests/polar_startup_test.py: 73 explicit assertions passed
+RUN [offline] tests/referee_integration_test.py
+[PASS] tests/referee_integration_test.py: declared script completion verified (263 counted assertions)
+RUN [offline] tests/robot_roles_test.py
+[PASS] tests/robot_roles_test.py: 39 explicit assertions passed
+RUN [offline] tests/settings_doc_consistency_test.py
+[PASS] tests/settings_doc_consistency_test.py: 7 explicit assertions passed
+RUN [offline] tests/smoke_test.py
+[PASS] tests/smoke_test.py: 71 explicit assertions passed
+RUN [offline] tests/startup_black_hole_test.py
+[PASS] tests/startup_black_hole_test.py: 7 unittest tests passed
+RUN [offline] tests/student_frontend_test.py
+[PASS] tests/student_frontend_test.py: 90 explicit assertions passed
+RUN [offline] tests/test_animation_pacing_regressions.py
+[PASS] tests/test_animation_pacing_regressions.py: 15 unittest tests passed
+RUN [offline] tests/test_api_freeze_platform_regressions.py
+[PASS] tests/test_api_freeze_platform_regressions.py: 8 unittest tests passed
+RUN [offline] tests/test_audio_replay_regressions.py
+[PASS] tests/test_audio_replay_regressions.py: 17 unittest tests passed
+RUN [offline] tests/test_background_display_locale.py
+[PASS] tests/test_background_display_locale.py: 2 unittest tests passed
+RUN [offline] tests/test_binding_restore_quality.py
+[PASS] tests/test_binding_restore_quality.py: 14 unittest tests passed
+RUN [offline] tests/test_build_safety_regressions.py
+[PASS] tests/test_build_safety_regressions.py: 22 unittest tests passed
+RUN [offline] tests/test_cc_worker_dispatch.py
+[PASS] tests/test_cc_worker_dispatch.py: 8 unittest tests passed
+RUN [offline] tests/test_clickgui_background_dismiss.py
+[PASS] tests/test_clickgui_background_dismiss.py: 14 unittest tests passed
+RUN [offline] tests/test_clickgui_frame_contract.py
+[PASS] tests/test_clickgui_frame_contract.py: 17 unittest tests passed
+RUN [offline] tests/test_controller_angle_integration.py
+[PASS] tests/test_controller_angle_integration.py: 14 unittest tests passed
+RUN [offline] tests/test_controller_angle_safety_review.py
+[PASS] tests/test_controller_angle_safety_review.py: 24 unittest tests passed
+RUN [offline] tests/test_controller_frame_regressions.py
+[PASS] tests/test_controller_frame_regressions.py: 15 unittest tests passed
+RUN [offline] tests/test_cs2_buy_matrix.py
+[PASS] tests/test_cs2_buy_matrix.py: 7 unittest tests passed
+RUN [offline] tests/test_cs2_crosshair_import.py
+[PASS] tests/test_cs2_crosshair_import.py: 23 unittest tests passed
+RUN [offline] tests/test_cs2_match_strip_style.py
+[PASS] tests/test_cs2_match_strip_style.py: 18 unittest tests passed
+RUN [offline] tests/test_cs2_personal_pack.py
+[PASS] tests/test_cs2_personal_pack.py: 15 unittest tests passed
+RUN [offline] tests/test_cs2_settings_center.py
+[PASS] tests/test_cs2_settings_center.py: 12 unittest tests passed
+RUN [offline] tests/test_cs2_source_assets.py
+[PASS] tests/test_cs2_source_assets.py: 6 unittest tests passed
+RUN [offline] tests/test_cs_crosshair_target_bounds.py
+[PASS] tests/test_cs_crosshair_target_bounds.py: 11 unittest tests passed
+RUN [offline] tests/test_cs_crosshair_visibility.py
+[PASS] tests/test_cs_crosshair_visibility.py: 11 unittest tests passed
+RUN [offline] tests/test_decoder_lifecycle_quality.py
+[PASS] tests/test_decoder_lifecycle_quality.py: 14 unittest tests passed
+RUN [offline] tests/test_device_manager_nonblocking.py
+[PASS] tests/test_device_manager_nonblocking.py: 7 unittest tests passed
+RUN [offline] tests/test_dt7_worker_dispatch.py
+[PASS] tests/test_dt7_worker_dispatch.py: 13 unittest tests passed
+RUN [offline] tests/test_economy_display_locale.py
+[PASS] tests/test_economy_display_locale.py: 10 unittest tests passed
+RUN [offline] tests/test_escape_menu.py
+[PASS] tests/test_escape_menu.py: 13 unittest tests passed
+RUN [offline] tests/test_field_log_lifecycle_quality.py
+[PASS] tests/test_field_log_lifecycle_quality.py: 18 unittest tests passed
+RUN [offline] tests/test_framebuffer_generation.py
+[PASS] tests/test_framebuffer_generation.py: 12 unittest tests passed
+RUN [offline] tests/test_fullscreen_composition.py
+[PASS] tests/test_fullscreen_composition.py: 15 unittest tests passed
+RUN [offline] tests/test_fullscreen_input_extended.py
+[PASS] tests/test_fullscreen_input_extended.py: 12 unittest tests passed
+RUN [offline] tests/test_gpu_warmup_budget.py
+[PASS] tests/test_gpu_warmup_budget.py: 10 unittest tests passed
+RUN [offline] tests/test_hero_display_locale.py
+[PASS] tests/test_hero_display_locale.py: 9 unittest tests passed
+RUN [offline] tests/test_hud_display_locale.py
+[PASS] tests/test_hud_display_locale.py: 14 unittest tests passed
+RUN [offline] tests/test_inventory_text_crosshair_scale.py
+[PASS] tests/test_inventory_text_crosshair_scale.py: 8 unittest tests passed
+RUN [offline] tests/test_jello_atlas_pages.py
+[PASS] tests/test_jello_atlas_pages.py: 10 unittest tests passed
+RUN [offline] tests/test_jello_description_wrapping.py
+[PASS] tests/test_jello_description_wrapping.py: 8 unittest tests passed
+RUN [offline] tests/test_jello_settings_keyboard.py
+[PASS] tests/test_jello_settings_keyboard.py: 15 unittest tests passed
+RUN [offline] tests/test_kill_asset_filtering.py
+[PASS] tests/test_kill_asset_filtering.py: 6 unittest tests passed
+RUN [offline] tests/test_kill_audio_regressions.py
+[PASS] tests/test_kill_audio_regressions.py: 22 unittest tests passed
+RUN [offline] tests/test_kill_selector_regressions.py
+[PASS] tests/test_kill_selector_regressions.py: 3 unittest tests passed
+RUN [offline] tests/test_lazy_settings_state.py
+[PASS] tests/test_lazy_settings_state.py: 21 unittest tests passed
+RUN [offline] tests/test_match_strip_locale.py
+[PASS] tests/test_match_strip_locale.py: 9 unittest tests passed
+RUN [offline] tests/test_minecraft_cjk_readability.py
+[PASS] tests/test_minecraft_cjk_readability.py: 11 unittest tests passed
+RUN [offline] tests/test_minecraft_lossless_upload_crop.py
+[PASS] tests/test_minecraft_lossless_upload_crop.py: 1 unittest tests passed
+RUN [offline] tests/test_module_list_cjk_layout.py
+[PASS] tests/test_module_list_cjk_layout.py: 13 unittest tests passed
+RUN [offline] tests/test_mqtt_lifecycle_nonblocking.py
+[PASS] tests/test_mqtt_lifecycle_nonblocking.py: 19 unittest tests passed
+RUN [offline] tests/test_polar_async_connect.py
+[PASS] tests/test_polar_async_connect.py: 5 unittest tests passed
+RUN [offline] tests/test_render_performance_regressions.py
+[PASS] tests/test_render_performance_regressions.py: 15 unittest tests passed
+RUN [offline] tests/test_serial_codec_regressions.py
+[PASS] tests/test_serial_codec_regressions.py: 11 unittest tests passed
+RUN [offline] tests/test_serial_lifecycle_regressions.py
+[PASS] tests/test_serial_lifecycle_regressions.py: 19 unittest tests passed
+RUN [offline] tests/test_settings_audit_quality.py
+[PASS] tests/test_settings_audit_quality.py: 7 unittest tests passed
+RUN [offline] tests/test_settings_cold_start.py
+[PASS] tests/test_settings_cold_start.py: 13 unittest tests passed
+RUN [offline] tests/test_startup_display_locale.py
+[PASS] tests/test_startup_display_locale.py: 10 unittest tests passed
+RUN [offline] tests/test_startup_settings_fullscreen.py
+[PASS] tests/test_startup_settings_fullscreen.py: 19 unittest tests passed
+RUN [offline] tests/test_state_overlay_contract.py
+[PASS] tests/test_state_overlay_contract.py: 11 unittest tests passed
+RUN [offline] tests/test_status_display_locale.py
+[PASS] tests/test_status_display_locale.py: 13 unittest tests passed
+RUN [offline] tests/test_test_registry.py
+[PASS] tests/test_test_registry.py: 32 unittest tests passed
+RUN [offline] tests/test_tongji_postprocess_performance.py
+[PASS] tests/test_tongji_postprocess_performance.py: 9 unittest tests passed
+RUN [offline] tests/test_transport_safety_regressions.py
+[PASS] tests/test_transport_safety_regressions.py: 36 unittest tests passed
+RUN [offline] tests/test_ui_cjk_font_readability.py
+[PASS] tests/test_ui_cjk_font_readability.py: 17 unittest tests passed
+RUN [offline] tests/test_ui_localization.py
+[PASS] tests/test_ui_localization.py: 15 unittest tests passed
+RUN [offline] tests/test_ui_state_regressions.py
+[PASS] tests/test_ui_state_regressions.py: 30 unittest tests passed
+RUN [offline] tests/top_match_bar_integration_test.py
+[PASS] tests/top_match_bar_integration_test.py: 23 unittest tests passed
+RUN [offline] tests/top_match_bar_minecraft_fusion_test.py
+[PASS] tests/top_match_bar_minecraft_fusion_test.py: 20 unittest tests passed
+RUN [offline] tests/top_match_bar_motion_test.py
+[PASS] tests/top_match_bar_motion_test.py: 6 unittest tests passed
+RUN [offline] tests/top_match_bar_qt_test.py
+[PASS] tests/top_match_bar_qt_test.py: 21 unittest tests passed
+RUN [offline] tests/top_match_bar_rm_integration_test.py
+[PASS] tests/top_match_bar_rm_integration_test.py: 29 unittest tests passed
+RUN [offline] tests/top_match_bar_test.py
+[PASS] tests/top_match_bar_test.py: 31 unittest tests passed
+RUN [firmware] tools/dt7_link/test_cc_link.py
+[SKIP] tools/dt7_link/test_cc_link.py: SKIP: 找不到 /workspace/scratch/8fc313400f06/client-quality/.firmware-not-selected/components/support/CRC8_CRC16.c
+RUN [firmware] tools/dt7_link/test_dbus_frame_vs_firmware.py
+[SKIP] tools/dt7_link/test_dbus_frame_vs_firmware.py: SKIP: 找不到固件源码（/workspace/scratch/8fc313400f06/client-quality/.firmware-not-selected/application/other/remote_control.c）
+RUN [firmware] tools/dt7_link/test_dt7_link.py
+[INCOMPLETE] tools/dt7_link/test_dt7_link.py: [SKIP] 没有固件树 | [SKIP] 找不到 D:\rmbuild\dump12\dump.cs
+RUN [offline] tools/dt7_link/test_dt7_release_flush.py
+[PASS] tools/dt7_link/test_dt7_release_flush.py: 32 explicit assertions passed
+RUN [offline] tools/dt7_link/test_dt7_review_fixes.py
+[PASS] tools/dt7_link/test_dt7_review_fixes.py: 24 explicit assertions passed
+RUN [offline] tools/dt7_link/test_dt7_sweep.py
+[PASS] tools/dt7_link/test_dt7_sweep.py: 14 explicit assertions passed
+RUN [firmware] tools/dt7_link/test_dt7_ui_selftest.py
+[INCOMPLETE] tools/dt7_link/test_dt7_ui_selftest.py: [SKIP] 没有固件树：交叉核对未运行
+RUN [offline] tools/dt7_link/test_end_to_end_c_link.py
+[PASS] tools/dt7_link/test_end_to_end_c_link.py: 27 explicit assertions passed
+RUN [offline] tools/dt7_link/test_frame_diff.py
+[PASS] tools/dt7_link/test_frame_diff.py: 23 explicit assertions passed
+RUN [offline] tools/dt7_link/test_radio_km_client.py
+[PASS] tools/dt7_link/test_radio_km_client.py: 57 explicit assertions passed
+RUN [offline] tools/dt7_link/test_vcp_listen.py
+[PASS] tools/dt7_link/test_vcp_listen.py: 17 explicit assertions passed
+RUN [offline] tools/dt7_link/test_wireless_selftest.py
+[PASS] tools/dt7_link/test_wireless_selftest.py: 24 explicit assertions passed
+RUN [firmware] tools/firmware/controller_angle/test_controller_angle.py
+[SKIP] tools/firmware/controller_angle/test_controller_angle.py: SKIP: set POLAR_REFEREE_REFERENCE to a read-only StandardRobot++ checkout
+RUN [firmware] tools/firmware/gimbal_host/test_gimbal_host.py
+[SKIP] tools/firmware/gimbal_host/test_gimbal_host.py: SKIP: 固件副本不存在（/workspace/scratch/8fc313400f06/client-quality/.firmware-not-selected）
+RUN [firmware] tools/firmware/host_bridge/test_host_bridge.py
+[SKIP] tools/firmware/host_bridge/test_host_bridge.py: SKIP: 固件副本不存在（/workspace/scratch/8fc313400f06/client-quality/.firmware-not-selected）
+RUN [firmware] tools/firmware/host_bridge/test_rc_key_ledger.py
+[SKIP] tools/firmware/host_bridge/test_rc_key_ledger.py: SKIP: 固件副本不存在（/workspace/scratch/8fc313400f06/client-quality/.firmware-not-selected）
+RUN [firmware] tools/firmware/host_bridge/test_usb_receiver_portable.py
+[SKIP] tools/firmware/host_bridge/test_usb_receiver_portable.py: SKIP: supply a disposable prepared StandardRobot++ fixture
+RUN [firmware] tools/firmware/km_link/test_km_link.py
+[SKIP] tools/firmware/km_link/test_km_link.py: SKIP: 固件树或头文件不齐（先跑 prepare_hero_build.py）
+RUN [firmware] tools/firmware/km_link/test_km_payload_layout.py
+[SKIP] tools/firmware/km_link/test_km_payload_layout.py: SKIP: 固件树里还没有 application/typedef/host_km_link.h（先跑 prepare_hero_build.py）
+RUN [offline] tools/firmware/km_link/test_serial_parsers_portable.py
+[PASS] tools/firmware/km_link/test_serial_parsers_portable.py: 13 unittest tests passed
+RUN [firmware] tools/firmware/motion_feedback/test_motion_feedback.py
+[SKIP] tools/firmware/motion_feedback/test_motion_feedback.py: SKIP: 固件副本不存在（/workspace/scratch/8fc313400f06/client-quality/.firmware-not-selected）
+RUN [firmware] tools/firmware/referee_rx/test_referee_rx.py
+[SKIP] tools/firmware/referee_rx/test_referee_rx.py: SKIP: set POLAR_REFEREE_REFERENCE to the explicitly selected read-only firmware reference
+RUN [firmware] tools/firmware/test_patch_logic.py
+[INCOMPLETE] tools/firmware/test_patch_logic.py: [INCOMPLETE] Legacy baseline patch test requires installation; excluded from read-only target validation
+RUN [firmware] tools/firmware/test_patch_real_headers.py
+[SKIP] tools/firmware/test_patch_real_headers.py: SKIP: 固件副本不存在（/workspace/scratch/8fc313400f06/client-quality/.firmware-not-selected）
+RUN [offline] tools/firmware/test_prepare_hero_options.py
+[PASS] tools/firmware/test_prepare_hero_options.py: 56 explicit assertions passed
+RUN [offline] tools/test_car_bridge_loopback.py
+[PASS] tools/test_car_bridge_loopback.py: 13 explicit assertions passed
+RUN [offline] tools/test_car_bridge_transport.py
+[PASS] tools/test_car_bridge_transport.py: 14 explicit assertions passed
+RUN [offline] tools/test_mqtt_link_settings.py
+[PASS] tools/test_mqtt_link_settings.py: 16 explicit assertions passed
+RUN [offline] tools/test_port_picking.py
+[PASS] tools/test_port_picking.py: 30 explicit assertions passed
+RUN [offline] tools/test_settings_are_read.py
+[PASS] tools/test_settings_are_read.py: 11 explicit assertions passed
+[PASS] 二级界面设置项孤儿数不超基线: 1 explicit assertions passed
+
+NO-GO (selected scope): 115 PASS, 12 SKIP, 4 INCOMPLETE, 0 FAIL
+Selected checks only. Mock/offline success is not hardware or field qualification.

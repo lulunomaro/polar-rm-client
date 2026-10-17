@@ -1,0 +1,6 @@
+test_two_native_acquisitions_stay_owned_until_both_release (__main__.IndependentThumbnailOwnership.test_two_native_acquisitions_stay_owned_until_both_release) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.103s
+
+OK

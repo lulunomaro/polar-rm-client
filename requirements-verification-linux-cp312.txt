@@ -1,0 +1,27 @@
+# Exact Linux x86_64 / CPython 3.12 verification wheels, observed 2026-10-16.
+# This is a local/offscreen test environment, not a Windows release lock.
+# Native desktop GL, firmware checkout, compiler and runtime assets are separate prerequisites.
+--index-url https://pypi.org/simple
+--only-binary=:all:
+--require-hashes
+
+# PySide6-6.8.2-cp39-abi3-manylinux_2_28_x86_64.whl
+PySide6==6.8.2 --hash=sha256:9195c8e980bd35752ad1439750df63ad3bc74064114cb020deb35b5052e967e4
+# PySide6_Addons-6.8.2-cp39-abi3-manylinux_2_28_x86_64.whl
+PySide6-Addons==6.8.2 --hash=sha256:bf27526c48e7fab7180754957f6b2bbf2226285298043dd54533a97006e65542
+# PySide6_Essentials-6.8.2-cp39-abi3-manylinux_2_28_x86_64.whl
+PySide6-Essentials==6.8.2 --hash=sha256:341d3023da4d74605e354974346234007065208b40740732c6f69e1d33e70835
+# shiboken6-6.8.2-cp39-abi3-manylinux_2_28_x86_64.whl
+shiboken6==6.8.2 --hash=sha256:924c23bed7c0b6ff8a308f4e12e5a9681f720c22d1be339cac01591feb7ebb32
+# numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+numpy==2.5.4 --hash=sha256:fbde6962867ee75b48b0ee29b2b9372ec5d617799dbaf38e82dc0596f2f7738a
+# opencv_python-5.0.0.93-cp37-abi3-manylinux_2_28_x86_64.whl
+opencv-python==5.0.0.93 --hash=sha256:c8de2dec111122a02e8beb28e16c31904992dfd6186560b142a92c71403c1039
+# openvino-2026.4.1-22982-cp312-cp312-manylinux_2_28_x86_64.whl
+openvino==2026.4.1 --hash=sha256:6b4375c17ddcac83a5180349e2e2bb811185c261066e2a920659892d58ef0e3b
+# openvino_telemetry-2025.2.0-py3-none-any.whl
+openvino-telemetry==2025.2.0 --hash=sha256:bcb667e83a44f202ecf4cfa49281715c6d7e21499daec04ff853b7f964833599
+# paho_mqtt-2.1.0-py3-none-any.whl
+paho-mqtt==2.1.0 --hash=sha256:6db9ba9b34ed5bc6b6e3812718c7e06e2fd7444540df2455d2c51bd58808feee
+# pyserial-3.5-py2.py3-none-any.whl
+pyserial==3.5 --hash=sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0

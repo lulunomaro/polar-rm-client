@@ -1,0 +1,40 @@
+Render stage startup.render failed: TypeError: draw failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 315, in draw
+    functions.glDrawArrays(self._GL_TRIANGLE_STRIP, 0, 4)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: draw failed
+.Render stage startup.render.cleanup.texture.1 failed: OSError: unit1 driver release failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_texture_units.py", line 39, in release
+    raise self.release_error
+OSError: unit1 driver release failed
+.Render stage startup.render failed: TypeError: failed after binding previous
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 297, in draw
+    bindings.bind_texture(self.previous, 1)
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 152, in bind_texture
+    texture.bind(unit)
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_texture_units.py", line 32, in bind
+    raise self.bind_error
+TypeError: failed after binding previous
+...
+----------------------------------------------------------------------
+Ran 5 tests in 0.006s
+
+OK

@@ -1,0 +1,13 @@
+F
+======================================================================
+FAIL: test_delayed_start_cannot_open_native_capture_after_close_completed (test_wallpaper_admission_audit.WallpaperAdmissionAuditTests.test_delayed_start_cannot_open_native_capture_after_close_completed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/next-audit/tests/test_wallpaper_admission_audit.py", line 70, in test_delayed_start_cannot_open_native_capture_after_close_completed
+    self.assertNotIn(True, late_native_opens,
+AssertionError: True unexpectedly found in [True] : native capture opened after close already certified retirement
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+FAILED (failures=1)

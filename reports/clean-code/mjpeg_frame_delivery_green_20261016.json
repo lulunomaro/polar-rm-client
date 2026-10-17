@@ -1,0 +1,154 @@
+{
+  "baseline": "66deab1d34ea56e0e9ce07812ef6b565491b704f",
+  "red_checkpoints": [
+    "69ae950",
+    "c34a8e3"
+  ],
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "production_file": "rm_client/backend/video_backend.py",
+  "production_sha256": "a970a581c158e7230c2a9c9126a48d9e5f35915e5687b1fbc4504bf158f1e35c",
+  "checks": [
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_mjpeg_frame_delivery.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 8 tests in 0.029s",
+        "OK"
+      ],
+      "output_sha256": "988ce78dcbc6ad958a909868f1540f1f8e04035fd67fb203dd52fc889230c6b1"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_decoder_lifecycle_quality.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 14 tests in 0.607s",
+        "OK"
+      ],
+      "output_sha256": "f80c2cd2996897d57425c57affd4d6679272ea76efe6b43b0f7aa48e9f29e8c2"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_video*.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 35 tests in 2.121s",
+        "OK"
+      ],
+      "output_sha256": "723a7dce807d759024d3a4e9b99faff2ea00ef589809014efe88edba4de40aa1"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_backend_video_source_nonblocking.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 14 tests in 0.440s",
+        "OK"
+      ],
+      "output_sha256": "35d173988e633fc645f418fb955177511d143ea5b6ae5e90a1ab14d5663cb775"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_normal_video*.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 49 tests in 1.853s",
+        "OK"
+      ],
+      "output_sha256": "2356239846712448d5b91a8b287f2ba42624fda5c98a6c9c3f9b81e1dd464653"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_camera*.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 50 tests in 2.962s",
+        "OK"
+      ],
+      "output_sha256": "5e32f33d539028953bbb3720e64ef0323d6dde36db6a5e04bbd47d97d9e4eddf"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_transport_safety_regressions.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 36 tests in 0.280s",
+        "OK"
+      ],
+      "output_sha256": "a82f74467e1f2c38b50e34a6bdfe6b952f24bcaeae1b6a23a9230ed549bfb61e"
+    },
+    {
+      "arguments": [
+        "tests/api_freeze_test.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "PASS: \u4e0e\u57fa\u7ebf api_freeze_baseline.json \u4e00\u81f4"
+      ],
+      "output_sha256": "2f0e160ed9c412701a04976e0599981c5f3964f1c3545d3a930ea5d5da382b60"
+    },
+    {
+      "arguments": [
+        "tools/quality_gate.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "PASS: static quality gates; 213 Python modules, 3397 functions, 0 initialization cycles; no runtime or hardware qualification"
+      ],
+      "output_sha256": "fc736e9e4721d32b1aa7b5db502c4dd640e46279dbd1829c5b97013b5c478078"
+    }
+  ],
+  "limits": [
+    "Real OpenCV JPEG decoding and inert/native-controlled lifecycle tests; no camera device, network video, ffmpeg process or GPU output qualification."
+  ]
+}

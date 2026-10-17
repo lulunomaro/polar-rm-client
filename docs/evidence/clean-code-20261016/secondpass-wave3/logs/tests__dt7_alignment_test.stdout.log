@@ -1,0 +1,113 @@
+  ok unbound real writer is locked
+  ok flags cannot bypass startup LOCKED
+  ok DT7 requires authoritative stage even outside official limit mode
+  ok MQTT qualification cannot authorize DT7
+  ok independent capability authorizes transport
+  ok writer owns 30 Hz limiter
+  ok release preempts rate limit
+  ok Arm cannot release E-stop
+  ok qualification cannot release E-stop
+  ok ESTOP denies motion
+  ok dedicated neutral bypass works in ESTOP
+  ok neutral bypass cannot forge nonzero input
+  ok E-stop release never resumes movement
+  ok qualification allows X
+  ok probe cannot include motion/firing {'pressed_bits': 1}
+  ok probe cannot include motion/firing {'pressed_bits': 4097}
+  ok probe cannot include motion/firing {'mouse_dx': 1}
+  ok probe cannot include motion/firing {'left': True}
+  ok probe cannot include motion/firing {'right': True}
+  ok probe cannot include motion/firing {'mid': True}
+  ok wrong token denied
+  ok expired token locks
+  ok KMC token has no DT7 scope
+  ok evidence exception fails closed
+  ok probe phase baseline
+  ok probe phase press
+  ok probe phase hold
+  ok pre-send baseline proves key transition
+  ok no-send hold remains separate from physical stop
+  ok stale/future/non-numeric samples rejected
+  ok cached sample cannot establish baseline
+  ok already-held probe cannot self-certify
+  ok real debug key packet advances identity
+  ok invalid readback cannot become neutral/fresh
+  ok invalid readback cannot become neutral/fresh
+  ok invalid readback cannot become neutral/fresh
+  ok invalid readback cannot become neutral/fresh
+  ok invalid readback cannot become neutral/fresh
+  ok invalid readback cannot become neutral/fresh
+  ok unrelated telemetry does not refresh key sample
+  ok probe duration is bounded
+  ok probe phase baseline
+  ok probe phase press
+  ok probe phase hold
+  ok pre-send baseline proves key transition
+  ok no-send hold remains separate from physical stop
+  ok signed robot/profile-bound fixture grants independent capability
+  ok fixture reload is authenticated
+  ok generic runner cannot mint DT7 link proof
+  ok configuration cannot mint safety proof
+  ok probe phase baseline
+  ok probe phase press
+  ok probe phase hold
+  ok pre-send baseline proves key transition
+  ok no-send hold remains separate from physical stop
+  ok mock probe cannot mint field proof
+  ok different firmware rejected
+  ok different profile rejected
+  ok invalid physical bound cannot pass True
+  ok invalid physical bound cannot pass nan
+  ok invalid physical bound cannot pass 501
+  ok invalid physical bound cannot pass -1
+  ok DT7 dynamic evidence expires at 24 hours
+  ok expired link proof cannot support safety proof
+  ok all UI flags still cannot transmit while locked
+  ok readiness consumes both DT7 authorization and live route
+  ok probe phase baseline
+  ok probe phase press
+  ok probe phase hold
+  ok pre-send baseline proves key transition
+  ok no-send hold remains separate from physical stop
+  ok manager arms only authenticated DT7 fixtures
+  ok authorized real DT7 fixture satisfies DT7 gates only
+  ok real TX disabled cannot claim usable DT7 route
+  ok W traverses runtime endpoint
+  ok default fire gate blocks mouse buttons
+  ok explicit fire gate enables both mouse buttons
+  ok lock clears local and wire inputs
+  ok direct writer cannot bypass manager lock
+  ok manual re-arm required
+  ok short write preserves neutral retry through callback
+  ok locked reconnect transmits only pending neutral
+  ok reconnect never replays old movement
+  ok runtime robot identity change revokes DT7
+  ok fixture can explicitly re-arm after identity restored
+  ok failed old-port release retains the original writer
+  ok failed port change cannot arm or discard pending zero
+  ok port replacement neutralizes old writer then locks
+  ok new port remains locked
+  ok expired evidence emits no physical motion frame
+  ok worker expiry notification locks without a manager tick
+  ok async fixture worker exits after neutral cleanup
+  ok LabDebug scenario exposes the lab DT7 drive switch
+  ok OfficialEvent keeps the lab DT7 drive switch closed
+  ok OfficialEvent still refuses DT7 transport while LOCKED
+  ok CampusSimulation keeps DT7 drive closed and transport denied
+  ok lab drive opens DT7 egress while the match state machine stays LOCKED
+  ok lab drive waives the qualification evidence gate
+  ok OfficialEvent still denies DT7 without its own dt7_control capability
+  ok W reaches the DT7 wire without any qualification fixture
+  ok lab drive still obeys the 30 Hz writer limit
+  ok lab drive keeps the fire gate closed by default
+  ok explicit fire gate still controls lab mouse buttons
+  ok lab switch never opens the MQTT driving topic
+  ok release lands a neutral frame on the DT7 wire
+  ok E-stop still denies lab DT7 drive
+  ok E-stop drops the lab route and lands neutral
+  ok portable DT7 profile belongs in defaults
+  ok missing portable profile is fail-closed
+  ok profile binding ignores metadata/path only
+  ok wire-semantic profile changes invalidate proof
+  ok release explicitly copies profile from build commit
+DT7 alignment PASS: 112 checks; OFFLINE ONLY / NOT READY FOR REAL MATCH

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 import math
-from typing import Any
+from typing import Any, Callable
 
 
 class OverlayKind(str, Enum):
@@ -31,6 +31,11 @@ class OverlayCoordinator:
     modal: OverlayKind | None = None
     chat_input: bool = False
     radial_active: bool = False
+    on_input_claimed: Callable[[], None] | None = field(default=None, repr=False, compare=False)
+
+    def _notify_input_claimed(self) -> None:
+        if self.on_input_claimed is not None:
+            self.on_input_claimed()
 
     @staticmethod
     def top_hud_safe_area(
@@ -67,9 +72,12 @@ class OverlayCoordinator:
 
     def request_modal(self, kind: OverlayKind) -> OverlayKind | None:
         previous = self.modal
+        changed = self.modal != kind or self.chat_input or self.radial_active
         self.modal = kind
         self.chat_input = False
         self.radial_active = False
+        if changed:
+            self._notify_input_claimed()
         return previous
 
     def close_modal(self, kind: OverlayKind | None = None) -> bool:
@@ -80,9 +88,12 @@ class OverlayCoordinator:
 
     def begin_chat(self) -> OverlayKind | None:
         previous = self.modal
+        changed = not self.chat_input or self.modal is not None or self.radial_active
         self.modal = None
         self.radial_active = False
         self.chat_input = True
+        if changed:
+            self._notify_input_claimed()
         return previous
 
     def end_chat(self) -> None:
@@ -91,7 +102,10 @@ class OverlayCoordinator:
     def begin_radial(self) -> bool:
         if self.chat_input or self.modal is not None:
             return False
+        changed = not self.radial_active
         self.radial_active = True
+        if changed:
+            self._notify_input_claimed()
         return True
 
     def end_radial(self) -> None:

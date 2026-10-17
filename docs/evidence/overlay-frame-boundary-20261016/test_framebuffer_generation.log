@@ -1,0 +1,46 @@
+...........Render stage resize failed: RuntimeError: GPU compositor FBO creation failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-frame-boundary/rm_client/ui/gpu_frame_compositor.py", line 382, in _run_pass
+    accepted = bool(render())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-frame-boundary/rm_client/ui/gpu_frame_compositor.py", line 432, in <lambda>
+    "resize", lambda: self._allocate_size(width, height, device_pixel_ratio),
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-frame-boundary/rm_client/ui/gpu_frame_compositor.py", line 508, in _allocate_size
+    raise RuntimeError("GPU compositor FBO creation failed")
+RuntimeError: GPU compositor FBO creation failed
+................
+----------------------------------------------------------------------
+Ran 27 tests in 1.322s
+
+OK
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories

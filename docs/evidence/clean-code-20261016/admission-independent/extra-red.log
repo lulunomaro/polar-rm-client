@@ -1,0 +1,53 @@
+test_admitted_late_error_after_cancel_keeps_inflight_and_counts (__main__.IndependentAdmissionReview.test_admitted_late_error_after_cancel_keeps_inflight_and_counts) ... FAIL
+test_angle_late_start_error_keeps_old_config_until_native_close (__main__.IndependentAdmissionReview.test_angle_late_start_error_keeps_old_config_until_native_close) ... ok
+test_angle_rejection_allows_same_configuration_retry_without_phantom_owner (__main__.IndependentAdmissionReview.test_angle_rejection_allows_same_configuration_retry_without_phantom_owner) ... FAIL
+test_concurrent_producers_and_close_during_unadmitted_rejection (__main__.IndependentAdmissionReview.test_concurrent_producers_and_close_during_unadmitted_rejection) ... ok
+test_repeated_constructor_rejection_recovery_preserves_loss_and_redacts (__main__.IndependentAdmissionReview.test_repeated_constructor_rejection_recovery_preserves_loss_and_redacts) ... ERROR
+
+======================================================================
+ERROR: test_repeated_constructor_rejection_recovery_preserves_loss_and_redacts (__main__.IndependentAdmissionReview.test_repeated_constructor_rejection_recovery_preserves_loss_and_redacts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/review-admission-evidence/test_independent_admission.py", line 121, in test_repeated_constructor_rejection_recovery_preserves_loss_and_redacts
+    self.assertFalse(logger.emit('first'))
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/review-admission-red/rm_client/backend/field_log.py", line 140, in emit
+    start_worker = self._worker = threading.Thread(
+                                  ^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: private payload and /private/path
+
+======================================================================
+FAIL: test_admitted_late_error_after_cancel_keeps_inflight_and_counts (__main__.IndependentAdmissionReview.test_admitted_late_error_after_cancel_keeps_inflight_and_counts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/review-admission-evidence/test_independent_admission.py", line 97, in test_admitted_late_error_after_cancel_keeps_inflight_and_counts
+    self.assertTrue(state['worker_active'])
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_angle_rejection_allows_same_configuration_retry_without_phantom_owner (__main__.IndependentAdmissionReview.test_angle_rejection_allows_same_configuration_retry_without_phantom_owner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/review-admission-evidence/test_independent_admission.py", line 157, in test_angle_rejection_allows_same_configuration_retry_without_phantom_owner
+    self.assertEqual(relay.owned_ports, ())
+AssertionError: Tuples differ: ('REVIEW-ANGLE',) != ()
+
+First tuple contains 1 additional elements.
+First extra element 0:
+'REVIEW-ANGLE'
+
+- ('REVIEW-ANGLE',)
++ ()
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.004s
+
+FAILED (failures=2, errors=1)

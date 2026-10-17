@@ -1,0 +1,44 @@
+
+--- 1) 车与遥控器同时插着（现场最常见的形态）---
+[ OK ] DT7 的 Auto 必须挑 DJI 那个口，而不是分最高的机器人口  COM9
+[ OK ] 运行期链路解析到同一个口
+[ OK ] 显式把 DT7 指到车的口 -> 拒发并说清为什么  COM3 是机器人本体的 CDC 串口（USB 0483:5720），不是遥控器；往那儿写只会得到假的 NO-CHANG
+[ OK ] 真要这么接时能显式放行（不把工具做成死路）  ('COM3', '')
+[ OK ] 下拉里不混进车的口  ['Auto', 'COM9']
+[ OK ] CC 的 Auto 挑 FTDI（选手端只认它）  COM7
+[ OK ] CC 打分把车与遥控器的口都判负
+[ OK ] cc_link 有 resolved_port 字段（缺了会在真发那刻抛 AttributeError）
+
+--- 2) 只插了车、没插遥控器 ---
+[ OK ] Auto 退回 Stub，绝不退到机器人口上
+[ OK ] 错误信息说人话（不是 could not open port 'Auto'）  没找到 DT7 的 DJI USB Virtual COM（VID_FFF0&PID_0008）。请把遥控器 USB 插
+
+--- 3) 两个 DJI 口（双遥控器）---
+[ OK ] 同分两个候选 -> 不猜，返回 Stub 让人显式选
+
+--- 3b) 两条链路绝不能互相抢口 ---
+[ OK ] 车与遥控器同时插着：A 路的 Auto 选车，不选遥控器  COM3
+[ OK ] 同一套设备下 DT7 的 Auto 选遥控器  COM9
+[ OK ] 车的候选保留人工兜底（含所有检出的口）  ['Stub', 'Auto', 'COM1', 'COM3', 'COM5', 'COM9', 'COM7']
+[ OK ] 遥控器的候选只列 DJI 的口（少一个选错的机会）  ['Auto', 'COM9']
+[ OK ] 真把 DT7 指到车的口时：拒发并说清原因  COM3 是机器人本体的 CDC 串口（USB 0483:5720），不是遥控器；往那儿写只会得到假的 NO-CHANG
+[ OK ] 中文描述让车只剩 30 分时，A 路也不许退而选遥控器（DT7 判负）  COM3
+[ OK ] 此时 DT7 仍要选到遥控器  COM9
+[ OK ] 只插了遥控器时 A 路必须 Stub，而不是抓一个能用的口凑数  Stub
+
+--- 4) 显式端口一律原样 ---
+[ OK ] DT7 显式 COM7 不重解析
+[ OK ] CC 显式 COM8 不重解析
+[ OK ] 空值退回 Stub（不会拿空串去开端口）
+[ OK ] profile 里默认值不是 Auto 时也不会被改口
+
+--- 5) DT7 比客户端晚插上：不许逼操作员重启程序 ---
+[ OK ] 重扫把 DT7 那个口塞进候选  ['Auto', 'COM9']
+[ OK ] 车的口不许混进 DT7 候选（DT7 只认 DJI）  ['Auto', 'COM9']
+[ OK ] 车的口仍然在 A 路候选里  ['Stub', 'Auto', 'COM1', 'COM3', 'COM5', 'COM9']
+[ OK ] 重扫报出人话差异（不是返回 None 让人猜）  Port: Stub, COM1, COM3, COM5, COM9；DT7 Port: COM9；CC Port: Stub, COM1, COM3, COM5, COM9
+[ OK ] 再扫一次是幂等的（没有变化就不报）
+[ OK ] 口现在不在，但它是当前值 —— 必须保住  ['Auto', 'COM9']
+[ OK ] 重扫不改当前值（刷新候选不该改变行为）
+
+挑口识别全部通过

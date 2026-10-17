@@ -5,14 +5,39 @@ import logging
 import os
 from pathlib import Path
 import shutil
+import weakref
 from typing import Iterable
 
 from .runtime_paths import RuntimePaths
 
+from shiboken6 import isValid
 from PySide6.QtCore import QObject, QUrl
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer, QSoundEffect, QMediaDevices
 from .audio_preferences import POOLS, selected_output, cue_volume
+
+
+def _effect_status_listener(pool, effect, name):
+    """A native signal must not become a strong owner of its parent pool."""
+    pool_ref, effect_ref = weakref.ref(pool), weakref.ref(effect)
+
+    def changed():
+        owner, voice = pool_ref(), effect_ref()
+        if owner is not None and voice is not None and isValid(owner) and isValid(voice):
+            owner._on_status(name, voice, voice.status())
+
+    return changed
+
+
+def _media_error_listener(pool, player):
+    pool_ref, player_ref = weakref.ref(pool), weakref.ref(player)
+
+    def failed(error, message):
+        owner, voice = pool_ref(), player_ref()
+        if owner is not None and voice is not None and isValid(owner) and isValid(voice):
+            owner._on_media_error(voice, message)
+
+    return failed
 
 
 class ReliableAudioPool(QObject):
@@ -85,7 +110,7 @@ class ReliableAudioPool(QObject):
                 effect = QSoundEffect(self)
                 effect.setAudioDevice(selected_output())
                 effect.statusChanged.connect(
-                    lambda sound=name, voice=effect: self._on_status(sound, voice, voice.status())
+                    _effect_status_listener(self, effect, name)
                 )
                 effect.setSource(QUrl.fromLocalFile(str(path.resolve())))
                 voices.append(effect)
@@ -106,7 +131,7 @@ class ReliableAudioPool(QObject):
                 output.setDevice(selected_output())
                 player = QMediaPlayer(self)
                 player.setAudioOutput(output)
-                player.errorOccurred.connect(lambda error, message, voice=player: self._on_media_error(voice, message))
+                player.errorOccurred.connect(_media_error_listener(self, player))
                 player.setSource(source)
                 voices.append((player, output))
             self._media_effects[name] = voices
@@ -179,7 +204,7 @@ class ReliableAudioPool(QObject):
             output.setDevice(selected_output())
             player = QMediaPlayer(self)
             player.setAudioOutput(output)
-            player.errorOccurred.connect(lambda error, message, voice=player: self._on_media_error(voice, message))
+            player.errorOccurred.connect(_media_error_listener(self, player))
             self._fallback.append((player, output))
             # Use the voice we just created. Taking the old cursor modulo a
             # growing pool selects voice 0 twice, interrupting the first kill

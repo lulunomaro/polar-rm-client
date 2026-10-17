@@ -1,0 +1,8 @@
+.............................................................................................................
+----------------------------------------------------------------------
+Ran 109 tests in 7.882s
+
+OK
+2000 failed-disconnect UI ticks: scans=4, neutral attempts=3, input-clear callbacks=1
+250 real-time 100Hz ticks / 2.500s: scans=4, retries=3, caller median=0.0464ms max=0.3412ms
+fake 19.3ms scan / blocked write: enqueue median=0.0050ms max=0.1482ms, calls=[('scan', 'dt7-writer'), ('open', 'dt7-writer'), ('write', 'dt7-writer'), ('write', 'dt7-writer'), ('close', 'dt7-writer')]

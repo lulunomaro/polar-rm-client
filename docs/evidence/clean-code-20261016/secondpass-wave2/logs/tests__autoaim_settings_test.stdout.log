@@ -1,0 +1,46 @@
+
+--- test_fov_setting_changes_lock_eligibility ---
+[PASS] Fov 能换算出像素半径  -> 549.798704410454
+[PASS] 换算式是 fx*tan(fov/2)（针孔模型精确关系）  -> 549.798704410454 vs 549.798704410454
+[PASS] 85 度时偏 400px 的靶仍可锁定
+[PASS] 收窄到 20 度后，同一个靶被排除（设置项真的影响行为）  -> 105.79618842507898
+[PASS] 中心靶不受影响
+[PASS] 端到端：窄视场角下高置信度的门外靶不会被选中  -> 2
+
+--- test_fov_fails_open_without_calibration ---
+[PASS] 未标定时算不出像素半径
+[PASS] 未标定时不加角度门槛（行为与接线前一致）
+[PASS] 标定分辨率与当前帧不符时不加门
+[PASS] 垃圾 Fov=0.0 归为不加门  -> None
+[PASS] 垃圾 Fov=-30.0 归为不加门  -> None
+[PASS] 垃圾 Fov=400.0 归为不加门  -> None
+[PASS] 垃圾 Fov='abc' 归为不加门  -> None
+
+--- test_priority_changes_target_selection ---
+[PASS] Armor 优先级按置信度选（保持原行为）  -> 12
+[PASS] Distance 优先级按距离选（结果与 Armor 不同 => 设置项生效）  -> 11
+[PASS] Distance 生效时记录 actual，不留旧值  -> Distance
+[PASS] Distance 生效时无降级原因
+
+--- test_priority_degrades_honestly_without_data ---
+[PASS] 无血量数据时降级为按置信度
+[PASS] 降级原因非空（不能静默）  -> 无裁判系统血量数据（未连裁判机或尚未收到血量帧），已按置信度选靶
+[PASS] 降级后 actual 报 Armor 而不是谎称 Health  -> Armor
+[PASS] 有血量数据时优先打残血靶（覆盖置信度排名）  -> 11
+[PASS] Health 真的生效时 actual=Health 且无降级原因  -> Health/
+[PASS] 已阵亡的靶不按低血量优先  -> 12
+[PASS] Radar 未实现时降级为置信度
+[PASS] Radar 的降级原因点明了未实现  -> 雷达上报的是地图坐标，与装甲板需要位置投影才能对应，未实现；已按置信度选靶
+[PASS] 未知优先级归为置信度且记录原因
+[PASS] 空候选集返回 None 不抛异常
+
+--- test_distance_missing_data_does_not_become_nearest ---
+[PASS] 缺距离时返回 inf 而不是 0  -> inf
+[PASS] 缺距离的靶不会被误判成最近而抢到优先  -> 22
+
+--- test_module_disabled_keeps_previous_behavior ---
+[PASS] 模块关闭时原样返回，不裁目标、不改锁定状态
+[PASS] 模块关闭时算不出像素半径（不参与判定）
+
+============================================================
+ALL AUTOAIM-SETTINGS TESTS PASSED

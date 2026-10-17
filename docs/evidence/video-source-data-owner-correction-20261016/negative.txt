@@ -1,0 +1,59 @@
+test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected (tests.test_video_source_retry_admission.VideoSourceRetryAdmissionTests.test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected) ...
+  test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected (tests.test_video_source_retry_admission.VideoSourceRetryAdmissionTests.test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected) (source='native') ... FAIL
+  test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected (tests.test_video_source_retry_admission.VideoSourceRetryAdmissionTests.test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected) (source='hevc') ... FAIL
+test_live_udp_reader_needs_retry_after_closer_admission_was_rejected (tests.test_video_source_retry_admission.VideoSourceRetryAdmissionTests.test_live_udp_reader_needs_retry_after_closer_admission_was_rejected) ... FAIL
+
+======================================================================
+FAIL: test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected (tests.test_video_source_retry_admission.VideoSourceRetryAdmissionTests.test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected) (source='native')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<review-checkout>/tests/test_video_source_retry_admission.py", line 71, in test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected
+    self.check_decoder_retry(source)
+  File "<review-checkout>/tests/test_video_source_retry_admission.py", line 98, in check_decoder_retry
+    self.assertEqual(failed.inflight_resources, ())
+AssertionError: Tuples differ: ('Native 0x0310',) != ()
+
+First tuple contains 1 additional elements.
+First extra element 0:
+'Native 0x0310'
+
+- ('Native 0x0310',)
++ ()
+
+======================================================================
+FAIL: test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected (tests.test_video_source_retry_admission.VideoSourceRetryAdmissionTests.test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected) (source='hevc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<review-checkout>/tests/test_video_source_retry_admission.py", line 71, in test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected
+    self.check_decoder_retry(source)
+  File "<review-checkout>/tests/test_video_source_retry_admission.py", line 98, in check_decoder_retry
+    self.assertEqual(failed.inflight_resources, ())
+AssertionError: Tuples differ: ('UDP/HEVC',) != ()
+
+First tuple contains 1 additional elements.
+First extra element 0:
+'UDP/HEVC'
+
+- ('UDP/HEVC',)
++ ()
+
+======================================================================
+FAIL: test_live_udp_reader_needs_retry_after_closer_admission_was_rejected (tests.test_video_source_retry_admission.VideoSourceRetryAdmissionTests.test_live_udp_reader_needs_retry_after_closer_admission_was_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<review-checkout>/tests/test_video_source_retry_admission.py", line 139, in test_live_udp_reader_needs_retry_after_closer_admission_was_rejected
+    self.assertEqual(failed.inflight_resources, ())
+AssertionError: Tuples differ: ('UDP/HEVC',) != ()
+
+First tuple contains 1 additional elements.
+First extra element 0:
+'UDP/HEVC'
+
+- ('UDP/HEVC',)
++ ()
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.295s
+
+FAILED (failures=3)
+EXPECTED NEGATIVE: restoring data-owner-is-cleanup policy causes native, HEVC and UDP failures

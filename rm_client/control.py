@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass, replace
 import json
+import logging
 import math
 import time
 from typing import Any
 
-from .model import ModuleRegistry, RobotState
+from .model import CONTROL_BIND_OPTIONS, CONTROL_RESERVED_KEYS, ModuleRegistry, RobotState
 
 
 # 官方 V1.3.1 KeyboardMouseControl.keyboard_value 位序。
@@ -36,14 +38,37 @@ CONTROL_KEYS = frozenset(KEYBOARD_BITS)
 DEFAULT_CONTROL_BINDS: dict[str, str] = {slot: slot for slot in KEYBOARD_BITS}
 
 # 可供绑定的物理键名候选（与 `PolarRMWindow.key_name()` 的输出同一命名体系）。
-BINDABLE_KEY_NAMES = (
-    "W", "A", "S", "D", "Q", "E", "R", "F", "G", "Z", "X", "C", "V", "B",
-    "Shift", "RightShift", "Ctrl", "Space", "Tab", "Enter", "Escape",
-    "Backspace", "Delete", "Insert", "Home", "End", "PageUp", "PageDown",
-    "Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5",
-    "F6", "F7", "F8", "F9", "F10", "F12",
-    "None",
-)
+# Keep the public tuple while sharing the UI's safety-filtered whitelist.
+BINDABLE_KEY_NAMES = tuple(CONTROL_BIND_OPTIONS)
+
+
+def validate_control_binds(binds: Mapping[str, str]) -> dict[str, str]:
+    """Return a complete, canonical map, or reject it without changing inputs.
+
+    Validate the final assignment rather than intermediate slot changes so
+    swaps and longer cycles are legal. UI-reserved keys remain unavailable
+    through every caller, including profile restore and the bridge API.
+    """
+    if not isinstance(binds, Mapping) or set(binds) != CONTROL_KEYS:
+        raise ValueError("控制绑定必须包含全部有效协议槽位")
+    allowed = {key.lower(): key for key in CONTROL_BIND_OPTIONS}
+    result = {}
+    seen = {}
+    for slot in KEYBOARD_BITS:
+        physical = binds[slot]
+        if not isinstance(physical, str):
+            raise ValueError(f"无效控制绑定：{slot}")
+        low = physical.strip().lower()
+        if low in CONTROL_RESERVED_KEYS:
+            raise ValueError(f"{slot} 槽的 {physical} 是界面 / 急停保留键，请在键盘设置中改绑为其他按键")
+        if low not in allowed:
+            raise ValueError(f"{physical} 不是可绑定按键")
+        if low != "none":
+            if low in seen:
+                raise ValueError(f"{physical} 同时绑定了 {seen[low]} 与 {slot}；请先清除其中一个")
+            seen[low] = slot
+        result[slot] = allowed[low]
+    return result
 
 
 @dataclass
@@ -311,19 +336,17 @@ class KeyboardControlBridge:
         slot = str(slot).upper()
         if slot not in CONTROL_KEYS:
             return False
-        candidate = str(key_name or "None").strip()
-        if candidate and candidate not in BINDABLE_KEY_NAMES:
+        candidate = dict(self.binds)
+        candidate[slot] = (key_name.strip() or "None") if isinstance(key_name, str) else (key_name or "None")
+        return self.set_binds(candidate)
+
+    def set_binds(self, binds: Mapping[str, str]) -> bool:
+        """Atomically replace a complete binding map; rejection leaves it intact."""
+        try:
+            candidate = validate_control_binds(binds)
+        except ValueError:
             return False
-        if candidate != "None":
-            lowered = candidate.lower()
-            for other, bound in self.binds.items():
-                if other != slot and str(bound).lower() == lowered:
-                    return False  # 已被别的槽占用
-            # 物理键名与默认槽名相同时，仍要先把旧的同名绑定释放，避免两个槽同时响应
-            for other in list(self.binds):
-                if other != slot and str(self.binds[other]).lower() == lowered:
-                    self.binds[other] = DEFAULT_CONTROL_BINDS[other]
-        self.binds[slot] = candidate or "None"
+        self.binds = candidate
         return True
 
     def reset_binds(self) -> None:
@@ -402,16 +425,30 @@ class KeyboardControlBridge:
         self._dirty = True
 
     def release_all(self, state: RobotState, registry: ModuleRegistry) -> ChassisCommand:
-        """Clear local input and immediately publish one neutral KMC snapshot."""
+        """Clear input and attempt each neutral route, preserving first failure."""
 
-        self.reset_inputs()
-        command = self.send_from_state(state, registry)
+        failures = []
+        try:
+            self.reset_inputs()
+            command = self.send_from_state(state, registry)
+        except Exception as error:
+            # Never publish ordinary input after a failed reset. Independent
+            # native neutral routes must still run if reset/publication fails.
+            failures.append(error)
+            logging.getLogger(__name__).exception("Input reset/neutral publication failed")
         # 上面那一帧走的是普通出口：它可能被闸门拒了、也可能被 max_hz 挡了。
         # 而关窗口 / 失去焦点这两条路调的就是本函数，只清本地等于"手松了、
         # 线上还按着"——DT7 与选手端那两侧都没有过期自动清零。所以这里再各补
         # 一帧强制中立（release_* 自己会抢时隙，多一帧零键无害）。
-        self.release_direct_dt7()
-        self.release_custom_controller()
+        for release in (lambda: self.release_direct_dt7(),
+                        lambda: self.release_custom_controller()):
+            try:
+                release()
+            except Exception as error:
+                failures.append(error)
+                logging.getLogger(__name__).exception("Independent input neutral release failed")
+        if failures:
+            raise failures[0]
         return command
 
     def clear_pending(self) -> None:

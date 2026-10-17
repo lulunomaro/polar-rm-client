@@ -9,6 +9,8 @@ import threading
 import time
 from typing import Any
 
+from .backend.resource_close import close_resource
+
 
 PROTOCOL = "rm.vision.tongji.v1"
 DEFAULT_PORT = 9871
@@ -240,32 +242,118 @@ class TongjiVisionReceiver:
         self._lock = threading.Lock()
         self._thread: threading.Thread | None = None
         self._socket: socket.socket | None = None
+        self._socket_close_error: Exception | None = None
+        self._socket_close_error_reported = False
+        self._lifecycle_lock = threading.RLock()
+        self._close_lock = threading.Lock()
+        self._closing = False
+        self._epoch = 0
 
-    def configure(self, port: int) -> None:
+    def configure(self, port: int, *, wait: bool = True) -> None:
         port = int(port)
-        if self.port != port and self.running:
-            self.stop()
-        self.port = port
+        with self._lifecycle_lock:
+            if self.port == port:
+                return
+            self.stop(wait=False)
+            self.port = port
+            thread = self._thread
+        if wait:
+            self._wait_stopped_worker(thread)
+
+    @property
+    def cleanup_pending(self) -> bool:
+        with self._lifecycle_lock:
+            return self._closing or (not self.running and self._thread is not None and self._thread.is_alive())
+
+    @property
+    def cleanup_error(self) -> str:
+        with self._lifecycle_lock:
+            return str(self._socket_close_error or "")
 
     def start(self) -> None:
-        if self.running:
-            return
-        self.running = True
-        self._thread = threading.Thread(target=self._run, name="polar-tongji-udp", daemon=True)
-        self._thread.start()
-
-    def stop(self) -> None:
-        self.running = False
-        if self._socket is not None:
+        with self._lifecycle_lock:
+            if self.running or self._closing:
+                return
+            if self._thread is not None and self._thread.is_alive():
+                return
+            if self._socket_close_error is not None:
+                return
+            self._epoch += 1
+            thread = threading.Thread(target=self._run, args=(self._epoch,), name="polar-tongji-udp", daemon=True)
+            self._thread = thread
+            self.running = True
             try:
-                self._socket.close()
-            except OSError:
-                pass
-        if self._thread is not None and self._thread.is_alive():
-            self._thread.join(timeout=0.6)
-        self._thread = None
-        self._socket = None
-        self.connected = False
+                thread.start()
+            except Exception:
+                self.running = False
+                self._epoch += 1
+                # Only a genuinely unstarted thread is safe to discard.
+                if thread.ident is None:
+                    self._thread = None
+                raise
+
+    def stop(self, *, wait: bool = True) -> None:
+        """Revoke results immediately; the existing worker owns socket close.
+
+        wait=False never joins or closes a native handle. Default wait retains
+        the legacy bounded wait; only close() confirms complete teardown.
+        """
+        with self._lifecycle_lock:
+            self.running = False
+            self.connected = False
+            self._epoch += 1
+            thread = self._thread
+            with self._lock:
+                self._latest = None
+        if wait:
+            self._wait_stopped_worker(thread)
+
+    def _wait_stopped_worker(self, thread: threading.Thread | None) -> None:
+        if thread is not None and thread.is_alive() and thread is not threading.current_thread():
+            thread.join(timeout=0.6)
+        with self._lifecycle_lock:
+            if self._thread is thread and (thread is None or not thread.is_alive()):
+                self._thread = None
+
+    def close(self) -> None:
+        """Strict wait and explicit retry, only on a teardown worker."""
+        if self._thread is threading.current_thread():
+            self.stop(wait=False)
+            raise RuntimeError("Vision receiver cannot wait for its own worker")
+        with self._lifecycle_lock:
+            # A duplicate close already queued before the first failure was
+            # reported is a waiter, not an authorization to retry that error.
+            retry_reported = self._socket_close_error is not None and self._socket_close_error_reported
+        with self._close_lock:
+            with self._lifecycle_lock:
+                self._closing = True
+                thread = self._thread
+            try:
+                self.stop()
+                if thread is threading.current_thread():
+                    raise RuntimeError("Vision receiver cannot wait for its own worker")
+                if thread is not None:
+                    thread.join()
+                with self._lifecycle_lock:
+                    if self._thread is thread:
+                        self._thread = None
+                if self._socket_close_error is not None and retry_reported:
+                    try:
+                        close_resource(self._socket)
+                        if self._socket.fileno() != -1:
+                            raise OSError("Socket remained open after close")
+                    except Exception as exc:
+                        self._socket_close_error = exc
+                    else:
+                        self._socket = None
+                        self._socket_close_error = None
+                        self._socket_close_error_reported = False
+                if self._socket_close_error is not None:
+                    self._socket_close_error_reported = True
+                    raise RuntimeError(f"Vision receiver socket close failed: {self._socket_close_error}") from self._socket_close_error
+            finally:
+                with self._lifecycle_lock:
+                    self._closing = False
 
     def latest(self, timeout_ms: float) -> TongjiPacket | None:
         with self._lock:
@@ -275,21 +363,33 @@ class TongjiVisionReceiver:
             return None
         return packet
 
-    def _run(self) -> None:
+    def _run(self, epoch: int | None = None) -> None:
+        with self._lifecycle_lock:
+            if epoch is not None and (not self.running or epoch != self._epoch):
+                return
+            epoch = self._epoch if epoch is None else epoch
+            port = self.port
+        sock = None
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            sock.bind(("0.0.0.0", self.port))
+            sock.bind(("0.0.0.0", port))
             sock.settimeout(0.20)
-            self._socket = sock
-            while self.running:
+            with self._lifecycle_lock:
+                # Retain a late-created handle until this owner's finally
+                # confirms native close, even after stop revoked publication.
+                self._socket = sock
+            while self.running and epoch == self._epoch:
                 try:
                     data, _address = sock.recvfrom(512 * 1024)
                 except socket.timeout:
                     continue
                 except OSError:
                     break
-                self.packets_received += 1
+                with self._lifecycle_lock:
+                    if not self.running or epoch != self._epoch:
+                        break
+                    self.packets_received += 1
                 try:
                     packet = parse_tongji_packet(data)
                 except Exception as error:
@@ -299,22 +399,33 @@ class TongjiVisionReceiver:
                 if packet is None:
                     self.invalid_packets += 1
                     continue
-                with self._lock:
-                    self._latest = packet
-                self.last_received_ns = time.time_ns()
-                self.connected = True
+                with self._lifecycle_lock:
+                    if not self.running or epoch != self._epoch:
+                        break
+                    with self._lock:
+                        self._latest = packet
+                    self.last_received_ns = time.time_ns()
+                    self.connected = True
         except OSError as error:
             self.last_error = str(error)
             self.connected = False
         finally:
-            if self._socket is not None:
+            if sock is not None:
                 try:
-                    self._socket.close()
-                except OSError:
-                    pass
-            self._socket = None
-            self.running = False
-            self.connected = False
+                    close_resource(sock)
+                    if sock.fileno() != -1:
+                        raise OSError("Socket remained open after close")
+                except Exception as exc:
+                    with self._lifecycle_lock:
+                        self._socket = sock
+                        self._socket_close_error = exc
+                        self.last_error = f"Vision receiver socket close failed: {exc}"
+                else:
+                    with self._lifecycle_lock:
+                        self._socket = None
+            with self._lifecycle_lock:
+                self.running = False
+                self.connected = False
 
 
 class PolarPublisher:

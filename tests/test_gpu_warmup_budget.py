@@ -3,6 +3,7 @@ import ast
 from pathlib import Path
 import sys
 import math
+import logging
 import time
 from types import SimpleNamespace as NS
 import unittest
@@ -10,6 +11,9 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 SOURCE = ROOT / 'rm_client/ui/polar_app.py'
+from rm_client.ui.polar.frame_telemetry import FrameTelemetry
+from rm_client.ui.polar.gpu_warmup import GpuWarmupQueue, GpuWarmupField
+from rm_client.ui.polar.tick_controller import TickDiagnostics, TickStageRunner
 
 
 def methods(*names):
@@ -18,16 +22,22 @@ def methods(*names):
     selected = [n for n in window.body if isinstance(n, ast.FunctionDef) and n.name in names]
     cls = ast.ClassDef(name='Window', bases=[], keywords=[], body=selected, decorator_list=[])
     module = ast.Module(body=[ast.ImportFrom(module='__future__', names=[ast.alias(name='annotations')], level=0), cls], type_ignores=[])
-    scope = {'time': time, 'math': math, 'QTimer': NS(singleShot=lambda delay, callback: callback()),
+    scope = {'time': time, 'math': math, 'TickStageRunner': TickStageRunner, '_LOG': logging.getLogger(__name__), 'QTimer': NS(singleShot=lambda delay, callback: callback()),
              'QApplication': NS(activeModalWidget=lambda: None)}
     exec(compile(ast.fix_missing_locations(module), str(SOURCE), 'exec'), scope)
-    return scope['Window']
+    cls = scope['Window']
+    cls._gpu_prewarm_jobs_pending = GpuWarmupField("pending")
+    cls._gpu_prewarm_last_ms = GpuWarmupField("last_ms")
+    cls._gpu_prewarm_max_ms = GpuWarmupField("max_ms")
+    return cls
 
 
 class WarmupTests(unittest.TestCase):
     def make_window(self):
         w = methods('prewarm_gpu_clickgui_resources', '_run_gpu_prewarm_slice')()
+        w._gpu_warmup = GpuWarmupQueue()
         w.calls = []
+        w._window_lifecycle = NS(closing=False)
         w.escape_menu_visible = False
         w.clickgui_gpu = NS(available=True, prewarm=lambda *a, **k: w.calls.append(('text', a)),
                            prewarm_images=lambda *a: w.calls.append(('image', a)))
@@ -94,7 +104,9 @@ class WarmupTests(unittest.TestCase):
 
     def paint_window(self, gpu_presented):
         w = methods('paintGL')()
+        w._gpu_warmup = GpuWarmupQueue()
         w.calls = []
+        w._window_lifecycle = NS(closing=False)
         w.paint_gpu_frame = lambda: gpu_presented
         w._paint_compatibility_frame = lambda: w.calls.append('cpu')
         w._gpu_warm_pending = True
@@ -102,9 +114,9 @@ class WarmupTests(unittest.TestCase):
         w._gpu_prewarm_timer = NS(isActive=lambda: False, start=lambda ms: w.calls.append('resume'))
         w.clickgui_gpu = NS(available=True)
         w.prewarm_gpu_clickgui_resources = lambda: w.calls.append('queued')
-        w._last_present_time = w._last_field_frame_log_at = time.perf_counter()
-        w.fps_samples = []; w.state = NS(); w.render_frame_ms_ema = 0
-        w._field_frame_times_ms = []
+        now = time.perf_counter()
+        w._frame_telemetry = FrameTelemetry(last_presented_at=now, last_reported_at=now)
+        w.state = NS()
         return w
 
     def test_compatibility_frame_does_not_queue_warmup(self):
@@ -125,11 +137,13 @@ class WarmupTests(unittest.TestCase):
         self.assertIn('yield ("text", ((font,), economy_labels', source)
 
     def test_tick_stage_includes_nonrender_work(self):
-        w = methods('_run_tick_stage')(); w._ui_tick_stages = {}
+        w = methods('_run_tick_stage')()
+        w._tick_diagnostics = TickDiagnostics()
+        w.state = NS(backend_stats={}); w.backend = NS(field_log=NS(emit=lambda *a, **k: None))
         self.assertTrue(w._run_tick_stage('backend.tick', lambda: None))
         self.assertTrue(w._run_tick_stage('backend.tick', lambda: None))
-        self.assertEqual(w._ui_tick_stages['backend.tick']['count'], 2)
-        self.assertGreaterEqual(w._ui_tick_stages['backend.tick']['total_ms'], 0)
+        self.assertEqual(w._tick_diagnostics.stages['backend.tick']['count'], 2)
+        self.assertGreaterEqual(w._tick_diagnostics.stages['backend.tick']['total_ms'], 0)
 
 
 if __name__ == '__main__': unittest.main(verbosity=2)

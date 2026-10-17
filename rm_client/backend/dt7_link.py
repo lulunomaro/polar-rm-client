@@ -70,6 +70,7 @@ from pathlib import Path
 
 from .. import serial_ports as ports
 from ..runtime_paths import RuntimePaths
+from .resource_close import close_resource
 
 ROOT = Path(__file__).resolve().parents[2]
 PROFILE_FILE = RuntimePaths.discover().defaults_root / "dt7_profile.json"
@@ -478,6 +479,7 @@ class Dt7KeyMouseLink:
     authorization_guard: object | None = None
     pre_write_guard: object | None = None
     _handle_requested_port: str = ""
+    _handle_close_failed: bool = False
 
     def _gate(self) -> str:
         """能不能发。任何一条不满足就返回原因，调用方据此拒发。"""
@@ -685,17 +687,23 @@ class Dt7KeyMouseLink:
         return resolved, ""
 
     def _drop_handle(self) -> None:
-        """丢掉当前句柄，下一帧重新解析 + 重新打开（掉线恢复的唯一通路）。"""
+        """Release ownership only after the driver confirms close."""
         handle = self._handle
-        self._handle = None
-        self.resolved_port = ""
         try:
             if handle is not None:
-                handle.close()
-        except Exception:
-            pass
+                close_resource(handle)
+        except Exception as exc:
+            self._handle_close_failed = True
+            self._open_last_error = f"DT7 close unconfirmed; explicit close retry required: {exc}"
+            raise
+        self._handle = None
+        self.resolved_port = ""
+        self._handle_requested_port = ""
+        self._handle_close_failed = False
 
     def _emit(self, frame: bytes) -> None:
+        if self._handle_close_failed:
+            raise RuntimeError(self._open_last_error)
         if self.write_bytes is not None:
             if self.pre_write_guard is not None and not self.pre_write_guard():
                 raise RuntimeError("stale DT7 intent cancelled before write")
@@ -714,7 +722,6 @@ class Dt7KeyMouseLink:
             ports.invalidate_port_cache()  # validate current identity on every new handle
             target, why = self._open_target()
             if not target:
-                self.resolved_port = ""
                 self._open_last_error = why
                 self._open_backoff_until = now + float(self.profile.get("open_retry_s", 0.5))
                 raise RuntimeError(why)
@@ -740,8 +747,8 @@ class Dt7KeyMouseLink:
         except Exception as exc:
             self._open_last_error = str(exc)
             ports.invalidate_port_cache()
-            self._drop_handle()          # 关键：死句柄必须扔，否则从此永久失效
             self._open_backoff_until = now + float(self.profile.get("open_retry_s", 0.5))
+            self._drop_handle()
             raise RuntimeError(f"{target} 写入失败（句柄已丢弃，下一帧重开）：{exc}")
 
     def release(self, now: float | None = None) -> tuple[bool, str]:
@@ -762,10 +769,5 @@ class Dt7KeyMouseLink:
                             wire_neutral=self.wire_neutral)
 
     def close(self) -> None:
-        handle = self._handle
-        self._handle = None
-        try:
-            if handle is not None:
-                handle.close()
-        except Exception:                          # noqa: BLE001
-            pass
+        """Close or retain the handle and raise; a later call explicitly retries."""
+        self._drop_handle()

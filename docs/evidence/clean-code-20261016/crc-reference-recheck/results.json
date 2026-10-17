@@ -1,0 +1,4030 @@
+{
+  "schema_version": 1,
+  "profile": "offline",
+  "total_discovered": 278,
+  "selected_count": 1,
+  "evidence_scope": "Selected checks only. Mock/offline success is not hardware or field qualification.",
+  "selected": [
+    {
+      "id": "tests/polar_link_test",
+      "path": "tests/polar_link_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    }
+  ],
+  "not_selected": [
+    {
+      "id": "tests/api_freeze_test",
+      "path": "tests/api_freeze_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/autoaim_settings_test",
+      "path": "tests/autoaim_settings_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/backend_protocol_test",
+      "path": "tests/backend_protocol_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": "^(?:\\\\n)?ALL PASSED \\([1-9]\\d* checks\\)$",
+      "check_count_pattern": "(?m)^(?:\\\\n)?(?:ALL PASSED|INCOMPLETE) \\((\\d+) checks",
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/dt7_alignment_test",
+      "path": "tests/dt7_alignment_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": "^DT7 alignment PASS: [1-9]\\d* checks;",
+      "check_count_pattern": "(?m)^DT7 alignment PASS: (\\d+) checks;",
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/field_candidate_test",
+      "path": "tests/field_candidate_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": "^FIELD CANDIDATE TESTS PASSED$",
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/gimbal_host_request_test",
+      "path": "tests/gimbal_host_request_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/gpu_compositor_test",
+      "path": "tests/gpu_compositor_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": "^gpu compositor test passed$",
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/gpu_renderer_runtime_smoke",
+      "path": "tests/gpu_renderer_runtime_smoke.py",
+      "category": "desktop",
+      "args": [],
+      "completion_pattern": "^GPU renderer runtime smoke passed$",
+      "check_count_pattern": null,
+      "evidence": "native desktop OpenGL; no physical robot qualification",
+      "profiles": [
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch10_settings_test",
+      "path": "tests/hud_batch10_settings_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch13_settings_test",
+      "path": "tests/hud_batch13_settings_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch14_settings_test",
+      "path": "tests/hud_batch14_settings_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch16_killfx_test",
+      "path": "tests/hud_batch16_killfx_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch17_crosshair_test",
+      "path": "tests/hud_batch17_crosshair_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch18_powerguard_test",
+      "path": "tests/hud_batch18_powerguard_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch19_bufftimeline_test",
+      "path": "tests/hud_batch19_bufftimeline_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch20_robotoverlay_color_test",
+      "path": "tests/hud_batch20_robotoverlay_color_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch21_radaroverlay_map_test",
+      "path": "tests/hud_batch21_radaroverlay_map_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch8_settings_test",
+      "path": "tests/hud_batch8_settings_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_batch9_settings_test",
+      "path": "tests/hud_batch9_settings_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_overlay_settings_test",
+      "path": "tests/hud_overlay_settings_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_status_settings_test",
+      "path": "tests/hud_status_settings_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/hud_telemetry_settings_test",
+      "path": "tests/hud_telemetry_settings_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/polar_bridge_test",
+      "path": "tests/polar_bridge_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/polar_integration_test",
+      "path": "tests/polar_integration_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/polar_selftest_test",
+      "path": "tests/polar_selftest_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/polar_spec_test",
+      "path": "tests/polar_spec_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/polar_startup_test",
+      "path": "tests/polar_startup_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/referee_integration_test",
+      "path": "tests/referee_integration_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": "^ALL PASSED \\([1-9]\\d* checks; localhost only; NOT field qualification\\)$",
+      "check_count_pattern": "(?m)^ALL PASSED \\((\\d+) checks;",
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/robot_roles_test",
+      "path": "tests/robot_roles_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/settings_doc_consistency_test",
+      "path": "tests/settings_doc_consistency_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/smoke_test",
+      "path": "tests/smoke_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/startup_black_hole_test",
+      "path": "tests/startup_black_hole_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/startup_gpu_runtime_smoke",
+      "path": "tests/startup_gpu_runtime_smoke.py",
+      "category": "desktop",
+      "args": [],
+      "completion_pattern": "^Startup GPU compositor runtime smoke passed at ",
+      "check_count_pattern": null,
+      "evidence": "native desktop OpenGL; no physical robot qualification",
+      "profiles": [
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/student_frontend_test",
+      "path": "tests/student_frontend_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_admission_ownership_independent_review",
+      "path": "tests/test_admission_ownership_independent_review.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_angle_writer_handoff",
+      "path": "tests/test_angle_writer_handoff.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_animation_pacing_regressions",
+      "path": "tests/test_animation_pacing_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_api_freeze_platform_regressions",
+      "path": "tests/test_api_freeze_platform_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_app_entry_contract",
+      "path": "tests/test_app_entry_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_async_configuration",
+      "path": "tests/test_async_configuration.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_audio_configuration_transactions",
+      "path": "tests/test_audio_configuration_transactions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_audio_replay_regressions",
+      "path": "tests/test_audio_replay_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_angle_lifecycle",
+      "path": "tests/test_backend_angle_lifecycle.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_async_lifecycle",
+      "path": "tests/test_backend_async_lifecycle.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_composite_shutdown_retry",
+      "path": "tests/test_backend_composite_shutdown_retry.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_estop_nonblocking",
+      "path": "tests/test_backend_estop_nonblocking.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_input_owner",
+      "path": "tests/test_backend_input_owner.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_lifecycle_callback_failures",
+      "path": "tests/test_backend_lifecycle_callback_failures.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_lifecycle_controller",
+      "path": "tests/test_backend_lifecycle_controller.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_lifecycle_input_failure",
+      "path": "tests/test_backend_lifecycle_input_failure.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_policy_boundaries",
+      "path": "tests/test_backend_policy_boundaries.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_policy_characterization",
+      "path": "tests/test_backend_policy_characterization.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_shutdown_retry",
+      "path": "tests/test_backend_shutdown_retry.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_backend_video_source_nonblocking",
+      "path": "tests/test_backend_video_source_nonblocking.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_background_display_locale",
+      "path": "tests/test_background_display_locale.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_binding_restore_quality",
+      "path": "tests/test_binding_restore_quality.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_build_safety_regressions",
+      "path": "tests/test_build_safety_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_build_telemetry_environment",
+      "path": "tests/test_build_telemetry_environment.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cached_frame_contract",
+      "path": "tests/test_cached_frame_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cached_window_layers",
+      "path": "tests/test_cached_window_layers.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_camera_activation",
+      "path": "tests/test_camera_activation.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_camera_activation_contract",
+      "path": "tests/test_camera_activation_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_camera_stop_admission",
+      "path": "tests/test_camera_stop_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_camera_stop_review",
+      "path": "tests/test_camera_stop_review.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_camera_window_heartbeat",
+      "path": "tests/test_camera_window_heartbeat.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cc_worker_dispatch",
+      "path": "tests/test_cc_worker_dispatch.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cleanup_worker_admission",
+      "path": "tests/test_cleanup_worker_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_clickgui_background_dismiss",
+      "path": "tests/test_clickgui_background_dismiss.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_clickgui_frame_contract",
+      "path": "tests/test_clickgui_frame_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_clickgui_presenter",
+      "path": "tests/test_clickgui_presenter.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_clickgui_renderer_faults",
+      "path": "tests/test_clickgui_renderer_faults.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_compositor_fault_diagnostics",
+      "path": "tests/test_compositor_fault_diagnostics.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_compositor_plan",
+      "path": "tests/test_compositor_plan.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_configuration_boundaries",
+      "path": "tests/test_configuration_boundaries.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_configuration_commands",
+      "path": "tests/test_configuration_commands.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_configuration_transactions",
+      "path": "tests/test_configuration_transactions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_controller_angle_admission",
+      "path": "tests/test_controller_angle_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_controller_angle_integration",
+      "path": "tests/test_controller_angle_integration.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_controller_angle_safety_review",
+      "path": "tests/test_controller_angle_safety_review.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_controller_frame_regressions",
+      "path": "tests/test_controller_frame_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_coordinator_late_admission",
+      "path": "tests/test_coordinator_late_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cs2_buy_matrix",
+      "path": "tests/test_cs2_buy_matrix.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cs2_crosshair_import",
+      "path": "tests/test_cs2_crosshair_import.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cs2_match_strip_style",
+      "path": "tests/test_cs2_match_strip_style.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cs2_personal_pack",
+      "path": "tests/test_cs2_personal_pack.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cs2_settings_center",
+      "path": "tests/test_cs2_settings_center.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cs2_source_assets",
+      "path": "tests/test_cs2_source_assets.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cs_crosshair_target_bounds",
+      "path": "tests/test_cs_crosshair_target_bounds.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_cs_crosshair_visibility",
+      "path": "tests/test_cs_crosshair_visibility.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_custom_byte_block_characterization",
+      "path": "tests/test_custom_byte_block_characterization.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_decoder_lifecycle_quality",
+      "path": "tests/test_decoder_lifecycle_quality.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_default_catalog_characterization",
+      "path": "tests/test_default_catalog_characterization.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_device_egress_characterization",
+      "path": "tests/test_device_egress_characterization.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_device_egress_safety",
+      "path": "tests/test_device_egress_safety.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_device_egress_settings",
+      "path": "tests/test_device_egress_settings.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_device_manager_nonblocking",
+      "path": "tests/test_device_manager_nonblocking.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_dt7_angle_ownership",
+      "path": "tests/test_dt7_angle_ownership.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_dt7_worker_dispatch",
+      "path": "tests/test_dt7_worker_dispatch.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_economy_confirmation",
+      "path": "tests/test_economy_confirmation.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_economy_content",
+      "path": "tests/test_economy_content.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_economy_display_locale",
+      "path": "tests/test_economy_display_locale.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_economy_interaction",
+      "path": "tests/test_economy_interaction.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_economy_interaction_characterization",
+      "path": "tests/test_economy_interaction_characterization.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_economy_layout",
+      "path": "tests/test_economy_layout.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_economy_presentation",
+      "path": "tests/test_economy_presentation.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_economy_scene_failures",
+      "path": "tests/test_economy_scene_failures.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_economy_selection",
+      "path": "tests/test_economy_selection.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_economy_value_dependencies",
+      "path": "tests/test_economy_value_dependencies.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_emergency_action_failures",
+      "path": "tests/test_emergency_action_failures.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_escape_menu",
+      "path": "tests/test_escape_menu.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_escape_menu_corner_pixels",
+      "path": "tests/test_escape_menu_corner_pixels.py",
+      "category": "desktop",
+      "args": [
+        "--require-gpu"
+      ],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "native desktop OpenGL; no physical robot qualification",
+      "profiles": [
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_field_log_admission",
+      "path": "tests/test_field_log_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_field_log_lifecycle_quality",
+      "path": "tests/test_field_log_lifecycle_quality.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_frame_telemetry",
+      "path": "tests/test_frame_telemetry.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_frame_telemetry_contract",
+      "path": "tests/test_frame_telemetry_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_framebuffer_generation",
+      "path": "tests/test_framebuffer_generation.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_fullscreen_composition",
+      "path": "tests/test_fullscreen_composition.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_fullscreen_input_extended",
+      "path": "tests/test_fullscreen_input_extended.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_gpu_command_collection_lifetime",
+      "path": "tests/test_gpu_command_collection_lifetime.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_gpu_command_frame_rejection",
+      "path": "tests/test_gpu_command_frame_rejection.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_gpu_warmup_budget",
+      "path": "tests/test_gpu_warmup_budget.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_gpu_warmup_contract",
+      "path": "tests/test_gpu_warmup_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_gpu_warmup_owner",
+      "path": "tests/test_gpu_warmup_owner.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_hero_display_locale",
+      "path": "tests/test_hero_display_locale.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_hud_display_locale",
+      "path": "tests/test_hud_display_locale.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_inventory_text_crosshair_scale",
+      "path": "tests/test_inventory_text_crosshair_scale.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_jello_atlas_pages",
+      "path": "tests/test_jello_atlas_pages.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_jello_description_wrapping",
+      "path": "tests/test_jello_description_wrapping.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_jello_settings_keyboard",
+      "path": "tests/test_jello_settings_keyboard.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_jello_white_armor_overlay",
+      "path": "tests/test_jello_white_armor_overlay.py",
+      "category": "desktop",
+      "args": [
+        "--require-gpu"
+      ],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "native desktop OpenGL; no physical robot qualification",
+      "profiles": [
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_keyboard_routing_characterization",
+      "path": "tests/test_keyboard_routing_characterization.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_kill_asset_filtering",
+      "path": "tests/test_kill_asset_filtering.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_kill_audio_regressions",
+      "path": "tests/test_kill_audio_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_kill_selector_regressions",
+      "path": "tests/test_kill_selector_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_lazy_settings_state",
+      "path": "tests/test_lazy_settings_state.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_lifecycle_coordinator",
+      "path": "tests/test_lifecycle_coordinator.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_match_strip_locale",
+      "path": "tests/test_match_strip_locale.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_minecraft_cjk_readability",
+      "path": "tests/test_minecraft_cjk_readability.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_minecraft_lossless_upload_crop",
+      "path": "tests/test_minecraft_lossless_upload_crop.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_module_catalog_boundaries",
+      "path": "tests/test_module_catalog_boundaries.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_module_list_cjk_layout",
+      "path": "tests/test_module_list_cjk_layout.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_mqtt_cleanup_ownership",
+      "path": "tests/test_mqtt_cleanup_ownership.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_mqtt_lifecycle_nonblocking",
+      "path": "tests/test_mqtt_lifecycle_nonblocking.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_native_stream_policy",
+      "path": "tests/test_native_stream_policy.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_normal_video_timeline",
+      "path": "tests/test_normal_video_timeline.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_normal_video_timeline_contract",
+      "path": "tests/test_normal_video_timeline_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_overlay_layer_boundary",
+      "path": "tests/test_overlay_layer_boundary.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_paho_loop_admission",
+      "path": "tests/test_paho_loop_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_pending_configuration",
+      "path": "tests/test_pending_configuration.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_pointer_interaction",
+      "path": "tests/test_pointer_interaction.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_polar_async_connect",
+      "path": "tests/test_polar_async_connect.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_polar_control_policy",
+      "path": "tests/test_polar_control_policy.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_polar_package_exports",
+      "path": "tests/test_polar_package_exports.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_polar_policy_baseline_source",
+      "path": "tests/test_polar_policy_baseline_source.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_port_discovery_admission",
+      "path": "tests/test_port_discovery_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_profile_close_admission",
+      "path": "tests/test_profile_close_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_profile_close_pending",
+      "path": "tests/test_profile_close_pending.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_profile_file_transactions",
+      "path": "tests/test_profile_file_transactions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_profile_save_contract",
+      "path": "tests/test_profile_save_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_profile_save_identity",
+      "path": "tests/test_profile_save_identity.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_profile_save_state",
+      "path": "tests/test_profile_save_state.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_projectile_counter_baselines",
+      "path": "tests/test_projectile_counter_baselines.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_qt_launch_abort",
+      "path": "tests/test_qt_launch_abort.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_qualification_observations",
+      "path": "tests/test_qualification_observations.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_quality_gates",
+      "path": "tests/test_quality_gates.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_quick_action_configuration",
+      "path": "tests/test_quick_action_configuration.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_referee_domain_boundaries",
+      "path": "tests/test_referee_domain_boundaries.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_referee_domain_characterization",
+      "path": "tests/test_referee_domain_characterization.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_referee_projection_policy",
+      "path": "tests/test_referee_projection_policy.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_referee_state_characterization",
+      "path": "tests/test_referee_state_characterization.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_render_owner_boundaries",
+      "path": "tests/test_render_owner_boundaries.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_render_performance_regressions",
+      "path": "tests/test_render_performance_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_resource_close_ownership",
+      "path": "tests/test_resource_close_ownership.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_runtime_source_classification",
+      "path": "tests/test_runtime_source_classification.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_safety_observer_diagnostics",
+      "path": "tests/test_safety_observer_diagnostics.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_scenario_configuration_guard",
+      "path": "tests/test_scenario_configuration_guard.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_serial_codec_regressions",
+      "path": "tests/test_serial_codec_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_serial_lifecycle_regressions",
+      "path": "tests/test_serial_lifecycle_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_serial_reader_admission",
+      "path": "tests/test_serial_reader_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_serial_starter_admission",
+      "path": "tests/test_serial_starter_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_setting_effects",
+      "path": "tests/test_setting_effects.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_settings_action_evidence",
+      "path": "tests/test_settings_action_evidence.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_settings_audit_quality",
+      "path": "tests/test_settings_audit_quality.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_settings_cold_start",
+      "path": "tests/test_settings_cold_start.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_settings_dialog_service_wiring",
+      "path": "tests/test_settings_dialog_service_wiring.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_settings_service_boundaries",
+      "path": "tests/test_settings_service_boundaries.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_specialized_gl_initialization",
+      "path": "tests/test_specialized_gl_initialization.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_specialized_gl_owners",
+      "path": "tests/test_specialized_gl_owners.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_specialized_texture_units",
+      "path": "tests/test_specialized_texture_units.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_startup_display_locale",
+      "path": "tests/test_startup_display_locale.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_startup_navigation",
+      "path": "tests/test_startup_navigation.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_startup_navigation_contract",
+      "path": "tests/test_startup_navigation_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_startup_settings_fullscreen",
+      "path": "tests/test_startup_settings_fullscreen.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_startup_texture_ownership",
+      "path": "tests/test_startup_texture_ownership.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_state_overlay_contract",
+      "path": "tests/test_state_overlay_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_status_display_locale",
+      "path": "tests/test_status_display_locale.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_test_registry",
+      "path": "tests/test_test_registry.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_text_editing_policy",
+      "path": "tests/test_text_editing_policy.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_tick_controller",
+      "path": "tests/test_tick_controller.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_tongji_postprocess_performance",
+      "path": "tests/test_tongji_postprocess_performance.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_transport_safety_regressions",
+      "path": "tests/test_transport_safety_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_transport_start_admission_matrix",
+      "path": "tests/test_transport_start_admission_matrix.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_udp_receiver_admission",
+      "path": "tests/test_udp_receiver_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_udp_stop_nonblocking",
+      "path": "tests/test_udp_stop_nonblocking.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_ui_cjk_font_readability",
+      "path": "tests/test_ui_cjk_font_readability.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_ui_localization",
+      "path": "tests/test_ui_localization.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_ui_state_regressions",
+      "path": "tests/test_ui_state_regressions.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_ui_worker_shutdown",
+      "path": "tests/test_ui_worker_shutdown.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_verification_dependency_lock",
+      "path": "tests/test_verification_dependency_lock.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_verification_provenance",
+      "path": "tests/test_verification_provenance.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_verification_sources",
+      "path": "tests/test_verification_sources.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_video_close_ownership",
+      "path": "tests/test_video_close_ownership.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_video_recovery",
+      "path": "tests/test_video_recovery.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_video_recovery_admission",
+      "path": "tests/test_video_recovery_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_video_source_retry_admission",
+      "path": "tests/test_video_source_retry_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_video_source_snapshot",
+      "path": "tests/test_video_source_snapshot.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_video_source_snapshot_evidence",
+      "path": "tests/test_video_source_snapshot_evidence.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_video_stop_nonblocking",
+      "path": "tests/test_video_stop_nonblocking.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_vision_activation_contract",
+      "path": "tests/test_vision_activation_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_vision_refresh_heartbeat",
+      "path": "tests/test_vision_refresh_heartbeat.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_vision_selection",
+      "path": "tests/test_vision_selection.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_vision_stop_admission",
+      "path": "tests/test_vision_stop_admission.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_vision_stop_review",
+      "path": "tests/test_vision_stop_review.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_api_contract",
+      "path": "tests/test_window_api_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_assembly",
+      "path": "tests/test_window_assembly.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_async_lifecycle",
+      "path": "tests/test_window_async_lifecycle.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_construction",
+      "path": "tests/test_window_construction.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_constructor_delayed_cleanup",
+      "path": "tests/test_window_constructor_delayed_cleanup.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_constructor_failure",
+      "path": "tests/test_window_constructor_failure.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_economy_commands",
+      "path": "tests/test_window_economy_commands.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_failed_launch",
+      "path": "tests/test_window_failed_launch.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_lifecycle_controller",
+      "path": "tests/test_window_lifecycle_controller.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_normal_frame",
+      "path": "tests/test_window_normal_frame.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_text_editing",
+      "path": "tests/test_window_text_editing.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_tick_contract",
+      "path": "tests/test_window_tick_contract.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_video_recovery",
+      "path": "tests/test_window_video_recovery.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_vision_runtime",
+      "path": "tests/test_window_vision_runtime.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_window_wheel_adapters",
+      "path": "tests/test_window_wheel_adapters.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/test_writer_close_ownership",
+      "path": "tests/test_writer_close_ownership.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/tongji_external_integration_test",
+      "path": "tests/tongji_external_integration_test.py",
+      "category": "external",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "explicit external fixtures; no physical robot qualification",
+      "profiles": [
+        "all"
+      ]
+    },
+    {
+      "id": "tests/top_match_bar_integration_test",
+      "path": "tests/top_match_bar_integration_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/top_match_bar_minecraft_fusion_test",
+      "path": "tests/top_match_bar_minecraft_fusion_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/top_match_bar_motion_test",
+      "path": "tests/top_match_bar_motion_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/top_match_bar_qt_test",
+      "path": "tests/top_match_bar_qt_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/top_match_bar_rm_integration_test",
+      "path": "tests/top_match_bar_rm_integration_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/top_match_bar_test",
+      "path": "tests/top_match_bar_test.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tests/transition_visual_check",
+      "path": "tests/transition_visual_check.py",
+      "category": "visual",
+      "args": [],
+      "completion_pattern": "^Transition visual frames captured$",
+      "check_count_pattern": null,
+      "evidence": "desktop visual capture; no physical robot qualification",
+      "profiles": [
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_cc_link",
+      "path": "tools/dt7_link/test_cc_link.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_dbus_frame_vs_firmware",
+      "path": "tools/dt7_link/test_dbus_frame_vs_firmware.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_dt7_link",
+      "path": "tools/dt7_link/test_dt7_link.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_dt7_release_flush",
+      "path": "tools/dt7_link/test_dt7_release_flush.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_dt7_review_fixes",
+      "path": "tools/dt7_link/test_dt7_review_fixes.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_dt7_sweep",
+      "path": "tools/dt7_link/test_dt7_sweep.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_dt7_ui_selftest",
+      "path": "tools/dt7_link/test_dt7_ui_selftest.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_end_to_end_c_link",
+      "path": "tools/dt7_link/test_end_to_end_c_link.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_frame_diff",
+      "path": "tools/dt7_link/test_frame_diff.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_radio_km_client",
+      "path": "tools/dt7_link/test_radio_km_client.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_vcp_listen",
+      "path": "tools/dt7_link/test_vcp_listen.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/dt7_link/test_wireless_selftest",
+      "path": "tools/dt7_link/test_wireless_selftest.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/controller_angle/test_controller_angle",
+      "path": "tools/firmware/controller_angle/test_controller_angle.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/gimbal_host/test_gimbal_host",
+      "path": "tools/firmware/gimbal_host/test_gimbal_host.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/host_bridge/test_host_bridge",
+      "path": "tools/firmware/host_bridge/test_host_bridge.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/host_bridge/test_rc_key_ledger",
+      "path": "tools/firmware/host_bridge/test_rc_key_ledger.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/host_bridge/test_usb_receiver_portable",
+      "path": "tools/firmware/host_bridge/test_usb_receiver_portable.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/km_link/test_km_link",
+      "path": "tools/firmware/km_link/test_km_link.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/km_link/test_km_payload_layout",
+      "path": "tools/firmware/km_link/test_km_payload_layout.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/km_link/test_serial_parsers_portable",
+      "path": "tools/firmware/km_link/test_serial_parsers_portable.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/motion_feedback/test_motion_feedback",
+      "path": "tools/firmware/motion_feedback/test_motion_feedback.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/referee_rx/test_referee_rx",
+      "path": "tools/firmware/referee_rx/test_referee_rx.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/test_patch_logic",
+      "path": "tools/firmware/test_patch_logic.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/test_patch_real_headers",
+      "path": "tools/firmware/test_patch_real_headers.py",
+      "category": "firmware",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "read-only selected firmware and portable host compilation; not board execution",
+      "profiles": [
+        "offline",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/firmware/test_prepare_hero_options",
+      "path": "tools/firmware/test_prepare_hero_options.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/test_car_bridge_loopback",
+      "path": "tools/test_car_bridge_loopback.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/test_car_bridge_transport",
+      "path": "tools/test_car_bridge_transport.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/test_mqtt_link_settings",
+      "path": "tools/test_mqtt_link_settings.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/test_port_picking",
+      "path": "tools/test_port_picking.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    },
+    {
+      "id": "tools/test_settings_are_read",
+      "path": "tools/test_settings_are_read.py",
+      "category": "offline",
+      "args": [],
+      "completion_pattern": null,
+      "check_count_pattern": null,
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "profiles": [
+        "offline",
+        "release",
+        "all"
+      ]
+    }
+  ],
+  "run_id": "168548d3f9654112940178adb709368a",
+  "run_started_at_utc": "2026-10-16T10:48:27Z",
+  "run_state": "completed",
+  "passed": true,
+  "counts": {
+    "PASS": 1,
+    "SKIP": 0,
+    "INCOMPLETE": 0,
+    "FAIL": 0
+  },
+  "results": [
+    {
+      "id": "tests/polar_link_test",
+      "path": "tests/polar_link_test.py",
+      "category": "offline",
+      "evidence": "offline assertions only; no physical hardware qualification",
+      "status": "PASS",
+      "detail": "81 explicit assertions passed",
+      "tests_run": null,
+      "checks_passed": 81,
+      "skipped": 0,
+      "returncode": 0,
+      "duration_s": 0.183,
+      "expected_failures": 0
+    }
+  ],
+  "provenance": {
+    "schema_version": 1,
+    "captured_at_utc": "2026-10-16T10:48:27.222018+00:00",
+    "interpreter": {
+      "implementation": "CPython",
+      "version": "3.12.14"
+    },
+    "os": {
+      "system": "Linux",
+      "release": "6.18.44",
+      "machine": "x86_64"
+    },
+    "dependencies": {
+      "PySide6": {
+        "status": "installed",
+        "version": "6.8.2"
+      },
+      "PySide6-Addons": {
+        "status": "installed",
+        "version": "6.8.2"
+      },
+      "PySide6-Essentials": {
+        "status": "installed",
+        "version": "6.8.2"
+      },
+      "shiboken6": {
+        "status": "installed",
+        "version": "6.8.2"
+      },
+      "opencv-python": {
+        "status": "installed",
+        "version": "5.0.0.93"
+      },
+      "numpy": {
+        "status": "installed",
+        "version": "2.5.4"
+      },
+      "paho-mqtt": {
+        "status": "installed",
+        "version": "2.1.0"
+      },
+      "pyserial": {
+        "status": "installed",
+        "version": "3.5"
+      },
+      "openvino": {
+        "status": "installed",
+        "version": "2026.4.1"
+      },
+      "openvino-telemetry": {
+        "status": "installed",
+        "version": "2025.2.0"
+      },
+      "PyInstaller": {
+        "status": "not-installed",
+        "version": null
+      },
+      "ziglang": {
+        "status": "not-installed",
+        "version": null
+      }
+    },
+    "source_at_start": {
+      "status": "available",
+      "commit": "ddaa286aab42793d3d2860a8d2059231d9cadf67",
+      "tree": "fa014d29ac22fd897ed067969cbf18e5b62b412a",
+      "dirty": false,
+      "dirty_scope": "tracked-and-untracked-nonignored",
+      "reason": null
+    }
+  },
+  "source_stability": {
+    "schema_version": 1,
+    "status": "PASS",
+    "detail": "Declared verification source inputs have identical start/end fingerprints",
+    "scope": {
+      "directories": [
+        "rm_client",
+        "tests",
+        "tools",
+        "configs"
+      ],
+      "suffixes": [
+        ".bat",
+        ".c",
+        ".cfg",
+        ".cpp",
+        ".h",
+        ".hpp",
+        ".ini",
+        ".json",
+        ".ps1",
+        ".py",
+        ".spec",
+        ".toml",
+        ".yaml",
+        ".yml"
+      ],
+      "root_files": [
+        "main.py",
+        "requirements*.txt"
+      ],
+      "exclusions": [
+        "hidden directories",
+        "__pycache__"
+      ],
+      "limits": "Start/end comparison only; excludes assets, external fixtures, installed packages and transient edits restored between captures."
+    },
+    "before": {
+      "status": "available",
+      "sha256": "9942c1ae41338605f9f49de50207034b51e5001bb91395093ee03c9b4c071905",
+      "file_count": 582
+    },
+    "after": {
+      "status": "available",
+      "sha256": "9942c1ae41338605f9f49de50207034b51e5001bb91395093ee03c9b4c071905",
+      "file_count": 582
+    }
+  },
+  "firmware_identity": null
+}

@@ -1,0 +1,20 @@
+test_font_dpr_raster_scale_and_weight_changes_still_miss (__main__.AtlasCacheTests.test_font_dpr_raster_scale_and_weight_changes_still_miss) ... ok
+test_known_text_without_published_texture_is_not_a_hit (__main__.AtlasCacheTests.test_known_text_without_published_texture_is_not_a_hit) ... ok
+test_new_character_still_hits_render_pass_guard (__main__.AtlasCacheTests.test_new_character_still_hits_render_pass_guard) ... ok
+test_new_shaped_line_still_hits_render_pass_guard (__main__.AtlasCacheTests.test_new_shaped_line_still_hits_render_pass_guard) ... ok
+test_oversized_glyph_page_does_not_evict_during_render_pass (__main__.AtlasCacheTests.test_oversized_glyph_page_does_not_evict_during_render_pass) ... ok
+test_oversized_shaped_page_does_not_evict_during_render_pass (__main__.AtlasCacheTests.test_oversized_shaped_page_does_not_evict_during_render_pass) ... ok
+test_warm_glyph_hit_keeps_page_and_generation_during_render_lock (__main__.AtlasCacheTests.test_warm_glyph_hit_keeps_page_and_generation_during_render_lock) ... ok
+test_warm_shaped_hit_keeps_page_and_generation (__main__.AtlasCacheTests.test_warm_shaped_hit_keeps_page_and_generation) ... ok
+test_cache_capacity_and_recreated_evicted_value (__main__.FontCacheTests.test_cache_capacity_and_recreated_evicted_value) ... ok
+test_cached_font_has_independent_mutable_value (__main__.FontCacheTests.test_cached_font_has_independent_mutable_value) ... ok
+test_exact_fractional_size_and_weight_are_not_quantized (__main__.FontCacheTests.test_exact_fractional_size_and_weight_are_not_quantized) ... ok
+test_fonts_do_not_leak_between_books (__main__.FontCacheTests.test_fonts_do_not_leak_between_books) ... ok
+test_reload_invalidates_cache_even_when_family_name_is_unchanged (__main__.FontCacheTests.test_reload_invalidates_cache_even_when_family_name_is_unchanged) ... ok
+test_resolved_family_changes_invalidate_fallback (__main__.FontCacheTests.test_resolved_family_changes_invalidate_fallback) ... ok
+test_tahoma_stays_plain_and_not_antialiased (__main__.FontCacheTests.test_tahoma_stays_plain_and_not_antialiased) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.514s
+
+OK

@@ -1,0 +1,5 @@
+RUN [offline] tests/polar_link_test.py
+[PASS] tests/polar_link_test.py: 81 explicit assertions passed
+
+PASS (selected scope): 1 PASS, 0 SKIP, 0 INCOMPLETE, 0 FAIL
+Selected checks only. Mock/offline success is not hardware or field qualification.

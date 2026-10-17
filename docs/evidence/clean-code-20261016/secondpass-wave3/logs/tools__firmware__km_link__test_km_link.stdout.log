@@ -1,0 +1,2 @@
+SKIP: 固件树或头文件不齐（先跑 prepare_hero_build.py）
+  /workspace/shared/client-quality-integration/.firmware-not-selected/application/typedef/host_km_link.h

@@ -1,0 +1,42 @@
+
+--- test_buffer_max_lands_via_static_status ---
+[PASS] 静态报文能把缓冲上限写进状态（不再停在默认 100）  -> 260
+[PASS] 有了真实上限后按 current/max 算比例（65/260=25%）  -> 25
+[PASS] 字段不在 present 位图里时保持原值（不得被清 0）  -> 260
+[PASS] 上限 0 视为无效，不覆盖已有值  -> 260
+[PASS] 动态报文只更新 current，不动 max  -> max=300 cur=50
+
+--- test_indicator_switches_hide_the_lamp ---
+[PASS] 全开时 FRIC 灯占位
+[PASS] 全开时 LOCK 灯占位
+[PASS] 全开时 ANTIRO 灯占位
+[PASS] 关掉 Show State 后 FRIC 灯不占位
+[PASS] 但 LOCK / ANTIRO 不受影响（开关不得串扰）
+[PASS] 关掉 Anti Rotation 后 ANTIRO 灯不占位
+[PASS] FRIC 仍是关、LOCK 仍是开（各自独立）
+[PASS] 关掉 Show Lock 后 LOCK 灯不占位
+
+--- test_unlisted_lamps_are_never_hidden ---
+[PASS] PTE 不受模块级开关影响（恒占位）
+[PASS] JUP 不受模块级开关影响（恒占位）
+[PASS] WHE 不受模块级开关影响（恒占位）
+[PASS] LES 不受模块级开关影响（恒占位）
+[PASS] LNK 不受模块级开关影响（恒占位）
+[PASS] DRV 不受模块级开关影响（恒占位）
+[PASS] GIM 不受模块级开关影响（恒占位）
+[PASS] MOT 不受模块级开关影响（恒占位）
+[PASS] 完全不认识的key 不受模块级开关影响（恒占位）
+
+--- test_indicator_predicate_fails_open_on_missing_config ---
+[PASS] 模块关闭时仍占位（判据只看设置项取值，不额外加严）
+[PASS] 查不到设置项时占位（不因规格缺失默认隐藏）
+
+--- test_buff_lamps_map_to_small_and_large_buff ---
+[PASS] 全开时两颗增益灯都占位
+[PASS] 关掉 Small Buff 只影响 ATKBUF
+[PASS] 关掉 Large Buff 只影响 DEFBUF
+[PASS] 关 Anti Rotation 不牵连两颗增益灯
+[PASS] 模块 disabled 时本判据仍只看设置项（不加严，避免双重判定）
+
+============================================================
+ALL BATCH-10 SETTINGS TESTS PASSED

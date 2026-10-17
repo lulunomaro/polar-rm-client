@@ -44,8 +44,8 @@ class EscapeMenuMixin:
             return
         # Neutralize held input immediately; backend tick/telemetry/estop keep
         # running. Closing never restores a captured key/button or arms control.
-        self.control.mock_output = bool(self.backend.mqtt.mock_output)
-        self.control.release_all(self.state, self.registry)
+        self._escape_menu_visible = visible
+        self._neutralize_modal_inputs()
         # Preserve failed neutral-send retry state for the normal backend tick.
         self._control_mouse_point = None
         self.tactical_map_hold = False

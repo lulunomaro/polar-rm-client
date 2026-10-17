@@ -1,0 +1,64 @@
+6322d89de2eecc31da025b59b3dadc4ec2599cde test(referee): freeze domain dispatch and partial side effects
+ada0ba2973c88973d0177ceef66bfba4eaf90e95 refactor(referee): separate domain metadata and economy values from assembly
+97c0e650d194e10b656aa1f61153446781c30bc7 docs(referee): correct frozen offer case count
+039c96e5f19a06de149db3aa2d0c0d08fe56ce23 test(startup): freeze Qt launch effects and failure boundaries
+89cb03ad00a19df13a278d04802dc8565663b186 refactor(startup): launch Qt through an explicit window factory
+129e63e457a24fd4ab4693a265187f3c315e7805 test(startup): freeze live navigation effects and interruption state
+9acc57448e94d706927aee3573a17730fd9a1e6a test(ui): freeze polar package compatibility export identities
+b3d92ba4c15844e96739d3dd56904691c4cc29fd refactor(ui): keep pure controllers behind lazy compatibility exports
+7a56f31114589eef7fc2172f38ce71ca56a1cbaa refactor(startup): give launcher navigation a pure state owner
+b2ba336c12280f8c9ed8c03c60742f7083fd8856 test(render): freeze live warmup queue and context failure ordering
+ab936698ebc11cabf3e3b01c8a4ca84ccef8f493 refactor(render): own incremental warmup queue behind explicit ports
+2d05e68cf0046dfedac145cc711b6b5ca9cd662e test(startup): reproduce post-failure activation in real window
+9ebd92cfa3bf441a8c6ab04061dcc86f52938519 fix(startup): retain failed windows and revoke pending activation
+d847633db7cac63136387d770a51dba508e776b3 test(camera): freeze activation ordering and partial state
+70729e6140ff493efab238738741c92a174ce892 refactor(camera): own capture admission through explicit ports
+05d34c86b31d7c1fe42c4af5afc6bb688a3ded39 test(vision): freeze staged source and worker admission effects
+63147a9c2f0c43276b4d54002aeede460b9a369f test(vision): preserve worker binding before reentrant setting reads
+0b5d80ef3f2edf8246ece98f23ec9fb67f048daf refactor(vision): own requested source and worker revocation policy
+bc9f47c4b0830da447ab652cae30b75a7d6315dd test(window): expose constructor timer admission escape
+935d0e2c0c3e13f89e1bc1126201c3ce36f51da8 test(window): hold constructor abort until native cleanup
+3f7bf4e1929dec028d5ae8a8573350497f744f79 fix(window): retain fully assembled owner when timer admission fails
+9d202cec98f9dc24f9030842b8be9a38f64b1563 test(config): freeze profile save ownership and interrupted effects
+433da7a256b1f825a3fe135b658faa9685fc1a1b refactor(config): own accepted profile and delayed-save lifecycle
+3da912b8fc1c1bebc2da52b79b2d13c09a838ac8 style(config): remove trailing blank line from profile save owner
+e1a175f090e744b9c5263f1386f6d7b15b096b60 test(render): freeze cached frame ordering and failure recovery contracts
+64559021da761f233743dcc0ef52c41c7e3f4196 refactor(render): isolate cached overlay layers behind immutable frame plans
+3986992b246a8458ae603dd0fe7ee81e3278a36a test(render): compare actual cached window scenes and post-present restore
+db5f00d1cee4324ab55f7e04079fca7f6d9d900b fix(render): validate frame scalar ownership and Qt dimension bounds
+17a97fb36b0d6e659ecad635749fac00b0b50eb2 refactor(render): reject contradictory overlay layer ownership plans
+077851568554afaa49931c4062a8e46747bf8154 test(render): require active scene for prepared ClickGUI layers
+e2ab8d038d27128dca6cea1caf64843ba92e0ccb test(render): expose falsely accepted HUD and specialized command batches
+5ea634bb5b68f9de0452f8f23dc8e702ad4b11ad fix(render): reject incomplete child command batches before present
+8cbf31ca2adfcf29d0f8e402b0ba882e655812ec test(render): preserve child rejection through failed framebuffer unwind
+feebbcb55fe98c93c5db78a1ac3a437a6811c80a fix(render): retain first child rejection through independent cleanup
+db2eb9fa6fee3f52ba6bddff65e519f55b6b47fd test(render): expose abandoned GPU collections swallowing raster fallback
+810fac6b9c1d7fbb456ae2d2d2ad2a00422123ef test(render): supply inert texture handles to specialized retry fixture
+bc4506b7e99001210f9ca1f529dc9cf117acb692 fix(render): unwind command collection ownership with its layer session
+cab6b14535250c3a3ea75da872c27ef6330ca7b1 fix(render): bound immutable frame dimensions and timestamp admission
+8f76150020e1c85ab25fe5d45686a43b1bfcd3fe docs(render): record cached frame ownership and fault recovery evidence
+0b41b158731ebdd9eab8f2f4c67d1c2ca2a39251 docs(render): retain complete focused and red regression logs
+077a170fbc754caafb1f61a1c4508e189ad0d79d docs(render): exclude superseded static checkpoint log
+8ebb22190f92f777afbfe2738fd8aaa1fb15a586 test(economy): characterize commands and interrupted effects before boundary refactor
+953ccd12e9aa32a6204c6b62533a9f1100e8097d refactor(economy): separate selection queries from reconciliation commands
+ee2cdeb71195b58aef258d3eae02870e49af5a7a refactor(economy): isolate value-driven content drawing from window state
+f2a567ecb9e61c21255b7298defb301ae110aec2 refactor(economy): isolate confirmation intent rules from UI effects
+ca7a57d7c6a1c6a6c6c1b8cf1f07a25842234d31 test(economy): guard explicit selection callers and confirmation budgets
+9da683dacf35a73387580de36d681f2f7929e0ad refactor(economy): preserve lazy confirmation observation order
+52f47c23ccadead88699a383d47e43fa9110359c docs(economy): record boundary ownership and fixed-source validation
+9ec4ce6f7395c73d76b8f1d8b883f1c1dfc5590d fix(verification): isolate source roots and per-suite caches
+50c27e84d7ff03e1e825952650b82f7ceacb776f fix(verification): reject source drift during evidence runs
+28e460a9c60b94681f3fe516089b24a71ccf26ac test(verification): pin reproducible Linux dependency wheels
+f5994b95a4afa5ea0315d23c3a26b7763ea2898d fix(verification): prevent inherited startup activation and data reuse
+b88a772ddf3211eef16943200061c89c10b9ac02 fix(verification): keep expected test failures incomplete
+24aed129c770803bb061514f0644000e335b3671 test(quality): protect extracted profile and economy domains
+202b84c96e1ece2cbb9cd9f8ef1656e978a9eeb5 fix(verification): publish explicit incomplete report checkpoints
+d7b783ec9a89fb6eb3a0da980051c6443d11009f docs(verification): bound report checkpoints to selected attempts
+833e90374d83a0b32e25571407b1949f619ba947 test(lifecycle): reproduce angle and audit admission ownership failures
+385c205ba1511cfb00f377b06597fab725f79f91 fix(lifecycle): preserve truthful angle and audit admission ownership
+7003d899cfbeb35fbc32d5e672cde489160b0895 test(lifecycle): independently challenge audit and angle admission races
+dc97434c1af052fa259a36151f434065c1aac540 docs(review): record independent admission ownership acceptance
+d17b41fd036d42462bda25a83b9e91a4c3203866 test(video): freeze actual-window source and timeline contracts
+bd1bedf0f9e188cbd5b199a4c7ac74799d2c5508 refactor(video): own normal-frame provenance and timeline policy
+893b23095cbf3f5dbbc5e223a29a9b11ccfeaa62 test(economy): characterize shared label identity and mutation visibility
+c4d3bcf97ef43056bf316bbec593802652120878 refactor(economy): align UI value consumers with domain vocabulary owner

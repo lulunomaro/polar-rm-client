@@ -25,6 +25,7 @@ exec(compile(ast.fix_missing_locations(MODULE), str(SOURCE), "exec"), NAMESPACE)
 
 class FakeBackend:
     apply_updates = NAMESPACE["apply_updates"]
+    _backend_transition_blocks_work = lambda self: False
     _notify_referee_view = NAMESPACE["_notify_referee_view"]
 
     def __init__(self, observer=None):

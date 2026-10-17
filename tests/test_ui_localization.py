@@ -224,7 +224,9 @@ class LocalizationTests(unittest.TestCase):
 
     def test_qualification_dialog_cancel_is_localized_and_has_no_side_effect(self):
         from rm_client.ui.polar.mixins.config_actions_mixin import ConfigActionsMixin
-        host = NS(registry=build_default_registry(), backend=Mock(), toast=Mock(), update_backend_readiness=Mock(), frame_scheduler=Mock())
+        host = ConfigActionsMixin()
+        host.registry, host.backend, host.toast = build_default_registry(), Mock(), Mock()
+        host.update_backend_readiness, host.frame_scheduler = Mock(), Mock()
         with patch("rm_client.ui.polar.mixins.config_actions_mixin.QInputDialog.getText", return_value=("", False)) as dialog:
             ConfigActionsMixin.handle_qualification_action(host, "New Qualification Session")
             self.assertEqual(dialog.call_args.args[1:], ("现场资格检查", "操作员姓名："))
@@ -234,7 +236,9 @@ class LocalizationTests(unittest.TestCase):
     def test_safety_dialog_preserves_literal_confirmation_phrase(self):
         from rm_client.ui.polar.mixins.config_actions_mixin import ConfigActionsMixin
         for phrase, passed in (("已观察台架", False), ("", False), ("OBSERVED ON FIXTURE", True)):
-            host = NS(registry=build_default_registry(), backend=Mock(), toast=Mock(), update_backend_readiness=Mock(), frame_scheduler=Mock())
+            host = ConfigActionsMixin()
+            host.registry, host.backend, host.toast = build_default_registry(), Mock(), Mock()
+            host.update_backend_readiness, host.frame_scheduler = Mock(), Mock()
             with patch("rm_client.ui.polar.mixins.config_actions_mixin.QInputDialog.getText", side_effect=[("Observer", True), (phrase, True)]) as dialog:
                 ConfigActionsMixin.handle_qualification_action(host, "Review PRM1 Spin Schema")
                 prompt = dialog.call_args.args[2]

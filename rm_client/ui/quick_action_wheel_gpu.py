@@ -10,6 +10,10 @@ from PySide6.QtOpenGL import (
     QOpenGLVertexArrayObject,
 )
 
+from functools import partial
+
+from .gl_resources import GlDrawBindings, GlResourceOwner, destroy_created
+
 
 _GL_BLEND = 0x0BE2
 _GL_CULL_FACE = 0x0B44
@@ -41,6 +45,7 @@ class QuickActionWheelGpuRenderer:
     def __init__(self) -> None:
         self.available = False
         self.last_error = ""
+        self.resources = GlResourceOwner("wheel")
         self.program: QOpenGLShaderProgram | None = None
         self.buffer = QOpenGLBuffer(QOpenGLBuffer.Type.VertexBuffer)
         self.vertex_array = QOpenGLVertexArrayObject()
@@ -49,19 +54,32 @@ class QuickActionWheelGpuRenderer:
     def initialize(self) -> bool:
         if self.available:
             return True
-        try:
-            self.program = self._build_program()
+        if self.program is not None or self.resources.release_pending:
+            try:
+                self.release()
+            except Exception:
+                # The retained owner must finish cleanup before replacement.
+                return False
+        self.last_error = ""
+
+        def create() -> bool:
+            program = self._build_program()
+            if program is None:
+                return False
+            self.program = program
             if not self.vertex_array.create():
-                raise RuntimeError("quick action wheel VAO creation failed")
+                self.last_error = "quick action wheel VAO creation rejected"
+                return False
             if not self.buffer.create():
-                raise RuntimeError("quick action wheel VBO creation failed")
-            self.available = True
-            self.last_error = ""
+                self.last_error = "quick action wheel VBO creation rejected"
+                return False
             return True
-        except Exception as exc:
-            self.last_error = str(exc)
-            self.release()
-            return False
+
+        self.available = self.resources.run(
+            "initialize", create, rejection=lambda: self.last_error, on_reject=self._release_actions,
+        )
+        self.last_error = self.resources.last_error
+        return self.available
 
     @staticmethod
     def _vertices(command: QuickActionWheelCommand, ratio: float) -> bytes:
@@ -96,7 +114,18 @@ class QuickActionWheelGpuRenderer:
         ratio = max(1.0, float(device_pixel_ratio))
         payload = self._vertices(command, ratio)
         self.draw_calls = 0
-        try:
+        bindings = GlDrawBindings(self.program, self.buffer, self.vertex_array, restore=(
+            ("active_texture_1", partial(functions.glActiveTexture, _GL_TEXTURE0 + 1)),
+            ("unbind_texture_1", partial(functions.glBindTexture, _GL_TEXTURE_2D, 0)),
+            ("active_texture_0", partial(functions.glActiveTexture, _GL_TEXTURE0)),
+            ("unbind_texture_0", partial(functions.glBindTexture, _GL_TEXTURE_2D, 0)),
+            ("disable_blend", partial(functions.glDisable, _GL_BLEND)),
+            ("disable_scissor", partial(functions.glDisable, _GL_SCISSOR_TEST)),
+            ("disable_depth", partial(functions.glDisable, _GL_DEPTH_TEST)),
+            ("disable_cull", partial(functions.glDisable, _GL_CULL_FACE)),
+        ))
+
+        def draw() -> bool:
             physical_width = max(1, round(width * ratio))
             physical_height = max(1, round(height * ratio))
             functions.glViewport(0, 0, physical_width, physical_height)
@@ -107,7 +136,8 @@ class QuickActionWheelGpuRenderer:
             functions.glBlendEquation(_GL_FUNC_ADD)
             functions.glBlendFunc(_GL_ONE, _GL_ONE_MINUS_SRC_ALPHA)
 
-            self.program.bind()
+            if not bindings.bind_program():
+                return False
             functions.glUniform2f(
                 self.program.uniformLocation("viewport"),
                 float(physical_width),
@@ -136,36 +166,23 @@ class QuickActionWheelGpuRenderer:
             functions.glBindTexture(_GL_TEXTURE_2D, int(blur_texture))
             functions.glUniform1i(self.program.uniformLocation("blurTex"), 1)
 
-            self.vertex_array.bind()
-            self.buffer.bind()
+            bindings.bind_vertex_array()
+            if not bindings.bind_buffer():
+                return False
             self.buffer.allocate(payload, len(payload))
             stride = 4 * 4
             for location, offset in ((0, 0), (1, 8)):
-                self.program.enableAttributeArray(location)
+                bindings.enable_attribute(location)
                 self.program.setAttributeBuffer(location, _GL_FLOAT, offset, 2, stride)
             functions.glDrawArrays(_GL_TRIANGLES, 0, 6)
-            for location in range(2):
-                self.program.disableAttributeArray(location)
-            self.buffer.release()
-            self.vertex_array.release()
-            self.program.release()
-            self.draw_calls = 1
             return True
-        except Exception as exc:
-            self.last_error = str(exc)
-            return False
-        finally:
-            functions.glActiveTexture(_GL_TEXTURE0 + 1)
-            functions.glBindTexture(_GL_TEXTURE_2D, 0)
-            functions.glActiveTexture(_GL_TEXTURE0)
-            functions.glBindTexture(_GL_TEXTURE_2D, 0)
-            functions.glDisable(_GL_BLEND)
-            functions.glDisable(_GL_SCISSOR_TEST)
-            functions.glDisable(_GL_DEPTH_TEST)
-            functions.glDisable(_GL_CULL_FACE)
 
-    @staticmethod
-    def _build_program() -> QOpenGLShaderProgram:
+        accepted = self.resources.run("render", draw, cleanup=bindings.cleanup, rejection=lambda: bindings.rejection)
+        self.last_error = self.resources.last_error
+        self.draw_calls = int(accepted)
+        return accepted
+
+    def _build_program(self) -> QOpenGLShaderProgram | None:
         vertex = """
             #version 330
             layout(location=0) in vec2 position;
@@ -247,20 +264,33 @@ class QuickActionWheelGpuRenderer:
             }
         """
         program = QOpenGLShaderProgram()
+        self.program = program
         if not program.addShaderFromSourceCode(QOpenGLShader.ShaderTypeBit.Vertex, vertex):
-            raise RuntimeError(program.log())
+            self.last_error = program.log()
+            return None
         if not program.addShaderFromSourceCode(QOpenGLShader.ShaderTypeBit.Fragment, fragment):
-            raise RuntimeError(program.log())
+            self.last_error = program.log()
+            return None
         if not program.link():
-            raise RuntimeError(program.log())
+            self.last_error = program.log()
+            return None
         return program
 
-    def release(self) -> None:
-        if self.buffer.isCreated():
-            self.buffer.destroy()
-        if self.vertex_array.isCreated():
-            self.vertex_array.destroy()
+    def _release_program(self) -> None:
         if self.program is not None:
             self.program.removeAllShaders()
-        self.program = None
+            self.program = None
+
+    def _release_actions(self):
+        return (
+            ("buffer", partial(destroy_created, self.buffer)),
+            ("vertex_array", partial(destroy_created, self.vertex_array)),
+            ("program", self._release_program),
+        )
+
+    def release(self) -> None:
         self.available = False
+        try:
+            self.resources.release(self._release_actions())
+        finally:
+            self.last_error = self.resources.last_error

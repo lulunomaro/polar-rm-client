@@ -1,0 +1,42 @@
+{
+  "base_revision": "fa2c2b8397295d27ada5d105854b751b7dd0940d",
+  "base_source_sha256": "6ae54216d9d09eeeae53e7da28f68274c64cc8e713dc65804de89ec99a76af70",
+  "candidate_source_sha256": "fb770caaed98ba4ca459dc4fa65e85112a0d0d552cac7c036fcbbec583cb92fd",
+  "before": {
+    "decisions": 13069,
+    "files": 208,
+    "functions": 3368,
+    "historical_ui_functions": 50,
+    "historical_ui_modules": 1,
+    "import_edges": 598,
+    "parsed_files": 208,
+    "statements": 37123
+  },
+  "after": {
+    "decisions": 13061,
+    "files": 209,
+    "functions": 3377,
+    "historical_ui_functions": 50,
+    "historical_ui_modules": 1,
+    "import_edges": 600,
+    "parsed_files": 209,
+    "statements": 37122
+  },
+  "delta": {
+    "decisions": -8,
+    "files": 1,
+    "functions": 9,
+    "historical_ui_functions": 0,
+    "historical_ui_modules": 0,
+    "import_edges": 2,
+    "parsed_files": 1,
+    "statements": -1
+  },
+  "candidate_gate": {
+    "baseline_revision": "d64f1528e2e1864ef369537c026b6d3f7127f590",
+    "status": "PASS",
+    "violations": []
+  },
+  "runtime_cycles": [],
+  "all_import_cycles": []
+}

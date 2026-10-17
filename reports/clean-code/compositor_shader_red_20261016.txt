@@ -1,0 +1,287 @@
+.FFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='present_program', stage='vertex', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='present_program', stage='vertex', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='present_program', stage='fragment', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='present_program', stage='fragment', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='present_program', stage='link', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='present_program', stage='link', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='blur_program', stage='vertex', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='blur_program', stage='vertex', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='blur_program', stage='fragment', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='blur_program', stage='fragment', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='blur_program', stage='link', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='blur_program', stage='link', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='jello_blur_program', stage='vertex', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='jello_blur_program', stage='vertex', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='jello_blur_program', stage='fragment', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='jello_blur_program', stage='fragment', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='jello_blur_program', stage='link', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='jello_blur_program', stage='link', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='glass_program', stage='vertex', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='glass_program', stage='vertex', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='glass_program', stage='fragment', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='glass_program', stage='fragment', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='glass_program', stage='link', raises=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_each_compile_and_link_failure_releases_candidate_and_earlier_programs (__main__.CompositorShaderOwnershipTests.test_each_compile_and_link_failure_releases_candidate_and_earlier_programs) (slot='glass_program', stage='link', raises=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 50, in test_each_compile_and_link_failure_releases_candidate_and_earlier_programs
+    program.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries (__main__.CompositorShaderOwnershipTests.test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries) (slot='present_program')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 68, in test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries
+    self.assertIs(getattr(compositor, SLOTS[slot]), candidate)
+AssertionError: None is not <Mock id='140077493024192'>
+
+======================================================================
+FAIL: test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries (__main__.CompositorShaderOwnershipTests.test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries) (slot='blur_program')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 68, in test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries
+    self.assertIs(getattr(compositor, SLOTS[slot]), candidate)
+AssertionError: None is not <Mock id='140077492718672'>
+
+======================================================================
+FAIL: test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries (__main__.CompositorShaderOwnershipTests.test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries) (slot='jello_blur_program')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 68, in test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries
+    self.assertIs(getattr(compositor, SLOTS[slot]), candidate)
+AssertionError: None is not <Mock id='140077492716416'>
+
+======================================================================
+FAIL: test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries (__main__.CompositorShaderOwnershipTests.test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries) (slot='glass_program')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 68, in test_failed_candidate_cleanup_retains_identity_blocks_replacement_and_retries
+    self.assertIs(getattr(compositor, SLOTS[slot]), candidate)
+AssertionError: None is not <Mock id='140077493403728'>
+
+======================================================================
+FAIL: test_failed_shader_log_preserves_original_error_and_candidate_owner (__main__.CompositorShaderOwnershipTests.test_failed_shader_log_preserves_original_error_and_candidate_owner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/tests/test_compositor_shader_ownership.py", line 100, in test_failed_shader_log_preserves_original_error_and_candidate_owner
+    candidate.removeAllShaders.assert_called_once()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'removeAllShaders' to have been called once. Called 0 times.
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.048s
+
+FAILED (failures=29)

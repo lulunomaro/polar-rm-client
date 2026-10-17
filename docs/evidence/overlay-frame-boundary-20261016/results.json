@@ -1,0 +1,173 @@
+{
+  "source_commit": "ba96e42d5ec20c95acb4b9b4404f423912e6da76",
+  "git_tree": "578cd0b95a6f5b9f4c6cd8503b8f8e09a4973b14",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "started_source_clean": true,
+  "timestamp_utc": "2026-10-16T09:57:47.272340+00:00",
+  "scope": "Targeted offline cached-frame checks. Real Qt raster/production methods; native GL calls are controlled test boundaries. Not aggregate/release/device/GPU qualification.",
+  "results": [
+    {
+      "test": "tests/test_gpu_command_frame_rejection.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 8,
+      "elapsed_seconds": 1.8,
+      "log": "test_gpu_command_frame_rejection.log",
+      "log_sha256": "40d117f8cf74433569f0f8d4969feacf19cbfa573f918df99a1e4cf8afb66217"
+    },
+    {
+      "test": "tests/test_gpu_command_collection_lifetime.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 4,
+      "elapsed_seconds": 3.143,
+      "log": "test_gpu_command_collection_lifetime.log",
+      "log_sha256": "7de4f223e531e9cf844d99cb74386a2a3379b9854712114f53227cd82e30f5e6"
+    },
+    {
+      "test": "tests/test_cached_frame_contract.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 4,
+      "elapsed_seconds": 5.409,
+      "log": "test_cached_frame_contract.log",
+      "log_sha256": "2970b15b0f5c1204209ff486f54cc71518003a69b19f989eea71457cb03a3201"
+    },
+    {
+      "test": "tests/test_overlay_layer_boundary.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 12,
+      "elapsed_seconds": 1.364,
+      "log": "test_overlay_layer_boundary.log",
+      "log_sha256": "8513c8b94f6ff4ea3d79f64910580bd2a8f5dcc6d4ea59f758f2c1af07f3e300"
+    },
+    {
+      "test": "tests/test_cached_window_layers.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 3,
+      "elapsed_seconds": 9.369,
+      "log": "test_cached_window_layers.log",
+      "log_sha256": "7efd66ade7a45fb64e39844baf2168414a137d250ab53ef87f0f331ca149e971"
+    },
+    {
+      "test": "tests/test_framebuffer_generation.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 27,
+      "elapsed_seconds": 1.897,
+      "log": "test_framebuffer_generation.log",
+      "log_sha256": "9ad858ae88fe74e9dab93395ec7524c415ac56f55d494e8c6f53f834993245de"
+    },
+    {
+      "test": "tests/test_compositor_plan.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 18,
+      "elapsed_seconds": 0.19,
+      "log": "test_compositor_plan.log",
+      "log_sha256": "a93cfa7bf7fe0a1507bc3830da553ec02bf6af25c6d91f43ef4927e91e89b690"
+    },
+    {
+      "test": "tests/test_clickgui_frame_contract.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 20,
+      "elapsed_seconds": 1.723,
+      "log": "test_clickgui_frame_contract.log",
+      "log_sha256": "0c73c4747e31db6dbcd63bf52108d07f12f8e380bd7055701b44890c0bdfe686"
+    },
+    {
+      "test": "tests/test_compositor_fault_diagnostics.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 28,
+      "elapsed_seconds": 0.272,
+      "log": "test_compositor_fault_diagnostics.log",
+      "log_sha256": "902456cc30ad84d4531da1d72ac1224d688ef2a8c43d5ebd746f1e4d739f4ba9"
+    },
+    {
+      "test": "tests/test_window_normal_frame.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 3,
+      "elapsed_seconds": 1.513,
+      "log": "test_window_normal_frame.log",
+      "log_sha256": "0880a525c3c2ae3bbcded69cf3bbbf399ccee88531904bff9c16a2aaca964eb6"
+    },
+    {
+      "test": "tests/test_ui_state_regressions.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 30,
+      "elapsed_seconds": 0.555,
+      "log": "test_ui_state_regressions.log",
+      "log_sha256": "1234c4b28ae99b6d588aca3c3d9813a03212b189833dce55d76de5f96df0ec27"
+    },
+    {
+      "test": "tests/test_specialized_gl_owners.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 15,
+      "elapsed_seconds": 0.648,
+      "log": "test_specialized_gl_owners.log",
+      "log_sha256": "b994e0ff9617d019e6f007d8165b456047f75cb22a67d365fb44b1c6fb25fbe8"
+    },
+    {
+      "test": "tests/test_specialized_gl_initialization.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 8,
+      "elapsed_seconds": 0.699,
+      "log": "test_specialized_gl_initialization.log",
+      "log_sha256": "6a10cfcf96cbead10ddab7d7df040bb7f3eb2d7dafd8ae8110286d54daea311a"
+    },
+    {
+      "test": "tests/test_clickgui_renderer_faults.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 6,
+      "elapsed_seconds": 0.26,
+      "log": "test_clickgui_renderer_faults.log",
+      "log_sha256": "065c7d15facfd20f14fb9182747be315f3349fa1d5e1a0e966047509f4bfa9b1"
+    },
+    {
+      "test": "tests/test_gpu_warmup_budget.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 10,
+      "elapsed_seconds": 0.574,
+      "log": "test_gpu_warmup_budget.log",
+      "log_sha256": "e39dd69ceee0f14cc37196a1e600bb6a43de183b7364a94dec4f29453137a6be"
+    },
+    {
+      "test": "tests/test_fullscreen_composition.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 15,
+      "elapsed_seconds": 0.548,
+      "log": "test_fullscreen_composition.log",
+      "log_sha256": "0a9c9456990cceb87d2218b8202088981aeb4e400c06f2efafd54860602e0e35"
+    },
+    {
+      "test": "tests/test_window_api_contract.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": 41,
+      "elapsed_seconds": 0.596,
+      "log": "test_window_api_contract.log",
+      "log_sha256": "34541ce9ad6a3cfb439ee6d2e465643af489b8f44c18f8e81d55328fc49757ae"
+    },
+    {
+      "test": "tests/api_freeze_test.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "methods": null,
+      "elapsed_seconds": 1.139,
+      "log": "api_freeze_test.log",
+      "log_sha256": "39fb4c2aa136d7df4d624347005dac38528b25f08c087a563c7e2585d75792a6"
+    }
+  ],
+  "passed": true
+}

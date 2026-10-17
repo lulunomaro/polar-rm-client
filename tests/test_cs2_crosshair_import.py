@@ -22,7 +22,7 @@ from unittest.mock import Mock, patch
 os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 os.environ.setdefault('POLAR_DISABLE_MEDIA_PRELOAD', '1')
 from PySide6.QtCore import Qt, QPoint, QRect
-from PySide6.QtGui import QColor, QImage, QPainter, QFont, QTextLayout
+from PySide6.QtGui import QColor, QImage, QPainter, QFont, QFontDatabase, QTextLayout
 from PySide6.QtWidgets import QApplication, QWidget, QDialog, QLabel, QVBoxLayout, QBoxLayout
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QKeyEvent
@@ -277,9 +277,15 @@ class EditorAndPaintTests(unittest.TestCase):
         return [(run.rawFont().familyName(), run.rawFont().styleName(), tuple(run.glyphIndexes()))
                 for run in layout.glyphRuns()]
 
-    def test_latin_cs2_cjk_yahei_are_real_glyphs_not_inherited_minecraft(self):
+    def test_latin_cs2_cjk_platform_fallback_are_real_glyphs_not_inherited_minecraft(self):
         from rm_client.ui.cs2_assets import local_cs2_assets
         widget = self.embedded_in_host()
+        # Production owns this explicit fallback chain. Windows normally uses
+        # YaHei, while portable Linux uses Noto; either must render real CJK
+        # glyphs, not silently pass with a missing face or host-font fallback.
+        cjk_families = {'Microsoft YaHei UI', 'Microsoft YaHei', 'Noto Sans CJK SC'}
+        available_cjk = cjk_families & set(QFontDatabase.families())
+        self.assertTrue(available_cjk, 'Install an approved CJK font to run native glyph assertions')
         for child in (widget, widget.controls['Gap'], widget.controls['Geometry Units'], widget.code,
                       widget.findChild(QLabel, 'crosshair_title')):
             with self.subTest(child=child.objectName()):
@@ -287,6 +293,7 @@ class EditorAndPaintTests(unittest.TestCase):
                 self.assertNotIn('Minecraft Ten', font.families())
                 self.assertIn('Microsoft YaHei UI', font.families())
                 self.assertIn('Microsoft YaHei', font.families())
+                self.assertIn('Noto Sans CJK SC', font.families())
                 self.assertFalse(font.italic())
                 # QSS resolves some control fonts to QFont.AnyStretch (0),
                 # which selects the face's normal stretch, never host 140%.
@@ -295,8 +302,12 @@ class EditorAndPaintTests(unittest.TestCase):
                 self.assertFalse(font.styleStrategy() & QFont.StyleStrategy.NoAntialias)
                 self.assertFalse(font.styleStrategy() & QFont.StyleStrategy.NoFontMerging)
                 runs = self.glyph_runs('CROSSHAIR 准星设置', font)
+                self.assertTrue(runs)
                 self.assertTrue(all(glyph != 0 for _, _, glyphs in runs for glyph in glyphs), runs)
-                self.assertTrue(any('YaHei' in family for family, _, _ in runs), runs)
+                cjk_runs = self.glyph_runs('准星设置', font)
+                self.assertEqual(sum(len(glyphs) for _, _, glyphs in cjk_runs), 4, cjk_runs)
+                self.assertTrue(all(family in available_cjk for family, _, _ in cjk_runs), cjk_runs)
+                self.assertTrue(all(glyph != 0 for _, _, glyphs in cjk_runs for glyph in glyphs), cjk_runs)
         pack = local_cs2_assets()
         if 'font_regular' in pack.families:
             runs = self.glyph_runs('CROSSHAIR 准星', widget.font())
@@ -388,8 +399,9 @@ class EditorAndPaintTests(unittest.TestCase):
         self.assertEqual(dialog.grab().toImage().pixelColor(0, 0), QColor('#17232b'))
         dialog.reject()
 
-    def paint(self, values, ratio=1):
+    def paint(self, values, ratio=1, display_scale=1):
         module = self.host.registry.get('Crosshair')
+        module.get_setting('Crosshair Scale').value = display_scale
         apply_profile(module, values)
         image = QImage(320 * ratio, 240 * ratio, QImage.Format_ARGB32_Premultiplied)
         image.setDevicePixelRatio(ratio)
@@ -407,17 +419,59 @@ class EditorAndPaintTests(unittest.TestCase):
     def test_qt_enums_t_shape_outline_rgba_dot_and_no_zero_thickness_invention(self):
         v = dict(DEFAULTS, **{'Reference Height': 240, 'Thickness': 2, 'Length': 10, 'Gap': 4,
                             'Outline Red': 40, 'Outline Green': 50, 'Outline Blue': 60, 'Outline Alpha': 128})
-        image = self.paint(v)
-        self.assertEqual(image.pixelColor(168, 120).getRgb(), (80, 255, 80, 255))
-        self.assertEqual(image.pixelColor(168, 118).alpha(), 128)
-        self.assertGreater(image.pixelColor(160, 111).alpha(), 0)
-        t = self.paint(dict(v, **{'T Shape': True}))
-        self.assertEqual(t.pixelColor(160, 111).alpha(), 0)
-        zero = self.paint(dict(v, **{'Thickness': 0, 'Center Dot': True}))
-        self.assertEqual(zero.pixelColor(160, 120).alpha(), 0)
-        dot = self.paint(dict(v, **{'CS2 Style': 6}))
-        self.assertGreater(dot.pixelColor(160, 120).alpha(), 0)
-        self.assertEqual(dot.pixelColor(168, 120).alpha(), 0)
+        foreground = QColor(80, 255, 80, 255)
+        outline = QColor(40, 50, 60, 128)
+        for ratio in (1, 2):
+            for display_scale in (.5, 1, 2):
+                with self.subTest(dpr=ratio, display_scale=display_scale):
+                    # Independent pixel-space oracle: the approved CS-only
+                    # baseline is 2x, then local scale and DPR are applied.
+                    # Profile values remain the import/export units.
+                    scale = 240 / v['Reference Height'] * 2 * display_scale * ratio
+                    length, gap, thick, border = (int(v[key] * scale) for key in
+                                                 ('Length', 'Gap', 'Thickness', 'Outline Width'))
+                    cx, cy = 160 * ratio, 120 * ratio
+                    arms = [QRect(cx - gap - length, cy - thick // 2, length, thick),
+                            QRect(cx + gap, cy - thick // 2, length, thick),
+                            QRect(cx - thick // 2, cy + gap, thick, length),
+                            QRect(cx - thick // 2, cy - gap - length, thick, length)]
+
+                    def expected(rectangles):
+                        image = QImage(320 * ratio, 240 * ratio, QImage.Format_ARGB32_Premultiplied)
+                        image.fill(0)
+                        painter = QPainter(image)
+                        try:
+                            # Source replacement ensures the union of borders
+                            # has alpha 128, including any overlapping pixels.
+                            painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
+                            for rect in rectangles:
+                                painter.fillRect(rect.adjusted(-border, -border, border, border), outline)
+                            for rect in rectangles:
+                                painter.fillRect(rect, foreground)
+                        finally:
+                            painter.end()
+                        # The oracle was painted in physical pixels already.
+                        image.setDevicePixelRatio(ratio)
+                        return image
+
+                    image = self.paint(v, ratio, display_scale)
+                    self.assertEqual(image, expected(arms))
+                    arm_x = cx + gap + length // 2
+                    self.assertEqual(image.pixelColor(arm_x, cy).getRgb(), foreground.getRgb())
+                    self.assertEqual(image.pixelColor(arm_x, cy - thick // 2 - 1).getRgb(), outline.getRgb())
+                    top_y = cy - gap - length // 2
+                    self.assertEqual(image.pixelColor(cx, top_y).getRgb(), foreground.getRgb())
+                    t = self.paint(dict(v, **{'T Shape': True}), ratio, display_scale)
+                    self.assertEqual(t, expected(arms[:3]))
+                    self.assertEqual(t.pixelColor(cx, top_y).alpha(), 0)
+                    zero = self.paint(dict(v, **{'Thickness': 0, 'Center Dot': True}), ratio, display_scale)
+                    self.assertEqual(zero, expected([]))
+                    dot = self.paint(dict(v, **{'CS2 Style': 6}), ratio, display_scale)
+                    self.assertEqual(dot, expected([QRect(cx - thick // 2, cy - thick // 2, thick, thick)]))
+                    self.assertEqual(dot.pixelColor(cx, cy).getRgb(), foreground.getRgb())
+                    self.assertEqual(dot.pixelColor(arm_x, cy).alpha(), 0)
+                    self.assertEqual(profile_from_module(self.host.registry.get('Crosshair')),
+                                     dict(v, **{'CS2 Style': 6}))
 
     def test_circle_square_quad_have_distinct_static_pixels_and_dpr(self):
         v = dict(DEFAULTS, **{'Reference Height': 240, 'Thickness': 2, 'Length': 8, 'Gap': 7, 'Center Dot': True})

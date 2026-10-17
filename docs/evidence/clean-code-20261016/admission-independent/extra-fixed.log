@@ -1,0 +1,10 @@
+test_admitted_late_error_after_cancel_keeps_inflight_and_counts (__main__.IndependentAdmissionReview.test_admitted_late_error_after_cancel_keeps_inflight_and_counts) ... ok
+test_angle_late_start_error_keeps_old_config_until_native_close (__main__.IndependentAdmissionReview.test_angle_late_start_error_keeps_old_config_until_native_close) ... ok
+test_angle_rejection_allows_same_configuration_retry_without_phantom_owner (__main__.IndependentAdmissionReview.test_angle_rejection_allows_same_configuration_retry_without_phantom_owner) ... ok
+test_concurrent_producers_and_close_during_unadmitted_rejection (__main__.IndependentAdmissionReview.test_concurrent_producers_and_close_during_unadmitted_rejection) ... ok
+test_repeated_constructor_rejection_recovery_preserves_loss_and_redacts (__main__.IndependentAdmissionReview.test_repeated_constructor_rejection_recovery_preserves_loss_and_redacts) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.004s
+
+OK

@@ -1,0 +1,309 @@
+............FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF..F.............................
+======================================================================
+FAIL: test_pure_domain_helper_ui_dependency_is_not_hidden (test_quality_gates.ImportGraphTests.test_pure_domain_helper_ui_dependency_is_not_hidden)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 240, in test_pure_domain_helper_ui_dependency_is_not_hidden
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='import rm_client.backend.transport')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='def create():\n    import rm_client.backend.transport')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    import rm_client.backend.transport')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='from rm_client.backend.transport import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='def create():\n    from rm_client.backend.transport import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from rm_client.backend.transport import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='import PySide6.QtCore')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='def create():\n    import PySide6.QtCore')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    import PySide6.QtCore')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='from PySide6.QtCore import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='def create():\n    from PySide6.QtCore import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from PySide6.QtCore import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='import tkinter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='def create():\n    import tkinter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    import tkinter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='from tkinter import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='def create():\n    from tkinter import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='referee_profiles', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from tkinter import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='import rm_client.backend.transport')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='def create():\n    import rm_client.backend.transport')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    import rm_client.backend.transport')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='from rm_client.backend.transport import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='def create():\n    from rm_client.backend.transport import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from rm_client.backend.transport import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='import PySide6.QtCore')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='def create():\n    import PySide6.QtCore')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    import PySide6.QtCore')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='from PySide6.QtCore import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='def create():\n    from PySide6.QtCore import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from PySide6.QtCore import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='import tkinter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='def create():\n    import tkinter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    import tkinter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='from tkinter import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='def create():\n    from tkinter import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_rejects_forbidden_dependencies_through_local_helpers (test_quality_gates.ImportGraphTests.test_pure_domain_rejects_forbidden_dependencies_through_local_helpers) (root='economy_values', content='from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from tkinter import Value')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 225, in test_pure_domain_rejects_forbidden_dependencies_through_local_helpers
+    self.assertTrue(any("Forbidden pure-domain dependency" in item
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_pure_domain_transitive_guard_includes_every_local_hop (test_quality_gates.ImportGraphTests.test_pure_domain_transitive_guard_includes_every_local_hop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audit/tests/test_quality_gates.py", line 234, in test_pure_domain_transitive_guard_includes_every_local_hop
+    self.assertTrue(any("rm_client.economy_values -> rm_client.first -> rm_client.second"
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 46 tests in 4.638s
+
+FAILED (failures=38)

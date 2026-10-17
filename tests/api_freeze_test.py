@@ -1,63 +1,22 @@
-"""API 冻结面快照测试（REFACTOR_BLUEPRINT §5.6 / 阶段 0 安全网）。
+"""Window compatibility contracts, with an opt-in historic full-snapshot audit.
 
-用途
-----
-在把 ``ui/polar_app.py``（PolarRMWindow，502 方法）重构为多模块（mixin 路线）
-之前，把 ``window.<成员>`` 的完整属性面采集成基线 JSON；重构前后各跑一次
-对比模式，任何 新增 / 缺失 / 类型种类变化 / 值签名变化 都会被逐一报告并
-以 exit code 2 失败，从而保证外部触点（tests/smoke_test.py 直访约 190 个
-成员、tools/ 下 5 个脚本、main.py / rm_client/app.py 的 import）不破坏。
+Default mode checks all established public members and explicitly documented
+private caller seams in window_api_contract.json. Python methods are compared by
+accepted parameters/defaults, not their implementing class or Mixin qualname.
+New implementation storage does not silently become an API contract.
 
-采集内容
---------
-1. 模块级冻结符号（``rm_client.ui.polar_app`` 必须继续可 import）：
-   PolarRMWindow / main / EconomyScenePhase / InertialScroll / FrameScheduler
-   （必需），Hotspot / ModuleListLayout / StartupLayerCache / VisionViewport /
-   PolarHudOverlay（建议保留，一并冻结）。
-2. ``PolarRMWindow`` 实例的 ``dir(window)`` 全量成员（含下划线私有字段），
-   按成员分类：method(staticmethod/unbound) / bound-method / bound-classmethod /
-   property / descriptor / plain attribute / getattr-error。
-3. 惰性可赋值探针：§5.6 注明 ``_target_box_regression_failed`` 由
-   transition 测试运行时 setattr 写入（不在构造后的 dir() 里），故单独
-   校验"实例上可赋值 + 可还原"，不进快照。
+The original api_freeze_baseline.json remains unchanged. --legacy-snapshot uses
+its original full dir(window) comparison, including private fields and method
+owners. It reports actual differences and may fail after a compatible extraction.
+Neither mode is a behavioral, GPU, firmware, or hardware qualification.
 
-值签名摘要纪律（避免基线抖动）
-------------------------------
-- 方法类：记录 ``__qualname__``（能抓到"同名方法换定义处/换实现"）。
-- plain attribute：记录 类型名 + 稳定标量值（None/bool/int/str 直接 repr
-  截断；全标量 tuple/frozenset 同样处理）。float 一律只记类型名：构造期
-  写入的 ``time.monotonic()`` 时钟值跨进程必然不同、进程内又恒定（双采样
-  抓不到），属于典型不稳定值。其余容器 / Qt 对象 / 任意对象只记类型名
-  （内容不稳定或含内存地址，一律不进签名）。
-- repr 中的 ``0x...`` 内存地址统一剥除。
-- 易变成员（时钟、EMA、计数器、后台线程写入的字段）自动识别，两条规则
-  （显式常量 ``VOLATILE_NAME_PATTERNS`` / ``VOLATILE_*_THRESHOLD``，便于评审）：
-  ① 名称命中 _at / time / started / counter / duration 等模式；
-  ② 值为疑似时间戳的浮点（≥1e4）或 ns/ms 级时钟整数（≥1e12）。
-  命中成员【保留在快照中但标记 volatile】，对比时只校验"存在 + 不消失"，
-  不比对类型种类与值签名——时间类/计数器类属性在两次构造间天然不同。
-  另有双采样兜底：更新基线时构造两次窗口、间隔采样，两次签名不一致的
-  成员同样标记 volatile。方法类成员不受 volatile 规则影响（qualname 永远比对）。
-- 采集前停掉窗口内全部 QTimer，消除 tick 驱动的状态漂移。
+  python tests/api_freeze_test.py
+  python tests/api_freeze_test.py --mutation-selftest
+  python tests/api_freeze_test.py --legacy-snapshot
 
-环境前提（docstring 记录，见任务约束）
---------------------------------------
-- Windows / Linux + 本仓 ``.venv``（Python 3.12/3.13，PySide6），QT_QPA_PLATFORM=
-  offscreen。offscreen 无 GL，QOpenGLWidget 会打
-  ``QOpenGLWidget is not supported on this platform`` 警告，CPU 兼容路径
-  可正常构造（与 tests/smoke_test.py 同一手法）；GL 相关成员以实际能构造
-  出的状态为准采集。
-- 需 ``POLAR_DISABLE_LOCAL_CAPTURE=1``、``POLAR_DISABLE_MEDIA_PRELOAD=1``，
-  防止测试进程探测物理摄像头 / 启动 FFmpeg 预加载线程（同 smoke_test）。
-- 窗口构造约 14s（--update 需两次构造，约 30s）。
-
-CLI
----
-- ``python tests/api_freeze_test.py --update``   重新生成基线快照
-- ``python tests/api_freeze_test.py``            对比模式（默认），不一致 exit 2
-- ``python tests/api_freeze_test.py --mutation-selftest``
-    进程内微型变异自检：临时从类上删除一个非关键成员（不改源码），确认
-    对比模式能抓到"缺失"，恢复后确认重新 PASS——证明测试有效性。
+--update only updates the historic snapshot; it requires --legacy-snapshot and
+an explicit --baseline destination. It never updates the compatibility manifest.
+Use a fresh POLAR_USER_DATA_ROOT for deterministic constructor defaults.
 """
 
 from __future__ import annotations
@@ -80,7 +39,16 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from tools.quality.window_contract import (
+    callable_signature,
+    compatibility_snapshots,
+    load_contract,
+    protected_names,
+)
+from window_lifecycle_helpers import close_window_safely, settle_window_lifecycle
+
 DEFAULT_BASELINE = Path(__file__).resolve().parent / "api_freeze_baseline.json"
+DEFAULT_CONTRACT = Path(__file__).resolve().parent / "window_api_contract.json"
 
 # §5.6 模块级冻结符号：required 缺一不可；recommended 建议保留（tools 演进）。
 MODULE_SYMBOLS_REQUIRED = (
@@ -244,6 +212,9 @@ def _member_entry(window: object, name: str) -> dict:
         qualname = getattr(value, "__qualname__", None)
         sig = qualname if qualname else _clean_repr(value)
         entry = {"kind": kind, "type": type(value).__name__, "sig": sig}
+        call_signature = callable_signature(value)
+        if call_signature is not None:
+            entry["call_signature"] = call_signature
         if name in QT_OPTIONAL_MEMBERS:
             # Legacy baseline predates provider metadata. New captures identify
             # the defining class so an application override is never exempted.
@@ -260,10 +231,16 @@ def _member_entry(window: object, name: str) -> dict:
     )
 
 
-def collect_window_snapshot(window: object) -> dict[str, dict]:
-    """收集 dir(window) 全量成员面（名称排序，JSON 可序列化）。"""
+def collect_window_snapshot(window: object, names: set[str] | None = None) -> dict[str, dict]:
+    """Capture only requested members, or the full historic surface for audits.
+
+    Unprotected private properties are not evaluated by compatibility checks.
+    Absence from dir(window) remains a missing member rather than an error value.
+    """
     snapshot: dict[str, dict] = {}
-    for name in sorted(dir(window)):
+    available = set(dir(window))
+    selected = available if names is None else available & names
+    for name in sorted(selected):
         if name.startswith("__") and name.endswith("__"):
             # dunder 由语言/Qt 基类提供，重构不触碰；排除以压缩基线噪声。
             continue
@@ -287,9 +264,14 @@ def _build_window():
 
     app = QApplication.instance() or QApplication([])
     window = PolarRMWindow()
-    window.resize(640, 360)
-    _quiesce(window)
-    app.processEvents()
+    try:
+        settle_window_lifecycle(window, app)
+        window.resize(640, 360)
+        _quiesce(window)
+        app.processEvents()
+    except Exception:
+        close_window_safely(window, app)
+        raise
     return app, window
 
 
@@ -324,8 +306,7 @@ def collect_baseline_snapshot() -> dict:
         app.processEvents()
         second = collect_window_snapshot(window)
     finally:
-        window.close()
-        app.processEvents()
+        close_window_safely(window, app)
 
     merged: dict[str, dict] = {}
     for name in sorted(set(first) | set(second)):
@@ -482,20 +463,36 @@ def _summary(snapshot: dict) -> str:
     )
 
 
-def run_compare(baseline_path: Path) -> int:
+def compare_contract(baseline: dict, current: dict, contract: dict | None) -> dict:
+    if contract is not None:
+        baseline, current = compatibility_snapshots(baseline, current, contract)
+    return diff_snapshots(baseline, current)
+
+
+def collect_comparison_snapshot(window: object, baseline: dict, contract: dict | None) -> dict:
+    names = protected_names(baseline, contract) if contract is not None else None
+    return {"meta": {}, "module_symbols": collect_module_symbols(),
+            "members": collect_window_snapshot(window, names)}
+
+
+def run_compare(baseline_path: Path, contract_path: Path | None = DEFAULT_CONTRACT) -> int:
     baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
-    _, window = _build_window()
+    contract = load_contract(contract_path, baseline) if contract_path else None
+    app, window = _build_window()
     try:
-        current = {
-            "meta": {},
-            "module_symbols": collect_module_symbols(),
-            "members": collect_window_snapshot(window),
-        }
+        current = collect_comparison_snapshot(window, baseline, contract)
         lazy_failures = probe_lazy_assignable(window)
     finally:
-        window.close()
-    diffs = diff_snapshots(baseline, current)
+        close_window_safely(window, app)
+    diffs = compare_contract(baseline, current, contract)
     print(format_diff(diffs))
+    if contract is not None:
+        print(f"Compatibility scope: {len(protected_names(baseline, contract))} established members; "
+              f"{len(contract['python_signatures'])} Python call signatures; "
+              f"{len(contract['private_members'])} explicit private caller seams. "
+              "Behavior still requires focused regression tests.")
+    else:
+        print("Legacy full-snapshot audit: every historic private field and method owner participates.")
     if lazy_failures:
         print(f"[惰性成员不可赋值] {lazy_failures}")
     print(_summary(current))
@@ -508,11 +505,11 @@ def run_compare(baseline_path: Path) -> int:
 
 def run_update(baseline_path: Path) -> int:
     snapshot = collect_baseline_snapshot()
-    _, window = _build_window()
+    app, window = _build_window()
     try:
         lazy_failures = probe_lazy_assignable(window)
     finally:
-        window.close()
+        close_window_safely(window, app)
     baseline_path.write_text(
         json.dumps(snapshot, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -529,16 +526,19 @@ def run_update(baseline_path: Path) -> int:
     return 0
 
 
-def run_mutation_selftest(baseline_path: Path) -> int:
+def run_mutation_selftest(baseline_path: Path, contract_path: Path | None = DEFAULT_CONTRACT) -> int:
     """微型变异自检：进程内删除一个非关键成员，验证测试能抓到，恢复后 PASS。"""
     baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
+    contract = load_contract(contract_path, baseline) if contract_path else None
     target = "draw_watermark"  # 非关键：纯绘制方法，删除不影响构造/其余成员
     if target not in baseline["members"]:
         print(f"FAIL: 基线中不存在目标成员 {target}")
         return 2
 
     # 定位定义该名字的类（重构后可能在 mixin 基类上）
-    _, window = _build_window()
+    app, window = _build_window()
+    owner = None
+    original = None
     try:
         owner = None
         for klass in type(window).__mro__:
@@ -552,19 +552,19 @@ def run_mutation_selftest(baseline_path: Path) -> int:
 
         # ① 变异：删除后必须被抓到（missing）
         delattr(owner, target)
-        mutated = {"meta": {}, "module_symbols": collect_module_symbols(),
-                   "members": collect_window_snapshot(window)}
-        diffs = diff_snapshots(baseline, mutated)
+        mutated = collect_comparison_snapshot(window, baseline, contract)
+        diffs = compare_contract(baseline, mutated, contract)
         caught = target in diffs["missing"] and not is_clean(diffs)
 
         # ② 恢复：必须重新 PASS
         setattr(owner, target, original)
-        restored = {"meta": {}, "module_symbols": collect_module_symbols(),
-                    "members": collect_window_snapshot(window)}
-        diffs_after = diff_snapshots(baseline, restored)
+        restored = collect_comparison_snapshot(window, baseline, contract)
+        diffs_after = compare_contract(baseline, restored, contract)
         clean_after = is_clean(diffs_after)
     finally:
-        window.close()
+        if owner is not None and original is not None:
+            setattr(owner, target, original)
+        close_window_safely(window, app)
 
     if caught and clean_after:
         print(f"变异自检 PASS: 删除 {target} 被 [成员缺失] 抓到；恢复后对比重新一致。")
@@ -577,7 +577,9 @@ def run_mutation_selftest(baseline_path: Path) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="PolarRMWindow API 冻结面快照测试（§5.6）")
-    parser.add_argument("--update", action="store_true", help="重新生成基线快照")
+    parser.add_argument("--update", action="store_true", help="Explicit historic-snapshot capture, never a contract refresh")
+    parser.add_argument("--legacy-snapshot", action="store_true", help="Audit the unchanged full historic snapshot")
+    parser.add_argument("--contract", type=Path, default=DEFAULT_CONTRACT, help="Reviewed compatibility manifest")
     parser.add_argument("--mutation-selftest", action="store_true",
                         help="进程内变异自检（删除成员→抓到→恢复→PASS）")
     parser.add_argument("--baseline", type=Path, default=DEFAULT_BASELINE,
@@ -585,13 +587,16 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.update:
+        if not args.legacy_snapshot or args.baseline.resolve() == DEFAULT_BASELINE.resolve():
+            parser.error("--update requires --legacy-snapshot and a separate --baseline destination; review changes before replacing evidence")
         return run_update(args.baseline)
+    contract_path = None if args.legacy_snapshot else args.contract
     if args.mutation_selftest:
-        return run_mutation_selftest(args.baseline)
+        return run_mutation_selftest(args.baseline, contract_path)
     if not args.baseline.exists():
-        print(f"FAIL: 基线不存在 {args.baseline}，请先运行 --update")
+        print(f"FAIL: 基线不存在 {args.baseline}；请恢复已评审的历史快照，不要用当前输出覆盖缺失证据")
         return 2
-    return run_compare(args.baseline)
+    return run_compare(args.baseline, contract_path)
 
 
 if __name__ == "__main__":

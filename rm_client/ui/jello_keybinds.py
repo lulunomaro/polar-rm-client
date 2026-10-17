@@ -11,9 +11,11 @@ import time
 from PySide6.QtCore import QPointF, QRectF, Qt, QTimer
 from PySide6.QtGui import QColor, QFontMetricsF, QPainter, QPainterPath, QPen, QPolygonF
 from PySide6.QtWidgets import QDialog, QHBoxLayout, QLabel, QLineEdit, QListWidget, QPushButton, QVBoxLayout, QWidget
-from ..model import CONTROL_SLOT_ORDER, CONTROL_RESERVED_KEYS
+from ..model import CONTROL_SLOT_ORDER, MODULE_RESERVED_KEYS
 from .fonts import draw_ui_text, cjk_ui_font, has_cjk, elide_ui_text
 from .jello_locale import module_label, category_label
+from .settings_application import validate_draft, apply_registry_draft
+from .emergency_shortcut import install_estop_shortcut
 from .jello_widgets import JelloDialog, apply_jello_widgets, draw_shadow, ease_out_back, jello_font, jello_regular_font
 
 
@@ -47,7 +49,7 @@ NAV_KEYS = tuple(Key(name,label,i*118,382,108,44,False) for i,(name,label) in en
     [("Insert","Ins"),("Home","Home"),("End","End"),("PageUp","PgUp"),("PageDown","PgDn"),
      ("Left","←"),("Up","↑"),("Down","↓"),("Right","→")]))
 ALL_KEYS = (*NATIVE_KEYS,*FUNCTION_KEYS,*NAV_KEYS)
-RESERVED = CONTROL_RESERVED_KEYS | {"escape"}
+RESERVED = MODULE_RESERVED_KEYS
 
 
 @dataclass(frozen=True)
@@ -84,7 +86,6 @@ class BindingSession:
         return [entry for entry in self.entries if self.values[entry.identity].lower()==key.lower()]
 
     def _validate(self, values):
-        from .cs2_settings_center import validate_draft
         driver = {identity:value for identity,value in values.items() if identity[0]=="RobotLink"}
         modules = {identity[1]:value for identity,value in values.items() if identity[0]=="module" and identity[1]!="ClickGui"}
         validate_draft(self.host,driver,modules)
@@ -120,7 +121,6 @@ class BindingSession:
                     widget = self.manager.controls.get(identity)
                 if widget is not None: widget.set_value(value)
             return
-        from .cs2_settings_center import apply_registry_draft
         driver = {k:v for k,v in self.values.items() if k[0]=="RobotLink" and v!=self.original[k]}
         modules = {k[1]:v for k,v in self.values.items() if k[0]=="module" and v!=self.original[k] and k[1]!="ClickGui"}
         if driver or modules: apply_registry_draft(self.host,driver,module_binds=modules)
@@ -395,7 +395,6 @@ class KeyboardCanvas(QWidget):
 
 
 def build_keyboard_manager(host, manager=None, target=None, parent=None):
-    from .cs2_settings_center import install_estop_shortcut
     dialog=JelloDialog(parent or host,keyboard=True)
     dialog.setObjectName("JelloKeyboardManager");dialog.setWindowTitle("Jello · Keybind Manager")
     available=host.screen().availableGeometry()

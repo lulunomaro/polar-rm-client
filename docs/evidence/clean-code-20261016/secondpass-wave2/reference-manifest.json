@@ -1,0 +1,30 @@
+{
+  "upstream_repository": "https://gitee.com/SMBU-POLARBEAR/Serial_Port_Assistant",
+  "upstream_commit": "af97031fb8dde62e15f2f33e686b0d35234a13a4",
+  "upstream_path": "lib/CRC8_CRC16.py",
+  "retrieval_url": "https://gitee.com/SMBU-POLARBEAR/Serial_Port_Assistant/raw/af97031fb8dde62e15f2f33e686b0d35234a13a4/lib/CRC8_CRC16.py",
+  "bytes": 5356,
+  "expected_sha256": "f46cce6382bbbae2056b81538c1de5c06a93c2199b4d07784d9bc551509ed2f5",
+  "actual_sha256_before_and_after": "f46cce6382bbbae2056b81538c1de5c06a93c2199b4d07784d9bc551509ed2f5",
+  "selection_environment": "POLAR_TEAM_CRC_REFERENCE",
+  "local_path": "/workspace/shared/client-quality-external/serial-port-assistant-af97031/CRC8_CRC16.py",
+  "file_included_in_repository": false,
+  "prior_targeted_recheck": {
+    "command": "CI=true POLAR_TEAM_CRC_REFERENCE=/workspace/shared/client-quality-external/serial-port-assistant-af97031/CRC8_CRC16.py /workspace/shared/client-quality-venv/bin/python tools/verify_all.py --test tests/polar_link_test.py --json /workspace/shared/client-quality-aggregate/crc-reference-recheck/results.json --log-dir /workspace/shared/client-quality-aggregate/crc-reference-recheck/logs",
+    "tested_source": {
+      "status": "available",
+      "commit": "ddaa286aab42793d3d2860a8d2059231d9cadf67",
+      "tree": "fa014d29ac22fd897ed067969cbf18e5b62b412a",
+      "dirty": false,
+      "dirty_scope": "tracked-and-untracked-nonignored",
+      "reason": null
+    },
+    "result": {
+      "PASS": 1,
+      "SKIP": 0,
+      "INCOMPLETE": 0,
+      "FAIL": 0
+    }
+  },
+  "current_selection_note": "This exact external reference is explicitly selected for the second complete offline run. Its bytes are outside the source-stability guard; reference-before.sha256 and reference-after.sha256 independently preserve the actual input."
+}

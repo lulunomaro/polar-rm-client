@@ -1,0 +1,2 @@
+ACTIVE test_island_resize_clamps_eased_progress_inside_reserved_band
+ACTIVE test_removed_target_telemetry_does_not_rebuild_mc_but_scoreboard_still_updates

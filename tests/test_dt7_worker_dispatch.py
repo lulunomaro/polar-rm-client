@@ -36,6 +36,51 @@ class DT7WorkerTests(unittest.TestCase):
         self.addCleanup(link.close)
         return link
 
+    def pending_fault_link(self):
+        callbacks = []
+        writes = []
+        inner = Dt7KeyMouseLink(
+            profile=dict(DEFAULT_PROFILE), mock_output=False, wire_neutral=False,
+            write_bytes=lambda frame: (writes.append(frame) or len(frame)))
+        link = self.make(link=inner)
+        link.safety = SimpleNamespace(
+            lock_control=lambda reason: callbacks.append(("lock", threading.get_ident())),
+            mark_published=lambda *args, **kwargs: callbacks.append(("published", threading.get_ident())),
+        )
+        with link._cv:
+            link._fault = "pending observer notification"
+            link._published = (("DT7KeyboardMouseControl",), {})
+        return link, callbacks, writes
+
+    def test_worker_request_release_admits_neutral_without_draining_observers(self):
+        link, callbacks, writes = self.pending_fault_link()
+        request = threading.Thread(target=link.request_release)
+        request.start()
+        request.join(1)
+        self.assertFalse(request.is_alive())
+        until(lambda: link.wire_neutral)
+        self.assertTrue(writes)
+        self.assertEqual(callbacks, [])
+        self.assertEqual(int.from_bytes(decode_dt7_frame(writes[-1])["payload"][8:10], "little"), 0)
+        link.poll()
+        self.assertEqual(callbacks, [("lock", threading.get_ident()),
+                                     ("published", threading.get_ident())])
+        link.close()
+        self.assertTrue(link.wait_closed())
+
+    def test_background_close_keeps_observers_for_owner_poll(self):
+        link, callbacks, writes = self.pending_fault_link()
+        request = threading.Thread(target=link.close)
+        request.start()
+        request.join(1)
+        self.assertFalse(request.is_alive())
+        self.assertTrue(link.wait_closed())
+        self.assertTrue(writes)
+        self.assertEqual(callbacks, [])
+        link.poll()
+        self.assertEqual(callbacks, [("lock", threading.get_ident()),
+                                     ("published", threading.get_ident())])
+
     def test_missing_auto_backoff_precedes_discovery(self):
         clock = [10.0]
         link = Dt7KeyMouseLink(port='Auto', profile=dict(DEFAULT_PROFILE),
@@ -278,18 +323,27 @@ class DT7WorkerTests(unittest.TestCase):
             link = self.make()
             started = time.monotonic()
             durations = []
+            caller_cpu_ms = []
             for index in range(250):
+                cpu_begin = time.thread_time()
                 begin = time.perf_counter()
                 link.poll()
                 link.send(pressed_bits=1)
                 if link.release_pending:
                     link.release()
                 durations.append((time.perf_counter() - begin) * 1000)
+                caller_cpu_ms.append((time.thread_time() - cpu_begin) * 1000)
                 time.sleep(max(0, started + (index + 1) / 100 - time.monotonic()))
             elapsed = time.monotonic() - started
             self.assertLessEqual(len(calls), 4)
             self.assertLessEqual(link.release_attempts, 3)
-            self.assertLess(max(durations), 20)
+            slowest = max(range(len(durations)), key=durations.__getitem__)
+            self.assertLess(max(durations), 20, (
+                f"tick={slowest + 1}/{len(durations)}, "
+                f"caller_wall_ms={durations[slowest]:.6f}, "
+                f"caller_thread_cpu_ms={caller_cpu_ms[slowest]:.6f}, "
+                f"scans={len(calls)}, retries={link.release_attempts}; "
+                "CPU interval includes wall-clock bookkeeping; cause not inferred"))
             print(f'250 real-time 100Hz ticks / {elapsed:.3f}s: scans={len(calls)}, retries={link.release_attempts}, caller median={statistics.median(durations):.4f}ms max={max(durations):.4f}ms')
             link.close()
             self.assertTrue(link.wait_closed())

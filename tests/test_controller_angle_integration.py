@@ -18,6 +18,8 @@ from rm_client.backend.controller_angles import (
     explicit_port, port_key,
 )
 from rm_client.backend.cc_link import CustomControllerLink, decode_cc_frame
+from rm_client.backend.device_egress_settings import CustomControllerSettings, EgressPermissions
+from rm_client.backend.port_admission import PortReservation, first_port_conflict
 from rm_client.model import build_default_registry
 from rm_client.serial_ports import refresh_port_options
 
@@ -28,7 +30,9 @@ def manager_method(name="_sync_controller_angles"):
     method = next(n for n in cls.body if isinstance(n, ast.FunctionDef)
                   and n.name == name)
     env = dict(Any=object, AngleRelayConfig=AngleRelayConfig, replace=replace,
-               explicit_port=explicit_port, port_key=port_key)
+               PortReservation=PortReservation, first_port_conflict=first_port_conflict,
+               explicit_port=explicit_port, port_key=port_key,
+               CustomControllerSettings=CustomControllerSettings, EgressPermissions=EgressPermissions)
     exec(compile(ast.Module(body=[method], type_ignores=[]), "manager-angle-method", "exec"), env)
     return env[name]
 
@@ -42,6 +46,7 @@ class ControllerAngleIntegrationTests(unittest.TestCase):
         self.robot = self.registry.get("RobotLink")
         self.link = ControllerAngleRelay(start_workers=False)
         self.manager = SimpleNamespace(controller_angles=self.link,
+            _backend_transition_blocks_work=lambda: False,
             safety=SimpleNamespace(estop_active=False), state=SimpleNamespace(backend_stats={}))
         self.sync = manager_method()
 
@@ -165,11 +170,10 @@ class ControllerAngleIntegrationTests(unittest.TestCase):
     def test_keymouse_waits_for_old_angle_port_owner_to_close(self):
         self.manager.controller_angles = SimpleNamespace(owned_ports=("RX", "TX"))
         self.manager._cc_link_for = lambda _: self.fail("must not create a competing CC writer")
-        settings = {name: SimpleNamespace(value=value) for name, value in (
-            ("Custom Controller Egress", True), ("CC Mock Writes", False), ("CC Port", "TX"))}
+        settings = CustomControllerSettings(requested_value=True, port_value="TX", mock_value=False)
         control = SimpleNamespace(cc_enabled=True, cc_last_error="")
         manager_method("_configure_cc_egress")(self.manager, control, settings,
-                                               self.robot, True, False)
+                                               EgressPermissions(bool(self.robot.enabled), True, False))
         self.assertFalse(control.cc_enabled)
         self.assertIn("串口", control.cc_last_error)
 
@@ -185,6 +189,8 @@ class ControllerAngleIntegrationTests(unittest.TestCase):
                 lock = threading.Lock()
                 self.manager.polar = SimpleNamespace(_stopping=closing, _intent_lock=lock)
                 self.manager.polar_bridge = SimpleNamespace(active=False)
+                self.manager._drain_input_clear = lambda: None
+                self.manager._backend_transition_blocks_work = lambda: False
                 self.manager._poll_device_writers = lambda control: events.append("poll")
 
                 def sync(registry):
@@ -207,22 +213,26 @@ class ControllerAngleIntegrationTests(unittest.TestCase):
         path = ROOT / "rm_client/ui/polar/mixins/config_actions_mixin.py"
         tree = ast.parse(path.read_text())
         cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "ConfigActionsMixin")
-        method = next(n for n in cls.body if isinstance(n, ast.FunctionDef)
-                      and n.name == "handle_config_action")
-        env = {}
-        exec(compile(ast.Module(body=[method], type_ignores=[]), "angle-ui-action", "exec"), env)
+        from rm_client.configuration.commands import ConfigCommandKind, resolve_config_command
+        env = dict(ConfigCommandKind=ConfigCommandKind, resolve_config_command=resolve_config_command)
+        # Compile the real adapter class so its explicit helper boundary remains
+        # exercised, while retaining this suite's Qt-free import contract.
+        future = ast.ImportFrom(module="__future__", names=[ast.alias(name="annotations")], level=0)
+        exec(compile(ast.fix_missing_locations(ast.Module(body=[future, cls], type_ignores=[])),
+                     "angle-ui-action", "exec"), env)
         self.enable(mock=True)
         from rm_client.backend.cc_link import encode_cc_frame
         self.link.feed(encode_cc_frame(0x0302, bytes(30), 1))
         self.manager._sync_controller_angles = lambda registry: self.sync(self.manager, registry)
         messages = []
-        window = SimpleNamespace(backend=self.manager, registry=self.registry, toast=messages.append,
-                                 handle_student_config_action=lambda action: False)
-        env["handle_config_action"](window, "Arm Angle Forward")
+        window = env["ConfigActionsMixin"]()
+        window.backend, window.registry, window.toast = self.manager, self.registry, messages.append
+        window.handle_student_config_action = lambda action: False
+        window.handle_config_action("Arm Angle Forward")
         self.assertTrue(self.link.armed)
-        env["handle_config_action"](window, "Show Angle Status")
+        window.handle_config_action("Show Angle Status")
         self.assertIn("真发=0", messages[-1])
-        env["handle_config_action"](window, "Disarm Angle Forward")
+        window.handle_config_action("Disarm Angle Forward")
         self.assertFalse(self.link.armed)
 
 

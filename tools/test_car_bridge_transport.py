@@ -26,11 +26,18 @@ from rm_client.backend.polar_transport import (    # noqa: E402
 
 
 FAILED = 0
+_OUTPUT_LOCK = threading.Lock()
+
+
+def emit(message):
+    """Keep background bridge diagnostics separate from counted check lines."""
+    with _OUTPUT_LOCK:
+        print(message, flush=True)
 
 
 def check(name, ok, detail=""):
     global FAILED
-    print(f"{'[ OK ]' if ok else '[FAIL]'} {name}" + (f"  {detail}" if detail else ""))
+    emit(f"{'[ OK ]' if ok else '[FAIL]'} {name}" + (f"  {detail}" if detail else ""))
     FAILED += 0 if ok else 1
 
 
@@ -65,13 +72,30 @@ class Board:
 
 def start_bridge(board: Board):
     bridge = bs.Bridge(serial_device="/dev/fake", listen="127.0.0.1", port=0,
-                       serial_opener=lambda dev, baud: board, stop_after=200000)
-    threading.Thread(target=bridge.serve_forever, daemon=True).start()
+                       serial_opener=lambda dev, baud: board, stop_after=200000, log=emit)
+    worker = threading.Thread(target=bridge.serve_forever, daemon=True)
+    worker.start()
     for _ in range(200):
         if bridge.bound_port:
-            return bridge
+            return bridge, worker
         time.sleep(0.02)
+    bridge.stop.set()
+    worker.join(2.0)
     raise AssertionError("桥没起来")
+
+
+def check_bridge_stopped(bridge, worker, board, *, timeout=2.0):
+    """Bounded observation of both server retirement and fake serial closure.
+
+    Setting stop alone is a request, not completion. This checks localhost test
+    ownership only; it cannot establish physical serial or firmware shutdown.
+    """
+    bridge.stop.set()
+    worker.join(timeout)
+    closed = board.closed is True
+    stopped = not worker.is_alive()
+    check("停掉之后桥与模拟串口都关掉了", stopped and closed,
+          f"server_stopped={stopped} board_closed={closed}")
 
 
 def split_frames(blob: bytes):
@@ -102,9 +126,9 @@ def first_frame_with_id(blob: bytes, want_id: int) -> bytes:
 
 
 def main() -> int:
-    print("\n--- 1) tcp 模式下 Port=Stub 不该挡住链路（这正是以前的死法）---")
+    emit("\n--- 1) tcp 模式下 Port=Stub 不该挡住链路（这正是以前的死法）---")
     board = Board()
-    bridge = start_bridge(board)
+    bridge, bridge_worker = start_bridge(board)
     tp = PolarLinkTransport(port="Stub", baud=115200, mock_writes=False)
     tp.transport = "tcp"
     tp.host = "127.0.0.1"
@@ -118,7 +142,7 @@ def main() -> int:
     finally:
         pass
 
-    print("\n--- 2) 提交驾驶意图 -> 字节必须原样落到 C 板 ---")
+    emit("\n--- 2) 提交驾驶意图 -> 字节必须原样落到 C 板 ---")
     tp.drive_channel = "virtual_rc"     # 默认是 robot_cmd(0x01)；这里要验的是 0x03 那条
     # 0x03 通道里 SHIFT 是**结构上不可达**的：RC_MAX_ALLOWED_KEY_MASK 就只有驾驶四键，
     # allow_spin_key 参数早改成"保留但不起作用"（自转走 0x04 设定 + 0x1F 回读）。
@@ -161,7 +185,7 @@ def main() -> int:
     check("0x03 帧体长度与固件 RC_ctrl_t 一致（5 通道+2 开关+3 鼠标+2 键+键位图）",
           len(rc) == 4 + 4 + 22 + 2, str(len(rc)))
 
-    print("\n--- 3) 车上行帧要能经桥拼回来 ---")
+    emit("\n--- 3) 车上行帧要能经桥拼回来 ---")
     up = ws.debug_frame(1, {"km_key": 21.0, "km_rx": 7.0})
     board.upstream.extend(up)
     deadline = time.time() + 3.0
@@ -175,11 +199,9 @@ def main() -> int:
     km = (dbg[0].fields or {}).get("packages", {}).get("km_key") if dbg else None
     check("上行 Debug 段解出来了（km_key=21）", km == 21, str(km))
     tp.stop()
-    bridge.stop.set()
-    time.sleep(0.2)
-    check("停掉之后桥与串口都关掉了", board.closed is True or True, str(board.closed))
+    check_bridge_stopped(bridge, bridge_worker, board)
 
-    print("\n--- 4) 地址没填时必须失败得清楚 ---")
+    emit("\n--- 4) 地址没填时必须失败得清楚 ---")
     tp2 = PolarLinkTransport(port="Stub", mock_writes=False)
     tp2.transport = "tcp"
     tp2.host = ""
@@ -189,7 +211,7 @@ def main() -> int:
           f"{tp2.connected} {tp2.last_error_code}")
     tp2.stop()
 
-    print("\n--- 5) 连不上的桥要报[连不上]而不是假装在重连 ---")
+    emit("\n--- 5) 连不上的桥要报[连不上]而不是假装在重连 ---")
     with socket.socket() as probe:
         probe.bind(("127.0.0.1", 0))
         free_port = probe.getsockname()[1]
@@ -203,9 +225,9 @@ def main() -> int:
           f"{tp3.last_error_code} {tp3.last_error[:50]}")
     tp3.stop()
 
-    print("\n--- 6) 掩码对照：另起一条链路也要看到同样的挡法 ---")
+    emit("\n--- 6) 掩码对照：另起一条链路也要看到同样的挡法 ---")
     board3 = Board()
-    bridge3 = start_bridge(board3)
+    bridge3, bridge3_worker = start_bridge(board3)
     tp4 = PolarLinkTransport(port="Stub", mock_writes=False)
     tp4.transport = "tcp"
     tp4.host = "127.0.0.1"
@@ -224,9 +246,9 @@ def main() -> int:
     check("同样：0x11 掉成 0x01（挡 SHIFT 的是常量，不是某个调用点忘了传参）",
           seen == 0x01, hex(seen))
     tp4.stop()
-    bridge3.stop.set()
+    check_bridge_stopped(bridge3, bridge3_worker, board3)
 
-    print("\n" + ("有失败项" if FAILED else "D 路传输层回路全部通过"))
+    emit("\n" + ("有失败项" if FAILED else "D 路传输层回路全部通过"))
     return 1 if FAILED else 0
 
 

@@ -1,0 +1,101 @@
+EFEEEEEF
+======================================================================
+ERROR: test_all_failures_remain_observable_and_independent (__main__.FocusLossFailureTests.test_all_failures_remain_observable_and_independent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 78, in test_all_failures_remain_observable_and_independent
+    host.focusOutEvent(object())
+  File "<production-focus-event>", line 3323, in focusOutEvent
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 43, in call
+    raise RuntimeError(name + " failed")
+RuntimeError: release failed
+
+======================================================================
+ERROR: test_each_outer_stop_failure_cannot_skip_other_effects_or_qt (__main__.FocusLossFailureTests.test_each_outer_stop_failure_cannot_skip_other_effects_or_qt) (failure='lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 72, in test_each_outer_stop_failure_cannot_skip_other_effects_or_qt
+    host.focusOutEvent(object())
+  File "<production-focus-event>", line 3325, in focusOutEvent
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 43, in call
+    raise RuntimeError(name + " failed")
+RuntimeError: lock failed
+
+======================================================================
+ERROR: test_each_outer_stop_failure_cannot_skip_other_effects_or_qt (__main__.FocusLossFailureTests.test_each_outer_stop_failure_cannot_skip_other_effects_or_qt) (failure='zero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 72, in test_each_outer_stop_failure_cannot_skip_other_effects_or_qt
+    host.focusOutEvent(object())
+  File "<production-focus-event>", line 3324, in focusOutEvent
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 43, in call
+    raise RuntimeError(name + " failed")
+RuntimeError: zero failed
+
+======================================================================
+ERROR: test_each_outer_stop_failure_cannot_skip_other_effects_or_qt (__main__.FocusLossFailureTests.test_each_outer_stop_failure_cannot_skip_other_effects_or_qt) (failure='clear')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 72, in test_each_outer_stop_failure_cannot_skip_other_effects_or_qt
+    host.focusOutEvent(object())
+  File "<production-focus-event>", line 3326, in focusOutEvent
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 43, in call
+    raise RuntimeError(name + " failed")
+RuntimeError: clear failed
+
+======================================================================
+ERROR: test_rejected_neutral_is_reported_and_does_not_skip_pending_clear (__main__.FocusLossFailureTests.test_rejected_neutral_is_reported_and_does_not_skip_pending_clear)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 87, in test_rejected_neutral_is_reported_and_does_not_skip_pending_clear
+    self.assertIn("offline", host.warnings[0][0])
+                             ~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_release_failure_still_locks_resets_releases_both_links_and_clears (__main__.FocusLossFailureTests.test_release_failure_still_locks_resets_releases_both_links_and_clears)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 64, in test_release_failure_still_locks_resets_releases_both_links_and_clears
+    host.focusOutEvent(object())
+  File "<production-focus-event>", line 3323, in focusOutEvent
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 43, in call
+    raise RuntimeError(name + " failed")
+RuntimeError: release failed
+
+======================================================================
+FAIL: test_authority_revocation_precedes_fallible_input_release (__main__.FocusLossFailureTests.test_authority_revocation_precedes_fallible_input_release)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 58, in test_authority_revocation_precedes_fallible_input_release
+    self.assertEqual(host.trace, ["lock", "release", "zero", "clear", "qt-focus"])
+AssertionError: Lists differ: ['release', 'zero', 'lock', 'clear', 'qt-focus'] != ['lock', 'release', 'zero', 'clear', 'qt-focus']
+
+First differing element 0:
+'release'
+'lock'
+
+- ['release', 'zero', 'lock', 'clear', 'qt-focus']
+?                    --------
+
++ ['lock', 'release', 'zero', 'clear', 'qt-focus']
+?  ++++++++
+
+
+======================================================================
+FAIL: test_reporting_failure_still_delegates_to_qt (__main__.FocusLossFailureTests.test_reporting_failure_still_delegates_to_qt)
+----------------------------------------------------------------------
+RuntimeError: zero failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/clean-window/tests/test_focus_loss_failures.py", line 95, in test_reporting_failure_still_delegates_to_qt
+    with self.assertRaisesRegex(RuntimeError, "report failed"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "report failed" does not match "zero failed"
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.307s
+
+FAILED (failures=2, errors=6)

@@ -1,0 +1,79 @@
+test_late_start_error_retains_running_owner_until_native_close (test_controller_angle_admission.ControllerAngleAdmissionTests.test_late_start_error_retains_running_owner_until_native_close) ... ok
+test_rejected_constructor_releases_phantom_reservation (test_controller_angle_admission.ControllerAngleAdmissionTests.test_rejected_constructor_releases_phantom_reservation) ... FAIL
+test_rejected_start_releases_phantom_reservation_and_strict_close_can_finish (test_controller_angle_admission.ControllerAngleAdmissionTests.test_rejected_start_releases_phantom_reservation_and_strict_close_can_finish) ... FAIL
+test_admitted_writer_survives_late_start_error_and_prevents_false_drain (test_field_log_admission.FieldLogAdmissionTests.test_admitted_writer_survives_late_start_error_and_prevents_false_drain) ... FAIL
+test_constructor_rejection_accounts_queued_record_and_cannot_report_success (test_field_log_admission.FieldLogAdmissionTests.test_constructor_rejection_accounts_queued_record_and_cannot_report_success) ... ERROR
+test_finished_writer_after_late_error_keeps_completed_accounting (test_field_log_admission.FieldLogAdmissionTests.test_finished_writer_after_late_error_keeps_completed_accounting) ... ok
+test_late_error_cannot_discard_a_successor_writer (test_field_log_admission.FieldLogAdmissionTests.test_late_error_cannot_discard_a_successor_writer) ... FAIL
+test_rejected_start_accounts_all_queued_records (test_field_log_admission.FieldLogAdmissionTests.test_rejected_start_accounts_all_queued_records) ... ok
+
+======================================================================
+ERROR: test_constructor_rejection_accounts_queued_record_and_cannot_report_success (test_field_log_admission.FieldLogAdmissionTests.test_constructor_rejection_accounts_queued_record_and_cannot_report_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/review-admission-red/tests/test_field_log_admission.py", line 29, in test_constructor_rejection_accounts_queued_record_and_cannot_report_success
+    self.assertFalse(logger.emit("admission"))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/review-admission-red/rm_client/backend/field_log.py", line 140, in emit
+    start_worker = self._worker = threading.Thread(
+                                  ^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: injected constructor rejection
+
+======================================================================
+FAIL: test_rejected_constructor_releases_phantom_reservation (test_controller_angle_admission.ControllerAngleAdmissionTests.test_rejected_constructor_releases_phantom_reservation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/review-admission-red/tests/test_controller_angle_admission.py", line 56, in test_rejected_constructor_releases_phantom_reservation
+    self.assertEqual(relay.owned_ports, ())
+AssertionError: Tuples differ: ('FAKE-ANGLE',) != ()
+
+First tuple contains 1 additional elements.
+First extra element 0:
+'FAKE-ANGLE'
+
+- ('FAKE-ANGLE',)
++ ()
+
+======================================================================
+FAIL: test_rejected_start_releases_phantom_reservation_and_strict_close_can_finish (test_controller_angle_admission.ControllerAngleAdmissionTests.test_rejected_start_releases_phantom_reservation_and_strict_close_can_finish)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/review-admission-red/tests/test_controller_angle_admission.py", line 43, in test_rejected_start_releases_phantom_reservation_and_strict_close_can_finish
+    self.assertEqual(relay.owned_ports, ())
+AssertionError: Tuples differ: ('FAKE-ANGLE',) != ()
+
+First tuple contains 1 additional elements.
+First extra element 0:
+'FAKE-ANGLE'
+
+- ('FAKE-ANGLE',)
++ ()
+
+======================================================================
+FAIL: test_admitted_writer_survives_late_start_error_and_prevents_false_drain (test_field_log_admission.FieldLogAdmissionTests.test_admitted_writer_survives_late_start_error_and_prevents_false_drain)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/review-admission-red/tests/test_field_log_admission.py", line 72, in test_admitted_writer_survives_late_start_error_and_prevents_false_drain
+    self.assertTrue(snapshot["worker_active"])
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_late_error_cannot_discard_a_successor_writer (test_field_log_admission.FieldLogAdmissionTests.test_late_error_cannot_discard_a_successor_writer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/review-admission-red/tests/test_field_log_admission.py", line 148, in test_late_error_cannot_discard_a_successor_writer
+    self.assertTrue(snapshot["worker_active"])
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.027s
+
+FAILED (failures=4, errors=1)

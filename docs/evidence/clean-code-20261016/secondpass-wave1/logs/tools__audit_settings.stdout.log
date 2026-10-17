@@ -1,0 +1,538 @@
+扫描源文件：198    设置项：470
+  READ       有读取点且名字不冲突    ：355
+  AMBIGUOUS  有读取点但同名多模块    ：63  （不能算已对齐，需人工归属）
+  DYNAMIC    动态拼名/命令消费候选   ：31
+  ORPHAN     没有任何读取点（真装饰）：21
+
+
+### EnergyAutoAim
+  [ORPHAN ] Rune Type  选项=['Auto', 'Small', 'Large'] 当前=Auto
+  [ORPHAN ] Lead Time  当前=0.18 s
+
+### ArmorLock
+  [ORPHAN ] Lock Point  选项=['Center', 'Top', 'Predict'] 当前=Center
+
+### FireControlStub
+  [ORPHAN ] Safety Lock  当前=True
+  [ORPHAN ] Max Rate  当前=8 Hz
+
+### ChassisAssist
+  [ORPHAN ] Buffer Protect  当前=True
+
+### PowerGuard
+  [ORPHAN ] Auto Limit  当前=False
+
+### TongjiVisionBridge
+  [ORPHAN ] Local Model  选项=['Tongji YOLOv5'] 当前=Tongji YOLOv5
+  [ORPHAN ] Desktop Safe  当前=True
+
+### MapMarker
+  [ORPHAN ] Repeat  当前=1
+
+### SentinelCommand
+  [ORPHAN ] Posture  选项=['Attack', 'Defense', 'Move'] 当前=Attack
+  [ORPHAN ] Confirm Prompt  当前=True
+
+### AirSupport
+  [ORPHAN ] Command  选项=['Free', 'Paid', 'Abort'] 当前=Free
+  [ORPHAN ] Require Confirm  当前=True
+
+### EconomyPanel
+  [ORPHAN ] Radar Level  当前=True
+  [ORPHAN ] Open Style  选项=['Dynamic Island', 'Full Sheet'] 当前=Dynamic Island
+
+### MQTTLink
+  [ORPHAN ] Auto Connect  当前=False
+
+### UDPVideo
+  [ORPHAN ] Reassemble  当前=True
+
+### FrictionWheel
+  [ORPHAN ] Spin Preview  当前=True
+  [ORPHAN ] Target RPM  当前=5200 rpm
+
+### LockState
+  [ORPHAN ] Lock Source  选项=['Vision', 'Radar', 'Manual'] 当前=Vision
+
+### AudioFeedback
+  [DYNAMIC] Import Enable Sound  当前=Import Enable Sound
+            动态证据 rm_client/ui/polar/mixins/config_actions_mixin.py:213  resolve_config_command('Import Enable Sound') -> SOUND_IMPORT -> import_custom_ui_sound('enable')
+  [DYNAMIC] Import Disable Sound  当前=Import Disable Sound
+            动态证据 rm_client/ui/polar/mixins/config_actions_mixin.py:213  resolve_config_command('Import Disable Sound') -> SOUND_IMPORT -> import_custom_ui_sound('disable')
+  [DYNAMIC] Import Invalid Sound  当前=Import Invalid Sound
+            动态证据 rm_client/ui/polar/mixins/config_actions_mixin.py:213  resolve_config_command('Import Invalid Sound') -> SOUND_IMPORT -> import_custom_ui_sound('invalid')
+  [DYNAMIC] Preview Enable  当前=Preview Enable
+            动态证据 rm_client/ui/polar/mixins/config_actions_mixin.py:215  resolve_config_command('Preview Enable') -> SOUND_PREVIEW -> _preview_ui_sound('enable')
+  [DYNAMIC] Preview Disable  当前=Preview Disable
+            动态证据 rm_client/ui/polar/mixins/config_actions_mixin.py:215  resolve_config_command('Preview Disable') -> SOUND_PREVIEW -> _preview_ui_sound('disable')
+  [DYNAMIC] Preview Invalid  当前=Preview Invalid
+            动态证据 rm_client/ui/polar/mixins/config_actions_mixin.py:215  resolve_config_command('Preview Invalid') -> SOUND_PREVIEW -> _preview_ui_sound('invalid')
+
+### RobotLink
+  [DYNAMIC] Bind W  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=W
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind S  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=S
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind A  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=A
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind D  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=D
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind SHIFT  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=SHIFT
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind CTRL  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=CTRL
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind Q  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=Q
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind E  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=E
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind R  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=R
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind F  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=F
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind G  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=G
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind Z  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=Z
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind X  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=X
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind C  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=C
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind V  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=V
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+  [DYNAMIC] Bind B  选项=['W', 'A', 'S', 'D', 'Q', 'E', 'R', 'F', 'G', 'Z', 'X', 'C', 'V', 'B', 'Shift', 'Ctrl', 'Space', 'Enter', 'Backspace', 'Delete', 'Insert', 'Home', 'End', 'PageUp', 'PageDown', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F10', 'None'] 当前=B
+            动态证据 rm_client/ui/polar/mixins/persistence_mixin.py:718  f"Bind {...}"
+            动态证据 rm_client/ui/settings_application.py:95  f"Bind {...}"
+
+### MinecraftCombatHUD
+  [DYNAMIC] Slot 1  选项=['Empty', 'Scenario', 'StartupVisual', 'MatchMode', 'RobotProfile', 'AllianceProfile', 'ConfigManager', 'EmergencyStop', 'MatchReadiness', 'ArmorAutoAim', 'EliminationFX', 'AudioFeedback', 'EnergyAutoAim', 'ArmorLock', 'HeroLob', 'FireControlStub', 'SpinMode', 'AutoSpinOnHit', 'ChassisAssist', 'PowerGuard', 'CameraFeed', 'TongjiVisionBridge', 'CameraCalibration', 'Armor3DESP', 'RobotOverlay', 'RadarOverlay', 'MapMarker', 'TacticalMap', 'LiquidTacticalMap', 'SentinelCommand', 'AirSupport', 'TopMatchBar', 'MatchTimer', 'BaseOutpostStatus', 'VictoryPointStatus', 'EconomyPanel', 'ProjectileShop', 'MatchChat', 'QuickActionWheel', 'ThermalPowerPanel', 'BuffTimeline', 'MQTTLink', 'UDPVideo', 'SerialBridge', 'ControllerAngles', 'RobotLink', 'HUD', 'UIScale', 'Crosshair', 'CombatTargetHUD', 'ChassisGimbalIndicator', 'ClickGui', 'GimbalPower', 'PowerLimit', 'SpeedLimit', 'Capacitor', 'FrictionWheel', 'LockState', 'BuffStatus', 'ProjectileAllowance', 'JumpPTEWheelLES', 'InjuryStatistics', 'MatchSettlement', 'DartPanel', 'SkillConfiguration', 'MinecraftInventory', 'ReloadingPanel', 'RuneRingStatus', 'ResourceIsland', 'GainZone', 'UWBStatus', 'ArmorStatus', 'WirelessCharging', 'MinecraftBuffs'] 当前=ArmorAutoAim
+            动态证据 rm_client/ui/minecraft_hud.py:354  f"Slot {...}"
+            动态证据 rm_client/ui/polar/mixins/student_frontend_mixin.py:205  f"Slot {...}"
+  [DYNAMIC] Slot 2  选项=['Empty', 'Scenario', 'StartupVisual', 'MatchMode', 'RobotProfile', 'AllianceProfile', 'ConfigManager', 'EmergencyStop', 'MatchReadiness', 'ArmorAutoAim', 'EliminationFX', 'AudioFeedback', 'EnergyAutoAim', 'ArmorLock', 'HeroLob', 'FireControlStub', 'SpinMode', 'AutoSpinOnHit', 'ChassisAssist', 'PowerGuard', 'CameraFeed', 'TongjiVisionBridge', 'CameraCalibration', 'Armor3DESP', 'RobotOverlay', 'RadarOverlay', 'MapMarker', 'TacticalMap', 'LiquidTacticalMap', 'SentinelCommand', 'AirSupport', 'TopMatchBar', 'MatchTimer', 'BaseOutpostStatus', 'VictoryPointStatus', 'EconomyPanel', 'ProjectileShop', 'MatchChat', 'QuickActionWheel', 'ThermalPowerPanel', 'BuffTimeline', 'MQTTLink', 'UDPVideo', 'SerialBridge', 'ControllerAngles', 'RobotLink', 'HUD', 'UIScale', 'Crosshair', 'CombatTargetHUD', 'ChassisGimbalIndicator', 'ClickGui', 'GimbalPower', 'PowerLimit', 'SpeedLimit', 'Capacitor', 'FrictionWheel', 'LockState', 'BuffStatus', 'ProjectileAllowance', 'JumpPTEWheelLES', 'InjuryStatistics', 'MatchSettlement', 'DartPanel', 'SkillConfiguration', 'MinecraftInventory', 'ReloadingPanel', 'RuneRingStatus', 'ResourceIsland', 'GainZone', 'UWBStatus', 'ArmorStatus', 'WirelessCharging', 'MinecraftBuffs'] 当前=ArmorLock
+            动态证据 rm_client/ui/minecraft_hud.py:354  f"Slot {...}"
+            动态证据 rm_client/ui/polar/mixins/student_frontend_mixin.py:205  f"Slot {...}"
+  [DYNAMIC] Slot 3  选项=['Empty', 'Scenario', 'StartupVisual', 'MatchMode', 'RobotProfile', 'AllianceProfile', 'ConfigManager', 'EmergencyStop', 'MatchReadiness', 'ArmorAutoAim', 'EliminationFX', 'AudioFeedback', 'EnergyAutoAim', 'ArmorLock', 'HeroLob', 'FireControlStub', 'SpinMode', 'AutoSpinOnHit', 'ChassisAssist', 'PowerGuard', 'CameraFeed', 'TongjiVisionBridge', 'CameraCalibration', 'Armor3DESP', 'RobotOverlay', 'RadarOverlay', 'MapMarker', 'TacticalMap', 'LiquidTacticalMap', 'SentinelCommand', 'AirSupport', 'TopMatchBar', 'MatchTimer', 'BaseOutpostStatus', 'VictoryPointStatus', 'EconomyPanel', 'ProjectileShop', 'MatchChat', 'QuickActionWheel', 'ThermalPowerPanel', 'BuffTimeline', 'MQTTLink', 'UDPVideo', 'SerialBridge', 'ControllerAngles', 'RobotLink', 'HUD', 'UIScale', 'Crosshair', 'CombatTargetHUD', 'ChassisGimbalIndicator', 'ClickGui', 'GimbalPower', 'PowerLimit', 'SpeedLimit', 'Capacitor', 'FrictionWheel', 'LockState', 'BuffStatus', 'ProjectileAllowance', 'JumpPTEWheelLES', 'InjuryStatistics', 'MatchSettlement', 'DartPanel', 'SkillConfiguration', 'MinecraftInventory', 'ReloadingPanel', 'RuneRingStatus', 'ResourceIsland', 'GainZone', 'UWBStatus', 'ArmorStatus', 'WirelessCharging', 'MinecraftBuffs'] 当前=FrictionWheel
+            动态证据 rm_client/ui/minecraft_hud.py:354  f"Slot {...}"
+            动态证据 rm_client/ui/polar/mixins/student_frontend_mixin.py:205  f"Slot {...}"
+  [DYNAMIC] Slot 4  选项=['Empty', 'Scenario', 'StartupVisual', 'MatchMode', 'RobotProfile', 'AllianceProfile', 'ConfigManager', 'EmergencyStop', 'MatchReadiness', 'ArmorAutoAim', 'EliminationFX', 'AudioFeedback', 'EnergyAutoAim', 'ArmorLock', 'HeroLob', 'FireControlStub', 'SpinMode', 'AutoSpinOnHit', 'ChassisAssist', 'PowerGuard', 'CameraFeed', 'TongjiVisionBridge', 'CameraCalibration', 'Armor3DESP', 'RobotOverlay', 'RadarOverlay', 'MapMarker', 'TacticalMap', 'LiquidTacticalMap', 'SentinelCommand', 'AirSupport', 'TopMatchBar', 'MatchTimer', 'BaseOutpostStatus', 'VictoryPointStatus', 'EconomyPanel', 'ProjectileShop', 'MatchChat', 'QuickActionWheel', 'ThermalPowerPanel', 'BuffTimeline', 'MQTTLink', 'UDPVideo', 'SerialBridge', 'ControllerAngles', 'RobotLink', 'HUD', 'UIScale', 'Crosshair', 'CombatTargetHUD', 'ChassisGimbalIndicator', 'ClickGui', 'GimbalPower', 'PowerLimit', 'SpeedLimit', 'Capacitor', 'FrictionWheel', 'LockState', 'BuffStatus', 'ProjectileAllowance', 'JumpPTEWheelLES', 'InjuryStatistics', 'MatchSettlement', 'DartPanel', 'SkillConfiguration', 'MinecraftInventory', 'ReloadingPanel', 'RuneRingStatus', 'ResourceIsland', 'GainZone', 'UWBStatus', 'ArmorStatus', 'WirelessCharging', 'MinecraftBuffs'] 当前=SpinMode
+            动态证据 rm_client/ui/minecraft_hud.py:354  f"Slot {...}"
+            动态证据 rm_client/ui/polar/mixins/student_frontend_mixin.py:205  f"Slot {...}"
+  [DYNAMIC] Slot 5  选项=['Empty', 'Scenario', 'StartupVisual', 'MatchMode', 'RobotProfile', 'AllianceProfile', 'ConfigManager', 'EmergencyStop', 'MatchReadiness', 'ArmorAutoAim', 'EliminationFX', 'AudioFeedback', 'EnergyAutoAim', 'ArmorLock', 'HeroLob', 'FireControlStub', 'SpinMode', 'AutoSpinOnHit', 'ChassisAssist', 'PowerGuard', 'CameraFeed', 'TongjiVisionBridge', 'CameraCalibration', 'Armor3DESP', 'RobotOverlay', 'RadarOverlay', 'MapMarker', 'TacticalMap', 'LiquidTacticalMap', 'SentinelCommand', 'AirSupport', 'TopMatchBar', 'MatchTimer', 'BaseOutpostStatus', 'VictoryPointStatus', 'EconomyPanel', 'ProjectileShop', 'MatchChat', 'QuickActionWheel', 'ThermalPowerPanel', 'BuffTimeline', 'MQTTLink', 'UDPVideo', 'SerialBridge', 'ControllerAngles', 'RobotLink', 'HUD', 'UIScale', 'Crosshair', 'CombatTargetHUD', 'ChassisGimbalIndicator', 'ClickGui', 'GimbalPower', 'PowerLimit', 'SpeedLimit', 'Capacitor', 'FrictionWheel', 'LockState', 'BuffStatus', 'ProjectileAllowance', 'JumpPTEWheelLES', 'InjuryStatistics', 'MatchSettlement', 'DartPanel', 'SkillConfiguration', 'MinecraftInventory', 'ReloadingPanel', 'RuneRingStatus', 'ResourceIsland', 'GainZone', 'UWBStatus', 'ArmorStatus', 'WirelessCharging', 'MinecraftBuffs'] 当前=EconomyPanel
+            动态证据 rm_client/ui/minecraft_hud.py:354  f"Slot {...}"
+            动态证据 rm_client/ui/polar/mixins/student_frontend_mixin.py:205  f"Slot {...}"
+  [DYNAMIC] Slot 6  选项=['Empty', 'Scenario', 'StartupVisual', 'MatchMode', 'RobotProfile', 'AllianceProfile', 'ConfigManager', 'EmergencyStop', 'MatchReadiness', 'ArmorAutoAim', 'EliminationFX', 'AudioFeedback', 'EnergyAutoAim', 'ArmorLock', 'HeroLob', 'FireControlStub', 'SpinMode', 'AutoSpinOnHit', 'ChassisAssist', 'PowerGuard', 'CameraFeed', 'TongjiVisionBridge', 'CameraCalibration', 'Armor3DESP', 'RobotOverlay', 'RadarOverlay', 'MapMarker', 'TacticalMap', 'LiquidTacticalMap', 'SentinelCommand', 'AirSupport', 'TopMatchBar', 'MatchTimer', 'BaseOutpostStatus', 'VictoryPointStatus', 'EconomyPanel', 'ProjectileShop', 'MatchChat', 'QuickActionWheel', 'ThermalPowerPanel', 'BuffTimeline', 'MQTTLink', 'UDPVideo', 'SerialBridge', 'ControllerAngles', 'RobotLink', 'HUD', 'UIScale', 'Crosshair', 'CombatTargetHUD', 'ChassisGimbalIndicator', 'ClickGui', 'GimbalPower', 'PowerLimit', 'SpeedLimit', 'Capacitor', 'FrictionWheel', 'LockState', 'BuffStatus', 'ProjectileAllowance', 'JumpPTEWheelLES', 'InjuryStatistics', 'MatchSettlement', 'DartPanel', 'SkillConfiguration', 'MinecraftInventory', 'ReloadingPanel', 'RuneRingStatus', 'ResourceIsland', 'GainZone', 'UWBStatus', 'ArmorStatus', 'WirelessCharging', 'MinecraftBuffs'] 当前=ProjectileShop
+            动态证据 rm_client/ui/minecraft_hud.py:354  f"Slot {...}"
+            动态证据 rm_client/ui/polar/mixins/student_frontend_mixin.py:205  f"Slot {...}"
+  [DYNAMIC] Slot 7  选项=['Empty', 'Scenario', 'StartupVisual', 'MatchMode', 'RobotProfile', 'AllianceProfile', 'ConfigManager', 'EmergencyStop', 'MatchReadiness', 'ArmorAutoAim', 'EliminationFX', 'AudioFeedback', 'EnergyAutoAim', 'ArmorLock', 'HeroLob', 'FireControlStub', 'SpinMode', 'AutoSpinOnHit', 'ChassisAssist', 'PowerGuard', 'CameraFeed', 'TongjiVisionBridge', 'CameraCalibration', 'Armor3DESP', 'RobotOverlay', 'RadarOverlay', 'MapMarker', 'TacticalMap', 'LiquidTacticalMap', 'SentinelCommand', 'AirSupport', 'TopMatchBar', 'MatchTimer', 'BaseOutpostStatus', 'VictoryPointStatus', 'EconomyPanel', 'ProjectileShop', 'MatchChat', 'QuickActionWheel', 'ThermalPowerPanel', 'BuffTimeline', 'MQTTLink', 'UDPVideo', 'SerialBridge', 'ControllerAngles', 'RobotLink', 'HUD', 'UIScale', 'Crosshair', 'CombatTargetHUD', 'ChassisGimbalIndicator', 'ClickGui', 'GimbalPower', 'PowerLimit', 'SpeedLimit', 'Capacitor', 'FrictionWheel', 'LockState', 'BuffStatus', 'ProjectileAllowance', 'JumpPTEWheelLES', 'InjuryStatistics', 'MatchSettlement', 'DartPanel', 'SkillConfiguration', 'MinecraftInventory', 'ReloadingPanel', 'RuneRingStatus', 'ResourceIsland', 'GainZone', 'UWBStatus', 'ArmorStatus', 'WirelessCharging', 'MinecraftBuffs'] 当前=TacticalMap
+            动态证据 rm_client/ui/minecraft_hud.py:354  f"Slot {...}"
+            动态证据 rm_client/ui/polar/mixins/student_frontend_mixin.py:205  f"Slot {...}"
+  [DYNAMIC] Slot 8  选项=['Empty', 'Scenario', 'StartupVisual', 'MatchMode', 'RobotProfile', 'AllianceProfile', 'ConfigManager', 'EmergencyStop', 'MatchReadiness', 'ArmorAutoAim', 'EliminationFX', 'AudioFeedback', 'EnergyAutoAim', 'ArmorLock', 'HeroLob', 'FireControlStub', 'SpinMode', 'AutoSpinOnHit', 'ChassisAssist', 'PowerGuard', 'CameraFeed', 'TongjiVisionBridge', 'CameraCalibration', 'Armor3DESP', 'RobotOverlay', 'RadarOverlay', 'MapMarker', 'TacticalMap', 'LiquidTacticalMap', 'SentinelCommand', 'AirSupport', 'TopMatchBar', 'MatchTimer', 'BaseOutpostStatus', 'VictoryPointStatus', 'EconomyPanel', 'ProjectileShop', 'MatchChat', 'QuickActionWheel', 'ThermalPowerPanel', 'BuffTimeline', 'MQTTLink', 'UDPVideo', 'SerialBridge', 'ControllerAngles', 'RobotLink', 'HUD', 'UIScale', 'Crosshair', 'CombatTargetHUD', 'ChassisGimbalIndicator', 'ClickGui', 'GimbalPower', 'PowerLimit', 'SpeedLimit', 'Capacitor', 'FrictionWheel', 'LockState', 'BuffStatus', 'ProjectileAllowance', 'JumpPTEWheelLES', 'InjuryStatistics', 'MatchSettlement', 'DartPanel', 'SkillConfiguration', 'MinecraftInventory', 'ReloadingPanel', 'RuneRingStatus', 'ResourceIsland', 'GainZone', 'UWBStatus', 'ArmorStatus', 'WirelessCharging', 'MinecraftBuffs'] 当前=MatchChat
+            动态证据 rm_client/ui/minecraft_hud.py:354  f"Slot {...}"
+            动态证据 rm_client/ui/polar/mixins/student_frontend_mixin.py:205  f"Slot {...}"
+  [DYNAMIC] Slot 9  选项=['Empty', 'Scenario', 'StartupVisual', 'MatchMode', 'RobotProfile', 'AllianceProfile', 'ConfigManager', 'EmergencyStop', 'MatchReadiness', 'ArmorAutoAim', 'EliminationFX', 'AudioFeedback', 'EnergyAutoAim', 'ArmorLock', 'HeroLob', 'FireControlStub', 'SpinMode', 'AutoSpinOnHit', 'ChassisAssist', 'PowerGuard', 'CameraFeed', 'TongjiVisionBridge', 'CameraCalibration', 'Armor3DESP', 'RobotOverlay', 'RadarOverlay', 'MapMarker', 'TacticalMap', 'LiquidTacticalMap', 'SentinelCommand', 'AirSupport', 'TopMatchBar', 'MatchTimer', 'BaseOutpostStatus', 'VictoryPointStatus', 'EconomyPanel', 'ProjectileShop', 'MatchChat', 'QuickActionWheel', 'ThermalPowerPanel', 'BuffTimeline', 'MQTTLink', 'UDPVideo', 'SerialBridge', 'ControllerAngles', 'RobotLink', 'HUD', 'UIScale', 'Crosshair', 'CombatTargetHUD', 'ChassisGimbalIndicator', 'ClickGui', 'GimbalPower', 'PowerLimit', 'SpeedLimit', 'Capacitor', 'FrictionWheel', 'LockState', 'BuffStatus', 'ProjectileAllowance', 'JumpPTEWheelLES', 'InjuryStatistics', 'MatchSettlement', 'DartPanel', 'SkillConfiguration', 'MinecraftInventory', 'ReloadingPanel', 'RuneRingStatus', 'ResourceIsland', 'GainZone', 'UWBStatus', 'ArmorStatus', 'WirelessCharging', 'MinecraftBuffs'] 当前=ClickGui
+            动态证据 rm_client/ui/minecraft_hud.py:354  f"Slot {...}"
+            动态证据 rm_client/ui/polar/mixins/student_frontend_mixin.py:205  f"Slot {...}"
+
+### Scenario
+  [AMBIGUOUS] Mode  选项=['OfficialEvent', 'CampusSimulation', 'LabDebug'] 当前=LabDebug  [名字共用x4]
+            rm_client/configuration/effects.py:44  SettingId("Scenario", "Mode"): SettingEffect.APPLY_SCENARIO,
+            rm_client/configuration/effects.py:45  SettingId("MatchMode", "Mode"): SettingEffect.APPLY_MATCH_MODE,
+            rm_client/configuration/effects.py:48  SettingId("ClickGui", "Mode"): SettingEffect.APPLY_GUI_MODE,
+  [AMBIGUOUS] Mock Writes  当前=True  [名字共用x3]
+            rm_client/backend/robot_link_settings.py:122  "Mock Writes", "Send Hz", "Drive Channel",
+            rm_client/backend/robot_link_settings.py:150  mock_writes=values.get("Mock Writes", ABSENT),
+            rm_client/scenarios.py:141  self._set_setting(registry, "Scenario", "Mock Writes", config.safety.mock_wr
+
+### MatchMode
+  [AMBIGUOUS] Mode  选项=['RMUC7v7', 'RMUL3v3'] 当前=RMUC7v7  [名字共用x4]
+            rm_client/configuration/effects.py:44  SettingId("Scenario", "Mode"): SettingEffect.APPLY_SCENARIO,
+            rm_client/configuration/effects.py:45  SettingId("MatchMode", "Mode"): SettingEffect.APPLY_MATCH_MODE,
+            rm_client/configuration/effects.py:48  SettingId("ClickGui", "Mode"): SettingEffect.APPLY_GUI_MODE,
+
+### ConfigManager
+  [AMBIGUOUS] Profile  选项=['default'] 当前=default  [名字共用x2]
+            rm_client/config_store.py:197  if setting.kind != "action_group" and not (module.name == "ConfigManager" an
+            rm_client/configuration/effects.py:52  SettingId("ConfigManager", "Profile"): SettingEffect.RELOAD_PROFILE,
+            rm_client/configuration/registry.py:129  if (module.name, name) == ("ConfigManager", "Profile"):
+
+### ArmorAutoAim
+  [AMBIGUOUS] Mock Output  当前=True  [名字共用x4]
+            rm_client/backend/manager.py:2193  mock = module.get_setting("Mock Output") if module is not None else None
+            rm_client/backend/readiness.py:99  setting = module.get_setting("Mock Output") if hasattr(module, "get_setting"
+            rm_client/ui/polar/mixins/config_actions_mixin.py:158  mock_setting = spin.get_setting("Mock Output")
+  [AMBIGUOUS] Fov  当前=85 deg  [名字共用x2]
+            rm_client/ui/polar/renderers/esp_wireframe.py:181  fov_deg = float(self.get_setting_number(module, "Fov", 0.0) or 0.0)
+  [AMBIGUOUS] Smooth  当前=0.28  [名字共用x2]
+            rm_client/ui/polar_app.py:3836  smooth = max(0.05, min(1.0, self.get_setting_number(module, "Smooth", 0.35))
+  [AMBIGUOUS] Lock Style  选项=['Polar Corner', 'White Outline', 'Minimal Bracket', 'Rune Ring', 'Heli Gimbal'] 当前=White Outline  [名字共用x2]
+            rm_client/ui/polar/renderers/esp_wireframe.py:434  setting = module.get_setting("Lock Style") if module else None
+
+### EliminationFX
+  [AMBIGUOUS] Scale  当前=1.0  [名字共用x3]
+            rm_client/legacy_tk_app.py:634  setting = module.get_setting("Scale") if module else None
+            rm_client/ui/jello_clickgui.py:678  scale_setting = click_gui.get_setting("Scale") if click_gui else None
+            rm_client/ui/polar/mixins/persistence_mixin.py:969  setting = module.get_setting("Scale") if module else None
+
+### EnergyAutoAim
+  [AMBIGUOUS] Mock Output  当前=True  [名字共用x4]
+            rm_client/backend/manager.py:2193  mock = module.get_setting("Mock Output") if module is not None else None
+            rm_client/backend/readiness.py:99  setting = module.get_setting("Mock Output") if hasattr(module, "get_setting"
+            rm_client/ui/polar/mixins/config_actions_mixin.py:158  mock_setting = spin.get_setting("Mock Output")
+  [AMBIGUOUS] Predict  选项=['Off', 'Fixed', 'Adaptive'] 当前=Adaptive  [名字共用x2]
+            rm_client/module_catalog.py:311  mode_setting("Lock Point", "Center", ["Center", "Top", "Predict"]),
+  [AMBIGUOUS] Fov  当前=58 deg  [名字共用x2]
+            rm_client/ui/polar/renderers/esp_wireframe.py:181  fov_deg = float(self.get_setting_number(module, "Fov", 0.0) or 0.0)
+  [AMBIGUOUS] Lock Style  选项=['Polar Corner', 'White Outline', 'Minimal Bracket', 'Rune Ring', 'Heli Gimbal'] 当前=Rune Ring  [名字共用x2]
+            rm_client/ui/polar/renderers/esp_wireframe.py:434  setting = module.get_setting("Lock Style") if module else None
+
+### ArmorLock
+  [AMBIGUOUS] Predict  当前=0.12 s  [名字共用x2]
+            rm_client/module_catalog.py:311  mode_setting("Lock Point", "Center", ["Center", "Top", "Predict"]),
+  [AMBIGUOUS] Heat Guard  当前=True  [名字共用x2]
+            rm_client/hero_lob.py:236  max_heat_ratio=float(setting("Heat Guard", 0.88)),
+
+### HeroLob
+  [AMBIGUOUS] Mode  选项=['Radar Assisted', 'Manual'] 当前=Radar Assisted  [名字共用x4]
+            rm_client/configuration/effects.py:44  SettingId("Scenario", "Mode"): SettingEffect.APPLY_SCENARIO,
+            rm_client/configuration/effects.py:45  SettingId("MatchMode", "Mode"): SettingEffect.APPLY_MATCH_MODE,
+            rm_client/configuration/effects.py:48  SettingId("ClickGui", "Mode"): SettingEffect.APPLY_GUI_MODE,
+  [AMBIGUOUS] Distance  当前=18.0 m  [名字共用x2]
+            rm_client/hero_lob.py:222  float(setting("Distance", getattr(state, "target_distance_m", 12.0))),
+            rm_client/module_catalog.py:207  mode_setting("Priority", "Armor", ["Armor", "Distance", "Health", "Radar"]),
+            rm_client/module_catalog.py:580  mode_setting("Entity Color", "Team", ["Team", "Distance", "Health"]),
+  [AMBIGUOUS] Heat Guard  当前=0.88  [名字共用x2]
+            rm_client/hero_lob.py:236  max_heat_ratio=float(setting("Heat Guard", 0.88)),
+  [AMBIGUOUS] Mock Output  当前=True  [名字共用x4]
+            rm_client/backend/manager.py:2193  mock = module.get_setting("Mock Output") if module is not None else None
+            rm_client/backend/readiness.py:99  setting = module.get_setting("Mock Output") if hasattr(module, "get_setting"
+            rm_client/ui/polar/mixins/config_actions_mixin.py:158  mock_setting = spin.get_setting("Mock Output")
+
+### FireControlStub
+  [AMBIGUOUS] Mode  选项=['Manual', 'Confirm', 'Disabled'] 当前=Manual  [名字共用x4]
+            rm_client/configuration/effects.py:44  SettingId("Scenario", "Mode"): SettingEffect.APPLY_SCENARIO,
+            rm_client/configuration/effects.py:45  SettingId("MatchMode", "Mode"): SettingEffect.APPLY_MATCH_MODE,
+            rm_client/configuration/effects.py:48  SettingId("ClickGui", "Mode"): SettingEffect.APPLY_GUI_MODE,
+
+### SpinMode
+  [AMBIGUOUS] Power Guard  当前=True  [名字共用x2]
+            rm_client/auto_spin.py:140  if _bool_setting(feature_module, "Power Guard", True):
+            rm_client/ui/polar/mixins/input_dispatch_mixin.py:1278  power_guard=self.setting_bool(spin, "Power Guard", True),
+  [AMBIGUOUS] Mock Output  当前=True  [名字共用x4]
+            rm_client/backend/manager.py:2193  mock = module.get_setting("Mock Output") if module is not None else None
+            rm_client/backend/readiness.py:99  setting = module.get_setting("Mock Output") if hasattr(module, "get_setting"
+            rm_client/ui/polar/mixins/config_actions_mixin.py:158  mock_setting = spin.get_setting("Mock Output")
+
+### AutoSpinOnHit
+  [AMBIGUOUS] Power Guard  当前=True  [名字共用x2]
+            rm_client/auto_spin.py:140  if _bool_setting(feature_module, "Power Guard", True):
+            rm_client/ui/polar/mixins/input_dispatch_mixin.py:1278  power_guard=self.setting_bool(spin, "Power Guard", True),
+
+### CameraCalibration
+  [AMBIGUOUS] Profile  选项=['polar_webcam'] 当前=polar_webcam  [名字共用x2]
+            rm_client/config_store.py:197  if setting.kind != "action_group" and not (module.name == "ConfigManager" an
+            rm_client/configuration/effects.py:52  SettingId("ConfigManager", "Profile"): SettingEffect.RELOAD_PROFILE,
+            rm_client/configuration/registry.py:129  if (module.name, name) == ("ConfigManager", "Profile"):
+
+### Armor3DESP
+  [AMBIGUOUS] Style  选项=['JelloShadow', 'Wireframe3D', 'PolarOutline2D', 'Prediction Rack'] 当前=JelloShadow  [名字共用x3]
+            rm_client/configuration/migrations.py:28  ("Armor3DESP", "Style"): {"PolarMechanicalWire": "JelloShadow"},
+            rm_client/configuration/migrations.py:64  if "Preset" not in settings and "Style" in settings:
+            rm_client/configuration/migrations.py:70  }.get(str(settings["Style"]), "Default Scrolling")
+  [AMBIGUOUS] Show Labels  当前=False  [名字共用x3]
+            rm_client/configuration/wheel.py:20  "radius": "Radius", "dead_zone": "Dead Zone", "show_labels": "Show Labels",
+            rm_client/ui/polar/renderers/esp_wireframe.py:1127  show_labels = self.setting_bool(module, "Show Labels", True)
+            rm_client/ui/polar/renderers/esp_wireframe.py:1435  show_labels = self.setting_bool(module, "Show Labels", True)
+  [AMBIGUOUS] Opacity  当前=0.82  [名字共用x2]
+            rm_client/ui/polar/renderers/esp_wireframe.py:1112  opacity = self.get_setting_number(module, "Opacity", 0.82)
+            rm_client/ui/polar/renderers/esp_wireframe.py:1431  opacity = self.get_setting_number(module, "Opacity", 0.82)
+            rm_client/ui/polar/renderers/tactical_map.py:1520  opacity_setting = self.registry.get("TacticalMap").get_setting("Opacity") if
+
+### RobotOverlay
+  [AMBIGUOUS] Distance  当前=True  [名字共用x2]
+            rm_client/hero_lob.py:222  float(setting("Distance", getattr(state, "target_distance_m", 12.0))),
+            rm_client/module_catalog.py:207  mode_setting("Priority", "Armor", ["Armor", "Distance", "Health", "Radar"]),
+            rm_client/module_catalog.py:580  mode_setting("Entity Color", "Team", ["Team", "Distance", "Health"]),
+
+### TacticalMap
+  [AMBIGUOUS] Opacity  当前=0.72  [名字共用x2]
+            rm_client/ui/polar/renderers/esp_wireframe.py:1112  opacity = self.get_setting_number(module, "Opacity", 0.82)
+            rm_client/ui/polar/renderers/esp_wireframe.py:1431  opacity = self.get_setting_number(module, "Opacity", 0.82)
+            rm_client/ui/polar/renderers/tactical_map.py:1520  opacity_setting = self.registry.get("TacticalMap").get_setting("Opacity") if
+
+### LiquidTacticalMap
+  [AMBIGUOUS] Show Labels  当前=True  [名字共用x3]
+            rm_client/configuration/wheel.py:20  "radius": "Radius", "dead_zone": "Dead Zone", "show_labels": "Show Labels",
+            rm_client/ui/polar/renderers/esp_wireframe.py:1127  show_labels = self.setting_bool(module, "Show Labels", True)
+            rm_client/ui/polar/renderers/esp_wireframe.py:1435  show_labels = self.setting_bool(module, "Show Labels", True)
+
+### TopMatchBar
+  [AMBIGUOUS] Scale  当前=0.72  [名字共用x3]
+            rm_client/legacy_tk_app.py:634  setting = module.get_setting("Scale") if module else None
+            rm_client/ui/jello_clickgui.py:678  scale_setting = click_gui.get_setting("Scale") if click_gui else None
+            rm_client/ui/polar/mixins/persistence_mixin.py:969  setting = module.get_setting("Scale") if module else None
+  [AMBIGUOUS] Show Scores  当前=True  [名字共用x2]
+            rm_client/ui/polar/renderers/tactical_map.py:335  if self._bool_on("MatchTimer", "Show Scores"):
+            rm_client/ui/top_match_bar_controller.py:205  if bool(self._setting("Show Scores", True)) else {})
+            rm_client/ui/top_match_bar_controller.py:344  show_scores=bool(self._setting("Show Scores", True)),
+
+### MatchTimer
+  [AMBIGUOUS] Show Scores  当前=True  [名字共用x2]
+            rm_client/ui/polar/renderers/tactical_map.py:335  if self._bool_on("MatchTimer", "Show Scores"):
+            rm_client/ui/top_match_bar_controller.py:205  if bool(self._setting("Show Scores", True)) else {})
+            rm_client/ui/top_match_bar_controller.py:344  show_scores=bool(self._setting("Show Scores", True)),
+
+### QuickActionWheel
+  [AMBIGUOUS] Show Labels  当前=True  [名字共用x3]
+            rm_client/configuration/wheel.py:20  "radius": "Radius", "dead_zone": "Dead Zone", "show_labels": "Show Labels",
+            rm_client/ui/polar/renderers/esp_wireframe.py:1127  show_labels = self.setting_bool(module, "Show Labels", True)
+            rm_client/ui/polar/renderers/esp_wireframe.py:1435  show_labels = self.setting_bool(module, "Show Labels", True)
+
+### MQTTLink
+  [AMBIGUOUS] Host  选项=['127.0.0.1', '192.168.12.1'] 当前=127.0.0.1  [名字共用x2]
+            rm_client/backend/manager.py:257  "mqtt_host": str(value("MQTTLink", "Host", connection.mqtt_host)).strip(),
+            rm_client/backend/manager.py:259  "udp_host": str(value("UDPVideo", "Host", connection.udp_host)).strip(),
+            rm_client/backend/manager.py:303  host_setting = module.get_setting("Host")
+  [AMBIGUOUS] Port  当前=3333  [名字共用x4]
+            rm_client/backend/manager.py:258  "mqtt_port": int(value("MQTTLink", "Port", connection.mqtt_port)),
+            rm_client/backend/manager.py:260  "udp_port": int(value("UDPVideo", "Port", connection.udp_port)),
+            rm_client/backend/manager.py:261  "serial_port": str(value("SerialBridge", "Port", connection.serial_port)),
+
+### UDPVideo
+  [AMBIGUOUS] Host  选项=['127.0.0.1', '0.0.0.0', '192.168.12.2'] 当前=127.0.0.1  [名字共用x2]
+            rm_client/backend/manager.py:257  "mqtt_host": str(value("MQTTLink", "Host", connection.mqtt_host)).strip(),
+            rm_client/backend/manager.py:259  "udp_host": str(value("UDPVideo", "Host", connection.udp_host)).strip(),
+            rm_client/backend/manager.py:303  host_setting = module.get_setting("Host")
+  [AMBIGUOUS] Port  当前=3334  [名字共用x4]
+            rm_client/backend/manager.py:258  "mqtt_port": int(value("MQTTLink", "Port", connection.mqtt_port)),
+            rm_client/backend/manager.py:260  "udp_port": int(value("UDPVideo", "Port", connection.udp_port)),
+            rm_client/backend/manager.py:261  "serial_port": str(value("SerialBridge", "Port", connection.serial_port)),
+
+### SerialBridge
+  [AMBIGUOUS] Port  选项=['Stub', 'COM1', 'COM3', 'COM5'] 当前=Stub  [名字共用x4]
+            rm_client/backend/manager.py:258  "mqtt_port": int(value("MQTTLink", "Port", connection.mqtt_port)),
+            rm_client/backend/manager.py:260  "udp_port": int(value("UDPVideo", "Port", connection.udp_port)),
+            rm_client/backend/manager.py:261  "serial_port": str(value("SerialBridge", "Port", connection.serial_port)),
+  [AMBIGUOUS] Baud  当前=115200  [名字共用x2]
+            rm_client/backend/manager.py:262  "serial_baud": int(value("SerialBridge", "Baud", connection.serial_baud)),
+            rm_client/backend/manager.py:274  baud = int(value("RobotLink", "Baud", BAUD_DEFAULT))
+            rm_client/backend/robot_link_settings.py:121  "Port", "Baud", "Link Mode", "Bridge Host", "Bridge Port",
+  [AMBIGUOUS] Mock Writes  当前=True  [名字共用x3]
+            rm_client/backend/robot_link_settings.py:122  "Mock Writes", "Send Hz", "Drive Channel",
+            rm_client/backend/robot_link_settings.py:150  mock_writes=values.get("Mock Writes", ABSENT),
+            rm_client/scenarios.py:141  self._set_setting(registry, "Scenario", "Mock Writes", config.safety.mock_wr
+
+### ControllerAngles
+  [AMBIGUOUS] Rescan Serial Ports  当前=Rescan Serial Ports  [名字共用x2]
+            rm_client/configuration/commands.py:68  ConfigCommandKind.DIAGNOSTIC: ("Run DT7 Link Selftest", "Rescan Serial Ports
+            rm_client/ui/polar/mixins/config_actions_mixin.py:246  "Rescan Serial Ports": self.rescan_serial_ports,
+
+### RobotLink
+  [AMBIGUOUS] Port  选项=['Stub', 'Auto', 'COM1', 'COM3', 'COM5'] 当前=Auto  [名字共用x4]
+            rm_client/backend/manager.py:258  "mqtt_port": int(value("MQTTLink", "Port", connection.mqtt_port)),
+            rm_client/backend/manager.py:260  "udp_port": int(value("UDPVideo", "Port", connection.udp_port)),
+            rm_client/backend/manager.py:261  "serial_port": str(value("SerialBridge", "Port", connection.serial_port)),
+  [AMBIGUOUS] Baud  当前=115200  [名字共用x2]
+            rm_client/backend/manager.py:262  "serial_baud": int(value("SerialBridge", "Baud", connection.serial_baud)),
+            rm_client/backend/manager.py:274  baud = int(value("RobotLink", "Baud", BAUD_DEFAULT))
+            rm_client/backend/robot_link_settings.py:121  "Port", "Baud", "Link Mode", "Bridge Host", "Bridge Port",
+  [AMBIGUOUS] Mock Writes  当前=False  [名字共用x3]
+            rm_client/backend/robot_link_settings.py:122  "Mock Writes", "Send Hz", "Drive Channel",
+            rm_client/backend/robot_link_settings.py:150  mock_writes=values.get("Mock Writes", ABSENT),
+            rm_client/scenarios.py:141  self._set_setting(registry, "Scenario", "Mock Writes", config.safety.mock_wr
+  [AMBIGUOUS] Rescan Serial Ports  当前=Rescan Serial Ports  [名字共用x2]
+            rm_client/configuration/commands.py:68  ConfigCommandKind.DIAGNOSTIC: ("Run DT7 Link Selftest", "Rescan Serial Ports
+            rm_client/ui/polar/mixins/config_actions_mixin.py:246  "Rescan Serial Ports": self.rescan_serial_ports,
+
+### UIScale
+  [AMBIGUOUS] GUI Scale  当前=1.0  [名字共用x2]
+            rm_client/ui/minecraft_hud.py:453  override_setting = module.get_setting("GUI Scale") if module is not None els
+            rm_client/ui/polar/mixins/input_dispatch_mixin.py:773  override = self.setting_mode(function_bar, "GUI Scale", "Auto")
+            rm_client/ui/polar/mixins/persistence_mixin.py:971  gui_scale = self.get_setting_number(ui_module, "GUI Scale", 1.0)
+  [AMBIGUOUS] Reference Height  当前=720 px  [名字共用x2]
+            rm_client/cs2_crosshair.py:24  "Reference Height": (240, 65535), "Color Mode": (0, 5), "Dynamic Spread Limi
+            rm_client/cs2_crosshair.py:29  "Outline Alpha", "Outline Mode", "CS2 Style", "Reference Height", "Color Mod
+            rm_client/cs2_crosshair.py:38  "Outline Width": 1.0, "Outline Mode": 1, "CS2 Style": 4, "Reference Height":
+
+### Crosshair
+  [AMBIGUOUS] Style  选项=['RM Dot', 'Circle', 'Cross', 'CS2'] 当前=RM Dot  [名字共用x3]
+            rm_client/configuration/migrations.py:28  ("Armor3DESP", "Style"): {"PolarMechanicalWire": "JelloShadow"},
+            rm_client/configuration/migrations.py:64  if "Preset" not in settings and "Style" in settings:
+            rm_client/configuration/migrations.py:70  }.get(str(settings["Style"]), "Default Scrolling")
+  [AMBIGUOUS] Size  当前=18  [名字共用x2]
+            rm_client/legacy_tk_app.py:224  size_setting = self.registry.get("Crosshair").get_setting("Size") if self.re
+            rm_client/ui/polar_app.py:3750  size_setting = module.get_setting("Size") if module else None
+            rm_client/ui/polar_app.py:3835  size = self.get_setting_number(module, "Size", 74.0)
+  [AMBIGUOUS] Reference Height  当前=1080 px  [名字共用x2]
+            rm_client/cs2_crosshair.py:24  "Reference Height": (240, 65535), "Color Mode": (0, 5), "Dynamic Spread Limi
+            rm_client/cs2_crosshair.py:29  "Outline Alpha", "Outline Mode", "CS2 Style", "Reference Height", "Color Mod
+            rm_client/cs2_crosshair.py:38  "Outline Width": 1.0, "Outline Mode": 1, "CS2 Style": 4, "Reference Height":
+
+### MinecraftCombatHUD
+  [AMBIGUOUS] GUI Scale  选项=['Auto', '1x', '2x', '3x', '4x', '5x', '6x', '7x', '8x'] 当前=Auto  [名字共用x2]
+            rm_client/ui/minecraft_hud.py:453  override_setting = module.get_setting("GUI Scale") if module is not None els
+            rm_client/ui/polar/mixins/input_dispatch_mixin.py:773  override = self.setting_mode(function_bar, "GUI Scale", "Auto")
+            rm_client/ui/polar/mixins/persistence_mixin.py:971  gui_scale = self.get_setting_number(ui_module, "GUI Scale", 1.0)
+
+### ChassisGimbalIndicator
+  [AMBIGUOUS] Style  选项=['Minimal', 'Tank', 'Compass'] 当前=Minimal  [名字共用x3]
+            rm_client/configuration/migrations.py:28  ("Armor3DESP", "Style"): {"PolarMechanicalWire": "JelloShadow"},
+            rm_client/configuration/migrations.py:64  if "Preset" not in settings and "Style" in settings:
+            rm_client/configuration/migrations.py:70  }.get(str(settings["Style"]), "Default Scrolling")
+  [AMBIGUOUS] Size  当前=56 px  [名字共用x2]
+            rm_client/legacy_tk_app.py:224  size_setting = self.registry.get("Crosshair").get_setting("Size") if self.re
+            rm_client/ui/polar_app.py:3750  size_setting = module.get_setting("Size") if module else None
+            rm_client/ui/polar_app.py:3835  size = self.get_setting_number(module, "Size", 74.0)
+  [AMBIGUOUS] Smooth  当前=0.35  [名字共用x2]
+            rm_client/ui/polar_app.py:3836  smooth = max(0.05, min(1.0, self.get_setting_number(module, "Smooth", 0.35))
+
+### ClickGui
+  [AMBIGUOUS] Scale  当前=1.0  [名字共用x3]
+            rm_client/legacy_tk_app.py:634  setting = module.get_setting("Scale") if module else None
+            rm_client/ui/jello_clickgui.py:678  scale_setting = click_gui.get_setting("Scale") if click_gui else None
+            rm_client/ui/polar/mixins/persistence_mixin.py:969  setting = module.get_setting("Scale") if module else None
+
+### PowerLimit
+  [AMBIGUOUS] Limit  当前=80 W  [名字共用x2]
+            rm_client/ui/polar/renderers/tactical_map.py:2277  limit = max(1.0, self.get_setting_number(power, "Limit", float(self.state.po
+            rm_client/ui/polar/renderers/tactical_map.py:2282  limit = max(1.0, self.get_setting_number(speed, "Limit", float(self.state.sp
+            rm_client/ui/polar/renderers/tactical_map.py:2460  limit = max(1.0, self.get_setting_number(power, "Limit", float(self.state.po
+
+### SpeedLimit
+  [AMBIGUOUS] Limit  当前=420 dps  [名字共用x2]
+            rm_client/ui/polar/renderers/tactical_map.py:2277  limit = max(1.0, self.get_setting_number(power, "Limit", float(self.state.po
+            rm_client/ui/polar/renderers/tactical_map.py:2282  limit = max(1.0, self.get_setting_number(speed, "Limit", float(self.state.sp
+            rm_client/ui/polar/renderers/tactical_map.py:2460  limit = max(1.0, self.get_setting_number(power, "Limit", float(self.state.po
+
+### ResourceIsland
+  [AMBIGUOUS] Show Status  当前=True  [名字共用x5]
+            rm_client/student_ui.py:89  if module is None or not module.enabled or not module.get_setting("Show Stat
+
+### GainZone
+  [AMBIGUOUS] Show Status  当前=True  [名字共用x5]
+            rm_client/student_ui.py:89  if module is None or not module.enabled or not module.get_setting("Show Stat
+
+### UWBStatus
+  [AMBIGUOUS] Show Status  当前=True  [名字共用x5]
+            rm_client/student_ui.py:89  if module is None or not module.enabled or not module.get_setting("Show Stat
+
+### ArmorStatus
+  [AMBIGUOUS] Show Status  当前=True  [名字共用x5]
+            rm_client/student_ui.py:89  if module is None or not module.enabled or not module.get_setting("Show Stat
+
+### WirelessCharging
+  [AMBIGUOUS] Show Status  当前=True  [名字共用x5]
+            rm_client/student_ui.py:89  if module is None or not module.enabled or not module.get_setting("Show Stat
+
+同名共用项归属：共 63 项，已能归到本模块 46 项，仍无法归属 17 项
+  以下项目前只能证明“这个名字有人读”，不能证明本模块读了自己那份：
+    ?  ArmorAutoAim / Smooth（同名共 2 处，1 个读取点无一可归）
+    ?  EnergyAutoAim / Predict（同名共 2 处，1 个读取点无一可归）
+    ?  EnergyAutoAim / Fov（同名共 2 处，1 个读取点无一可归）
+    ?  ArmorLock / Predict（同名共 2 处，1 个读取点无一可归）
+    ?  ArmorLock / Heat Guard（同名共 2 处，1 个读取点无一可归）
+    ?  HeroLob / Mode（同名共 4 处，11 个读取点无一可归）
+    ?  FireControlStub / Mode（同名共 4 处，11 个读取点无一可归）
+    ?  QuickActionWheel / Show Labels（同名共 3 处，4 个读取点无一可归）
+    ?  ControllerAngles / Rescan Serial Ports（同名共 2 处，2 个读取点无一可归）
+    ?  RobotLink / Mock Writes（同名共 3 处，4 个读取点无一可归）
+    ?  RobotLink / Rescan Serial Ports（同名共 2 处，2 个读取点无一可归）
+    ?  Crosshair / Reference Height（同名共 2 处，17 个读取点无一可归）
+    ?  ResourceIsland / Show Status（同名共 5 处，1 个读取点无一可归）
+    ?  GainZone / Show Status（同名共 5 处，1 个读取点无一可归）
+    ?  UWBStatus / Show Status（同名共 5 处，1 个读取点无一可归）
+    ?  ArmorStatus / Show Status（同名共 5 处，1 个读取点无一可归）
+    ?  WirelessCharging / Show Status（同名共 5 处，1 个读取点无一可归）
+
+==============================================================================
+如何读这份输出（重要）：
+  ORPHAN 只证明"没人按这个名字读它"。有三种可能，必须人工区分：
+    a) 真的是装饰 —— 该删掉，或者该接上；
+    b) 通过别的方式读 —— 例如遍历所有设置项做持久化/序列化，
+       那不是功能读取，仍算装饰；
+    c) 名字被别的模块共用 —— 看 [名字共用xN] 标记。
+  反过来，READ 也**不等于对齐**：值可能被读了但兑现不了。
+  典型例子是 SpinMode 的 "Spin Speed"(420 dps) 与 "Direction"(CW/CCW)：
+  固件的自转只是一个开关标志，转速与方向由固件自己的 SPIN 模式决定，
+  这两个滑块读了也改不了机器人行为。这类要对照
+  tools/firmware/host_bridge/GAPS.md 人工确认。
+
+[OK] 孤儿设置项 21 个，未超过基线 21
+提醒：另有 63 个设置项名字与其他模块冲突，读取点无法归属，
+      它们**不算已对齐**，需要人工确认各自模块真的读了自己的值：
+        Scenario / Mode（同名共 4 处）
+        Scenario / Mock Writes（同名共 3 处）
+        MatchMode / Mode（同名共 4 处）
+        ConfigManager / Profile（同名共 2 处）
+        ArmorAutoAim / Mock Output（同名共 4 处）
+        ArmorAutoAim / Fov（同名共 2 处）
+        ArmorAutoAim / Smooth（同名共 2 处）
+        ArmorAutoAim / Lock Style（同名共 2 处）
+        EliminationFX / Scale（同名共 3 处）
+        EnergyAutoAim / Mock Output（同名共 4 处）
+        EnergyAutoAim / Predict（同名共 2 处）
+        EnergyAutoAim / Fov（同名共 2 处）
+        EnergyAutoAim / Lock Style（同名共 2 处）
+        ArmorLock / Predict（同名共 2 处）
+        ArmorLock / Heat Guard（同名共 2 处）
+        HeroLob / Mode（同名共 4 处）
+        HeroLob / Distance（同名共 2 处）
+        HeroLob / Heat Guard（同名共 2 处）
+        HeroLob / Mock Output（同名共 4 处）
+        FireControlStub / Mode（同名共 4 处）
+        SpinMode / Power Guard（同名共 2 处）
+        SpinMode / Mock Output（同名共 4 处）
+        AutoSpinOnHit / Power Guard（同名共 2 处）
+        CameraCalibration / Profile（同名共 2 处）
+        Armor3DESP / Style（同名共 3 处）
+        Armor3DESP / Show Labels（同名共 3 处）
+        Armor3DESP / Opacity（同名共 2 处）
+        RobotOverlay / Distance（同名共 2 处）
+        TacticalMap / Opacity（同名共 2 处）
+        LiquidTacticalMap / Show Labels（同名共 3 处）
+        TopMatchBar / Scale（同名共 3 处）
+        TopMatchBar / Show Scores（同名共 2 处）
+        MatchTimer / Show Scores（同名共 2 处）
+        QuickActionWheel / Show Labels（同名共 3 处）
+        MQTTLink / Host（同名共 2 处）
+        MQTTLink / Port（同名共 4 处）
+        UDPVideo / Host（同名共 2 处）
+        UDPVideo / Port（同名共 4 处）
+        SerialBridge / Port（同名共 4 处）
+        SerialBridge / Baud（同名共 2 处）
+        SerialBridge / Mock Writes（同名共 3 处）
+        ControllerAngles / Rescan Serial Ports（同名共 2 处）
+        RobotLink / Port（同名共 4 处）
+        RobotLink / Baud（同名共 2 处）
+        RobotLink / Mock Writes（同名共 3 处）
+        RobotLink / Rescan Serial Ports（同名共 2 处）
+        UIScale / GUI Scale（同名共 2 处）
+        UIScale / Reference Height（同名共 2 处）
+        Crosshair / Style（同名共 3 处）
+        Crosshair / Size（同名共 2 处）
+        Crosshair / Reference Height（同名共 2 处）
+        MinecraftCombatHUD / GUI Scale（同名共 2 处）
+        ChassisGimbalIndicator / Style（同名共 3 处）
+        ChassisGimbalIndicator / Size（同名共 2 处）
+        ChassisGimbalIndicator / Smooth（同名共 2 处）
+        ClickGui / Scale（同名共 3 处）
+        PowerLimit / Limit（同名共 2 处）
+        SpeedLimit / Limit（同名共 2 处）
+        ResourceIsland / Show Status（同名共 5 处）
+        GainZone / Show Status（同名共 5 处）
+        UWBStatus / Show Status（同名共 5 处）
+        ArmorStatus / Show Status（同名共 5 处）
+        WirelessCharging / Show Status（同名共 5 处）

@@ -1,0 +1,33 @@
+{
+  "fixed_source_commit": "e403a1a1dd24d49bd5873892d3a4b9a68808186f",
+  "production_fix_commit": "d9a61f1240d34cd9842bd5ff8f205395ddb637f4",
+  "corrected_reviewer_test_commit": "815fc17f52940b8711468231ea4fcbe2310f42e2",
+  "old_production_patch": "e5fc526",
+  "initial_reproduction_source": "aed368219295b7d3a9bdb8e19782799a4f632f6a",
+  "synchronized_reproduction_source": "d51bb72c356ce8943077b629e91d53c10e22fec6",
+  "synchronized_reproduction_note": "Only test/docs changed since initial reproduction; stdout/stderr entering real os.read both observed before rejecting closer",
+  "python": "3.12.14",
+  "executed_at_utc": "2026-10-16T07:29:38Z",
+  "focused": {
+    "suites": 24,
+    "methods": 154,
+    "skipped": 0,
+    "exit_code": 0,
+    "result": "PASS"
+  },
+  "repeat": {
+    "rounds": 30,
+    "methods": 300,
+    "skipped": 0,
+    "exit_code": 0,
+    "result": "PASS"
+  },
+  "negative": {
+    "restored": "data-worker-is-cleanup policy only",
+    "expected_failures": 3,
+    "errors": 0,
+    "wrapper_exit_code": 0
+  },
+  "scope": "Focused progress and native owner verification; actual os.pipe reads plus fake process, socket and device boundaries; no aggregate/UI/hardware/GPU acceptance",
+  "log_normalization": "Trailing whitespace removed and checkout path redacted; diagnostic content unchanged"
+}

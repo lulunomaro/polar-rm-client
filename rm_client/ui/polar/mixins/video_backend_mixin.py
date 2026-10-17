@@ -1,69 +1,19 @@
-"""阶段 3b 大域 mixin 化：视频管线 / 后端接线 / 英雄部署（D7）+ 官方消息 /
-战斗事件 / 击杀特效（D18）+ Minecraft 功能槽（D14）→ VideoBackendMixin。
+"""Window adapters for video, vision, combat feedback and legacy HUD actions.
 
-（REFACTOR_BLUEPRINT §5 阶段 3 表 3b 行 / §2 D7·D18·D14 节 / §5.6 冻结面）
+The window owns the registry, frontend state, capture workers and renderers.
+These methods translate between those collaborators, select video sources and
+present explicit recovery actions. Worker stop admission and owner-thread
+lifecycle completion are separate from native cleanup confirmation.
 
-迁移范围（以 grep 重定位后的实际行号为准，蓝图原行号已漂移；四段不连续区块）：
-- D14 Minecraft 功能槽：``append_minecraft_drop_overlay`` /
-  ``assign_minecraft_function_slot`` / ``activate_minecraft_function_slot``
-- D7 英雄部署：``hero_range_profile_selected`` / ``hero_deploy_video_cut_active`` /
-  ``hero_deploy_uses_mock_transport`` / ``open_hero_deploy_interface`` /
-  ``close_hero_deploy_interface`` / ``send_hero_deploy_request`` /
-  ``update_hero_deploy_state`` / ``update_auto_spin_guard`` /
-  ``draw_hero_deploy_interface`` / ``hero_lob_preview`` / ``update_hero_lob_guard``
-- D7 视频管线/后端接线：``ensure_camera_started`` / ``draw_video`` /
-  ``refresh_vision_runtime`` / ``on_captured_camera_frame`` /
-  ``consume_hero_native_video_frame`` / ``hero_native_frame_state`` /
-  ``draw_hero_native_background`` / ``consume_capture_frame`` /
-  ``consume_backend_video_frame`` / ``normal_backend_video_fresh`` /
-  ``normal_video_frame_ready`` / ``clear_normal_backend_video_frame`` /
-  ``backend_video_source_selected`` / ``draw_backend_video_lost`` /
-  ``active_tongji_result``
-- D7 同济桥：``alliance_side`` / ``sync_tongji_vision_state`` /
-  ``publish_vision_control_if_armed`` / ``tongji_target``
-- D7 合成视频：``draw_synthetic_video(+cached)`` / ``update_hud_liquid_source`` /
-  ``draw_synthetic_video_scene``
-- D18 官方消息/战斗事件/击杀特效：``consume_official_messages`` /
-  ``apply_official_state`` / ``process_vision_kill_events`` /
-  ``accept_combat_event`` / ``elimination_element_toggles`` /
-  ``update_elimination_hit_info`` / ``draw_elimination_fx``
-
-纪律与偏差决策（保守边界，中文注明）：
-- 方法体**零修改**（含注释、空行与不可达代码——``update_hud_liquid_source`` 中
-  ``return`` 之后的 CPU 快照说明注释逐字保留），纯移动进本 Mixin；
-- **tick stage 名字不变**（蓝图 3b 特别注意项）：on_tick / _run_tick_stage 的
-  stage 列表仍按原方法名经 self 引用（backend.readiness、hero.deploy、auto.spin、
-  official.consume、official.apply、fx.hit_info、vision.sync、vision.events 等），
-  VideoBackendMixin 位于继承列表、QOpenGLWidget 之前且与既有 Mixin 无同名成员
-  → MRO 保证解析到本 Mixin，调用面与每帧开销不变；
-- ``draw_synthetic_video_scene`` 按阶段 2f 偏差决策归 D7（此前因蓝图归属未到
-  执行点而留原地），本次随域整体迁入；``VisionViewport.paintGL`` 经
-  ``owner.draw_synthetic_video_scene`` 的调用面不变；
-- 边界保守决策：``has_valid_combat_target`` 属 D8（阶段 2b 已注明跨域留原地）
-  → 不迁；``draw_hud_liquid_glass`` / ``liquid_press_amount`` 是 D2/D5/D6/D9
-  广泛复用的液态玻璃共享辅助，蓝图未列入 D7 清单 → 留在 polar_app.py；
-  ``preview_elimination_fx`` 属 D16 动作处理域 → 不迁；
-  ``invalidate_transient_overlay_scene`` 是 D2 帧编排侧的 FBO 失效协议辅助
-  （被本域多处经 self 调用）→ 留在 polar_app.py；
-- ``alliance_side`` 蓝图列于 D7 同济桥组，随域迁入（D18 的
-  process_vision_kill_events / draw_elimination_fx 经 self 继续调用它）；
-- ``NORMAL_BACKEND_VIDEO_STALE_S`` 类常量与 ``synthetic_video_cache*`` /
-  ``_hero_native_*`` / ``_normal_backend_mode`` / ``_normal_frame_source`` /
-  ``frame_image`` / ``frame_pixmap`` 等 __init__ 状态 schema 字段全部原位不动
-  （§5.6 冻结面 + §6 缓存纪律：各失效键置空逻辑随方法零修改搬运）；
-- ``_aspect_fit_image_rect`` 已在阶段 1 迁至 ui/polar/text_metrics.py 并以
-  staticmethod 挂回类上，本域经 self 调用不变；
-- ``apply_official_state`` 对 ``BackendManager._economy_signature`` 的跨模块
-  访问是既有实现，零修改保留（仅为本模块新增该符号导入）。
-
-冻结面纪律：与阶段 3a 一致——api_freeze_test 对方法类成员比对 ``__qualname__``
-（基线值形如 "PolarRMWindow.<name>"），故在本模块底部把全部迁入方法的
-``__qualname__`` 钉回 ``PolarRMWindow.<name>``，使 ``window.<member>`` 签名与
-迁移前 bit 级一致。
+This legacy mixin also retains hero deployment, Minecraft slots and combat-event
+presentation. Its methods share the full window through ``self``; moving them
+here did not create independently owned domain services. Compatibility is checked
+by the explicit window contract and behavior tests, not implementing qualnames.
 """
 
 from __future__ import annotations
 
+import logging
 import math
 import os
 import time
@@ -99,6 +49,11 @@ from ...jello_locale import chinese_enabled
 from ...overlay_coordinator import OverlayKind
 from ...paint import glow_rect, rounded_rect
 from ...theme import color
+from ..video_recovery import (
+    VIDEO_RETRY_ACTION, VIDEO_WAIT_ACTION, VideoRecoveryNotice, VideoRetryToken, video_recovery_notice,
+)
+
+_LOG = logging.getLogger(__name__)
 
 __all__ = [
     "VideoBackendMixin",
@@ -317,9 +272,7 @@ class VideoBackendMixin:
             # The judge-system acknowledgement is authoritative.  Stop the
             # normal webcam sampler and make the Apple-island/
             # AndroidLiquidGlass console the locked foreground workspace.
-            if self.camera_started:
-                self.camera_worker.stop()
-                self.camera_started = False
+            self._camera_activation.pause_admitted_capture()
             self._hero_native_wait_started = now
             if self.economy_phase != EconomyScenePhase.CLOSED:
                 self._economy_generation += 1
@@ -486,37 +439,29 @@ class VideoBackendMixin:
             self.state.hero_lob_status = readiness.summary
 
     def ensure_camera_started(self) -> None:
+        if self._window_lifecycle.closing:
+            return
         if os.environ.get("POLAR_DISABLE_LOCAL_CAPTURE", "").lower() in ("1", "true", "yes"):
-            if self.camera_worker.running:
-                self.camera_worker.stop()
-            self.camera_started = False
-            self.camera_worker.last_error = "local capture disabled"
+            self._camera_activation.suspend(reason="local capture disabled")
             return
         source = self.registry.get("CameraFeed")
         source_setting = source.get_setting("Source") if source else None
         if source_setting is not None and source_setting.value != "Webcam":
             # A hidden webcam must not keep sampling or feeding local vision
             # after UDP/Native/Synthetic takes ownership of CameraFeed.
-            if self.camera_worker.running:
-                self.camera_worker.stop()
-            self.camera_started = False
+            self._camera_activation.suspend()
             return
         camera_id = int(self.get_setting_number(source, "Camera ID", 0))
         capture_width = int(self.get_setting_number(source, "Capture Width", 960))
         capture_height = int(self.get_setting_number(source, "Capture Height", 540))
-        requested_config = (camera_id, capture_width, capture_height)
-        if self.camera_started and not self.camera_worker.running:
-            self.camera_started = False
-        if self.camera_started and self._camera_config != requested_config:
-            self.camera_worker.stop()
-            self.camera_started = False
-            self.clear_normal_backend_video_frame()
-        if not self.camera_started:
-            self.camera_worker.configure(camera_id, (capture_width, capture_height))
-            self.camera_worker.on_frame = self.on_captured_camera_frame
-            self.camera_started = self.camera_worker.start()
-            if self.camera_started:
-                self._camera_config = requested_config
+        self._camera_activation.ensure(
+            (camera_id, capture_width, capture_height),
+            bind_frame_sink=self._bind_camera_frame_sink,
+            discard_frame=lambda: self.clear_normal_backend_video_frame(),
+        )
+
+    def _bind_camera_frame_sink(self) -> None:
+        self.camera_worker.on_frame = self.on_captured_camera_frame
 
     def draw_video(self, p: QPainter, width: int, height: int) -> None:
         if self.hero_deploy_video_cut_active():
@@ -534,7 +479,7 @@ class VideoBackendMixin:
             self.draw_synthetic_video(p, width, height)
             return
         if use_camera:
-            self.ensure_camera_started()
+            self._run_tick_stage("camera.runtime", self.ensure_camera_started)
         backend_source = bool(
             not use_camera
             and source_setting is not None
@@ -550,38 +495,72 @@ class VideoBackendMixin:
             return
         self.draw_synthetic_video(p, width, height)
 
+    def _stop_vision_workers(self, owners) -> Exception | None:
+        """Revoke every requested owner before reporting any stop failure.
+
+        Native release stays with each worker. This adapter never joins it;
+        final window shutdown uses the separate strict close contract.
+        """
+        return self._vision_selection.stop_workers(owners, report_failure=self._report_vision_stop_failure)
+
+    def _report_vision_stop_failure(self, name: str, error: Exception) -> None:
+        def report_failure():
+            raise error
+        try:
+            self._run_tick_stage(f"vision.stop.{name}", report_failure)
+        except Exception:
+            # All revocations have already been attempted. Even a broken
+            # diagnostic adapter must not replace the operational cause.
+            _LOG.error("Vision stop diagnostic failed: %s", name, exc_info=True)
+
     def refresh_vision_runtime(self) -> None:
-        self.backend.set_active_video_source(
-            self.setting_mode(self.registry.get("CameraFeed"), "Source", "")
-        )
+        if self._window_lifecycle.closing:
+            return
+        selection = self._vision_selection
+        owners = selection.workers()
+        try:
+            self.backend.set_active_video_source(
+                self.setting_mode(self.registry.get("CameraFeed"), "Source", "")
+            )
+        except Exception:
+            # A failed source transition must not leave old inference or input
+            # workers active. Preserve the source error for profile rollback;
+            # independent stop faults are reported without hiding that cause.
+            self._stop_vision_workers(owners)
+            raise
         if os.environ.get("POLAR_DISABLE_LOCAL_CAPTURE", "").lower() in ("1", "true", "yes"):
-            self._vision_source = "Mock"
-            self._tongji_enabled = False
-            if self.local_vision.running:
-                self.local_vision.stop()
-            if self.tongji_receiver.running:
-                self.tongji_receiver.stop()
-            if self.tongji_bridge.running:
-                self.tongji_bridge.stop()
+            selection.disable_capture()
+            failure = self._stop_vision_workers(owners)
+            if failure is not None:
+                raise failure
             return
         bridge_module = self.registry.get("TongjiVisionBridge")
-        self._vision_source = os.environ.get("POLAR_VISION_SOURCE", self.setting_mode(bridge_module, "Vision Source", "Local"))
-        if self._vision_source not in ("Local", "Tongji", "Auto", "Mock"):
-            self._vision_source = "Local"
+        selection.select_source(os.environ.get(
+            "POLAR_VISION_SOURCE", self.setting_mode(bridge_module, "Vision Source", "Local"),
+        ))
         bridge_enabled = bool(bridge_module and bridge_module.enabled)
-        self._tongji_enabled = self._vision_source in ("Tongji", "Auto") and bridge_enabled
+        selection.set_bridge_enabled(bridge_enabled)
         listen = self.setting_bool(bridge_module, "Listen", True)
-        if self._tongji_enabled and listen:
-            self.tongji_receiver.configure(int(self.get_setting_number(bridge_module, "UDP Port", 9871)))
-            self.tongji_receiver.start()
-        elif self.tongji_receiver.running:
-            self.tongji_receiver.stop()
-
-        local_enabled = self._vision_source in ("Local", "Auto") and bridge_enabled
+        receiver_requested = selection.receiver_requested(listen)
+        local_enabled = selection.local_enabled(bridge_enabled)
         model_path = self._client_asset_path("同济自瞄", "sp_vision_25", "assets", "yolov5.xml")
-        device = self.setting_mode(bridge_module, "Local Device", "AUTO")
-        if local_enabled and model_path.exists():
-            self.local_vision.configure(model_path, device)
+        local_requested = local_enabled and model_path.exists()
+        # Revoke disabled owners before admitting any replacement. The legacy
+        # TCP bridge remains compatibility-only and is always revoked here.
+        stops = selection.unrequested_workers(
+            receiver_requested=receiver_requested, local_requested=local_requested,
+        )
+        failure = self._stop_vision_workers(stops)
+        if failure is not None:
+            raise failure
+        if receiver_requested:
+            self.tongji_receiver.configure(
+                int(self.get_setting_number(bridge_module, "UDP Port", 9871)), wait=False,
+            )
+            self.tongji_receiver.start()
+        if local_requested:
+            device = self.setting_mode(bridge_module, "Local Device", "AUTO")
+            self.local_vision.configure(model_path, device, wait=False)
             overlay = self.registry.get("RobotOverlay")
             self.local_vision.configure_prediction(
                 int(self.get_setting_number(overlay, "Armor Count", 4)),
@@ -589,12 +568,6 @@ class VideoBackendMixin:
                 self.get_setting_number(overlay, "Predict Horizon", 0.06),
             )
             self.local_vision.start()
-        elif self.local_vision.running:
-            self.local_vision.stop()
-
-        # 旧 TCP 桥接器只保留给历史配置兼容，默认视觉路径不再抢占摄像头或等待 WSL。
-        if self.tongji_bridge.running:
-            self.tongji_bridge.stop()
 
     def on_captured_camera_frame(self, frame: CapturedFrame) -> None:
         if self.hero_deploy_video_cut_active():
@@ -692,18 +665,17 @@ class VideoBackendMixin:
         camera_module = self.registry.get("CameraFeed")
         source_mode = self.setting_mode(camera_module, "Source", "Webcam")
         normalized_mode = source_mode.strip().lower()
-        if normalized_mode != self._normal_backend_mode:
+        if self._normal_video_timeline.mode_changed(normalized_mode):
             self.clear_normal_backend_video_frame()
-            self._normal_backend_mode = normalized_mode
+            self._normal_video_timeline.select_mode(normalized_mode)
         if normalized_mode == "synthetic":
             return
         if normalized_mode != "webcam":
             self.consume_backend_video_frame()
             return
         frame = self.camera_worker.latest_frame()
-        if frame is None or frame.sequence <= self._last_capture_sequence:
+        if frame is None or not self._normal_video_timeline.consume_capture(frame.sequence):
             return
-        self._last_capture_sequence = frame.sequence
         try:
             self._vision_scene_luminance = float(frame.bgr[::32, ::32].mean()) / 255.0
             self.state.vision_scene_luminance = self._vision_scene_luminance
@@ -713,8 +685,7 @@ class VideoBackendMixin:
         if self.setting_bool(camera_module, "Mirror", False):
             image = image.mirrored(True, False)
         self.frame_image = image
-        self._normal_frame_source = "webcam"
-        self._display_frame_sequence += 1
+        self._normal_video_timeline.publish_capture_frame()
         # QPixmap 会由 Qt OpenGL Paint Engine 缓存为纹理；同一摄像头帧在
         # 120/144Hz HUD 重绘期间不再反复上传 QImage。
         self.frame_pixmap = QPixmap.fromImage(image)
@@ -726,9 +697,9 @@ class VideoBackendMixin:
         camera_module = self.registry.get("CameraFeed")
         source_mode = self.setting_mode(camera_module, "Source", "Webcam")
         normalized_mode = source_mode.strip().lower()
-        if normalized_mode != self._normal_backend_mode:
+        if self._normal_video_timeline.mode_changed(normalized_mode):
             self.clear_normal_backend_video_frame()
-            self._normal_backend_mode = normalized_mode
+            self._normal_video_timeline.select_mode(normalized_mode)
         bgr, frame_at, _frame_source = self.backend.latest_video_frame(
             self.NORMAL_BACKEND_VIDEO_STALE_S,
             source_mode,
@@ -737,7 +708,7 @@ class VideoBackendMixin:
             self.backend.udp.clear_stale_decoded_frame(self.NORMAL_BACKEND_VIDEO_STALE_S)
             self.clear_normal_backend_video_frame()
             return
-        if frame_at <= self._last_backend_video_at:
+        if not self._normal_video_timeline.backend_frame_is_new(frame_at):
             return
         try:
             source = bgr
@@ -759,8 +730,7 @@ class VideoBackendMixin:
         camera_module = self.registry.get("CameraFeed")
         if self.setting_bool(camera_module, "Mirror", False):
             image = image.mirrored(True, False)
-        self._last_backend_video_at = frame_at
-        self._display_frame_sequence += 1
+        self._normal_video_timeline.admit_backend_frame(frame_at)
         # OfficialEvent stops the local webcam while the judge feed owns the
         # screen; the decoded backend frame is the only live image, so local
         # vision must consume it or detection/ESP silently lose all input.
@@ -768,7 +738,7 @@ class VideoBackendMixin:
             self._backend_vision_sequence = int(getattr(self, "_backend_vision_sequence", 0)) + 1
             self.local_vision.submit(self._backend_vision_sequence, width, height, bgr)
         self.frame_image = image
-        self._normal_frame_source = "backend"
+        self._normal_video_timeline.publish_backend_frame()
         self.frame_pixmap = QPixmap.fromImage(image)
         try:
             self._vision_scene_luminance = float(bgr[::32, ::32].mean()) / 255.0
@@ -783,22 +753,17 @@ class VideoBackendMixin:
         normalized_source = source.strip().lower()
         return bool(
             self.backend_video_source_selected()
-            and self._normal_backend_mode == normalized_source
-            and self._normal_frame_source == "backend"
-            and self._last_backend_video_at > 0.0
-            and now - self._last_backend_video_at <= self.NORMAL_BACKEND_VIDEO_STALE_S
+            and self._normal_video_timeline.backend_is_fresh(
+                normalized_source, now, self.NORMAL_BACKEND_VIDEO_STALE_S,
+            )
         )
 
     def normal_video_frame_ready(self, now: float | None = None) -> bool:
         source = self.setting_mode(self.registry.get("CameraFeed"), "Source", "Webcam")
         normalized_source = source.strip().lower()
-        if normalized_source in {"", "webcam"}:
-            return bool(
-                self._normal_backend_mode in {"", "webcam"}
-                and self._normal_frame_source == "webcam"
-            )
-        if normalized_source == "synthetic":
-            return False
+        ready = self._normal_video_timeline.readiness_without_backend(normalized_source)
+        if ready is not None:
+            return ready
         return self.normal_backend_video_fresh(now)
 
     def clear_normal_backend_video_frame(self) -> bool:
@@ -806,10 +771,8 @@ class VideoBackendMixin:
         # main frame fields. Invalidate it even when the selected source was
         # Synthetic and therefore had no ``_normal_frame_source`` owner.
         self.liquid_glass.discard("hud")
-        if self._last_backend_video_at <= 0.0 and self._normal_frame_source == "none":
+        if not self._normal_video_timeline.clear_frame():
             return False
-        self._last_backend_video_at = 0.0
-        self._normal_frame_source = "none"
         self.frame_image = None
         self.frame_pixmap = None
         self._gpu_background_key = None
@@ -831,6 +794,81 @@ class VideoBackendMixin:
             Qt.AlignmentFlag.AlignCenter,
             hero_text("VIDEO SIGNAL LOST · WAITING FOR FRESH DECODED FRAME", chinese_enabled(self.registry)),
         )
+
+    def video_source_recovery_notice(self) -> VideoRecoveryNotice | None:
+        visible = not (
+            self.home_visible or self.menu_overlay_active()
+            or self.student_ui.visible or self.quick_action_wheel.visible
+            or self.match_chat.input_open or self._window_lifecycle.closing
+            or self.gui_timeline.progress > 0.01
+        )
+        return video_recovery_notice(
+            self.backend.video_source_snapshot, self.backend.lifecycle_snapshot,
+            visible=visible,
+            lifecycle_pending=self.backend.lifecycle_pending,
+            configuration_pending=self.configuration_change_pending,
+            profile_pending=not self.backend.referee_profile_change.completed,
+        )
+
+    def draw_video_source_recovery(self, painter: QPainter, width: int, height: int) -> None:
+        # This is live interaction geometry, never part of the cached video
+        # background. Remove our previous target when cleanup or visibility changes.
+        self.hotspots[:] = [target for target in self.hotspots
+                            if target.action not in (VIDEO_RETRY_ACTION, VIDEO_WAIT_ACTION)]
+        notice = self.video_source_recovery_notice()
+        if notice is None or width < 100 or height < 120:
+            return
+        panel_width = min(560.0, width - 32.0)
+        left = (width - panel_width) * 0.5
+        top = max(8.0, min(height - 112.0, height * 0.5 + 24.0))
+        panel = QRectF(left, top, panel_width, 104.0)
+        painter.fillRect(panel, QColor("#13212d"))
+        chinese = chinese_enabled(self.registry)
+        title = ("视频清理尚未完成" if chinese else "Video cleanup incomplete")
+        title += f" · {notice.requested_source}"
+        details = (notice.errors[0] if notice.errors else
+                   ("等待释放：" if chinese else "Waiting for release: ")
+                   + ", ".join(notice.inflight_resources or notice.pending_resources))
+        self.draw_text(painter, QRectF(left + 12, top + 7, panel_width - 24, 22),
+                       title, self.font("poppins_bold", 9.0), QColor("#f2b86c"))
+        self.draw_text(painter, QRectF(left + 12, top + 31, panel_width - 24, 22),
+                       details, self.font("poppins_medium", 8.0), QColor("#e2eaf0"))
+        button = QRectF(left + 12, top + 65, panel_width - 24, 28)
+        enabled = notice.retry_token is not None
+        painter.fillRect(button, QColor("#27587b" if enabled else "#24313d"))
+        label = (("重试视频清理" if chinese else "Retry video cleanup") if enabled else
+                 ("正在等待资源释放…" if chinese else "Waiting for resource cleanup…"))
+        self.draw_text(painter, button, label, self.font("poppins_medium", 8.5),
+                       QColor("#ffffff" if enabled else "#a2b1bc"), Qt.AlignmentFlag.AlignCenter)
+        if enabled:
+            self.add_hotspot(button, VIDEO_RETRY_ACTION, notice.retry_token, button=1,
+                             tooltip="; ".join(notice.errors) or ", ".join(notice.pending_resources))
+        else:
+            # Disabled describes the action, not pointer transparency. A click
+            # on the visible waiting button must not become combat input.
+            self.add_hotspot(button, VIDEO_WAIT_ACTION, button=1, tooltip=details)
+
+    def retry_video_source_cleanup(self, token: VideoRetryToken) -> bool:
+        notice = self.video_source_recovery_notice()
+        chinese = chinese_enabled(self.registry)
+        if notice is None or notice.retry_token is None or token != notice.retry_token:
+            message = ("视频状态已变化或正在关闭，请等待后重试。" if chinese else
+                       "Video state changed or shutdown is pending. Wait before retrying.")
+            self.toast(message, kind="warning")
+            return False
+        try:
+            self.backend.retry_active_video_source(expected_generation=token.source_generation)
+        except Exception as exc:
+            _LOG.error("Explicit video cleanup retry failed", exc_info=True)
+            prefix = "视频清理重试失败" if chinese else "Video cleanup retry failed"
+            self.toast(f"{prefix}: {type(exc).__name__}: {exc}", kind="warning")
+            self.frame_scheduler.force()
+            return False
+        self.clear_normal_backend_video_frame()
+        self.frame_scheduler.force()
+        self.toast("已请求重试视频清理；等待资源释放后恢复。" if chinese else
+                   "Video cleanup retry requested; waiting for resource release.")
+        return True
 
     def active_tongji_result(self) -> VisionResult | None:
         bridge_module = self.registry.get("TongjiVisionBridge")
@@ -878,9 +916,19 @@ class VideoBackendMixin:
         return side if side in ("Red", "Blue") else "Red"
 
     def consume_official_messages(self) -> None:
-        for topic, payload, _received_at in self.mqtt.drain_received_messages():
-            events, updates = self.official_feed.consume(topic, payload, alliance=self.alliance_side(), local_robot_id=self.state.robot_id)
-            self._official_state_updates.update(updates)
+        for topic, payload, received_at in self.mqtt.drain_received_messages():
+            events, updates = self.official_feed.consume(
+                topic, payload, alliance=self.alliance_side(),
+                local_robot_id=self.state.robot_id,
+                referee_profile=self.state.referee_profile,
+                received_at=received_at,
+            )
+            # Decoded backend application owns scalar telemetry. A raw packet
+            # arriving between tick stages must not publish it ahead of the
+            # canonical adapter (or bypass an apply failure/transition block).
+            # Receipt freshness is not a transactional state-application claim.
+            if "official_feed_at" in updates:
+                self._official_state_updates["official_feed_at"] = updates["official_feed_at"]
             for event in events:
                 self.accept_combat_event(event)
 

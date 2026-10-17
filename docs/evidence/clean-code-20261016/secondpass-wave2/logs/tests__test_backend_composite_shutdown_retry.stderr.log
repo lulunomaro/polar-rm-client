@@ -1,0 +1,7 @@
+Lifecycle event after audit sealed: mqtt_disconnect; 
+Lifecycle event after audit sealed: backend_lifecycle_failure; RuntimeError: OSError: pipe close failed
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.011s
+
+OK

@@ -1,0 +1,2 @@
+PASS 48 baseline/current complete GL submission trace pairs, 100 deterministic commands each
+PASS all five shader builders unchanged; all command normalization statements unchanged

@@ -1,0 +1,8 @@
+test_final_release_failure_stays_owned_for_explicit_retry (__main__.IndependentAdmissionProbes.test_final_release_failure_stays_owned_for_explicit_retry) ... ok
+test_finished_then_raised_owner_is_joinable_and_cleared (__main__.IndependentAdmissionProbes.test_finished_then_raised_owner_is_joinable_and_cleared) ... ok
+test_pending_rejection_resolves_close_without_joining_unstarted_worker (__main__.IndependentAdmissionProbes.test_pending_rejection_resolves_close_without_joining_unstarted_worker) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.097s
+
+OK

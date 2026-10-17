@@ -1,0 +1,20 @@
+[PASS] 默认值是 Both（不是从没生效过的 Mini）  -> Both
+[PASS] 值域含 Both/Mini/Full/Hidden 四档  -> ['Both', 'Mini', 'Full', 'Hidden']
+[PASS] Both：缩略态照画，返回值与热区不变  -> [('radar_blip', 0)]
+[PASS] Both：展开态也照画（=接线前两张图都画）  -> Both
+[PASS] Both：经典面板（不传 detail，compact 决定）仍按原样画
+[PASS] Mini：缩略态画  -> [('radar_blip', 0)]
+[PASS] Mini：展开态不画（返回 0、零热区）  -> []
+[PASS] Full：缩略态不画  -> []
+[PASS] Full：展开态画  -> [('radar_blip', 0)]
+[PASS] Hidden：两种形态都不画  -> []
+[PASS] Hidden：数据与 TTL 不受影响（state 仍在，只是不显示）
+[PASS] 未知取值回落 Both（宁可多画不吞情报）且记原因  -> unknown map mode 'Nonsense'
+[PASS] 设置项整个缺失也回落画
+[PASS] 无数据：返回 0 与接线前一致（开关不改变空数据路径）
+[PASS] 过期数据：TTL 依旧先于开关拦下（返回 0）
+[PASS] state.radar_detections 在本文件里只被 draw_radar_overlay 引用  -> outside=0
+[PASS] 两个面板路径共用 draw_radar_overlay（恰好 2 处调用）  -> calls=2
+[PASS] 除 tactical_map 外无第二个读取 radar_detections 的 UI 文件  -> []
+
+合计 0 项失败

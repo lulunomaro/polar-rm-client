@@ -1,0 +1,63 @@
+{
+  "run_id": "18986d4f9f6246a6ac8558210e1b8caa",
+  "run_state": "completed",
+  "counts": {
+    "PASS": 268,
+    "SKIP": 12,
+    "INCOMPLETE": 3,
+    "FAIL": 0
+  },
+  "source_stability": {
+    "schema_version": 1,
+    "status": "PASS",
+    "detail": "Declared verification source inputs have identical start/end fingerprints",
+    "scope": {
+      "directories": [
+        "rm_client",
+        "tests",
+        "tools",
+        "configs"
+      ],
+      "suffixes": [
+        ".bat",
+        ".c",
+        ".cfg",
+        ".cpp",
+        ".h",
+        ".hpp",
+        ".ini",
+        ".json",
+        ".ps1",
+        ".py",
+        ".spec",
+        ".toml",
+        ".yaml",
+        ".yml"
+      ],
+      "root_files": [
+        "main.py",
+        "requirements*.txt"
+      ],
+      "exclusions": [
+        "hidden directories",
+        "__pycache__"
+      ],
+      "limits": "Start/end comparison only; excludes assets, external fixtures, installed packages and transient edits restored between captures."
+    },
+    "before": {
+      "status": "available",
+      "sha256": "056ae788b9590a49c52c69cdbefe233061159d53c942de22fe96647a500bbd0e",
+      "file_count": 597
+    },
+    "after": {
+      "status": "available",
+      "sha256": "056ae788b9590a49c52c69cdbefe233061159d53c942de22fe96647a500bbd0e",
+      "file_count": 597
+    }
+  },
+  "run_started_at_utc": "2026-10-16T11:53:46Z",
+  "tested_commit": "370d6aff650c8010e24cb3c23129c06fb485c1c9",
+  "tested_tree": "7d4dc9a0bb6c918c80485d4f261f5ce9edcf35ab",
+  "category_counts": {},
+  "external_crc_sha256_after": "f46cce6382bbbae2056b81538c1de5c06a93c2199b4d07784d9bc551509ed2f5"
+}

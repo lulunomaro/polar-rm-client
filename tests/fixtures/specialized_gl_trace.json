@@ -1,0 +1,1023 @@
+{
+  "StartupGpuCompositor": [
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2929
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        3089
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "vao.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "program.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "current.bind",
+      "args": [
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1i",
+      "args": [
+        0,
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "previous.bind",
+      "args": [
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1i",
+      "args": [
+        1,
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform4f",
+      "args": [
+        2,
+        0.08333333333333333,
+        0.05555555555555555,
+        0.8333333333333334,
+        0.8888888888888888
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform4f",
+      "args": [
+        3,
+        0.06896551724137931,
+        0.045454545454545456,
+        0.8620689655172413,
+        0.9090909090909091
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1f",
+      "args": [
+        4,
+        0.5
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1f",
+      "args": [
+        5,
+        0.3
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1i",
+      "args": [
+        6,
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1i",
+      "args": [
+        7,
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        0,
+        5126,
+        0,
+        2,
+        8
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDrawArrays",
+      "args": [
+        5,
+        0,
+        4
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "vao.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "previous.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "current.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "program.release",
+      "args": [],
+      "kwargs": {}
+    }
+  ],
+  "QuickActionWheelGpuRenderer": [
+    {
+      "call": "gl.glViewport",
+      "args": [
+        0,
+        0,
+        150,
+        120
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2929
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2884
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        3089
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glEnable",
+      "args": [
+        3042
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glBlendEquation",
+      "args": [
+        32774
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glBlendFunc",
+      "args": [
+        1,
+        771
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "program.uniformLocation",
+      "args": [
+        "viewport"
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform2f",
+      "args": [
+        3,
+        150.0,
+        120.0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.uniformLocation",
+      "args": [
+        "innerRatio"
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1f",
+      "args": [
+        3,
+        0.5
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.uniformLocation",
+      "args": [
+        "sectorCount"
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1i",
+      "args": [
+        3,
+        6
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.uniformLocation",
+      "args": [
+        "selectedIndex"
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1i",
+      "args": [
+        3,
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.uniformLocation",
+      "args": [
+        "wheelOpacity"
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1f",
+      "args": [
+        3,
+        0.8
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glActiveTexture",
+      "args": [
+        33984
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glBindTexture",
+      "args": [
+        3553,
+        11
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.uniformLocation",
+      "args": [
+        "backgroundTex"
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1i",
+      "args": [
+        3,
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glActiveTexture",
+      "args": [
+        33985
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glBindTexture",
+      "args": [
+        3553,
+        12
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.uniformLocation",
+      "args": [
+        "blurTex"
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform1i",
+      "args": [
+        3,
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "vao.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.allocate",
+      "args": [
+        {
+          "bytes": 96,
+          "sha256": "081ff8d0b8b973427a2a6f54482d75ed949e7470e56fa15e0b2ba6737ace57e6"
+        },
+        96
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        0,
+        5126,
+        0,
+        2,
+        16
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        1,
+        5126,
+        8,
+        2,
+        16
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDrawArrays",
+      "args": [
+        4,
+        0,
+        6
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "vao.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "program.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glActiveTexture",
+      "args": [
+        33985
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glBindTexture",
+      "args": [
+        3553,
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glActiveTexture",
+      "args": [
+        33984
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glBindTexture",
+      "args": [
+        3553,
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        3042
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        3089
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2929
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2884
+      ],
+      "kwargs": {}
+    }
+  ],
+  "IslandIconGpuRenderer": [
+    {
+      "call": "gl.glViewport",
+      "args": [
+        0,
+        0,
+        150,
+        120
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2929
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2884
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        3089
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glEnable",
+      "args": [
+        3042
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glBlendEquation",
+      "args": [
+        32774
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glBlendFunc",
+      "args": [
+        1,
+        771
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "program.uniformLocation",
+      "args": [
+        "viewport"
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform2f",
+      "args": [
+        3,
+        150.0,
+        120.0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "vao.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.allocate",
+      "args": [
+        {
+          "bytes": 240,
+          "sha256": "e5dddfc691b92ec059f3d10bf6a022c55e3c2b6d0df4648bd11c5d1c060c7bc4"
+        },
+        240
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        0,
+        5126,
+        0,
+        2,
+        40
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        1,
+        5126,
+        8,
+        2,
+        40
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        2
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        2,
+        5126,
+        16,
+        4,
+        40
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        3
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        3,
+        5126,
+        32,
+        2,
+        40
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDrawArrays",
+      "args": [
+        4,
+        0,
+        6
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        2
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        3
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "vao.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "program.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        3042
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        3089
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2929
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2884
+      ],
+      "kwargs": {}
+    }
+  ],
+  "VisionWireGpuRenderer": [
+    {
+      "call": "gl.glViewport",
+      "args": [
+        0,
+        0,
+        150,
+        120
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2929
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2884
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        3089
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glEnable",
+      "args": [
+        3042
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glBlendEquation",
+      "args": [
+        32774
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glBlendFunc",
+      "args": [
+        1,
+        771
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "program.uniformLocation",
+      "args": [
+        "viewport"
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glUniform2f",
+      "args": [
+        3,
+        150.0,
+        120.0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "vao.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.bind",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.allocate",
+      "args": [
+        {
+          "bytes": 192,
+          "sha256": "b5483b5a70ffeac47e3194b7ff8285ffceddc9fc6c06340c702b2e325ca7c661"
+        },
+        192
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        0,
+        5126,
+        0,
+        2,
+        32
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        1,
+        5126,
+        8,
+        4,
+        32
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        2
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        2,
+        5126,
+        24,
+        1,
+        32
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.enableAttributeArray",
+      "args": [
+        3
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.setAttributeBuffer",
+      "args": [
+        3,
+        5126,
+        28,
+        1,
+        32
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDrawArrays",
+      "args": [
+        4,
+        0,
+        6
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        0
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        1
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        2
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "program.disableAttributeArray",
+      "args": [
+        3
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "buffer.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "vao.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "program.release",
+      "args": [],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        3042
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        3089
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2929
+      ],
+      "kwargs": {}
+    },
+    {
+      "call": "gl.glDisable",
+      "args": [
+        2884
+      ],
+      "kwargs": {}
+    }
+  ]
+}

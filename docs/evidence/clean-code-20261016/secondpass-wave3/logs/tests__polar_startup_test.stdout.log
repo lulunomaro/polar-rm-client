@@ -1,0 +1,80 @@
+[PASS] 仅有传统 COM1 时 Auto 不乱连
+[PASS] Auto 选中机器人而非 COM1
+[PASS] COM12 出现在选项列表里
+[PASS] 蓝牙串口被排除
+[PASS] 两候选同分时不猜
+[PASS] 显式 COM7 原样返回
+[PASS] 显式 Stub 原样返回
+[PASS] 启动页仍是原有三个场景，没有多出第四个模式
+[PASS] TeamBench 已彻底移除，不留悬空配置
+[PASS] 窗口构造成功
+[PASS] 三个场景都有各自元数据（不是回退值）
+[PASS] 渲染路径与按键表都不引用已删除的场景
+[PASS] apply_scenario('OfficialEvent') 不抛异常
+[PASS] 切场景不会覆写 RobotLink 的任何设置（模块自立）
+[PASS] RobotLink 在官方场景下同样可用（不靠专属模式）
+[PASS] 官方场景下经济链路为真发（不被队内链路拖回 mock）
+[PASS] 官方场景下官方 MQTT 为真发，与队内链路并行
+[PASS] 6 条下行段经分片全部解出
+[PASS] 链路被判定为活跃
+[PASS] HUD 底盘朝向已是机器人实测 57.296°
+[PASS] 云台朝向/俯仰为真值
+[PASS] 功率上限为真值
+[PASS] 实测速度已入 state
+[PASS] 部件错误位已入 state
+[PASS] 三闸齐全后底盘速度上线
+[PASS] 视觉 NUC 占用时云台不让客户端发
+[PASS] 仲裁为 PASSIVE
+[PASS] 授权状态已回写供 HUD 显示
+[PASS] NUC 退出后客户端接管云台并按弧度发送
+[PASS] 上线帧长 49
+[PASS] 上线帧 fire 恒 0
+[PASS] stats 含 polar_link 段
+[PASS] polar_link stats 可 JSON 序列化
+[PASS] stats 报告了已解码段计数
+[PASS] 急停后仲裁为 ESTOP
+[PASS] 急停后底盘意图被拒
+[PASS] 急停传导到队内链路
+[PASS] RMIndicatorsHud 真的画出了像素
+[PASS] 链路诊断行已渲染（polar_link hotspot 已注册）
+[PASS] 诊断 tooltip 包含端口与 CRC 错误信息
+[PASS] 实测速度/云台俯仰遥测行已渲染（新真值不再无人读）
+[PASS] 遥测 tooltip 带实测速度与云台控制权状态
+[PASS] 失焦释放按键后驾驶意图归零
+[PASS] 窗口侧链路已连上
+[PASS] polar.link 阶段未抛异常（没被 _run_tick_stage 吞掉）
+[PASS] tick 错误计数未增长
+[PASS] 窗口 tick 循环使链路判定为活跃
+[PASS] HUD 底盘朝向被窗口 tick 刷成真值
+[PASS] 诊断快照由窗口 tick 写入
+[PASS] 机器人收到了窗口 tick 循环发出的帧
+[PASS] 上行帧携带零速（未推杆时不得动车）
+[PASS] 默认绑定下按物理 W 被接受
+[PASS] control 记下了 W 槽按下
+[PASS] ClickGUI 暴露了 Bind W 设置项
+[PASS] Up 在可绑定候选里
+[PASS] after_setting_changed 已把绑定同步到 control
+[PASS] 改绑后按↑被接受
+[PASS] 改绑后↑驱动了 W 槽
+[PASS] 改绑后按原物理 W 不再驱动任何槽
+[PASS] 且 W 槽仍为松开
+ACTIVE test_rebind_works_through_real_window_and_persists
+[PASS] 机器人收到了上位机帧
+[PASS] 已授权时 intent 携带 key.v bit0
+[PASS] MQTT 断开通知清除已按住的改绑驾驶键
+[PASS] virtual_rc 通道下上线的 0x01 帧 speed_vector 全零
+[PASS] Bind W 已进入导出的配置快照
+[PASS] 已手动回到默认
+[PASS] load 配置后绑定恢复为 Up
+[PASS] load 后设置项显示也为 Up
+ACTIVE test_hud_renders_role_fields_and_survives_their_absence
+[PASS] 无兵种字段时 HUD 不崩且仍产出像素
+[PASS] 带兵种字段时 HUD 不崩且仍产出像素
+[PASS] 兵种不一致时 HUD 不崩
+[PASS] 驾驶被兵种禁止时 HUD 不崩
+[PASS] 脏字段值下 HUD 不崩
+[PASS] 链路未活跃时 HUD 不崩
+[PASS] 虚拟机器人启动验证未尝试 Python 网络访问
+
+============================================================
+ALL POLAR_STARTUP TESTS PASSED

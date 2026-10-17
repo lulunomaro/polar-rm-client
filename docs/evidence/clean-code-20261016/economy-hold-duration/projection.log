@@ -1,0 +1,2 @@
+PASS: 320 exact grid projection cases; 80 intentional pending/no-selection text differences; lazy field-read order verified for every case
+Render mutations remain adapter-owned: category/selection reconciliation, scroll clamping, hover advancement, hotspot replacement. No production change made.

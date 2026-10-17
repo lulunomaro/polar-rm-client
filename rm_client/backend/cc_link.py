@@ -56,6 +56,8 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 from ..protocol import crc8, crc16
+from .resource_close import close_resource
+from .writer_thread import WriterThread
 
 # --- 命令码（《2026 通信协议》表 1-5 / 表 1-43） ---
 CC_CMD_ROBOT_INTERACT = 0x0302     # 自定义控制器 <-> 机器人，30 字节，<=30Hz，图传链路
@@ -377,6 +379,13 @@ class AsyncCustomControllerLink:
     only once neutral is confirmed. Neutral supersedes motion; failed writes
     discard every pre-failure intent and require a successful neutral barrier.
     A stuck OS driver can occupy this daemon, but never creates more workers.
+
+    ``retain_owner`` may publish the initialized facade to its caller before
+    worker admission. Keep that owner through a constructor failure until
+    ``closed`` is confirmed. The original exception also receives a best-effort
+    ``failed_writer`` attribute for callers using the original constructor API.
+    The callback runs outside the worker lock. If it calls ``close()``, the
+    constructor returns that sealed owner without admitting another writer.
     """
 
     asynchronous = True
@@ -386,7 +395,8 @@ class AsyncCustomControllerLink:
                  write_bytes: Callable[[bytes], Any] | None = None,
                  time_fn: Callable[[], float] = time.perf_counter, *,
                  max_intent_age: float = 0.25, release_attempts: int = 3,
-                 retry_interval: float = 0.05) -> None:
+                 retry_interval: float = 0.05,
+                 retain_owner: Callable[["AsyncCustomControllerLink"], None] | None = None) -> None:
         import threading
         self.queued = 0
         self.coalesced = 0
@@ -416,6 +426,7 @@ class AsyncCustomControllerLink:
         self._release_due = 0.0
         self._closing = False
         self._stopped = False
+        self._close_failed = False
         self._serial = None
         self._write_bytes = write_bytes
         self._active = None
@@ -423,16 +434,61 @@ class AsyncCustomControllerLink:
         self._link = CustomControllerLink(port=port, baudrate=baudrate,
             max_hz=max_hz, mock_output=mock_output,
             write_bytes=self._write_frame, time_fn=time_fn)
-        self._thread = threading.Thread(target=self._run, name="cc-writer", daemon=True)
-        self._thread.start()
+        self._worker = WriterThread(self._condition)
+        self.startup_failed = False
+        admission_reserved = False
+        try:
+            if retain_owner is not None:
+                retain_owner(self)
+            with self._condition:
+                if self._closing:
+                    return  # The retention callback already cancelled this owner.
+                self._worker.reserve()
+                admission_reserved = True
+            self._worker.start_reserved(self._run, "cc-writer")
+        except BaseException as exc:
+            self.startup_failed = True
+            self.faulted = True
+            # Retention precedes admission; cancellation and best-effort
+            # metadata cannot replace the original construction failure.
+            try:
+                with self._condition:
+                    # Keep an already-finished failed finalizer for explicit
+                    # retry, preserving its native-close diagnostic.
+                    if not self._closing:
+                        self.last_error = self.fault_reason = "CC writer admission failed; close required"
+                    never_admitted = self._worker.never_admitted
+                    if not self._closing or (admission_reserved and never_admitted):
+                        self.close()
+            except BaseException:
+                pass
+            try:
+                exc.failed_writer = self
+            except BaseException:
+                pass
+            raise
+
+    @property
+    def _thread(self):
+        """Compatibility view of the sole retained worker (never a second owner)."""
+        return self._worker.thread
 
     @property
     def worker_alive(self) -> bool:
-        return self._thread.is_alive()
+        return self._worker.alive
 
     @property
     def closed(self) -> bool:
         return self._stopped
+
+    @property
+    def port_handoff_ready(self) -> bool:
+        """Proof for another owner: neutral, no retained handle, worker gone."""
+        return bool(
+            self.closed and not self.worker_alive
+            and self._serial is None and not self._close_failed
+            and self.wire_neutral and not self.release_pending
+        )
 
     def _queue(self, cmd_id, payload, *, neutral=False):
         with self._condition:
@@ -483,7 +539,7 @@ class AsyncCustomControllerLink:
         with self._condition:
             if self.wire_neutral and not self.release_pending:
                 return True, "neutral"
-            if not self.release_pending and not self._stopped:
+            if not self.release_pending and not self._closing:
                 self._request_release()
             return False, self.last_error or "CC neutral release pending"
 
@@ -512,21 +568,27 @@ class AsyncCustomControllerLink:
     def close(self):
         """Invalidate motion and request best-effort neutral; never wait on IO."""
         with self._condition:
-            if self._closing:
-                return
-            self._closing = True
-            self._pending = None
-            if not self.release_pending:
-                self._epoch += 1
-            if not self.wire_neutral and not self.release_pending:
-                self._request_release()
-            self._condition.notify()
+            if not self._closing:
+                self._closing = True
+                self._pending = None
+                if not self.release_pending:
+                    self._epoch += 1
+                if not self.wire_neutral and not self.release_pending:
+                    self._request_release()
+                self._condition.notify()
+            if not self._worker.starting and not self.closed and not self.worker_alive:
+                # A rejected writer can still own a native handle; only a
+                # background worker may drain its barrier and release it.
+                never_admitted = self._worker.never_admitted
+                # A rejected close-retry thread does not erase an earlier
+                # native-close failure. Retry that finalizer, not the drain.
+                needs_drain = never_admitted and not self._close_failed
+                target = self._run if needs_drain else self._finalize_close
+                self._worker.start(target, "cc-close-retry")
 
     def wait_closed(self, timeout=2.5):
-        """Ordered application shutdown/test only, never a frame operation."""
-        import threading
-        if self._thread is not threading.current_thread():
-            self._thread.join(max(0.0, float(timeout)))
+        """Background/test cleanup only; None explicitly waits without a deadline."""
+        self._worker.join(timeout)
         return self.closed
 
     def _valid_active(self):
@@ -558,12 +620,35 @@ class AsyncCustomControllerLink:
         return self._serial.write(frame)
 
     def _close_serial(self):
-        handle, self._serial = self._serial, None
+        handle = self._serial
         if handle is not None:
-            try:
-                handle.close()
-            except Exception:
-                pass
+            close_resource(handle)
+            self._serial = None
+
+    def _record_close_failure(self, exc):
+        with self._condition:
+            self._close_failed = True
+            self._closing = True
+            self._pending = None
+            self.faulted = True
+            self.last_error = f"CC close unconfirmed; explicit close retry required: {exc}"
+            self.fault_reason = self.last_error
+            self._condition.notify_all()
+
+    def _finalize_close(self):
+        """Runs only on the sole writer or an explicit background close retry."""
+        with self._condition:
+            self._closing = True
+            self._pending = None
+        try:
+            self._close_serial()
+        except Exception as exc:
+            self._record_close_failure(exc)
+        else:
+            with self._condition:
+                self._close_failed = False
+                self._stopped = True
+                self._condition.notify_all()
 
     def _run(self):
         try:
@@ -643,9 +728,11 @@ class AsyncCustomControllerLink:
                         # while the failing write was in flight.
                         self._pending = None
                 if not ok:
-                    self._close_serial()
+                    try:
+                        self._close_serial()
+                    except Exception as exc:
+                        self._record_close_failure(exc)
+                        return
         finally:
-            self._close_serial()
-            with self._condition:
-                self._stopped = True
-                self._condition.notify_all()
+            if not self._close_failed:
+                self._finalize_close()

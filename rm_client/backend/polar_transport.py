@@ -27,6 +27,8 @@ from dataclasses import asdict, dataclass, field, replace
 from typing import Any, Callable
 
 from ..serial_ports import describe_ports, resolve_port as resolve_polar_port
+from .resource_close import close_resource
+from .polar_connection import PolarConnectionConfig, acquire_polar_connection
 from .polar_link import (
     MAX_RETAINED_BYTES,
     SPIN_CMD_NONE,
@@ -172,6 +174,7 @@ class PolarLinkTransport:
         self.last_segment_at = 0.0
 
         self._serial: Any = None
+        self._close_error = ""
         # ---- D 路（车端 USB<->WiFi 桥）：只有"字节从哪儿来"这一层受影响 ----
         #: "serial" 直插 C 板；"tcp" 走车上小电脑上的 bridge_server 裸管道
         self.transport = "serial"
@@ -186,6 +189,7 @@ class PolarLinkTransport:
         self._intent: PolarDriveIntent | None = None
         self._intent_lock = threading.RLock()
         self._lifecycle_lock = threading.RLock()
+        self._stream_close_lock = threading.Lock()
         self._connect_generation = 0
         self._connecting = False
         self._stopping = False
@@ -240,13 +244,13 @@ class PolarLinkTransport:
         return self.connected and self.last_segment_at > 0.0 and self.link_age_s <= 2.0
 
     # ------------------------------------------------------------------
-    def _connection_config(self) -> tuple[Any, ...]:
-        return (str(self.transport or "serial").strip().lower(), self.port,
+    def _connection_config(self) -> PolarConnectionConfig:
+        return PolarConnectionConfig(str(self.transport or "serial").strip().lower(), self.port,
                 self.baud, self.host, self.tcp_port, self.stream_opener,
                 self.mock_writes)
 
-    def _claim_start_locked(self) -> tuple[int, tuple[Any, ...]] | None:
-        if (self._stopping or self._connecting or self._running
+    def _claim_start_locked(self) -> tuple[int, PolarConnectionConfig] | None:
+        if (self._stopping or self._connecting or self._running or self._serial is not None
                 or (self._thread is not None and self._thread.is_alive())):
             return None
         self._connecting = True
@@ -272,59 +276,29 @@ class PolarLinkTransport:
             attempt = self._claim_start_locked()
             if attempt is None:
                 return
-            worker = threading.Thread(target=self._connect_attempt, args=attempt,
-                                      name="polar-connect", daemon=True)
-            self._connector_thread = worker
+            worker = None
             try:
+                worker = threading.Thread(target=self._connect_attempt, args=attempt,
+                                          name="polar-connect", daemon=True)
+                self._connector_thread = worker
                 worker.start()
             except Exception as exc:
-                self._connecting = False
-                self._connector_thread = None
+                # A start wrapper can raise after admitting native open work.
+                # Revoke publication but retain its reservation until cleanup.
+                self._connect_generation += 1
+                if worker is None or worker.ident is None:
+                    self._connecting = False
+                    self._connector_thread = None
                 self.last_error = str(exc)
                 self.last_error_code = "THREAD_START_FAILED"
         finally:
             self._lifecycle_lock.release()
 
-    def _connect_attempt(self, generation: int, config: tuple[Any, ...]) -> None:
-        mode, port, baud, host, tcp_port, opener, _mock = config
-        opened = None
-        resolved = ""
-        error = ""
-        code = ""
-        try:
-            # Both USB enumeration and TCP connect can block. Neither may hold
-            # the lifecycle lock needed by stop() to invalidate this attempt.
-            if mode in ("tcp", "wifi", "bridge"):
-                if not str(host or "").strip():
-                    error = "TCP 模式要填桥接主机地址（车上小电脑的 IP）"
-                    code = "NO_BRIDGE_HOST"
-                else:
-                    resolved = f"tcp://{host}:{tcp_port}"
-            else:
-                resolved = resolve_polar_port(port)
-                if resolved in ("", "Stub", "stub", "None", "none"):
-                    resolved = ""
-                    if str(port).strip().lower() == "auto":
-                        error = "未找到机器人 USB 串口（可重试，或在 RobotLink.Port 里显式选口）"
-                        code = "NO_ROBOT_USB"
-                    else:
-                        error = "未配置真实机器人串口（Stub）"
-                        code = "PORT_STUB"
-            if not code:
-                from . import serial_stream as stream
-                opened = stream.open_stream(mode, port=resolved, baud=baud,
-                                            host=host, tcp_port=tcp_port,
-                                            serial_opener=opener)
-                if not (opened and getattr(opened, "is_open", False)):
-                    error = f"链路 {resolved} 打开失败"
-                    code = "PORT_OPEN_FAILED"
-        except Exception as exc:
-            if mode in ("tcp", "wifi", "bridge"):
-                error = f"连不上车端桥 {resolved}：{exc}"
-                code = "BRIDGE_UNREACHABLE"
-            else:
-                error = f"{resolved}: {exc}"
-                code = "PORT_BUSY"
+    def _connect_attempt(self, generation: int, config: PolarConnectionConfig) -> None:
+        # Enumeration and native open may block; the connector reservation,
+        # rather than the lifecycle lock, protects this unpublished owner.
+        result = acquire_polar_connection(config, resolve_port=resolve_polar_port)
+        opened = result.resource
         try:
             with self._lifecycle_lock:
                 # A stop or configuration change revokes ownership. The local
@@ -332,10 +306,10 @@ class PolarLinkTransport:
                 if (self._stopping or generation != self._connect_generation
                         or config != self._connection_config()):
                     return
-                self.resolved_port = resolved
-                self.last_error = error
-                self.last_error_code = code
-                if code:
+                self.resolved_port = result.resolved_port
+                self.last_error = result.error
+                self.last_error_code = result.error_code
+                if result.error_code:
                     self.connected = False
                     return
                 self._serial, opened = opened, None
@@ -351,22 +325,37 @@ class PolarLinkTransport:
                     self._drive_was_armed = False
                 self._running = True
                 self._stop.clear()
-                self._thread = threading.Thread(target=self._loop, name="polar-link", daemon=True)
+                worker = None
                 try:
-                    self._thread.start()
+                    worker = threading.Thread(target=self._loop, name="polar-link", daemon=True)
+                    self._thread = worker
+                    worker.start()
                 except Exception as exc:
                     self._running = False
-                    self._thread = None
+                    self.connected = False
+                    self._stop.set()
                     self.last_error = str(exc)
                     self.last_error_code = "THREAD_START_FAILED"
-                    self._close_failed_stream()
+                    if worker is None or worker.ident is None:
+                        self._thread = None
+                        self._close_failed_stream()
+                    # An admitted writer may still be inside native read/TX.
+                    # Its existing finally owns close; retaining the thread and
+                    # stream keeps replacement blocked until that cleanup exits.
         finally:
             # Keep ownership until the rejected/failed handle has been closed.
             if opened is not None:
                 try:
-                    opened.close()
-                except Exception:
-                    pass
+                    close_resource(opened)
+                except Exception as exc:
+                    with self._lifecycle_lock:
+                        # No replacement is admitted while this connector is
+                        # active. Preserve even a rejected/stale open owner.
+                        self._serial = opened
+                        self.connected = False
+                        self._close_error = f"Rejected robot stream close unconfirmed: {exc}"
+                        self.last_error = self._close_error
+                        self.last_error_code = "STREAM_CLOSE_FAILED"
             with self._lifecycle_lock:
                 self._connecting = False
                 self._connector_thread = None
@@ -391,14 +380,18 @@ class PolarLinkTransport:
             if self._stopping:
                 return
             self._stopping = True
-            worker = threading.Thread(target=self._finish_requested_stop,
-                                      name="polar-close", daemon=True)
-            self._stopper_thread = worker
+            worker = None
             try:
+                worker = threading.Thread(target=self._finish_requested_stop,
+                                          name="polar-close", daemon=True)
+                self._stopper_thread = worker
                 worker.start()
             except Exception as exc:
-                self._stopping = False
-                self._stopper_thread = None
+                # The admitted stopper alone releases its reservation, even
+                # if Thread.start reports failure after launching it.
+                if worker is None or worker.ident is None:
+                    self._stopping = False
+                    self._stopper_thread = None
                 self.last_error = str(exc)
                 self.last_error_code = "THREAD_START_FAILED"
 
@@ -436,12 +429,7 @@ class PolarLinkTransport:
             worker.join(timeout=1.0)
         if worker is None or not worker.is_alive():
             self._thread = None
-        if self._serial is not None:
-            try:
-                self._serial.close()
-            except Exception:
-                pass
-            self._serial = None
+        self._close_failed_stream()
         self.connected = False
 
     # ------------------------------------------------------------------
@@ -590,12 +578,7 @@ class PolarLinkTransport:
                 self._spin_cmd = SPIN_CMD_NONE
                 self._gimbal_host_request = 0
                 self._drive_was_armed = False
-            stream, self._serial = self._serial, None
-            if stream is not None:
-                try:
-                    stream.close()
-                except Exception:
-                    pass
+            self._close_failed_stream()
             self._running = False
 
     def _drain_rx(self) -> None:
@@ -791,14 +774,26 @@ class PolarLinkTransport:
             self.last_error_code = "STREAM_WRITE_FAILED"
             self._close_failed_stream()
 
+    @property
+    def cleanup_complete(self) -> bool:
+        return (self._serial is None and not self._running and not self._connecting
+                and (self._thread is None or not self._thread.is_alive())
+                and (self._stopper_thread is None or not self._stopper_thread.is_alive()))
+
     def _close_failed_stream(self) -> None:
-        stream, self._serial = self._serial, None
-        self.connected = False
-        if stream is not None:
-            try:
-                stream.close()
-            except Exception:
-                pass
+        with self._stream_close_lock:
+            stream = self._serial
+            self.connected = False
+            if stream is not None:
+                try:
+                    close_resource(stream)
+                except Exception as exc:
+                    self._close_error = f"Robot stream close unconfirmed: {type(exc).__name__}: {exc}"
+                    self.last_error = self._close_error
+                    self.last_error_code = "STREAM_CLOSE_FAILED"
+                    return
+                self._serial = None
+            self._close_error = ""
 
     def _flush_zero_burst(self, *, blocking: bool) -> None:
         """尽力连续发送零帧；断链/短写时不能保证固件收到或执行停车。

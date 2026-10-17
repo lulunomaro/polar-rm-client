@@ -1,0 +1,1024 @@
+QOpenGLWidget is not supported on this platform.
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+EEEEEEEEEEQPainter::end: Painter ended with 2 saved states
+EEQPainter::end: Painter ended with 2 saved states
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+======================================================================
+ERROR: test_blank_liquid_press_and_release_never_reach_combat (__main__.TacticalMapInputOwnershipTests.test_blank_liquid_press_and_release_never_reach_combat) (rejected=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 81, in test_blank_liquid_press_and_release_never_reach_combat
+    with self.subTest(rejected=rejected), self.surface(liquid=True) as window:
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_blank_liquid_press_and_release_never_reach_combat (__main__.TacticalMapInputOwnershipTests.test_blank_liquid_press_and_release_never_reach_combat) (rejected=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 81, in test_blank_liquid_press_and_release_never_reach_combat
+    with self.subTest(rejected=rejected), self.surface(liquid=True) as window:
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_classic_to_liquid_switch_replaces_previous_geometry_and_mirroring (__main__.TacticalMapInputOwnershipTests.test_classic_to_liquid_switch_replaces_previous_geometry_and_mirroring)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 124, in test_classic_to_liquid_switch_replaces_previous_geometry_and_mirroring
+    with self.surface(liquid=False, side='Red') as window:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_collapsed_and_right_clicks_preserve_normal_combat_routing (__main__.TacticalMapInputOwnershipTests.test_collapsed_and_right_clicks_preserve_normal_combat_routing) (liquid=False, hold=False, button=<MouseButton.LeftButton: 1>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 188, in test_collapsed_and_right_clicks_preserve_normal_combat_routing
+    with self.subTest(liquid=liquid, hold=hold, button=button), self.surface(liquid=liquid, hold=hold, progress=progress) as window:
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_collapsed_and_right_clicks_preserve_normal_combat_routing (__main__.TacticalMapInputOwnershipTests.test_collapsed_and_right_clicks_preserve_normal_combat_routing) (liquid=False, hold=False, button=<MouseButton.LeftButton: 1>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 188, in test_collapsed_and_right_clicks_preserve_normal_combat_routing
+    with self.subTest(liquid=liquid, hold=hold, button=button), self.surface(liquid=liquid, hold=hold, progress=progress) as window:
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_collapsed_and_right_clicks_preserve_normal_combat_routing (__main__.TacticalMapInputOwnershipTests.test_collapsed_and_right_clicks_preserve_normal_combat_routing) (liquid=False, hold=True, button=<MouseButton.RightButton: 2>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 188, in test_collapsed_and_right_clicks_preserve_normal_combat_routing
+    with self.subTest(liquid=liquid, hold=hold, button=button), self.surface(liquid=liquid, hold=hold, progress=progress) as window:
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_collapsed_and_right_clicks_preserve_normal_combat_routing (__main__.TacticalMapInputOwnershipTests.test_collapsed_and_right_clicks_preserve_normal_combat_routing) (liquid=True, hold=False, button=<MouseButton.LeftButton: 1>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 188, in test_collapsed_and_right_clicks_preserve_normal_combat_routing
+    with self.subTest(liquid=liquid, hold=hold, button=button), self.surface(liquid=liquid, hold=hold, progress=progress) as window:
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_collapsed_and_right_clicks_preserve_normal_combat_routing (__main__.TacticalMapInputOwnershipTests.test_collapsed_and_right_clicks_preserve_normal_combat_routing) (liquid=True, hold=False, button=<MouseButton.LeftButton: 1>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 188, in test_collapsed_and_right_clicks_preserve_normal_combat_routing
+    with self.subTest(liquid=liquid, hold=hold, button=button), self.surface(liquid=liquid, hold=hold, progress=progress) as window:
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_collapsed_and_right_clicks_preserve_normal_combat_routing (__main__.TacticalMapInputOwnershipTests.test_collapsed_and_right_clicks_preserve_normal_combat_routing) (liquid=True, hold=True, button=<MouseButton.RightButton: 2>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 188, in test_collapsed_and_right_clicks_preserve_normal_combat_routing
+    with self.subTest(liquid=liquid, hold=hold, button=button), self.surface(liquid=liquid, hold=hold, progress=progress) as window:
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot (__main__.TacticalMapInputOwnershipTests.test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot) (liquid=False, failure=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 223, in test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot
+    with self.subTest(liquid=liquid, failure=failure), self.surface(liquid=liquid) as window:
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot (__main__.TacticalMapInputOwnershipTests.test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot) (liquid=False, failure=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 223, in test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot
+    with self.subTest(liquid=liquid, failure=failure), self.surface(liquid=liquid) as window:
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot (__main__.TacticalMapInputOwnershipTests.test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot) (liquid=True, failure=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 223, in test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot
+    with self.subTest(liquid=liquid, failure=failure), self.surface(liquid=liquid) as window:
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot (__main__.TacticalMapInputOwnershipTests.test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot) (liquid=True, failure=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 223, in test_disabling_map_or_failed_paint_cannot_reuse_previous_hit_snapshot
+    with self.subTest(liquid=liquid, failure=failure), self.surface(liquid=liquid) as window:
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_liquid_publishes_fresh_layout_rect_and_blue_mirror (__main__.TacticalMapInputOwnershipTests.test_liquid_publishes_fresh_layout_rect_and_blue_mirror) (side='Red')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 73, in test_liquid_publishes_fresh_layout_rect_and_blue_mirror
+    with self.subTest(side=side), self.surface(liquid=True, side=side) as window:
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_liquid_publishes_fresh_layout_rect_and_blue_mirror (__main__.TacticalMapInputOwnershipTests.test_liquid_publishes_fresh_layout_rect_and_blue_mirror) (side='Blue')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 73, in test_liquid_publishes_fresh_layout_rect_and_blue_mirror
+    with self.subTest(side=side), self.surface(liquid=True, side=side) as window:
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_map_hotspot_keeps_priority_but_owns_its_release (__main__.TacticalMapInputOwnershipTests.test_map_hotspot_keeps_priority_but_owns_its_release)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 154, in test_map_hotspot_keeps_priority_but_owns_its_release
+    with self.surface(liquid=True) as window:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=False, progress=0.17, setting=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=False, progress=0.17, setting='Mirror Blue')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=False, progress=0.17, setting='Mirror Tactical Map')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=False, progress=0.65, setting=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=False, progress=0.65, setting='Mirror Blue')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=False, progress=0.65, setting='Mirror Tactical Map')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=False, progress=1.0, setting=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=False, progress=1.0, setting='Mirror Blue')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=False, progress=1.0, setting='Mirror Tactical Map')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=True, progress=0.17, setting=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=True, progress=0.17, setting='Mirror Blue')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=True, progress=0.17, setting='Mirror Tactical Map')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=True, progress=0.65, setting=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=True, progress=0.65, setting='Mirror Blue')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=True, progress=0.65, setting='Mirror Tactical Map')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=True, progress=1.0, setting=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=True, progress=1.0, setting='Mirror Blue')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_opening_progress_and_mirror_switches_follow_the_current_draw (__main__.TacticalMapInputOwnershipTests.test_opening_progress_and_mirror_switches_follow_the_current_draw) (liquid=True, progress=1.0, setting='Mirror Tactical Map')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 255, in test_opening_progress_and_mirror_switches_follow_the_current_draw
+    with self.subTest(liquid=liquid, progress=progress, setting=setting), self.surface(liquid=liquid, side='Blue', progress=progress) as window:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_publisher_exception_still_owns_drag_release_and_clears_old_anchor (__main__.TacticalMapInputOwnershipTests.test_publisher_exception_still_owns_drag_release_and_clears_old_anchor) (liquid=False, stage='publisher')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 95, in test_publisher_exception_still_owns_drag_release_and_clears_old_anchor
+    with self.subTest(liquid=liquid, stage=stage), self.surface(liquid=liquid) as window:
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_publisher_exception_still_owns_drag_release_and_clears_old_anchor (__main__.TacticalMapInputOwnershipTests.test_publisher_exception_still_owns_drag_release_and_clears_old_anchor) (liquid=False, stage='settings')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 95, in test_publisher_exception_still_owns_drag_release_and_clears_old_anchor
+    with self.subTest(liquid=liquid, stage=stage), self.surface(liquid=liquid) as window:
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_publisher_exception_still_owns_drag_release_and_clears_old_anchor (__main__.TacticalMapInputOwnershipTests.test_publisher_exception_still_owns_drag_release_and_clears_old_anchor) (liquid=False, stage='toast')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 95, in test_publisher_exception_still_owns_drag_release_and_clears_old_anchor
+    with self.subTest(liquid=liquid, stage=stage), self.surface(liquid=liquid) as window:
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_publisher_exception_still_owns_drag_release_and_clears_old_anchor (__main__.TacticalMapInputOwnershipTests.test_publisher_exception_still_owns_drag_release_and_clears_old_anchor) (liquid=False, stage='hotspot')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 95, in test_publisher_exception_still_owns_drag_release_and_clears_old_anchor
+    with self.subTest(liquid=liquid, stage=stage), self.surface(liquid=liquid) as window:
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_publisher_exception_still_owns_drag_release_and_clears_old_anchor (__main__.TacticalMapInputOwnershipTests.test_publisher_exception_still_owns_drag_release_and_clears_old_anchor) (liquid=True, stage='publisher')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 95, in test_publisher_exception_still_owns_drag_release_and_clears_old_anchor
+    with self.subTest(liquid=liquid, stage=stage), self.surface(liquid=liquid) as window:
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_publisher_exception_still_owns_drag_release_and_clears_old_anchor (__main__.TacticalMapInputOwnershipTests.test_publisher_exception_still_owns_drag_release_and_clears_old_anchor) (liquid=True, stage='settings')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 95, in test_publisher_exception_still_owns_drag_release_and_clears_old_anchor
+    with self.subTest(liquid=liquid, stage=stage), self.surface(liquid=liquid) as window:
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_publisher_exception_still_owns_drag_release_and_clears_old_anchor (__main__.TacticalMapInputOwnershipTests.test_publisher_exception_still_owns_drag_release_and_clears_old_anchor) (liquid=True, stage='toast')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 95, in test_publisher_exception_still_owns_drag_release_and_clears_old_anchor
+    with self.subTest(liquid=liquid, stage=stage), self.surface(liquid=liquid) as window:
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_publisher_exception_still_owns_drag_release_and_clears_old_anchor (__main__.TacticalMapInputOwnershipTests.test_publisher_exception_still_owns_drag_release_and_clears_old_anchor) (liquid=True, stage='hotspot')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 95, in test_publisher_exception_still_owns_drag_release_and_clears_old_anchor
+    with self.subTest(liquid=liquid, stage=stage), self.surface(liquid=liquid) as window:
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_real_backend_locked_or_disabled_never_reaches_native_publisher (__main__.TacticalMapInputOwnershipTests.test_real_backend_locked_or_disabled_never_reaches_native_publisher) (liquid=False, allowed=False, state=<ControlState.LOCKED: 'LOCKED'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 276, in test_real_backend_locked_or_disabled_never_reaches_native_publisher
+    with self.subTest(liquid=liquid, allowed=allowed, state=state), self.surface(liquid=liquid) as window:
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_real_backend_locked_or_disabled_never_reaches_native_publisher (__main__.TacticalMapInputOwnershipTests.test_real_backend_locked_or_disabled_never_reaches_native_publisher) (liquid=False, allowed=True, state=<ControlState.LOCKED: 'LOCKED'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 276, in test_real_backend_locked_or_disabled_never_reaches_native_publisher
+    with self.subTest(liquid=liquid, allowed=allowed, state=state), self.surface(liquid=liquid) as window:
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_real_backend_locked_or_disabled_never_reaches_native_publisher (__main__.TacticalMapInputOwnershipTests.test_real_backend_locked_or_disabled_never_reaches_native_publisher) (liquid=False, allowed=True, state=<ControlState.QUALIFICATION: 'QUALIFICATION'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 276, in test_real_backend_locked_or_disabled_never_reaches_native_publisher
+    with self.subTest(liquid=liquid, allowed=allowed, state=state), self.surface(liquid=liquid) as window:
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_real_backend_locked_or_disabled_never_reaches_native_publisher (__main__.TacticalMapInputOwnershipTests.test_real_backend_locked_or_disabled_never_reaches_native_publisher) (liquid=False, allowed=True, state=<ControlState.MATCH_ARMED: 'MATCH_ARMED'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 276, in test_real_backend_locked_or_disabled_never_reaches_native_publisher
+    with self.subTest(liquid=liquid, allowed=allowed, state=state), self.surface(liquid=liquid) as window:
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_real_backend_locked_or_disabled_never_reaches_native_publisher (__main__.TacticalMapInputOwnershipTests.test_real_backend_locked_or_disabled_never_reaches_native_publisher) (liquid=True, allowed=False, state=<ControlState.LOCKED: 'LOCKED'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 276, in test_real_backend_locked_or_disabled_never_reaches_native_publisher
+    with self.subTest(liquid=liquid, allowed=allowed, state=state), self.surface(liquid=liquid) as window:
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_real_backend_locked_or_disabled_never_reaches_native_publisher (__main__.TacticalMapInputOwnershipTests.test_real_backend_locked_or_disabled_never_reaches_native_publisher) (liquid=True, allowed=True, state=<ControlState.LOCKED: 'LOCKED'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 276, in test_real_backend_locked_or_disabled_never_reaches_native_publisher
+    with self.subTest(liquid=liquid, allowed=allowed, state=state), self.surface(liquid=liquid) as window:
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_real_backend_locked_or_disabled_never_reaches_native_publisher (__main__.TacticalMapInputOwnershipTests.test_real_backend_locked_or_disabled_never_reaches_native_publisher) (liquid=True, allowed=True, state=<ControlState.QUALIFICATION: 'QUALIFICATION'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 276, in test_real_backend_locked_or_disabled_never_reaches_native_publisher
+    with self.subTest(liquid=liquid, allowed=allowed, state=state), self.surface(liquid=liquid) as window:
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_real_backend_locked_or_disabled_never_reaches_native_publisher (__main__.TacticalMapInputOwnershipTests.test_real_backend_locked_or_disabled_never_reaches_native_publisher) (liquid=True, allowed=True, state=<ControlState.MATCH_ARMED: 'MATCH_ARMED'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 276, in test_real_backend_locked_or_disabled_never_reaches_native_publisher
+    with self.subTest(liquid=liquid, allowed=allowed, state=state), self.surface(liquid=liquid) as window:
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_reverse_after_press_keeps_ownership_and_right_release_does_not_steal_it (__main__.TacticalMapInputOwnershipTests.test_reverse_after_press_keeps_ownership_and_right_release_does_not_steal_it)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 166, in test_reverse_after_press_keeps_ownership_and_right_release_does_not_steal_it
+    with self.surface(liquid=True) as window:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_round_mask_corners_are_not_part_of_the_visible_field_hit (__main__.TacticalMapInputOwnershipTests.test_round_mask_corners_are_not_part_of_the_visible_field_hit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 243, in test_round_mask_corners_are_not_part_of_the_visible_field_hit
+    with self.surface(liquid=True) as window:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates (__main__.TacticalMapInputOwnershipTests.test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates) (liquid=False, size=(960, 640), dpr=1.0, scale=1.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 144, in test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates
+    with self.subTest(liquid=liquid, size=(width, height), dpr=dpr, scale=scale), self.surface(liquid=liquid) as window:
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates (__main__.TacticalMapInputOwnershipTests.test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates) (liquid=False, size=(1280, 720), dpr=1.25, scale=0.82)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 144, in test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates
+    with self.subTest(liquid=liquid, size=(width, height), dpr=dpr, scale=scale), self.surface(liquid=liquid) as window:
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates (__main__.TacticalMapInputOwnershipTests.test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates) (liquid=False, size=(800, 600), dpr=2.0, scale=1.1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 144, in test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates
+    with self.subTest(liquid=liquid, size=(width, height), dpr=dpr, scale=scale), self.surface(liquid=liquid) as window:
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates (__main__.TacticalMapInputOwnershipTests.test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates) (liquid=False, size=(640, 360), dpr=2.5, scale=0.75)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 144, in test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates
+    with self.subTest(liquid=liquid, size=(width, height), dpr=dpr, scale=scale), self.surface(liquid=liquid) as window:
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates (__main__.TacticalMapInputOwnershipTests.test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates) (liquid=True, size=(960, 640), dpr=1.0, scale=1.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 144, in test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates
+    with self.subTest(liquid=liquid, size=(width, height), dpr=dpr, scale=scale), self.surface(liquid=liquid) as window:
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates (__main__.TacticalMapInputOwnershipTests.test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates) (liquid=True, size=(1280, 720), dpr=1.25, scale=0.82)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 144, in test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates
+    with self.subTest(liquid=liquid, size=(width, height), dpr=dpr, scale=scale), self.surface(liquid=liquid) as window:
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates (__main__.TacticalMapInputOwnershipTests.test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates) (liquid=True, size=(800, 600), dpr=2.0, scale=1.1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 144, in test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates
+    with self.subTest(liquid=liquid, size=(width, height), dpr=dpr, scale=scale), self.surface(liquid=liquid) as window:
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates (__main__.TacticalMapInputOwnershipTests.test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates) (liquid=True, size=(640, 360), dpr=2.5, scale=0.75)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 144, in test_scale_translation_resize_and_dpr_use_logical_mouse_coordinates
+    with self.subTest(liquid=liquid, size=(width, height), dpr=dpr, scale=scale), self.surface(liquid=liquid) as window:
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_visible_field_edges_reject_outside_and_accept_inside (__main__.TacticalMapInputOwnershipTests.test_visible_field_edges_reject_outside_and_accept_inside) (liquid=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 200, in test_visible_field_edges_reject_outside_and_accept_inside
+    with self.subTest(liquid=liquid), self.surface(liquid=liquid) as window:
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+======================================================================
+ERROR: test_visible_field_edges_reject_outside_and_accept_inside (__main__.TacticalMapInputOwnershipTests.test_visible_field_edges_reject_outside_and_accept_inside) (liquid=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 200, in test_visible_field_edges_reject_outside_and_accept_inside
+    with self.subTest(liquid=liquid), self.surface(liquid=liquid) as window:
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/shared/client-quality-integration/tests/test_tactical_map_input_ownership.py", line 36, in surface
+    patch.object(self.window, 'home_visible', False), \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1605, in __exit__
+    delattr(self.target, self.attribute)
+AttributeError: __delete__
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.222s
+
+FAILED (errors=62)

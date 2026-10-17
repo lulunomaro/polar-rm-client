@@ -19,7 +19,7 @@ from rm_client.cs2_crosshair import (apply_profile, build_crosshair_editor, deco
     display_scale_from_module, encode_share_code, paint_crosshair, profile_from_module)
 from rm_client.model import RobotState, build_default_registry
 from rm_client.student_ui import StudentUiState
-from rm_client.ui.fonts import ui_text_layout
+from rm_client.ui.fonts import cjk_ui_font, ui_text_layout
 from rm_client.ui.minecraft_hud import MinecraftCombatHudRenderer
 from rm_client.ui.student_panels import StudentPanelRenderer
 
@@ -74,8 +74,17 @@ class InventoryReadabilityTests(unittest.TestCase):
             self.assertEqual(font.pixelSize(), 16)
             layout = ui_text_layout(font, '技能/性能', image)
             runs = layout.glyphRuns()
+            self.assertTrue(runs)
             self.assertTrue(all(g != 0 for run in runs for g in run.glyphIndexes()))
-            self.assertTrue(any('YaHei' in run.rawFont().familyName() for run in runs))
+            # The shared shaper prefers installed YaHei/DengXian on Windows
+            # and allows the system CJK fallback elsewhere (e.g. Noto on
+            # Linux). Verify the actual Chinese runs, not just a font request.
+            cjk_runs = [*layout.glyphRuns(0, 2), *layout.glyphRuns(3, 2)]
+            installed_cjk = set(QFontDatabase.families(QFontDatabase.WritingSystem.SimplifiedChinese))
+            preferred_cjk = set(cjk_ui_font(font).families()) & installed_cjk
+            self.assertEqual(sum(len(run.glyphIndexes()) for run in cjk_runs), 4)
+            self.assertTrue(all(run.rawFont().familyName() in (preferred_cjk or installed_cjk)
+                                for run in cjk_runs))
             self.assertTrue(all(run.rawFont().styleName() == 'Regular' for run in runs))
         finally: painter.end()
 

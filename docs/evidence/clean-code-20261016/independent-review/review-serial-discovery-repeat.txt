@@ -1,0 +1,1 @@
+PASS: 100 repetitions of nine admission methods; 900 executions; 0 failures, errors or skips.

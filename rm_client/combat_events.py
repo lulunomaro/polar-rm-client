@@ -7,6 +7,11 @@ import struct
 import time
 from typing import Any, Iterable
 
+from .referee_profiles import DEFAULT_PROFILE
+
+_RECEIVED_AT_UNSET = object()
+_OFFICIAL_FEED_MAX_AGE_S = 2.5
+
 
 @dataclass(frozen=True)
 class CombatEvent:
@@ -88,6 +93,44 @@ def _field_int(fields: dict[int, list[int | bytes]], field: int, default: int = 
     return int(value) if isinstance(value, int) else default
 
 
+def _field_int32(fields: dict[int, list[int | bytes]], field: int) -> int:
+    value = _field_int(fields, field) & 0xFFFFFFFF
+    return value - (1 << 32) if value & (1 << 31) else value
+
+
+# Raw-feed presentation is a partial projection, just like the decoded adapter.
+# Numbers follow the reviewed RM2026 contract; absence is not an explicit zero.
+_STATE_UPDATE_FIELDS = {
+    "GameStatus": {
+        "current_round": (1,), "total_rounds": (2,), "red_score": (3,),
+        "blue_score": (4,), "current_stage": (5,), "stage_countdown_sec": (6,),
+        "stage_elapsed_sec": (7,),
+    },
+    "GlobalLogisticsStatus": {
+        "remaining_economy": (1,), "total_economy_obtained": (2,),
+        "tech_level": (3,), "encryption_level": (4,),
+    },
+    "GlobalUnitStatus": {
+        "base_health": (1,), "base_status": (2,), "base_shield": (3,),
+        "outpost_health": (4,), "outpost_status": (5,), "official_robot_health": (11,),
+    },
+    "RobotRespawnStatus": {
+        "respawn_pending": (1,), "respawn_progress": (2, 3),
+        "respawn_can_free": (4,), "respawn_gold_cost": (5,), "respawn_can_pay": (6,),
+    },
+    "RobotDynamicStatus": {
+        "current_health": (1,), "current_heat": (2,), "current_chassis_energy": (4,),
+        "current_buffer_energy": (5,), "total_projectiles_fired": (8,),
+        "remaining_ammo": (9,), "out_of_combat": (10,),
+        "can_remote_heal": (12,), "can_remote_ammo": (13,),
+    },
+    "AirSupportStatusSync": {
+        "air_support_active": (1,), "air_support_free_time_sec": (2,),
+        "air_support_can_free": (2,), "air_support_cost_coins": (3,),
+    },
+}
+
+
 def _field_bytes(fields: dict[int, list[int | bytes]], field: int) -> bytes:
     values = fields.get(field, ())
     if not values:
@@ -136,7 +179,7 @@ OFFICIAL_DOWNLINK_MESSAGES = frozenset({
 })
 
 
-def _parse_event_param(raw: bytes) -> dict[str, Any]:
+def _parse_event_param(raw: bytes) -> dict[str, Any] | None:
     if not raw:
         return {}
     text = raw.decode("utf-8", errors="replace").strip()
@@ -156,9 +199,32 @@ def _parse_event_param(raw: bytes) -> dict[str, Any]:
             except ValueError:
                 pass
         return {"detail": text}
+    except (ValueError, RecursionError):
+        # JSON tokens/nesting may exceed runtime conversion/parser limits.
+        # Unlike syntax fallback, this is an explicitly rejected extension.
+        return None
     if not isinstance(value, dict):
         return {"detail": text}
     return value
+
+
+def _event_numbers(value: dict[str, Any], *, extended: bool) -> tuple[int, int, int, float, int] | None:
+    """Reject invalid explicit numeric extensions, preserving absent defaults.
+
+    Conversion stays compatible with existing finite numeric strings. Keep the
+    exception boundary around input conversion, never around UI callbacks.
+    """
+    try:
+        victim_id = int(value.get("victim_id", 0))
+        killer_id = int(value.get("killer_id", 0))
+        combo = int(value.get("combo", 0)) if extended else 0
+        distance = float(value.get("distance_m", 0.0)) if extended else 0.0
+        score = int(value.get("score_delta", 0)) if extended else 0
+    except (TypeError, ValueError, OverflowError):
+        return None
+    if not math.isfinite(distance):
+        return None
+    return victim_id, killer_id, combo, distance, score
 
 
 class OfficialMatchFeed:
@@ -171,24 +237,51 @@ class OfficialMatchFeed:
         self.last_kill_data_at = 0.0
         self.last_official_event_at = 0.0
         self._robot_health: list[int] = []
+        self._referee_profile = DEFAULT_PROFILE
         self._seen: dict[tuple[str, int, int], float] = {}
 
-    def is_fresh(self, timeout_s: float = 2.5) -> bool:
-        return self.last_message_at > 0.0 and time.perf_counter() - self.last_message_at <= timeout_s
+    def is_fresh(self, timeout_s: float = _OFFICIAL_FEED_MAX_AGE_S) -> bool:
+        return self.last_message_at > 0.0 and 0.0 <= time.perf_counter() - self.last_message_at <= timeout_s
 
-    def is_kill_data_fresh(self, timeout_s: float = 2.5) -> bool:
+    def is_kill_data_fresh(self, timeout_s: float = _OFFICIAL_FEED_MAX_AGE_S) -> bool:
         """只有可能携带击杀/战亡信息的官方消息才会屏蔽视觉击杀。"""
-        return self.last_kill_data_at > 0.0 and time.perf_counter() - self.last_kill_data_at <= timeout_s
+        return self.last_kill_data_at > 0.0 and 0.0 <= time.perf_counter() - self.last_kill_data_at <= timeout_s
 
-    def consume(self, topic: str, payload: bytes, *, alliance: str, local_robot_id: int) -> tuple[list[CombatEvent], dict[str, Any]]:
-        now = time.perf_counter()
+    def consume(self, topic: str, payload: bytes, *, alliance: str, local_robot_id: int,
+                referee_profile: str = DEFAULT_PROFILE,
+                received_at: float | object = _RECEIVED_AT_UNSET) -> tuple[list[CombatEvent], dict[str, Any]]:
+        if referee_profile != self._referee_profile:
+            self._referee_profile = referee_profile
+            self._robot_health = []
+            self._seen.clear()
+            self.last_message_at = 0.0
+            self.last_kill_data_at = 0.0
+            self.last_official_event_at = 0.0
+        processing_at = time.perf_counter()
+        # Production queues stamp local monotonic receipt time. Only omitted
+        # timestamps preserve the historical direct-call processing-time API.
+        # Explicit invalid/future/stale receipts must never revive freshness.
+        if received_at is _RECEIVED_AT_UNSET:
+            now = processing_at
+        else:
+            if type(received_at) not in (int, float):
+                return [], {}
+            try:
+                now = float(received_at)
+            except (OverflowError, ValueError):
+                return [], {}
+            if (not math.isfinite(now) or now <= 0.0
+                    or not 0.0 <= processing_at - now <= _OFFICIAL_FEED_MAX_AGE_S):
+                return [], {}
         name = _topic_name(topic)
         if name in OFFICIAL_DOWNLINK_MESSAGES:
-            self.last_message_at = now
+            self.last_message_at = max(self.last_message_at, now)
         if name in {"Event", "GlobalUnitStatus", "RobotInjuryStat", "RobotStaticStatus", "CustomByteBlock"}:
-            self.last_kill_data_at = now
+            self.last_kill_data_at = max(self.last_kill_data_at, now)
         fields = decode_proto_fields(payload)
-        updates: dict[str, Any] = {"official_feed_at": now}
+        # Out-of-order direct consumers cannot move the latest receipt back;
+        # individual events still retain their own actual receipt timestamp.
+        updates: dict[str, Any] = {"official_feed_at": max(self.last_message_at, now)}
         events: list[CombatEvent] = []
 
         if name == "GameStatus":
@@ -201,8 +294,8 @@ class OfficialMatchFeed:
                     0: "NOT_STARTED", 1: "PREPARE", 2: "SELF_CHECK",
                     3: "COUNTDOWN", 4: "MATCH", 5: "SETTLEMENT",
                 }.get(_field_int(fields, 5), str(_field_int(fields, 5))),
-                "stage_countdown_sec": _field_int(fields, 6),
-                "stage_elapsed_sec": _field_int(fields, 7),
+                "stage_countdown_sec": max(0, _field_int32(fields, 6)),
+                "stage_elapsed_sec": max(0, _field_int32(fields, 7)),
             })
         elif name == "GlobalLogisticsStatus":
             updates.update({
@@ -212,7 +305,10 @@ class OfficialMatchFeed:
                 "encryption_level": _field_int(fields, 4),
             })
         elif name == "GlobalUnitStatus":
-            health_values = fields.get(11) or fields.get(6) or []
+            # Current field 6 is enemy_base_health, never a roster. The legacy
+            # roster has no reviewed role order and is diagnostic-only in its
+            # decoded adapter; raw feedback must not bypass that quarantine.
+            health_values = fields.get(11, []) if referee_profile == DEFAULT_PROFILE else []
             health = [number for value in health_values for number in _packed_uints(value)]
             updates.update({
                 "base_health": _field_int(fields, 1),
@@ -232,15 +328,18 @@ class OfficialMatchFeed:
         elif name == "RobotStaticStatus":
             robot_id = _field_int(fields, 4)
             alive_state = _field_int(fields, 3)
-            if alive_state == 2:
+            # An absent/default identity is not evidence for a victim. Keep
+            # the established protocol ID range, including non-selectable roles.
+            valid_id = 1 <= robot_id <= 9 or 101 <= robot_id <= 109
+            if 3 in fields and 4 in fields and valid_id and alive_state == 2:
                 kind = "death" if robot_id == local_robot_id else "elimination"
                 events.append(CombatEvent(kind, "referee", True, now, victim_id=robot_id, detail="alive_state"))
         elif name == "RobotRespawnStatus":
-            total = max(0, _field_int(fields, 2))
+            total = max(1, _field_int(fields, 2))
             current = max(0, _field_int(fields, 3))
             updates.update({
                 "respawn_pending": bool(_field_int(fields, 1)),
-                "respawn_progress": min(1.0, current / total) if total > 0 else 0.0,
+                "respawn_progress": min(1.0, current / total),
                 "respawn_can_free": bool(_field_int(fields, 4)),
                 "respawn_gold_cost": _field_int(fields, 5),
                 "respawn_can_pay": bool(_field_int(fields, 6)),
@@ -268,44 +367,55 @@ class OfficialMatchFeed:
         elif name == "Event":
             event_id = _field_int(fields, 1)
             event_data = _parse_event_param(_field_bytes(fields, 2))
-            victim_id = int(event_data.get("victim_id", 0))
-            killer_id = int(event_data.get("killer_id", 0))
-            detail = str(event_data.get("detail", ""))
-            if event_id == 1:
-                tags = event_data.get("tags", ())
-                events.append(CombatEvent(
-                    "elimination", "referee", True, now, victim_id, killer_id, detail or "official_event",
-                    kill_type=str(event_data.get("kill_type", "NORMAL")).upper(),
-                    combo=int(event_data.get("combo", 0)),
-                    victim_name=str(event_data.get("victim_name", "")),
-                    distance_m=float(event_data.get("distance_m", 0.0)),
-                    score_delta=int(event_data.get("score_delta", 0)),
-                    tags=tuple(str(tag) for tag in tags) if isinstance(tags, (list, tuple)) else (),
-                ))
-            elif event_id in (2, 3):
-                events.append(CombatEvent("objective", "referee", True, now, victim_id, killer_id, detail or "objective"))
+            numbers = (_event_numbers(event_data, extended=event_id == 1)
+                       if event_data is not None else None)
+            if numbers is not None:
+                victim_id, killer_id, combo, distance, score = numbers
+                detail = str(event_data.get("detail", ""))
+                if event_id == 1:
+                    tags = event_data.get("tags", ())
+                    events.append(CombatEvent(
+                        "elimination", "referee", True, now, victim_id, killer_id, detail or "official_event",
+                        kill_type=str(event_data.get("kill_type", "NORMAL")).upper(),
+                        combo=combo,
+                        victim_name=str(event_data.get("victim_name", "")),
+                        distance_m=distance,
+                        score_delta=score,
+                        tags=tuple(str(tag) for tag in tags) if isinstance(tags, (list, tuple)) else (),
+                    ))
+                elif event_id in (2, 3):
+                    events.append(CombatEvent("objective", "referee", True, now, victim_id, killer_id, detail or "objective"))
         elif name == "CustomByteBlock":
             events.extend(self._custom_events(_field_bytes(fields, 1), now))
 
+        required_fields = _STATE_UPDATE_FIELDS.get(name, {})
+        updates = {
+            key: value for key, value in updates.items()
+            if key == "official_feed_at"
+            or all(number in fields for number in required_fields[key])
+        }
+        # Partial respawn progress belongs to the decoded adapter's accumulated
+        # snapshot. Only a complete pair can independently replace that value.
         filtered = self._dedupe(events)
         if filtered:
-            self.last_official_event_at = now
+            self.last_official_event_at = max(self.last_official_event_at, now)
         return filtered, updates
 
     def _health_transitions(self, health: list[int], alliance: str, now: float) -> list[CombatEvent]:
         previous = self._robot_health
-        self._robot_health = health
+        # The wire roster has five own roles followed by five enemy roles.
+        # Short vectors omit observations; they never move the team boundary.
+        self._robot_health = health[:2 * len(self.ENEMY_ORDER)]
         if not previous:
             return []
         events: list[CombatEvent] = []
-        own_count = min(5, len(health) // 2)
-        for index, current in enumerate(health):
+        own_count = len(self.ENEMY_ORDER)
+        for index in range(own_count, min(len(health), 2 * own_count)):
+            current = health[index]
             before = previous[index] if index < len(previous) else current
             if before <= 0 or current != 0:
                 continue
-            if index < own_count:
-                continue
-            type_id = self.ENEMY_ORDER[(index - own_count) % len(self.ENEMY_ORDER)]
+            type_id = self.ENEMY_ORDER[index - own_count]
             victim_id = 100 + type_id if alliance == "Red" else type_id
             events.append(CombatEvent("elimination", "referee_health", True, now, victim_id=victim_id, detail="health_zero"))
         return events
@@ -324,24 +434,29 @@ class OfficialMatchFeed:
                     return []
         try:
             value = json.loads(text)
-        except json.JSONDecodeError:
+        except (ValueError, RecursionError):
+            # Includes syntax, numeric-token and nesting parser limits.
             return []
         if not isinstance(value, dict) or value.get("protocol") != "polar.kill.v1":
             return []
+        numbers = _event_numbers(value, extended=True)
+        if numbers is None:
+            return []
+        victim_id, killer_id, combo, distance, score = numbers
         tags = value.get("tags", ())
         return [CombatEvent(
             str(value.get("kind", "elimination")),
             "team_byte_block",
             bool(value.get("confirmed", True)),
             now,
-            int(value.get("victim_id", 0)),
-            int(value.get("killer_id", 0)),
+            victim_id,
+            killer_id,
             str(value.get("detail", "")),
             str(value.get("kill_type", "NORMAL")).upper(),
-            int(value.get("combo", 0)),
+            combo,
             str(value.get("victim_name", "")),
-            float(value.get("distance_m", 0.0)),
-            int(value.get("score_delta", 0)),
+            distance,
+            score,
             tuple(str(tag) for tag in tags) if isinstance(tags, (list, tuple)) else (),
         )]
 

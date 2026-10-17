@@ -1,0 +1,8 @@
+Read-only deterministic same-session MQTT E-stop race reproducer
+0c0e46ba2568d686ca625701a4abdbb8aa56e988
+Steps: admit nonzero KMC; pause _publish_record; trigger_estop; resume without changing MQTT session.
+publish_result: [(True, 'ok')]
+estop_active: True
+session_generation_unchanged: True
+nonzero_KMC_publications: 1
+Expected after repair: publish=False; nonzero_KMC_publications=0; dedicated zero remains allowed.

@@ -1,0 +1,35 @@
+....FF
+======================================================================
+FAIL: test_present_global_death_overrides_previous_local_robot_dynamic_hp (__main__.RefereeHealthSourceSelectionTests.test_present_global_death_overrides_previous_local_robot_dynamic_hp) (blue=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/state-projection-ownership/tests/test_referee_health_source_selection.py", line 52, in test_present_global_death_overrides_previous_local_robot_dynamic_hp
+    self.assertEqual((row['hp'], row['state'], marker['hp']), (0, 'DEAD', 0))
+AssertionError: Tuples differ: (275, 'ALIVE', 275) != (0, 'DEAD', 0)
+
+First differing element 0:
+275
+0
+
+- (275, 'ALIVE', 275)
++ (0, 'DEAD', 0)
+
+======================================================================
+FAIL: test_present_global_death_overrides_previous_local_robot_dynamic_hp (__main__.RefereeHealthSourceSelectionTests.test_present_global_death_overrides_previous_local_robot_dynamic_hp) (blue=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/state-projection-ownership/tests/test_referee_health_source_selection.py", line 52, in test_present_global_death_overrides_previous_local_robot_dynamic_hp
+    self.assertEqual((row['hp'], row['state'], marker['hp']), (0, 'DEAD', 0))
+AssertionError: Tuples differ: (275, 'ALIVE', 275) != (0, 'DEAD', 0)
+
+First differing element 0:
+275
+0
+
+- (275, 'ALIVE', 275)
++ (0, 'DEAD', 0)
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.018s
+
+FAILED (failures=2)

@@ -1,0 +1,13 @@
+F.........
+======================================================================
+FAIL: test_actual_paho_network_thread_constructor_releases_wakeup_pair (test_constructor_admission_matrix.NativeConstructorMatrixTests.test_actual_paho_network_thread_constructor_releases_wakeup_pair)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/next-admission-matrix/tests/test_constructor_admission_matrix.py", line 139, in test_actual_paho_network_thread_constructor_releases_wakeup_pair
+    self.assertIn('Paho constructor rejected', backend.last_error)
+AssertionError: 'Paho constructor rejected' not found in 'isinstance() arg 2 must be a type, a tuple of types, or a union'
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.276s
+
+FAILED (failures=1)

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
-from .backend.referee.registry import get_profile
+from .referee_profiles import get_profile_definition
 
-_REFEREE = get_profile()
+_REFEREE = get_profile_definition()
 
 
 SCENARIO_MODES = ["OfficialEvent", "CampusSimulation", "LabDebug"]

@@ -1,0 +1,46 @@
+F..FF.
+======================================================================
+FAIL: test_decode_started_before_stop_cannot_publish_after_restart (__main__.MjpegFrameDeliveryTests.test_decode_started_before_stop_cannot_publish_after_restart)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-video/tests/test_mjpeg_frame_delivery.py", line 94, in test_decode_started_before_stop_cannot_publish_after_restart
+    self.assertTrue(entered.wait(1), 'valid JPEG never reached decode completion')
+AssertionError: False is not true : valid JPEG never reached decode completion
+
+======================================================================
+FAIL: test_recognized_four_byte_prefix_is_normalized_only_by_udp_adapter (__main__.MjpegFrameDeliveryTests.test_recognized_four_byte_prefix_is_normalized_only_by_udp_adapter)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-video/tests/test_mjpeg_frame_delivery.py", line 61, in test_recognized_four_byte_prefix_is_normalized_only_by_udp_adapter
+    np.testing.assert_array_equal(self.backend.latest_bgr, self.expected)
+  File "/workspace/shared/client-clean-venv/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 1128, in assert_array_equal
+    assert_array_compare(operator.__eq__, actual, desired, err_msg=err_msg,
+  File "/workspace/shared/client-clean-venv/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 988, in assert_array_compare
+    raise AssertionError(msg)
+AssertionError:
+Arrays are not equal
+
+Mismatched elements: 2304 / 2304 (100%)
+First 5 mismatches are at indices:
+ [0, 0, 0]: None (ACTUAL), 0 (DESIRED)
+ [0, 0, 1]: None (ACTUAL), 0 (DESIRED)
+ [0, 0, 2]: None (ACTUAL), 0 (DESIRED)
+ [0, 1, 0]: None (ACTUAL), 2 (DESIRED)
+ [0, 1, 1]: None (ACTUAL), 1 (DESIRED)
+ ACTUAL: array(None, dtype=object)
+ DESIRED: array([[[  0,   0,   0],
+        [  2,   1,   3],
+        [ 10,   2,   9],...
+
+======================================================================
+FAIL: test_valid_raw_jpeg_publishes_exact_same_pixels_through_both_paths (__main__.MjpegFrameDeliveryTests.test_valid_raw_jpeg_publishes_exact_same_pixels_through_both_paths)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-video/tests/test_mjpeg_frame_delivery.py", line 32, in test_valid_raw_jpeg_publishes_exact_same_pixels_through_both_paths
+    self.assertEqual(self.backend.mjpeg_decoded_frames, 1)
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 6 tests in 1.027s
+
+FAILED (failures=3)

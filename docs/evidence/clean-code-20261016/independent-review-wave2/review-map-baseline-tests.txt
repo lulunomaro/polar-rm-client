@@ -1,0 +1,41 @@
+QOpenGLWidget is not supported on this platform.
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+test_buff_and_penalty_malformed_order_and_limits_match (__main__.TacticalMapContractTests.test_buff_and_penalty_malformed_order_and_limits_match) ... ok
+test_click_gates_and_exceptions_do_not_publish_or_toast_early (__main__.TacticalMapContractTests.test_click_gates_and_exceptions_do_not_publish_or_toast_early) ... ok
+test_map_size_minecraft_and_reentrant_policy_queries_match (__main__.TacticalMapContractTests.test_map_size_minecraft_and_reentrant_policy_queries_match) ... ok
+test_missing_map_asset_preserves_fallback_raster_and_field_geometry (__main__.TacticalMapContractTests.test_missing_map_asset_preserves_fallback_raster_and_field_geometry) ... ok
+test_partial_render_failures_preserve_effect_prefix_and_original_error (__main__.TacticalMapContractTests.test_partial_render_failures_preserve_effect_prefix_and_original_error) ... ok
+test_projection_mirror_clamp_and_click_roundtrip_preserve_backend_boundary (__main__.TacticalMapContractTests.test_projection_mirror_clamp_and_click_roundtrip_preserve_backend_boundary) ... ok
+test_radar_stale_units_malformed_and_highlight_settings_match_raster (__main__.TacticalMapContractTests.test_radar_stale_units_malformed_and_highlight_settings_match_raster) ... ok
+test_real_window_complete_scene_raster_commands_and_hits_match (__main__.TacticalMapContractTests.test_real_window_complete_scene_raster_commands_and_hits_match) ... ok
+test_reference_is_the_exact_fixed_source (__main__.TacticalMapContractTests.test_reference_is_the_exact_fixed_source) ... ok
+test_rounded_map_transform_dpr_corners_cache_identity_and_allocation_failure (__main__.TacticalMapContractTests.test_rounded_map_transform_dpr_corners_cache_identity_and_allocation_failure) ... ok
+test_tab_press_autorepeat_reverse_and_resize_keep_continuous_state (__main__.TacticalMapContractTests.test_tab_press_autorepeat_reverse_and_resize_keep_continuous_state) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 4.452s
+
+OK

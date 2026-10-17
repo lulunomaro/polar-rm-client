@@ -1,13 +1,13 @@
 # 二级界面设置项对齐清单
 
-ClickGUI 里 **59 个模块、372 个设置项**，每一个都是界面上能拖能勾的。
-这份文档回答：**哪些调了真的有用，哪些是装饰品。**
+当前注册表有 **74 个模块、470 个设置项**（2026-10-16 统计校对）。
+这份文档区分静态审计结果与历史接线记录；静态命中不能单独证明设置已经影响画面或输出。
 
 审计工具：`tools/audit_settings.py`（本文档所有数字都由它产出，可复现）
 
 ```powershell
 python tools/audit_settings.py              # 汇总 + 列出孤儿与动态项
-python tools/audit_settings.py --all        # 列全部 372 项
+python tools/audit_settings.py --all        # 列当前全部设置项
 python tools/audit_settings.py --json out.json
 ```
 
@@ -17,14 +17,33 @@ python tools/audit_settings.py --json out.json
 
 | 档位 | 数量 | 含义 |
 |---|---:|---|
-| **READ** | 274 | 有读取点且名字不冲突，能归属到具体模块 |
-| **AMBIGUOUS** | 51 | 有读取点，但**多个模块共用同一个设置名**，读取点无法归属 —— 不算已对齐 |
-| **DYNAMIC** | 25 | 由 `f"Bind {槽}"` / `f"Slot {序号}"` 动态拼名读取（已逐个核实读取点存在） |
-| **ORPHAN** | **22** | **没有任何读取点——界面上能调，代码完全没人读** |
+| **READ** | 355 | 静态工具检出字面命中且名字不冲突；仍需确认是否为功能消费者 |
+| **AMBIGUOUS** | 63 | 多个模块共用设置名；其中 48 项有工具归属提示、15 项仍无归属提示，均不能仅凭总数算已对齐 |
+| **DYNAMIC** | 31 | 25 个动态设置名读取候选，加 6 个精确注册且存在消费端的动态音效命令；仍需行为测试 |
+| **ORPHAN** | **21** | 静态工具未发现字面或动态读取证据；按下表逐项保留待处理范围 |
+
+2026-10-16 的命令边界抽取把六个 AudioFeedback 的 Import/Preview 名字改为有界循环生成，
+因此从 READ 改列 DYNAMIC，孤儿上限仍为 21。这不是消除了六个功能缺口。
+`tools/settings_action_evidence.py` 只有在精确解析器接受该命令、入口传给执行分派、
+对应类别调用音效消费端时才记录动态证据；纯声明、未知槽和断开的分派均不算。
+`tests/test_settings_action_evidence.py` 覆盖这些负例与真实审计输出，
+`tests/test_configuration_commands.py` 则逐一执行六个生产命令分派及其参数断言。
+
+
+历史 PR17 基线 `b26b7b7` 与命令抽取前工作树均为 READ 361 / AMBIGUOUS 63 /
+DYNAMIC 25 / ORPHAN 21；命令抽取后只有上述六项转为 DYNAMIC。
+21 项 ORPHAN 的 `(module, setting)` 集合没有变化，
+**没有把旧文档校正的 22→21 记为本轮新增接线**。
+
+旧清单多列的项是 `ClickGui / Save Layout`。两棵树中工具都因为
+`rm_client/ui/cs2_settings_center.py` 的设置列表
+`("ClickGui", ("Scale", "Language", "Save Layout"), False)` 将其归为 READ。
+这只是设置列表中的名字，**不是已经验证的布局保存消费者**；该设置的功能兑现仍需
+单独检查，不能把它从 ORPHAN 统计中移出解释为修好了功能。
 
 ### 接线进度（只许减不许增，基线已接入 `tools/verify_all.py`）
 
-| 阶段 | 孤儿数 | 本批接上的 |
+| 阶段 | 孤儿数 | 本批接上的 / 统计说明 |
 |---|---:|---|
 | 初始真实值（排除翻译表后） | 71 | — |
 | 第 1–2 批：自瞄 + 遥测 | 68 | `Fov`、`Priority`、`Warn`、`Show Bar`、`Show Limit`（+修复 `Send Hz`） |
@@ -48,9 +67,10 @@ python tools/audit_settings.py --json out.json
 | 第 19 批：增益时间轴 | **24** | `Buffs`、`Special Mechanism`、`Timeline`——整个模块**本来连面板都没有**，本轮新建了消费者（位置是量出来的）|
 | 第 20 批：装甲盒配色 | **23** | `Color`——默认值改成等于接线前画面的 White；Team 只在认得出 red/blue 板色时染阵营色；Threat 无威胁度数据，按 `ArmorAutoAim/Priority` 的 Radar 先例**降级并记原因** |
 | 第 21 批：雷达叠加 | **22** | `Map`——前两轮"等语义确认"里的同型题：默认值改成等于接线前画面的 `Both`（两张图都画），Mini/Full 以面板自己的展开插值 `detail` 为唯一判据分档，Hidden 只隐藏显示、不吞数据与 TTL |
+| 第 22 次记录：统计校对（2026-10-16，非接线批次） | **21** | PR17 `b26b7b7` 与当前审计均为 21；移出旧清单的 `ClickGui/Save Layout` 只是被设置列表字面命中，不表示本轮新增或验证了功能消费者 |
 
-> 上表最后一行的“29 不变”不是没干活，而是旧口径看不见那两项。
-> 完整说明见下面「同名共用那 51 项」一节。
+> 上表第 17 批的“29 不变”是历史口径看不见那两项。
+> 下面「同名共用那 51 项」保留当时记录；当前同名档数量以本页结果表为准。
 
 对应回归测试：`autoaim_settings_test.py`、`hud_telemetry_settings_test.py`、
 `hud_status_settings_test.py`、`hud_overlay_settings_test.py`、`hud_batch8_settings_test.py`、
@@ -63,34 +83,35 @@ python tools/audit_settings.py --json out.json
 `hud_batch21_radaroverlay_map_test.py`（雷达叠加：默认 Both 逐值不变 + 单消费者守卫，防未来绕过开关）。
 全部已接入 `tools/verify_all.py`，孤儿基线由 `--max-orphans` 卡住。
 
-### 剩下 22 个：逐项查证后的真实分类
+### 剩下 21 个：当前 ORPHAN 清单与历史处置分类
 
-下面每一档都按**具体标识符查过**，不是凭印象。判断"无数据源"之前先枚举了
-`RobotState` 的字段——上一轮我就是没查字段就断言 `Small/Large Buff` 对不上，
-结果两个字段都在，已更正。
+下面完整列出当前静态 ORPHAN，按历史评审的处置类型整理。2026-10-16 校对的是
+统计集合，不是对所有功能/协议结论重新验收；功能是否兑现仍需追踪消费者与行为测试。
 
 | 情况 | 证据 | 项数 |
 |---|---|---:|
-| **刻意不做**（接了会上事故 / 没东西可接 / 按设计是空壳） | `MQTTLink/Auto Connect` 接上后新默认配置收不到裁判数据；`UDPVideo/Reassemble` 后端已交付整帧；`ClickGui/Save Layout` 全仓无此函数；`EnergyAutoAim` 无视觉管线也无发送出口（`readiness.py` 里有诚实性闸门作证）；`FireControlStub` 描述自陈“不输出真实发射命令” | 7 |
-| **得先新功能**（没有可接的消费者） | `Open Style` 的 `"Full Sheet"` 只出现在设置定义那一行；`Local Model` 只有一个选项。（`BuffTimeline` 三项本也在这一档，第 19 批已把面板建出来）| 2 |
-| **做它等于新增比赛行为** | `ArmorLock/Lock Point`、`ChassisAssist/Buffer Protect`、`PowerGuard/Auto Limit` 均无实现，补上就是客户端主动控车/限功率；`MapMarker/Repeat` 无对应字段且重复广播要过裁判侧 10Hz 限流；`Desktop Safe` 与 `ArmorAutoAim/Mock Output` 重叠，接上等于新开一道控制门 | 5 |
+| **刻意不做 / 需先审查默认行为** | `MQTTLink/Auto Connect`、`UDPVideo/Reassemble`、`EnergyAutoAim/Rune Type`、`EnergyAutoAim/Lead Time`、`FireControlStub/Safety Lock`、`FireControlStub/Max Rate`；连接默认值、已有整帧入口及无真实输出能力不能靠补一个读取点改变 | 6 |
+| **得先定义新功能** | `EconomyPanel/Open Style`、`TongjiVisionBridge/Local Model`；历史评审分别缺第二种呈现和模型选择消费者 | 2 |
+| **可能新增比赛行为，需明确授权与语义** | `ArmorLock/Lock Point`、`ChassisAssist/Buffer Protect`、`PowerGuard/Auto Limit`、`MapMarker/Repeat`、`TongjiVisionBridge/Desktop Safe` | 5 |
 | **等一句语义确认**（怎么定都不唯一） | `LockState/Lock Source` 的 Radar 需“地图→像素”投影、Manual 无手选目标子系统；`FrictionWheel/Spin Preview` 含义不明（客户端从不驱动摩擦轮，`manager.py` 里 `friction_on=False` 硬编） | 2 |
 | **数据字段存在但含义要按裁判版本对** | `EconomyPanel/Radar Level`：0x0202 第 4 字段已解码进 `state.encryption_level`，且**全仓无处显示**。旧规则表这一槽叫“雷达合法等级”，新版叫“加密等级”——同一个槽在不同协议修订里名字不同，我不猜 | 1 |
 | **真无数据源** | `FrictionWheel/Target RPM`：摩擦轮在本仓只有一个布尔 `state.friction_wheel`，没有任何转速字段可读（云台电压**其实存在**且已接，见更正三） | 1 |
-| **B 类（处置建议见文末）** | 空中支援发送函数**零调用者**；`MapMarker` 已接 2/3（真实报文是 `MapClickCmd`，我先前判错了） | 4 |
+| **B 类控制选项（不能由“有发送函数”推导已接线）** | `AirSupport/Command`、`AirSupport/Require Confirm`、`SentinelCommand/Posture`、`SentinelCommand/Confirm Prompt`；文末保留历史处置建议 | 4 |
 
-**孤儿按模块分布（15 个模块共 22 项，其余 44 个模块的设置项已全部有归属）**：
+**孤儿按模块分布（14 个模块共 21 项；其余 60 个模块没有被此口径标为 ORPHAN，不等于全部功能已验证）**：
 `AirSupport` 2、`EconomyPanel` 2、`EnergyAutoAim` 2、`FireControlStub` 2、
 `FrictionWheel` 2、`SentinelCommand` 2、`TongjiVisionBridge` 2，
-以及 `ArmorLock` / `ChassisAssist` / `ClickGui` / `LockState` / `MQTTLink` /
+以及 `ArmorLock` / `ChassisAssist` / `LockState` / `MQTTLink` /
 `MapMarker` / `PowerGuard`（仅剩 `Auto Limit`）/ `UDPVideo` 各 1。
-`BuffTimeline` 本批整模块清零（3 项全接）。
+`BuffTimeline` 的 3 项接线属于历史第 19 批，当前校对没有改动其生产代码。
 
-本会话让孤儿从 71 降到 22（共 49 项），其中 **48 项是真的接上了消费者**，
+#### 历史接线记录（第 1–21 批，以下数量保持当时口径）
+
+当时记录孤儿从 71 降到 22（共 49 项），其中 **48 项是真的接上了消费者**，
 另有 1 项（48→47）是审计工具自己修了个假孤儿（常量别名没被认出来）。
 此外还有 **两项根本不在这个计数里**（被同名项洗白在 AMBIGUOUS 档）：
 `Crosshair/Style`、`RobotOverlay/Distance`，第 17 批接上。
-算上它们，本会话共接上 **50 项**。
+算上它们，当时共记录接上 **50 项**。
 接上的 48 项分布在：`Capacitor`、`PowerLimit`、`SpeedLimit`、`GimbalPower`、`MatchTimer`、
 `MatchMode`、`BaseOutpostStatus`、`VictoryPointStatus`、`ProjectileAllowance`、
 `ProjectileShop`、`ThermalPowerPanel`、`BuffStatus`、`EliminationFX`（28 项里 0 孤儿）、
@@ -100,11 +121,9 @@ python tools/audit_settings.py --json out.json
 `Armor3DESP`、`LockState`、`FrictionWheel`、
 `EconomyPanel`、`MapMarker` 各剩最后一两项（都在上面的分类表里）。
 
-**结论**：凡是**已经有消费者、只是没供值**的孤儿都已接完（本会话把孤儿从 71 推到 22，
-其中 48 项接线，另有 2 项从同名档里挖出来）。剩下的 22 项每一项都需要
-下面三件事中的一件：新建功能、新增比赛行为（必须你们授权）、
-或一句语义/数据口径确认。没有一项是“再努力一点”就能接完的，
-我也不把它们包装成“都快做完了”。
+**当前结论**：静态 ORPHAN 为 21，保留的历史接线数量不再拿来推导当前功能完成率。
+新增功能、比赛行为与语义/数据口径仍需逐项确认；READ / AMBIGUOUS 的命中也不等于
+端到端通过。以下历次更正、同名项和处置建议保留历史背景，当前统计以本页顶部为准。
 
 ### ❗ 更正四：第四次同一源的误判
 
@@ -125,7 +144,7 @@ python tools/audit_settings.py --json out.json
 **先假设“没找到 = 不存在”，而不是先列出真名清单再判定**。本轮开始
 每一项都先拿实际字段名/函数名/字典键名反查一遍，再下结论。
 
-### 同名共用那 51 项：42 项已能证明，剩下 9 项里有真孤儿
+### 历史记录：同名共用那 51 项，42 项已能归属、9 项仍待确认
 
 以前只能说“这 51 项同名，得人工看”。本轮给 `audit_settings.py` 加了
 **按模块归属**（`--attribute`）：
@@ -493,13 +512,14 @@ python tools/audit_settings.py --attribute      # 列出仍无法归属的那些
 ## 防倒退
 
 孤儿数量被 `tools/verify_all.py` 盯着，**只许减不许增**：
-新加一个设置项而忘了接线，验证会红。当前基线 **22**（从最初的 71 降下来）。
+新增被工具识别为孤儿的设置项会触发门限。当前基线 **21**（2026-10-16 与 PR17
+基线及当前工作树校对一致；不是本轮新接一项）。
 
 ```powershell
-python tools/audit_settings.py --max-orphans 22
+python tools/audit_settings.py --max-orphans 21
 ```
 
-AMBIGUOUS 那 51 项**不计入也不计减**基线，原因见上面那节。
+当前 AMBIGUOUS 的 63 项**不计入也不计减**基线；历史的 51 项记录不代表当前总数。
 
 本文档里那个孤儿数一共出现在 6 个地方（结果表、进度表末行、“剩下 N 个”
 标题、防倒退正文、示例命令，加上 `verify_all.py` 里的闸门值），

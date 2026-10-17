@@ -14,6 +14,7 @@ from tempfile import TemporaryDirectory
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
+from window_lifecycle_helpers import close_window_safely, settle_window_lifecycle
 os.environ["POLAR_DISABLE_LOCAL_CAPTURE"]="1"
 os.environ["POLAR_DISABLE_MEDIA_PRELOAD"]="1"
 DATA=TemporaryDirectory(prefix="polar_student_")
@@ -104,8 +105,11 @@ def main():
     state.active_penalty={"penalty_type":3,"total_penalty_num":1,"penalty_effect_sec":10}
     notices.poll(state,5);notices.poll(state,6)
     check(sum("红牌" in m.text for m in chat.messages)==1,"penalty signature prevents per-frame spam")
-    w=PolarRMWindow();w.timer.stop();w.home_visible=False
+    w=PolarRMWindow();w.timer.stop()
     try:
+        # These are normal UI interactions, after startup configuration commits.
+        settle_window_lifecycle(w,app)
+        w.home_visible=False
         glyphs=[];bitmap_draw=w.server_chat_renderer.bitmap.draw
         def observe_glyph(*args,**kwargs):
             glyphs.append(args[3]);return bitmap_draw(*args,**kwargs)
@@ -243,7 +247,7 @@ def main():
         check(len(w.hotspots)==len({(h.action,h.payload,h.button,h.rect.x(),h.rect.y()) for h in w.hotspots}),"100 opens don't leak duplicate hotspots")
         print(f"\n{COUNT} checks PASS",flush=True)
     finally:
-        w.close()
+        close_window_safely(w,app)
     return 0
 
 if __name__=="__main__":raise SystemExit(main())

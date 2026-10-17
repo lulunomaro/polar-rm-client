@@ -12,22 +12,40 @@ LabDebug / CampusSimulation / OfficialEvent 各自：
 from __future__ import annotations
 
 import logging
+from copy import deepcopy
 import json
 import time
+import threading
+from queue import Empty, Full, Queue
 from dataclasses import replace
 from typing import Any, Callable
 
 from ..model import RobotState
-from ..native_viewer_telemetry import parse_vehicle_telemetry, parse_video_0310_chunk
-from .. import robot_roles
+from ..lifecycle import LifecycleCompletion, LifecycleSnapshot, TeardownTask
+from .lifecycle import ScenarioRequest, ShutdownCompletion, emit_lifecycle_event
+from .lifecycle_controller import BackendLifecycleController
+from .teardown_plan import TeardownResources
+from .video_source import (VideoSourceAdmission, VideoSourceAdmissionError,
+                           VideoSourceRequest, VideoSourceSnapshot, VideoSourceFailure)
+from ..native_viewer_telemetry import (
+    VehicleTelemetry, Video0310Chunk, parse_vehicle_telemetry, parse_video_0310_chunk,
+)
+from .native_stream_policy import assess_native_video_sequence, localization_invalidated
 from ..scenarios import SCENARIOS
 from . import cc_link
 from . import dt7_link
 from .dt7_worker import AsyncDt7KeyMouseLink
+from .port_admission import PortReservation, first_port_conflict
+from .polar_health import capture_polar_link_health
+from .device_egress_settings import (
+    CustomControllerSettings, DeviceEgressSettings, EgressPermissions,
+)
 from . import team_control as proto
 from .referee.registry import DEFAULT_PROFILE, get_profile
+from .referee.profile_change import RefereeProfileChange
 from .referee.rm2026.state_adapter import Rm2026StateAdapter
 from .mqtt_backend import RmMqttBackend
+from .mqtt_endpoint import admit_mqtt_endpoint
 from .polar_bridge import (
     PolarControlArbiter,
     PolarMotionVerifier,
@@ -39,11 +57,20 @@ from .polar_link import (
     SEG_ROBOT_MOTION,
     SEG_ROBOT_STATUS,
     SPIN_CMD_NONE,
-    SPIN_CMD_OFF,
-    SPIN_CMD_ON,
     deg_to_rad,
 )
 from .polar_transport import PolarDriveIntent, PolarLinkTransport
+from .polar_control_policy import (
+    ControlGates, RobotRoleSelection, SpinCommandState, may_plan_gimbal,
+    gimbal_egress_owner as select_gimbal_egress,
+)
+from .radio_km_feedback import (
+    RadioKmReadback, decode_radio_km_policy, evaluate_radio_km_feedback,
+)
+from .robot_link_settings import (
+    ABSENT, BAUD_DEFAULT, PORT_DEFAULT, RobotLinkSettings,
+    PolarDriveSettings, PolarGimbalSettings, PolarSpinSettings,
+)
 from .safety import OfficialSafety
 from .serial_backend import RmSerialBackend
 from .controller_angles import AngleRelayConfig, ControllerAngleRelay, explicit_port, port_key
@@ -64,10 +91,6 @@ SENTRY_SEMI_AUTO = 1
 
 # 队内链路未连上时的重连间隔（秒）。Auto 重连会重新枚举串口。
 POLAR_RETRY_S = 2.0
-# RobotLink 里这两个控件的"没动过"长什么样：拿它们当哨兵，
-# 默认值时让场景配置继续说话（见 tick_polar_link 里的 precedence 注释）
-PORT_DEFAULT = "Auto"
-BAUD_DEFAULT = 115200
 
 _LOG = logging.getLogger(__name__)
 
@@ -83,6 +106,12 @@ class BackendManager:
         scenario_key: str = "LabDebug",
         referee_profile: str = DEFAULT_PROFILE,
     ) -> None:
+        self._lifecycle = BackendLifecycleController(
+            invalidate_runtime=self._invalidate_shutdown_runtime,
+            stopped_runtime=self._finish_stopped_runtime,
+            activate_scenario=self._activate_scenario,
+        )
+        self._serial_start_thread: threading.Thread | None = None
         self.paths = RuntimePaths.discover()
         self.workspace = workspace if workspace is not None else self.paths.workspace_root
         self.state = state
@@ -139,6 +168,9 @@ class BackendManager:
         self._native_next_restart_at = 0.0
         self._native_restart_backoff_s = 0.5
         self._native_failure_epoch_handled = False
+        self._native_restart_generation = 0
+        self._native_restart_thread: threading.Thread | None = None
+        self._native_restart_results: Queue[tuple[int, bool, dict[str, Any]]] = Queue(maxsize=1)
         self._apply_error_count = 0
         self._last_apply_error = ""
         self._official_state_updates_count = 0
@@ -146,12 +178,20 @@ class BackendManager:
         self._mqtt_disconnect_lock_at = 0.0
         self._mqtt_reconnected_locked_at = 0.0
         self._active_video_source = ""
+        self._video_source_request: VideoSourceRequest | None = None
+        self._video_source_generation = 0
+        self._video_source_failures = ()
+        self._referee_change_requested = ""
+        self._referee_change_error = ""
         self._normal_video_source = ""
         self._hero_native_override = False
         self._estop_triggered_at = 0.0
         self._last_estop_zero_ok = False
         self._last_estop_zero_reason = "not run"
         self._input_clear_generation = 0
+        self._input_clear_error = ""
+        self._input_owner_thread = threading.get_ident()
+        self._input_clear_requests: Queue[str] = Queue(maxsize=1)
         self.input_clear_hook: Callable[[str], None] | None = None
         # Optional presentation-only observer, called after authoritative apply.
         # It never owns/drains a queue and errors cannot affect control state.
@@ -251,6 +291,8 @@ class BackendManager:
         非法输入退回当前有效值，并且把有效值写回设置项 —— 宁可覆盖你的手误，
         也不让界面显示一个根本没在用的地址。
         """
+        if self._backend_transition_blocks_work():
+            return "Backend lifecycle transition pending or failed"
         module = registry.get("MQTTLink") if registry is not None else None
         if module is None:
             return ""
@@ -265,60 +307,87 @@ class BackendManager:
         port_setting = module.get_setting("Port")
         if host_setting is None or port_setting is None:
             return ""
-        want_host = str(host_setting.value or "").strip()
-        note = ""
-        try:
-            want_port = int(port_setting.value)
-        except (TypeError, ValueError):
-            want_port = -1
-        if not want_host or " " in want_host:
-            note = "MQTT 地址为空或含空格，沿用 " + str(self.mqtt.host)
-            want_host = str(self.mqtt.host)
-        if not 1000 <= want_port <= 9999:
-            note = (note + "；" if note else "") + "MQTT 端口非法，沿用 " + str(self.mqtt.port)
-            want_port = int(self.mqtt.port)
-        changed = self.mqtt.set_address(want_host, want_port)
-        # 设置项永远等于真正在用的地址：UI 不骗人
-        if str(host_setting.value) != self.mqtt.host:
-            host_setting.value = str(self.mqtt.host)
-        if int(port_setting.value or 0) != int(self.mqtt.port):
-            port_setting.value = int(self.mqtt.port)
-        self.mqtt.last_error = note
+        raw_host, raw_port = host_setting.value, port_setting.value
+        endpoint = admit_mqtt_endpoint(raw_host, raw_port,
+            current_host=self.mqtt.host, current_port=self.mqtt.port)
+        changed = self.mqtt.set_address(endpoint.host, endpoint.port)
+        # set_address may deliver an input-clear observer that edits settings
+        # or reenters sync. Repair only the captured request, without parsing
+        # raw values again or erasing a newer request/diagnostic from that hook.
+        host_unchanged = host_setting.value is raw_host
+        port_unchanged = port_setting.value is raw_port
+        if host_unchanged:
+            host_setting.value = self.mqtt.host
+        if port_unchanged:
+            port_setting.value = self.mqtt.port
+        if host_unchanged and port_unchanged:
+            self.mqtt.last_error = endpoint.note
         if changed:
             print(f"[mqtt] broker 改为 {self.mqtt.host}:{self.mqtt.port}")
-        return note
+        return endpoint.note
+
+    @property
+    def referee_profile_change(self) -> RefereeProfileChange:
+        return RefereeProfileChange(
+            self._referee_change_requested or self.referee.profile_id,
+            self.referee.profile_id, self.mqtt.referee.profile_id,
+            self.state.referee_profile if self.state is not None else None,
+            bool(self._referee_change_requested), self._referee_change_error,
+        )
 
     def set_referee_profile(self, profile_id: str, *, start_video: bool = True) -> None:
-        """A profile switch creates a locked receive/evidence epoch, never motion."""
+        """Accept a locked target; an explicit repeat retries incomplete application."""
+        if (not self._lifecycle.applying
+                and (self._input_clear_incomplete() or self._lifecycle.blocks_work)):
+            return
         try:
             profile = get_profile(profile_id)
         except ValueError:
             self.mqtt.publish_estop_zero()
-            self.mqtt.stop(publish_status=False)
+            self.mqtt.stop(publish_status=False, wait=False)
             self.safety.lock_control("unsupported referee profile")
             self.safety.current_stage = "0"
             self.safety._stage_seen = False
             raise
-        if profile.profile_id == self.referee.profile_id:
+        if profile.profile_id == self.referee.profile_id and not self._referee_change_requested:
             return
-        self.mqtt.publish_estop_zero()
-        self.safety.lock_control("referee profile changed")
-        self.mqtt.set_referee_profile(profile.profile_id)
-        self.referee = profile
-        self.referee_adapter = profile.create_state_adapter(self)
-        self.qualification.store.referee_profile = profile.profile_id
-        self.qualification.store.protocol_version = profile.protocol_version
-        self.native_decoder.stop()
-        self._native_recovery.reset()
-        self._native_0310_last_sequence = None
-        self._native_0310_blocked_until_sps = True
-        self._hero_native_override = False
-        self._normal_video_source = ""
-        if self.state is not None:
-            self._reset_state_for_scenario(self.state)
-            self.state.referee_profile = profile.profile_id
-        self.set_active_video_source(self.config.connection.video_source, start=start_video)
-        self.field_log.emit("referee_profile", profile=profile.profile_id, version=profile.protocol_version)
+        retry = bool(self._referee_change_error)
+        self._referee_change_requested = profile.profile_id
+        self._referee_change_error = ""
+        try:
+            self.mqtt.publish_estop_zero()
+            self.safety.lock_control("referee profile changed")
+            self._native_restart_generation += 1
+            self._native_0310_blocked_until_sps = True
+            # Retire the old decoder before publishing a new profile identity.
+            # Failed admission leaves the previous profile label consistent.
+            self.native_decoder.request_stop()
+            self._native_recovery.reset()
+            self._native_0310_last_sequence = None
+            self._hero_native_override = False
+            self._normal_video_source = ""
+            if self.state is not None:
+                self._reset_state_for_scenario(self.state)
+            self.mqtt.set_referee_profile(profile.profile_id)
+            adapter = profile.create_state_adapter(self)
+            self.referee = profile
+            self.referee_adapter = adapter
+            self.qualification.store.referee_profile = profile.profile_id
+            self.qualification.store.protocol_version = profile.protocol_version
+            if self.state is not None:
+                self.state.referee_profile = profile.profile_id
+            if self._input_clear_incomplete():
+                raise RuntimeError("Profile input clear incomplete: " +
+                                   (self._input_clear_error or "pending observer"))
+            self.set_active_video_source(self.config.connection.video_source,
+                                         start=start_video, _retry=retry)
+            self.field_log.emit("referee_profile", profile=profile.profile_id,
+                                version=profile.protocol_version)
+        except Exception as exc:
+            self._referee_change_error = f"{type(exc).__name__}: {exc}"
+            self.safety.lock_control("referee profile change incomplete")
+            raise
+        self._referee_change_requested = ""
 
     @staticmethod
     def _clear_mock_frontend_state(state: RobotState) -> None:
@@ -339,60 +408,120 @@ class BackendManager:
         state.official_state_active = True
         state.official_state_at = max(float(state.official_state_at), float(timestamp))
 
-    def apply_scenario(self, key: str, *, start: bool = True, registry: Any = None,
-                       robot_id: int | None = None) -> None:
+    def _scenario_request(self, key: str, *, start: bool, registry: Any,
+                          robot_id: int | None, synchronous_start: bool) -> ScenarioRequest:
+        """Read and validate GUI-owned settings before starting a transition."""
         key = key if key in SCENARIOS else "LabDebug"
-        was_estopped = bool(getattr(self.safety, "estop_active", False))
-        self.shutdown(restart=True)
-        if robot_id is not None:
-            # Apply identity while stopped, before any new endpoint connects.
-            self.set_client_id(robot_id)
-        self.scenario_key = key
-        self._hero_native_override = False
-        self._normal_video_source = ""
-        if self.state is not None:
-            self._reset_state_for_scenario(self.state)
-        config = self._config_from_registry(SCENARIOS[key], registry)
-        self._apply_config(config)
+        config = deepcopy(self._config_from_registry(SCENARIOS[key], registry))
+        profile_id = self.referee.profile_id
+        mode, host, port = self.polar.transport, self.polar.host, self.polar.tcp_port
         if registry is not None:
             mqtt_module = registry.get("MQTTLink")
-            profile_setting = mqtt_module.get_setting("Referee Profile") if mqtt_module else None
-            if profile_setting is not None:
-                self.set_referee_profile(str(profile_setting.value), start_video=False)
+            item = mqtt_module.get_setting("Referee Profile") if mqtt_module else None
+            if item is not None:
+                profile_id = str(item.value)
             robot_module = registry.get("RobotLink")
             if robot_module is not None:
                 def setting(name: str, default: Any) -> Any:
                     item = robot_module.get_setting(name)
                     return item.value if item is not None else default
                 mode = str(setting("Link Mode", "serial")).strip().lower()
-                if mode not in {"serial", "tcp"}:
-                    raise ValueError("Invalid configured robot transport")
-                self.polar.transport = mode
-                self.polar.host = str(setting("Bridge Host", "")).strip()
-                self.polar.tcp_port = int(setting("Bridge Port", 50570))
-                if not 1 <= self.polar.tcp_port <= 65535:
-                    raise ValueError("Invalid configured robot bridge port")
-        # shutdown() deliberately latches local E-stop.  A scenario switch has
-        # already emitted the neutral frame and now creates a fresh fail-closed
-        # safety epoch; it must not inherit the old software latch forever.
-        # A shutdown-created latch can be cleared for a fresh locked epoch,
-        # but an operator's pre-existing E-stop is never cleared by a reload.
-        if not was_estopped:
+                host = str(setting("Bridge Host", "")).strip()
+                port = int(setting("Bridge Port", 50570))
+        profile = get_profile(profile_id)
+        identity = profile.validate_client_id(str(self.mqtt.client_id if robot_id is None else robot_id))
+        if mode not in {"serial", "tcp"}:
+            raise ValueError("Invalid configured robot transport")
+        if not 1 <= port <= 65535:
+            raise ValueError("Invalid configured robot bridge port")
+        preserve_estop = bool(self.safety.estop_active)
+        if self._lifecycle.pending_scenario is not None:
+            preserve_estop = (self._lifecycle.pending_scenario.preserve_estop
+                              or self.safety.estop_at != self._lifecycle.transition_estop_at)
+        return ScenarioRequest(key, config, bool(start), identity, profile.profile_id,
+                               mode, host, port, preserve_estop, synchronous_start)
+
+    def request_scenario(self, key: str, *, start: bool = True, registry: Any = None,
+                         robot_id: int | None = None) -> int:
+        """UI entry point: neutralize now; close asynchronously; apply on poll."""
+        self._lifecycle.snapshot()  # Enforce owner affinity before touching settings/hooks.
+        if self._lifecycle.final:
+            raise RuntimeError("Backend is closing; scenario replacement is forbidden")
+        try:
+            request = self._scenario_request(key, start=start, registry=registry,
+                                             robot_id=robot_id, synchronous_start=False)
+        except (ValueError, TypeError):
+            # Bad settings cannot preserve a previously armed live epoch.
+            self.request_shutdown(restart=True)
+            raise
+        return self._request_scenario(request)
+
+    def _request_scenario(self, request: ScenarioRequest) -> int:
+        return self._lifecycle.request_scenario(request, self._capture_teardown_resources())
+
+    def apply_scenario(self, key: str, *, start: bool = True, registry: Any = None,
+                       robot_id: int | None = None) -> None:
+        """Explicit synchronous compatibility path for CLI and non-UI tests."""
+        self._lifecycle.snapshot()
+        if self._lifecycle.final:
+            raise RuntimeError("Backend is closing; scenario replacement is forbidden")
+        try:
+            request = self._scenario_request(key, start=start, registry=registry,
+                                             robot_id=robot_id, synchronous_start=True)
+        except (ValueError, TypeError):
+            self.shutdown(restart=True)
+            raise
+        self._request_scenario(request)
+        completion = self._wait_lifecycle()
+        if completion is not None and not completion.succeeded:
+            raise RuntimeError("Scenario transition failed: " + "; ".join(
+                failure.error for failure in completion.failures))
+
+    def _activate_scenario(self, request: ScenarioRequest) -> None:
+        """Owner-thread commit after old resource ownership is confirmed gone."""
+        # An explicit scenario request has already strictly closed all old
+        # video owners. Its activation begins a fresh source-admission epoch.
+        self._video_source_request = None
+        self._video_source_failures = ()
+        self._active_video_source = ""
+        self.scenario_key = request.key
+        self._hero_native_override = False
+        self._normal_video_source = ""
+        if self.state is not None:
+            self._reset_state_for_scenario(self.state)
+        self._apply_config(request.config)
+        self.set_referee_profile(request.referee_profile, start_video=False)
+        self.set_client_id(request.robot_id)
+        self.polar.transport = request.polar_mode
+        self.polar.host = request.polar_host
+        self.polar.tcp_port = request.polar_tcp_port
+        # A transition-created latch may become a fresh LOCKED epoch. An
+        # operator E-stop before or during teardown must never be released.
+        if not request.preserve_estop and self.safety.estop_at == self._lifecycle.transition_estop_at:
             self.safety.release_estop()
-        if not start:
+        if self._input_clear_incomplete():
+            raise RuntimeError("Scenario input clear incomplete: " + (self._input_clear_error or "pending observer"))
+        if not request.start:
             return
-        # 三种模式都启动 MQTT（可收裁判数据；发布按场景门控）
         self.mqtt.start()
-        # UDP socket/HEVC decoder are started only when that source is selected.
-        # Native 0x0310 arrives on MQTT and owns its own lazy decoder.
         if self._active_video_source in {"shark udp", "udp", "udp hevc", "hevc", "h265"}:
             self.udp.start()
-        # 串口：Stub 或真实端口
-        self.serial.start()
-        # 队内 0x5A 链路是**与裁判系统并行的独立通道**，不属于任何一个场景：
-        # 正式比赛本来就要同时用裁判系统（血量/增益/能量）和机器人 USB（驾驶与本体遥测）。
-        # 所以按“有没有配真实端口”决定要不要起，而不是按场景名。
-        # 端口为 ""/"Stub" 时 transport 自己会拒连，不会往任何串口写字节。
+        if request.synchronous_start:
+            self.serial.start()
+        else:
+            # Serial open can stall inside an OS driver. This one captured
+            # owner is joined before a later close/replacement may proceed.
+            starter = threading.Thread(target=self.serial.start,
+                name="backend-start-serial", daemon=True)
+            self._serial_start_thread = starter
+            try:
+                starter.start()
+            except Exception:
+                # ident survives thread exit: start-then-raise still owns any
+                # late-opened handle, even if is_alive() is already false.
+                if starter.ident is None:
+                    self._serial_start_thread = None
+                raise
         self.polar.request_start()
 
     def _retry_polar_connect(self) -> None:
@@ -463,38 +592,15 @@ class BackendManager:
         返回当前压在线上的指令，供诊断快照与 HUD 使用。
         """
 
-        now = time.perf_counter()
-        if desired:
-            self._spin_ever_on = True
-            self._spin_off_since = 0.0
-            cmd = SPIN_CMD_ON
-        elif not self._spin_ever_on:
-            # 客户端从未主张过自转，不碰驾驶员的状态
-            cmd = SPIN_CMD_NONE
-        elif reported is None:
-            # 固件未打 host_bridge 补丁（不发 0x1F），无法闭环：
-            # 有界发 OFF 后放手，宁可“可能没关掉”也不能锁死遥控器。
-            if self._spin_off_since <= 0.0:
-                self._spin_off_since = now
-            if now - self._spin_off_since >= self.SPIN_OFF_ASSERT_S:
-                self._spin_ever_on = False
-                self._spin_off_since = 0.0
-                cmd = SPIN_CMD_NONE
-            else:
-                cmd = SPIN_CMD_OFF
-        elif bool(reported):
-            # 回读说还在转，继续发 OFF
-            self._spin_off_since = 0.0
-            cmd = SPIN_CMD_OFF
-        else:
-            # 回读确认已停 -> 交还控制权
-            self._spin_ever_on = False
-            self._spin_off_since = 0.0
-            cmd = SPIN_CMD_NONE
-
-        self._spin_assert = cmd
-        self.polar.set_spin_command(cmd)
-        return cmd
+        decision = SpinCommandState(self._spin_ever_on, self._spin_off_since).advance(
+            desired=desired, reported=reported, now=time.perf_counter(),
+            off_assert_s=self.SPIN_OFF_ASSERT_S,
+        )
+        self._spin_ever_on = decision.ever_on
+        self._spin_off_since = decision.off_since
+        self._spin_assert = decision.command
+        self.polar.set_spin_command(decision.command)
+        return decision.command
 
     def _sync_controller_angles(self, registry: Any) -> dict[str, Any]:
         """Configure the independent RX relay; never open a device on the UI thread.
@@ -503,6 +609,12 @@ class BackendManager:
         relay's explicit arm. MQTT qualification does not authorize or block
         this separate physical-controller serial link.
         """
+        if self._backend_transition_blocks_work():
+            self.controller_angles.disarm("Backend transition pending or failed")
+            status = self.controller_angles.stats()
+            if self.state is not None:
+                self.state.backend_stats["controller_angles"] = status
+            return status
         module = registry.get("ControllerAngles") if registry is not None else None
         robot = registry.get("RobotLink") if registry is not None else None
 
@@ -534,7 +646,10 @@ class BackendManager:
                 owners.append(("DT7", str(value(robot, "DT7 Port", "Auto"))))
         for label, handle in (("CC prior writer", getattr(self, "_cc_link", None)),
                               ("DT7 prior writer", getattr(self, "_dt7_link", None))):
-            if handle is not None and not getattr(handle, "mock_output", True):
+            if (handle is not None and not getattr(handle, "mock_output", True)
+                    and getattr(handle, "port_handoff_ready", False) is not True):
+                # A generic closed flag is insufficient: the writer must
+                # prove neutral, completed teardown and no retained handle.
                 owners.append((label, str(getattr(handle, "resolved_port", "")
                                           or getattr(handle, "port", "Auto"))))
         serial = getattr(self, "serial", None)
@@ -544,10 +659,15 @@ class BackendManager:
         if config.forward and not config.mock_output:
             used.add(port_key(config.tx_port))
         if config.enabled:
-            for label, port in owners:
-                if port.strip().lower() == "auto" or (explicit_port(port) and port_key(port) in used):
-                    conflict = f"{label} port may conflict; select distinct explicit ports or Stub"
-                    break
+            # Keep alias observations lazy: the first conflict stops evaluation,
+            # and disabled reception must not inspect owner aliases at all.
+            reservations = (
+                PortReservation(label, unresolved_auto=True)
+                if port.strip().lower() == "auto" else
+                PortReservation(label, port_key(port) if explicit_port(port) else None)
+                for label, port in owners
+            )
+            conflict = first_port_conflict(used, reservations)
         if conflict:
             config = replace(config, enabled=False)
             authorized = False
@@ -563,6 +683,9 @@ class BackendManager:
         """Never wait for the transport's driver-held TX lock on a UI tick."""
         if control is not None:
             self._dt7_control_ref = control
+        self._drain_input_clear()
+        if self._backend_transition_blocks_work():
+            return {"active": False, "polar_status": self.lifecycle_snapshot.phase.value}
         self._poll_device_writers(control)
         # The independent angle watchdog/ownership must run even if POLAR is
         # busy or closing, before another serial egress can claim a port.
@@ -620,28 +743,50 @@ class BackendManager:
                 control.cc_last_error = cc_writer.last_error
 
     def _configure_device_egress(self, registry, control):
-        module = registry.get("RobotLink") if registry is not None else None
-        names = ("Direct DT7 Egress", "DT7 Port", "DT7 Real TX", "DT7 Allow Fire Keys",
-                 "Custom Controller Egress", "CC Port", "CC Hz", "CC Mock Writes",
-                 "Allow Spin Key", "Allow Drive")
-        settings = {name: module.get_setting(name) if module is not None else None for name in names}
-        allow_drive = bool(getattr(settings.get("Allow Drive"), "value", False))
-        estopped = bool(self.safety.estop_active)
+        settings = DeviceEgressSettings.capture(registry)
+        permissions = EgressPermissions(
+            settings.module_enabled, bool(settings.allow_drive_value), bool(self.safety.estop_active),
+        )
         # Independent writers must process every falling edge even while the
         # other writer is still retiring an old target.
-        self._configure_cc_egress(control, settings, module, allow_drive, estopped)
-        dt7_setting = settings.get("Direct DT7 Egress")
-        dt7_wanted = bool(dt7_setting is not None and dt7_setting.value)
+        self._configure_cc_egress(control, settings.cc, permissions)
+        dt7_settings = settings.dt7
+        dt7_wanted = dt7_settings.requested
         if control is not None:
             control.dt7_selected = dt7_wanted
-        self._dt7_selected = bool(dt7_wanted and module is not None and module.enabled)
+        self._dt7_selected = bool(dt7_wanted and permissions.module_enabled)
         if control is not None and dt7_wanted:
             prof = dt7_link.load_profile()
-            port = str(getattr(settings.get("DT7 Port"), "value", "Auto") or "Auto")
+            endpoint = dt7_settings.endpoint()
+            port = endpoint.port
             # "DT7 Real TX" 是显式硬件闸：不勾就只产帧不碰串口。原来这里连
             # mock_output 都不传，等于 C 路在客户端里根本发不出一个字节。
-            real_tx = bool(getattr(settings.get("DT7 Real TX"), "value", False))
+            real_tx = endpoint.real_tx
             link = getattr(self, "_dt7_link", None)
+            if getattr(link, "startup_failed", False) and not link.closed:
+                control.dt7_link = link
+                control.dt7_enabled = False
+                control.dt7_last_error = link.last_error or "DT7 writer startup cleanup pending"
+                self._dt7_was_enabled = False
+                return {"active": self.polar_bridge.active, "dt7_error": control.dt7_last_error}
+            angle_link = getattr(self, "controller_angles", None)
+            owned_ports = angle_link.owned_ports if angle_link is not None else ()
+            if real_tx and owned_ports and (port.strip().lower() == "auto"
+                    or any(port_key(port) == port_key(p) for p in owned_ports)):
+                # A stop request does not release the angle reader's serial
+                # ownership. Revoke before neutralizing the retained DT7
+                # writer; neither a new writer nor its authority may bypass it.
+                control.dt7_enabled = False
+                if link is not None:
+                    control.dt7_link = link
+                if (getattr(self, "_dt7_was_enabled", False)
+                        or getattr(control, "dt7_release_pending", False)
+                        or not getattr(link, "wire_neutral", True)):
+                    control.release_direct_dt7()
+                control.dt7_last_error = "角度链路仍占用串口；等待关闭后再启用直连 DT7 出口"
+                self._dt7_was_enabled = False
+                return {"active": self.polar_bridge.active,
+                        "dt7_error": control.dt7_last_error}
             if (link is None or getattr(link, "closed", False)
                     or link.port != port or link.profile != prof
                     or link.mock_output == real_tx):
@@ -667,17 +812,19 @@ class BackendManager:
                         control.dt7_enabled = False
                         return {"active": self.polar_bridge.active, "dt7_error": "DT7 previous writer closing"}
                 writer_type = AsyncDt7KeyMouseLink if real_tx else dt7_link.Dt7KeyMouseLink
+                ownership = ({"retain_owner": lambda owner: setattr(self, "_dt7_link", owner)}
+                             if real_tx else {})
                 link = writer_type(port=port, profile=prof,
-                                   mock_output=not real_tx, safety=self.safety)
-                self._dt7_link = link
+                                   mock_output=not real_tx, safety=self.safety, **ownership)
+                if getattr(self, "_dt7_link", None) is not link:
+                    self._dt7_link = link
                 self._dt7_change_key = None
             control.dt7_link = link
             link.safety = self.safety
             link.authorization_guard = self._dt7_evidence_gate
             policy_ok, policy_reason = (True, "mock") if link.mock_output else self.safety.can_transmit_dt7(
                 qualification_token=getattr(control, "dt7_qualification_token", None))
-            dt7_live = bool(not estopped and allow_drive
-                            and module is not None and module.enabled and policy_ok)
+            dt7_live = bool(permissions.may_drive and policy_ok)
             # 松手帧要覆盖**每一条**降级路径：急停、撤 Allow Drive、模块停用。
             # 旧代码只在急停时补，另外两条路是"直接停发" —— 而 DT7 那侧没有
             # 过期自动清零，键会粘在车上继续控。
@@ -688,13 +835,11 @@ class BackendManager:
             from ..control import (DT7_DEFAULT_KEY_MASK, DT7_FIRE_KEY_MASK,
                                    DT7_SPIN_KEY_MASK)
             mask = int(DT7_DEFAULT_KEY_MASK)
-            spin_setting = settings.get("Allow Spin Key")
-            if spin_setting is not None and bool(spin_setting.value):
+            if dt7_settings.spin_allowed:
                 mask |= int(DT7_SPIN_KEY_MASK)
-            fire_setting = settings.get("DT7 Allow Fire Keys")
-            if fire_setting is not None and bool(fire_setting.value):
+            if dt7_settings.fire_allowed:
                 mask |= int(DT7_FIRE_KEY_MASK)
-            control.dt7_allow_fire = bool(fire_setting is not None and fire_setting.value)
+            control.dt7_allow_fire = dt7_settings.fire_allowed
             control.dt7_key_mask = mask
             control.dt7_enabled = dt7_live
             if not dt7_live:
@@ -717,33 +862,72 @@ class BackendManager:
         registry: Any = None,
         control: Any = None,
     ) -> dict[str, Any]:
-        """队内 0x5A 链路的单帧泵：下行入 HUD，已授权的意图上线。
-
-        必须排在 tick 阶段表的**最后**：`RobotState.tick()` 的桌面仿真会写同一批
-        字段（底盘/云台朝向、buff、能量），只有后写才能覆盖先写。
-        """
-
+        """Apply one POLAR tick after simulation; publish only gated intentions."""
         target = state if state is not None else self.state
         if target is None:
             return {"active": False}
         if control is not None:
             self._dt7_control_ref = control
+        self._apply_polar_telemetry(target)
+        settings = RobotLinkSettings.capture(registry)
+        if not self._apply_polar_configuration(settings):
+            return {"active": self.polar_bridge.active, "polar_status": "closing"}
+        # Retry only after all endpoint settings, never against the old target.
+        self._retry_polar_connect()
+        target.polar_link_active = self.polar_bridge.active
+        self.polar_arbiter.request_takeover(
+            client_gimbal_enabled=settings.gimbal.requested,
+            vision_nuc_occupied=settings.gimbal.vision_nuc_occupied,
+        )
+        estopped = self._sync_polar_estop()
+        plan = self._plan_polar_gimbal(target, estopped=estopped)
+        command = getattr(control, "last_command", None) if control is not None else None
+        role = RobotRoleSelection.resolve(
+            int(getattr(target, "robot_id", 0) or 0),
+            int(getattr(target, "polar_reported_robot_id", 0) or 0),
+        )
+        gates = ControlGates(estopped, settings.drive.module_enabled,
+                             settings.drive.allow_drive, bool(self.polar_bridge.active))
+        drive_armed = gates.chassis_authorized(
+            requested=settings.drive.chassis_requested, role_block=role.drive_block,
+        )
+        if control is not None:
+            self._apply_radio_km_feedback(control, self.polar_bridge, gates,
+                                          requested=settings.drive.radio_requested)
+        velocity = self._scale_polar_drive(command, settings.drive, role, armed=drive_armed)
+        motion_state, motion_stats = self._update_polar_motion(target, velocity)
+        self._publish_polar_authority(target, estopped=estopped,
+                                      drive_armed=drive_armed, motion_stats=motion_stats)
+        self._apply_polar_spin(target, settings.spin, gates)
+        self._apply_polar_gimbal_host_request(control, settings.gimbal, gates)
+        self._submit_polar_intent(velocity, plan, command, drive_armed=drive_armed)
+        return {
+            "active": self.polar_bridge.active,
+            "drive_armed": drive_armed,
+            "estopped": estopped,
+            "motion_state": motion_state,
+            "authority": self.polar_arbiter.state if not estopped else "ESTOP",
+            "gimbal_target_deg": plan,
+            "error": self.polar.last_error or self.polar_bridge.last_error,
+            **role.diagnostics(),
+            "gimbal_egress": self.gimbal_egress_owner(target, registry),
+        }
+
+    def _apply_polar_telemetry(self, target: RobotState) -> None:
+        """Apply authoritative robot data after the frontend simulation step."""
+        bridge = self.polar_bridge
         for segment in self.polar.drain_segments():
-            self.polar_bridge.apply(segment)
+            bridge.apply(segment)
             if segment.segment_id == SEG_ROBOT_MOTION:
                 self.polar_motion.note_motion_segment()
             elif segment.segment_id == SEG_ROBOT_STATUS:
-                # 0x0A 带测速模块坐标：没有 0x1E 时用它以位移判定车是否动。
+                # Position is motion evidence when firmware has no 0x1E segment.
                 self.polar_motion.note_position(
-                    self.polar_bridge.overlay.get("polar_self_x", 0.0),
-                    self.polar_bridge.overlay.get("polar_self_y", 0.0),
+                    bridge.overlay.get("polar_self_x", 0.0),
+                    bridge.overlay.get("polar_self_y", 0.0),
                 )
             elif segment.segment_id == SEG_CHASSIS_STATE:
-                # 0x1F 只有打了 host_bridge 补丁的固件才会发。
-                # 它是自转指令唯一的闭环证据，必须单独记一笔。
                 self.polar_chassis_state_seen = True
-
-        bridge = self.polar_bridge
         target.polar_link_active = bridge.active
         target.polar_link_age_s = min(bridge.link_age_s, 999.0)
         target.polar_segments_received = sum(bridge.segment_counts.values())
@@ -753,469 +937,197 @@ class BackendManager:
         target.polar_overlay = dict(bridge.overlay)
         target.apply_polar_overlay()
 
-        module = registry.get("RobotLink") if registry is not None else None
-        settings = {
-            name: (module.get_setting(name) if module is not None else None)
-            for name in (
-                "Allow Drive",
-                "Link Mode",
-                "Bridge Host",
-                "Bridge Port",
-                "Mock Writes",
-                "Allow Spin Key",
-                "Radio KM Egress",
-                "Custom Controller Egress",
-                "Direct DT7 Egress",
-                "DT7 Port",
-                "DT7 Real TX",
-                "DT7 Allow Fire Keys",
-                "CC Port",
-                "CC Hz",
-                "CC Mock Writes",
-                "Client Chassis Drive",
-                "Client Gimbal Control",
-                "Vision NUC Occupied",
-                "Speed Scale %",
-                "Yaw Scale %",
-                "Gimbal Slew",
-                "Drive Channel",
-                "Send Hz",
-                "Port",
-                "Baud",
-            )
-        }
-        # RobotLink 的 Port / Baud 要落到传输层：以前只有场景初值
-        # （config.connection.polar_port）被用过一次，界面上选口/改波特率**一点作用都没有**,
-        # 而出错提示还写着"在 RobotLink.Port 里显式选口"，等于指了一条不起作用的路。
-        #
-        #  precedence 规则（明确写死，别让两个来源打架）：
-        #   * 模块设置保持默认（Auto / 115200）=> 场景配置说了算，行为与接线前逐位相同
-        #   * 操作员显式改过 => 以模块设置为准（"我在界面上选了 COM7 就得是 COM7"）
-        #   * 显式清空 Port 不回退到"猜一个口"，保持上一次的确定值
-        # 之所以不无脑让模块赢：默认值是 Auto，官方场景下会突然去自动找串口，
-        # 选错口的后果比"没生效"严重得多。
-        port_setting = settings.get("Port")
-        if port_setting is not None:
-            want_port = str(port_setting.value or "").strip()
-            if want_port and want_port != PORT_DEFAULT:
-                if want_port != str(self.polar.port or ""):
-                    if not self._prepare_polar_reconfigure("robot port changed; fresh telemetry required"):
-                        return {"active": bridge.active, "polar_status": "closing"}
-                    self.polar.port = want_port
-                    self.polar.last_error = ""
-                    self.polar.last_error_code = ""
-        baud_setting = settings.get("Baud")
-        if baud_setting is not None:
-            try:
-                want_baud = int(baud_setting.value)
-            except (TypeError, ValueError):
-                want_baud = 0
-            # C 板那条是 USB CDC，固件不看波特率；但换成 UART 桥一类接法时它就是有效参数。
-            # 界面既然给了这个框，后端就得读它 —— 但同样只在被显式改过时才覆盖场景。
-            if want_baud != BAUD_DEFAULT and 1200 <= want_baud <= 3_000_000 \
-                    and want_baud != int(self.polar.baud):
-                if not self._prepare_polar_reconfigure("robot baud changed; fresh telemetry required"):
-                    return {"active": bridge.active, "polar_status": "closing"}
-                self.polar.baud = want_baud
-        # 驾驶授权与队内写入开关都属于模块自己，**不能**取场景标志：
-        # 大疆官方场景的 allow_polar_drive=False 只表示“本场景不自动授权”，
-        # 开不了“操作员手动开了”的情形。早期版本拿它当闸门，导致官方场景下
-        # 无论怎么勾选都发不出指令（现由集成测试固定断言）。
-        allow_setting = settings["Allow Drive"]
-        allow_drive = bool(allow_setting.value) if allow_setting is not None else False
-        mock_setting = settings["Mock Writes"]
-        want_mock = bool(mock_setting.value) if mock_setting is not None else self.polar.mock_writes
-        slew_setting = settings["Gimbal Slew"]
-        if slew_setting is not None and self.polar_arbiter.slew != float(slew_setting.value):
-            self.polar_arbiter.slew = max(1.0, min(45.0, float(slew_setting.value)))
-        # 发送频率归模块设置管。原来它只在 __init__ 里从场景配置
-        # （config.connection.polar_send_hz）读一次，界面上的 “Send Hz” 滑块
-        # 根本没人读——拖了、存了、重启也还在，但频率一点没变。
-        # 场景配置仍作为初值（见 __init__），模块设置是运行期的唯一真相。
-        # D 路：把"字节从哪儿来"这一层切到车端桥上。协议层不动一个字节。
-        mode_setting_obj = settings.get("Link Mode")
-        if mode_setting_obj is not None:
-            want_mode = str(mode_setting_obj.value or "serial").strip().lower()
-            want_mode = want_mode if want_mode in ("serial", "tcp") else "serial"
-            host_obj = settings.get("Bridge Host")
-            port_obj = settings.get("Bridge Port")
-            want_host = str(getattr(host_obj, "value", "") or "").strip()
-            try:
-                want_port = int(getattr(port_obj, "value", 50570) or 50570)
-            except (TypeError, ValueError):
-                want_port = 50570
-            if (self.polar.transport, self.polar.host, self.polar.tcp_port) != (
-                    want_mode, want_host, want_port):
-                # 换链路等于换一条连接：旧句柄必须关，否则还在往老地方写
-                if not self._prepare_polar_reconfigure("robot bridge endpoint changed; fresh telemetry required"):
-                    return {"active": bridge.active, "polar_status": "closing"}
-                self.polar.transport = want_mode
-                self.polar.host = want_host
-                self.polar.tcp_port = want_port
-                if want_mode == "tcp" and not want_host:
-                    self.polar.last_error = "TCP 模式要先填桥接主机地址"
-                    self.polar.last_error_code = "NO_BRIDGE_HOST"
-        if want_mock != self.polar.mock_writes:
-            # With no stream/open attempt there is no old output to retire.
-            # Do not revoke independent DT7/CC authorization just to establish
-            # POLAR's initial setting; reconnect owns its own fresh epoch.
-            if (self.polar._serial is not None or self.polar._running
-                    or self.polar._connecting or self.polar._stopping):
-                if not self._prepare_polar_reconfigure("robot output mode changed; fresh telemetry required"):
-                    return {"active": bridge.active, "polar_status": "closing"}
-            self.polar.mock_writes = want_mock
-        hz_setting = settings.get("Send Hz")
-        if hz_setting is not None:
-            try:
-                self.polar.set_send_hz(float(hz_setting.value))
-            except (TypeError, ValueError):
-                # 垃圾值不得把链路带倒：保持当前频率，不报错不中断 tick
-                pass
-        # 驾驶上行通道：virtual_rc 复用固件已生效的 WASD 驾驶逻辑，
-        # 只需固件补一处 VIRTUAL_RC_CTRL → rc_ctrl 接线。
-        channel_setting = settings.get("Drive Channel")
-        if channel_setting is not None:
-            channel = str(channel_setting.value or "robot_cmd").strip().lower().replace(" ", "_")
-            self.polar.drive_channel = channel if channel in (
-                "robot_cmd",
-                "virtual_rc",
-                "both",
-            ) else "robot_cmd"
-
-        # Only attempt connection after all current endpoints have been read;
-        # never briefly retry the previous target while a setting is changing.
-        self._retry_polar_connect()
-        target.polar_link_active = bridge.active
-
-        self.polar_arbiter.request_takeover(
-            client_gimbal_enabled=bool(
-                settings["Client Gimbal Control"].value
-            )
-            if settings["Client Gimbal Control"] is not None
-            else False,
-            vision_nuc_occupied=bool(settings["Vision NUC Occupied"].value)
-            if settings["Vision NUC Occupied"] is not None
-            else True,
-        )
-
-        # 急停优先于一切：同帧锁零，且不再给云台/底盘产生任何非零意图。
-        # 这里不提前 return：否则下面的诊断快照与授权字段会被跳过，HUD 会卡在旧值。
+    def _sync_polar_estop(self) -> bool:
         estopped = bool(getattr(self.safety, "estop_active", False))
         if estopped:
             self.polar.request_estop()
             self._polar_gimbal_last = None
         else:
             self.polar.release_estop()
+        return estopped
 
+    def _plan_polar_gimbal(self, target: RobotState, *, estopped: bool) -> tuple[float, float] | None:
         plan = None
-        if (
-            not estopped
-            and self.polar_arbiter.may_command_gimbal
-            and bridge.active
-            and getattr(target, "vision_calibrated", False)
-            and getattr(target, "target_locked", False)
-            and not robot_roles.gimbal_block_reason(
-                int(getattr(target, "robot_id", 0) or 0)
-            )
+        if may_plan_gimbal(
+            estopped=estopped,
+            arbiter_authorized=self.polar_arbiter.may_command_gimbal,
+            link_active=self.polar_bridge.active,
+            calibrated=bool(getattr(target, "vision_calibrated", False)),
+            target_locked=bool(getattr(target, "target_locked", False)),
+            selected_robot_id=getattr(target, "robot_id", 0),
         ):
             plan = self.polar_arbiter.plan_gimbal(
                 float(getattr(target, "vision_aim_yaw_deg", 0.0) or 0.0),
                 float(getattr(target, "vision_aim_pitch_deg", 0.0) or 0.0),
-                bridge.overlay.get("gimbal_yaw_deg"),
-                bridge.overlay.get("gimbal_pitch_deg"),
+                self.polar_bridge.overlay.get("gimbal_yaw_deg"),
+                self.polar_bridge.overlay.get("gimbal_pitch_deg"),
             )
         self._polar_gimbal_last = plan
+        return plan
 
-        chassis_setting = settings["Client Chassis Drive"]
-        command = getattr(control, "last_command", None) if control is not None else None
-        vx = vy = wz = 0.0
-        # 兵种对齐：限幅与可驾驶性查固件参数表（rm_client/robot_roles.py）。
-        # 机器人会在 0x0A 里上报自己的编号（`polar_reported_robot_id`），那才是
-        # 实际连上的那台车，所以限幅跟它走；操作员选的 `robot_id` 用作交叉校验。
-        selected_id = int(getattr(target, "robot_id", 0) or 0)
-        reported_id = int(getattr(target, "polar_reported_robot_id", 0) or 0)
-        role_id = reported_id or selected_id
-        role = robot_roles.limits_for(role_id)
-        role_block = robot_roles.drive_block_reason(role_id)
-        # 选错车是真实事故源：限速不同（英雄 2.0 / 步兵 1.5），而且给哨兵下
-        # 驾驶指令会破坏它的自动巡线。两边都知道时不一致就必须告警。
-        role_mismatch = (
-            ""
-            if not (selected_id and reported_id and selected_id != reported_id)
-            else f"界面选的兵种是 {selected_id}，但机器人自报编号是 {reported_id}；"
-                 f"限幅与驾驶权限已按实际车辆（{role.label}）执行，请核对界面选择"
+    @staticmethod
+    def _scale_polar_drive(command, settings: PolarDriveSettings,
+                           role: RobotRoleSelection, *, armed: bool) -> tuple[float, float, float]:
+        if not armed or command is None:
+            return 0.0, 0.0, 0.0
+        speed_scale, yaw_scale = settings.scales()
+        return scale_drive(
+            command.vx, command.vy, command.wz,
+            max_linear_mps=role.limits.max_linear_mps * speed_scale,
+            max_yaw_rps=role.limits.max_yaw_rps * yaw_scale,
         )
 
-        drive_armed = bool(
-            not estopped
-            and not role_block
-            and allow_drive
-            and module is not None
-            and module.enabled
-            and chassis_setting is not None
-            and chassis_setting.value
-            and bridge.active
-        )
-        # 无线键鼠出口（0x0311）：界面上那个开关只代表"操作员想开"，
-        # 这里补齐另外三道闸——没急停、RobotLink 模块启用、驾驶已授权。
-        # 与 drive_armed 的区别是**不要求 polar bridge.active**：这条出口的
-        # 设计目的就是不插 USB 线也能控车，拿 USB 链路状态当闸门会把它自己
-        # 锁死。（图传那条路自己的频控/门控在 MqttBackend 与车上固件里。）
-        radio_setting = settings.get("Radio KM Egress")
-        radio_km_wanted = bool(radio_setting is not None and radio_setting.value)
-        if control is not None:
-            radio_km_live = bool(
-                radio_km_wanted
-                and not estopped
-                and allow_drive
-                and module is not None
-                and module.enabled
-            )
-            control.radio_km_enabled = radio_km_live
-            # 车上回读：km_rx = C 板实际收到的 0x0311 帧数，km_key = 合并后的键位。
-            # 只有插着 USB 0x5A 时才拿得到；拔了线就是"不知道"，绝不能当成"没收到"。
-            dbg = bridge.debug_packages or {}
-            rx_raw = dbg.get("km_rx")
-            key_raw = dbg.get("km_key")
-            from ..control import describe_km_policy
-            pol_name, pol_uses, pol_hint = describe_km_policy(dbg.get("km_pol"))
-            control.radio_km_policy = pol_name
-            control.radio_km_policy_hint = pol_hint
-            try:
-                rx_now = int(float(rx_raw)) if rx_raw is not None else None
-            except (TypeError, ValueError):
-                rx_now = None
-            try:
-                control.radio_km_robot_key = (int(float(key_raw))
-                                              if key_raw is not None else -1)
-            except (TypeError, ValueError):
-                control.radio_km_robot_key = -1
-            control.radio_km_robot_key_at = bridge.debug_key_at
-            control.radio_km_robot_key_sequence = bridge.debug_key_sequence
-            if not (bridge.debug_key_at > 0 and 0 <= time.perf_counter() - bridge.debug_key_at <= 0.75):
-                control.radio_km_robot_key = -1
-            prev_rx = getattr(self, "_km_rx_prev", None)
-            growing = rx_now is not None and prev_rx is not None and rx_now > prev_rx
-            self._km_rx_prev = rx_now if rx_now is not None else prev_rx
-            control.radio_km_robot_rx = -1 if rx_now is None else rx_now
-            control.radio_km_robot_rx_growing = bool(growing)
-            if not radio_km_wanted:
-                control.radio_km_link_state = "off"
-                control.radio_km_link_note = "未开启"
-            elif not radio_km_live:
-                control.radio_km_link_state = "blocked"
-                control.radio_km_link_note = "闸门未过"
-            elif rx_now is None:
-                control.radio_km_link_state = "no-readback"
-                control.radio_km_link_note = "车上计数读不到（插一下 USB 0x5A 就能看到）"
-            elif growing:
-                control.radio_km_link_state = "live"
-                # "帧到了"和"这一档会用它的键位"是两件事，必须分开说：
-                # 默认档 CL_KM_RC 下计数照涨但键位永远不会参与，只报"已收到"会骗人
-                control.radio_km_link_note = (
-                    f"车上已收到 {rx_now} 帧 0x0311，但档位 {pol_name} 不参与"
-                    if pol_uses is False
-                    else f"车上已收到 {rx_now} 帧 0x0311（档位 {pol_name}）")
-            elif rx_now == 0:
-                control.radio_km_link_state = "silent"
-                control.radio_km_link_note = (
-                    "车上一个 0x0311 都没收到。注意：官方要求图传发送端串口 921600"
-                    "（规程表 1-1），而本固件只配了 USART1/USART3/USART6，"
-                    "全仓没有 921600 那一路 —— 所以光把线接到 C 板也不会收到。"
-                    "两条可行做法：① 用 C 路（直连 DT7，不依赖图传接线）；"
-                    "② 车载电脑收 0x0311 后经 HostKmFeed 喂进 C 板。")
-            else:
-                control.radio_km_link_state = "stalled"
-                control.radio_km_link_note = f"计数停在 {rx_now}，不再增长：链路中途断了"
-            if not radio_km_wanted:
-                control.radio_km_gate_reason = ""
-            elif radio_km_live:
-                # 生效了就把旧的"没生效"原因清掉，别让诊断行骗人。
-                control.radio_km_gate_reason = ""
-            else:
-                # 操作员开了开关却一帧都不发，最常见原因就是下面这三条。
-                control.radio_km_gate_reason = (
-                    "无线键鼠出口未生效："
-                    + ("急停激活" if estopped else
-                       ("模块 RobotLink 未启用" if not (module is not None and module.enabled)
-                        else "未授予 Allow Drive"))
-                )
-        # ---- 自定义控制器出口（0x0306 -> 选手端 -> DT7 空口）----
-        # 三道闸与 0x0311 那条一致（非急停 / 模块启用 / Allow Drive），
-        # 两条区别要记清：这条**不经过 MQTT、也不经过车上图传串口**，
-        # 所以 0x0311 判成 NO-RX 时它依然可用；代价是选手端必须在跑，
-        # 且"键鼠来源"只能有一个（2026 协议 2.2.1）。
-        # ---- 直连 DT7 出口：同样三道闸，但不要求选手端在跑、也不要求 0x5A 在线 ----
-        if drive_armed and command is not None:
-            speed_scale = float(settings["Speed Scale %"].value or 100) / 100.0
-            yaw_scale = float(settings["Yaw Scale %"].value or 100) / 100.0
-            vx, vy, wz = scale_drive(
-                command.vx,
-                command.vy,
-                command.wz,
-                # 限幅跟兵种走：英雄麦轮 2.0，全向轮步兵 1.5
-                max_linear_mps=role.max_linear_mps * speed_scale,
-                max_yaw_rps=role.max_yaw_rps * yaw_scale,
-            )
-
-        # 指令-实测交叉校验：把「链路正常但车不动」变成可读告警。
+    def _update_polar_motion(self, target: RobotState, velocity: tuple[float, float, float]):
+        bridge = self.polar_bridge
         motion_state = self.polar_motion.update(
             link_active=bridge.active,
-            commanded_vx=vx,
-            commanded_vy=vy,
-            commanded_wz=wz,
+            commanded_vx=velocity[0], commanded_vy=velocity[1], commanded_wz=velocity[2],
             measured_vx=bridge.overlay.get("measured_vx_mps"),
             measured_vy=bridge.overlay.get("measured_vy_mps"),
             measured_wz=bridge.overlay.get("measured_wz_rps"),
         )
-        motion_stats = self.polar_motion.stats()
+        stats = self.polar_motion.stats()
         target.polar_motion_state = motion_state
-        target.polar_motion_detail = str(motion_stats["detail"] or "")
+        target.polar_motion_detail = str(stats["detail"] or "")
+        return motion_state, stats
 
-        # 把仲裁结果回写到 state：上车时操作员必须能直接看到指令现在是否生效。
-        arbiter_stats = self.polar_arbiter.stats()
+    def _publish_polar_authority(self, target: RobotState, *, estopped: bool,
+                                 drive_armed: bool, motion_stats: dict[str, Any]) -> None:
+        """Refresh authority/diagnostics even without any referee traffic."""
+        bridge = self.polar_bridge
+        authority = self.polar_arbiter.stats()
         target.polar_drive_armed = drive_armed
         target.polar_gimbal_client = self.polar_arbiter.may_command_gimbal
-        target.polar_authority_state = "ESTOP" if estopped else str(arbiter_stats["state"])
+        target.polar_authority_state = "ESTOP" if estopped else str(authority["state"])
         target.polar_authority_reason = (
-            "急停激活，队内链路控制已锁零" if estopped else str(arbiter_stats["reason"] or "")
+            "急停激活，队内链路控制已锁零" if estopped else str(authority["reason"] or "")
         )
-        # 诊断快照必须每帧自己刷：`apply_updates` 只在收到官方 MQTT 消息时
-        # 才写 backend_stats，而台架/实车场景根本没有裁判机流量。
         target.backend_stats["polar_link"] = {
-            **self.polar.stats(),
-            "link_alive": bool(bridge.active),
-            "segment_counts": {
-                f"0x{key:02X}": int(value)
-                for key, value in sorted(bridge.segment_counts.items())
-            },
-            "dropped_segments": bridge.dropped,
-            "decode": {
-                "frames_ok": self.polar.codec.stats.frames_ok,
-                "crc8_errors": self.polar.codec.stats.crc8_errors,
-                "crc16_errors": self.polar.codec.stats.crc16_errors,
-                "unknown_segments": self.polar.codec.stats.unknown_segments,
-                "length_errors": self.polar.codec.stats.length_errors,
-                "buffer_overflows": self.polar.codec.stats.buffer_overflows,
-            },
-            "authority": arbiter_stats,
+            **capture_polar_link_health(lambda: self.polar, lambda: bridge),
+            "authority": authority,
             "motion": motion_stats,
             "timestamp_roll_detected": self.polar.timestamp.roll_detected,
         }
 
-        # “受击后小陀螺”走 0x5A。
-        #
-        # 这里曾经把 SpinMode 的启用状态翻成 0x03 的 SHIFT 键位，那是**错的**：
-        # 固件对 SHIFT 是边沿翻转（chassis_mecanum.c:177 置 1 / :223 置 0 /
-        # chassis_omni.c:96 取反，而松手 :187 / :107 不改变 spin_flag），
-        # 客户端因此只能开、关不掉，再开一次反而把自转关掉。
-        # 现在改走上行 0x04 的显式“设定”指令，并用下行 0x1F 回读闭环确认。
-        #
-        # 刻意**不**挂在 drive_armed 上：
-        #   1) 0x04 不覆盖驾驶员物理遥控器（只维护 spin_flag），没有 0x03
-        #      那种“冻结真实摇杆”的风险；
-        #   2) “我只想开自转、不想用客户端开车”是合理诉求，
-        #      原来的写法让它根本发不出去。
-        # 设置项名仍叫 “Allow Spin Key”（不改名以免弄坏已保存的配置），
-        # 但它现在闸的是 0x04 自转指令，而 SHIFT 键位永不再从客户端注入。
-        spin_setting = settings.get("Allow Spin Key")
-        allow_spin_cmd = bool(spin_setting.value) if spin_setting is not None else False
-        spin_module = registry.get("SpinMode") if registry is not None else None
-        spin_desired = bool(
-            allow_spin_cmd
-            and not estopped
-            and bridge.active
-            and spin_module is not None
-            and spin_module.enabled
-        )
-        # 0x1F 回读。未打 host_bridge 补丁的固件不发这一段，此时为 None，
-        # 客户端据此降级为“指令已发、无法确认”，而不是假装成功。
-        spin_reported = bridge.overlay.get("polar_spin_active")
-        if spin_reported is None:
-            spin_reported = bridge.overlay.get("spin_active")
-        spin_cmd = self._update_spin_command(desired=spin_desired, reported=spin_reported)
-        # 无线时点了自转却"没反应"，以前界面一句解释都没有：0x04 要有 0x5A 链路才走得出去。
-        # 这里把"为什么没发"与"怎么才能发"一次说清，省掉一次白跑。
+    def _apply_polar_spin(self, target: RobotState, settings: PolarSpinSettings,
+                          gates: ControlGates) -> None:
+        """Assert 0x04 spin independently of chassis drive; never inject SHIFT."""
+        bridge = self.polar_bridge
+        gates = replace(gates, link_active=bool(bridge.active))
+        desired = gates.spin_authorized(allowed=settings.allowed, module_enabled=settings.module_enabled)
+        reported = bridge.overlay.get("polar_spin_active")
+        if reported is None:
+            reported = bridge.overlay.get("spin_active")
+        self._update_spin_command(desired=desired, reported=reported)
         target.polar_spin_note = spin_block_reason(
-            allow_spin=allow_spin_cmd, link_active=bool(bridge.active),
-            estop=bool(estopped), module_on=bool(spin_module is not None and spin_module.enabled),
-            reported=spin_reported)
-        # 这句理由以前只存进 state 就没人读了：界面只挂一个短标记，操作员看不到办法。
-        # 所以在"第一次出现/内容变了"时把全文打到日志和 field_log（50Hz 重算，
-        # 不做边沿触发的话一秒刷 50 行，等于没有）。
+            allow_spin=settings.allowed, link_active=bool(bridge.active),
+            estop=gates.estopped, module_on=settings.module_enabled, reported=reported,
+        )
         note = str(target.polar_spin_note or "")
         if note != self._last_spin_note:
             self._last_spin_note = note
             if note:
                 _LOG.warning("spin command not sent: %s", note)
                 self.field_log.emit("spin_command_blocked", reason=note,
-                                    link_active=bool(bridge.active),
-                                    reported=spin_reported)
-        # 云台直控请求（0x04 param0 bit0，电平语义，见 gimbal_host 桥）。
-        # 三个条件缺一不可："Client Gimbal Control" 开着、链路在线、非急停。
-        # 未打桥的固件忽略该字节，所以发它不改变老固件任何行为；打了桥的
-        # 固件也只在 s[0] 中间档才提档进 GIMBAL_AUTO_AIM——下方安全档与
-        # 上方原语义都不受影响。
-        gimbal_setting = settings.get("Client Gimbal Control")
-        gimbal_host_request = bool(
-            gimbal_setting is not None and gimbal_setting.value
-            and bridge.active and not estopped
-        )
-        self.polar.set_gimbal_host_request(gimbal_host_request)
-        # C 路鼠标与"上位机云台直控请求"在固件里是有先后的：中间档一旦收到
-        # 0x04 param0 bit0 就进 GIMBAL_AUTO_AIM，那时 DT7 的鼠标增量不参与云台
-        # （gimbal_yaw_pitch_direct.c:236-243）。这不是 bug，是固件仲裁；
-        # 但必须**在这一拍算出请求位之后**再写提示，读上一拍的旧值会留残影
-        # （就是这么被测试抓到的）。
+                                    link_active=bool(bridge.active), reported=reported)
+
+    def _apply_polar_gimbal_host_request(self, control, settings: PolarGimbalSettings,
+                                         gates: ControlGates) -> None:
+        gates = replace(gates, link_active=bool(self.polar_bridge.active))
+        requested = gates.gimbal_host_requested(requested=settings.requested)
+        self.polar.set_gimbal_host_request(requested)
+        # Publish after calculating this tick's request, never the previous bit.
         if control is not None:
             control.dt7_mouse_note = (
                 "云台直控请求占着（0x04 param0 bit0）："
                 "固件中间档走 AUTO_AIM，DT7 鼠标不控云台"
-                if (getattr(control, "dt7_enabled", False) and gimbal_host_request) else "")
-        # 驾驶键位只留 W/S/A/D：SHIFT 已改走 0x04，此处永不再置位。
-        key_value = int(getattr(command, "keyboard_value", 0) or 0) if drive_armed else 0
+                if (getattr(control, "dt7_enabled", False) and requested) else "")
 
-        self.polar.submit(
-            PolarDriveIntent(
-                vx=vx,
-                vy=vy,
-                wz=wz,
-                gimbal_pitch_rad=deg_to_rad(plan[1]) if plan else 0.0,
-                gimbal_yaw_rad=deg_to_rad(plan[0]) if plan else 0.0,
-                friction_on=False,
-                tracking=bool(plan),
-                # 固件 `rc_ctrl.key.v` 位序与官方 keyboard_value 完全一致，直接复用。
-                key_value=key_value,
-                # 恒 False：自转已改走 0x04，不允许再通过 0x03 注入 SHIFT。
-                allow_spin_key=False,
-            )
+    def _submit_polar_intent(self, velocity: tuple[float, float, float],
+                             plan: tuple[float, float] | None, command, *, drive_armed: bool) -> None:
+        key_value = int(getattr(command, "keyboard_value", 0) or 0) if drive_armed else 0
+        self.polar.submit(PolarDriveIntent(
+            vx=velocity[0], vy=velocity[1], wz=velocity[2],
+            gimbal_pitch_rad=deg_to_rad(plan[1]) if plan else 0.0,
+            gimbal_yaw_rad=deg_to_rad(plan[0]) if plan else 0.0,
+            friction_on=False, tracking=bool(plan), key_value=key_value,
+            # Spin uses 0x04; the transport retains the structural W/S/A/D mask.
+            allow_spin_key=False,
+        ))
+
+    def _apply_polar_configuration(self, settings: RobotLinkSettings) -> bool:
+        """Apply configuration in order, retaining the old writer until retired.
+
+        Default Auto/115200 do not override a scenario endpoint. A changing
+        endpoint, baud, bridge or output mode must finish its existing safe
+        reconfiguration handshake before subsequent settings are applied.
+        """
+        request = settings.transport
+        port = request.explicit_port()
+        if port is not None and port != str(self.polar.port or ""):
+            if not self._prepare_polar_reconfigure("robot port changed; fresh telemetry required"):
+                return False
+            self.polar.port = port
+            self.polar.last_error = self.polar.last_error_code = ""
+        baud = request.explicit_baud()
+        if baud is not None and baud != int(self.polar.baud):
+            if not self._prepare_polar_reconfigure("robot baud changed; fresh telemetry required"):
+                return False
+            self.polar.baud = baud
+        want_mock = (self.polar.mock_writes if request.mock_writes is ABSENT
+                     else bool(request.mock_writes))
+        if settings.gimbal.slew is not ABSENT and self.polar_arbiter.slew != float(settings.gimbal.slew):
+            self.polar_arbiter.slew = max(1.0, min(45.0, float(settings.gimbal.slew)))
+        endpoint = request.bridge_endpoint()
+        if endpoint is not None and (self.polar.transport, self.polar.host, self.polar.tcp_port) != endpoint:
+            if not self._prepare_polar_reconfigure("robot bridge endpoint changed; fresh telemetry required"):
+                return False
+            self.polar.transport, self.polar.host, self.polar.tcp_port = endpoint
+            if self.polar.transport == "tcp" and not self.polar.host:
+                self.polar.last_error = "TCP 模式要先填桥接主机地址"
+                self.polar.last_error_code = "NO_BRIDGE_HOST"
+        if want_mock != self.polar.mock_writes:
+            if (self.polar._serial is not None or self.polar._running
+                    or self.polar._connecting or self.polar._stopping):
+                if not self._prepare_polar_reconfigure("robot output mode changed; fresh telemetry required"):
+                    return False
+            self.polar.mock_writes = want_mock
+        if request.send_hz is not ABSENT:
+            try:
+                self.polar.set_send_hz(float(request.send_hz))
+            except (TypeError, ValueError):
+                pass  # Malformed persisted frequency retains the current value.
+        channel = request.normalized_drive_channel()
+        if channel is not None:
+            self.polar.drive_channel = channel
+        return True
+
+    def _apply_radio_km_feedback(self, control, bridge, gates: ControlGates, *, requested: bool) -> None:
+        """Adapt a detached readback decision to the existing control/HUD fields."""
+        debug = bridge.debug_packages or {}
+        authorized = gates.radio_authorized(requested=requested)
+        # Revoke authority before decoding diagnostic data: bad telemetry must
+        # never preserve the previous tick's permission to publish key/mouse.
+        control.radio_km_enabled = authorized
+        policy = decode_radio_km_policy(debug.get("km_pol"))
+        control.radio_km_policy = policy.name
+        control.radio_km_policy_hint = policy.hint
+        feedback = evaluate_radio_km_feedback(
+            RadioKmReadback(debug.get("km_rx"), debug.get("km_key"), debug.get("km_pol"),
+                            bridge.debug_key_at, bridge.debug_key_sequence),
+            requested=requested, authorized=authorized,
+            previous_received=getattr(self, "_km_rx_prev", None), now=time.perf_counter(),
+            policy=policy,
         )
-        return {
-            "active": bridge.active,
-            "drive_armed": drive_armed,
-            "estopped": estopped,
-            "motion_state": motion_state,
-            "authority": self.polar_arbiter.state if not estopped else "ESTOP",
-            "gimbal_target_deg": plan,
-            "error": self.polar.last_error or bridge.last_error,
-            # 兵种对齐可观测：操作员要能看出“现在按的是哪台车、它的限速多少、
-            # 为什么不让驾驶”，而不是只看到 DRV 不亮。
-            "role_id": role_id,
-            "role_label": role.label,
-            "role_hud_code": role.hud_code,
-            "role_chassis": role.chassis,
-            "role_max_linear_mps": round(role.max_linear_mps, 3),
-            "role_max_yaw_rps": round(role.max_yaw_rps, 3),
-            "role_known": role.known,
-            "role_drive_block": role_block,
-            "role_gimbal_block": robot_roles.gimbal_block_reason(role_id),
-            "role_selected_id": selected_id,
-            "role_reported_id": reported_id,
-            "role_mismatch": role_mismatch,
-            # 云台出口归属：让操作员看得见“现在角度是由哪条通道在发”，
-            # 否则双出口互斥被抑制时只会表现为“自瞄没反应”而无解释。
-            "gimbal_egress": self.gimbal_egress_owner(target, registry),
-        }
+        control.radio_km_robot_key = feedback.robot_key
+        control.radio_km_robot_key_at = feedback.robot_key_at
+        control.radio_km_robot_key_sequence = feedback.robot_key_sequence
+        control.radio_km_robot_rx = feedback.robot_rx
+        control.radio_km_robot_rx_growing = feedback.robot_rx_growing
+        control.radio_km_link_state = feedback.link_state
+        control.radio_km_link_note = feedback.link_note
+        control.radio_km_gate_reason = gates.radio_block_reason(requested=requested)
+        self._km_rx_prev = feedback.next_received
 
     def _reset_state_for_scenario(self, state: RobotState) -> None:
         """Discard data from the previous transport epoch before reconnecting."""
@@ -1261,6 +1173,8 @@ class BackendManager:
         state.robot_module_status.clear()
         state.injury_stats.clear()
         state.injury_stats_initialized = False
+        state.projectile_damage_small_initialized = False
+        state.projectile_damage_large_initialized = False
         state.projectile_damage_small_total = 0
         state.projectile_damage_large_total = 0
         state.last_projectile_hit_at = 0.0
@@ -1279,6 +1193,9 @@ class BackendManager:
         return Rm2026StateAdapter._sync_local_projectile_allowance(state)
 
     def tick(self) -> None:
+        self.poll_lifecycle()
+        if self._backend_transition_blocks_work():
+            return
         self.mqtt.poll_connection()
         if self.state is not None:
             self.safety.update_stage(self.state.current_stage)
@@ -1301,25 +1218,46 @@ class BackendManager:
             self._mqtt_disconnect_lock_applied = False
         self._recover_video_decoders()
 
+    def _poll_native_decoder_restart(self) -> None:
+        """Apply completion only on the manager/UI thread, never the worker."""
+
+        try:
+            generation, restarted, health = self._native_restart_results.get_nowait()
+        except Empty:
+            return
+        self._native_restart_thread = None
+        if generation != self._native_restart_generation:
+            return
+        self._native_failure_epoch_handled = bool(restarted)
+        self._native_recovery.reset()
+        self._native_0310_blocked_until_sps = True
+        if restarted:
+            self._native_0310_decoder_restarts += 1
+            self._native_0310_decoder_started_once = True
+            self._native_restart_backoff_s = 0.5
+            self._native_next_restart_at = 0.0
+        else:
+            self._native_next_restart_at = time.perf_counter() + self._native_restart_backoff_s
+            self._native_restart_backoff_s = min(5.0, self._native_restart_backoff_s * 2.0)
+        self.field_log.emit(
+            "decoder_restart", source="native_0310", restarted=restarted, health=health,
+        )
+
     def _recover_video_decoders(self) -> None:
-        """Apply decoder health timeouts off the transport callback path.
+        """Schedule at most one recovery; the UI tick never tears down pipes."""
 
-        An ffmpeg process can remain alive while producing no frame (bad GOP,
-        transmitter reset) or can leave a stale last image. Both conditions
-        are treated exactly like packet loss: reset the bounded Annex-B gate,
-        restart with backoff, and wait for a fresh parameter-set/keyframe.
-        """
-
+        self._poll_native_decoder_restart()
+        if self._video_source_failures:
+            return
         if self.udp.decode_h265 and self.udp.running and self.udp.h265_decoder is not None:
             health = self.udp.h265_decoder.health()
             if health.get("first_frame_timeout") or health.get("stale"):
-                self.udp.h265_recovery.reset()
                 self.udp._request_h265_restart()
 
         native_selected = self._active_video_source in {
             "native", "native 0x0310", "0x0310",
         } or int(getattr(self.state, "deploy_mode", 0) if self.state is not None else 0) == 1
-        if not native_selected:
+        if not native_selected or self._native_restart_thread is not None:
             return
         health = self.native_decoder.health()
         crashed = bool(
@@ -1330,27 +1268,41 @@ class BackendManager:
         )
         if not (crashed or health.get("first_frame_timeout") or health.get("stale")):
             return
-        now = time.perf_counter()
-        if now < self._native_next_restart_at:
+        if time.perf_counter() < self._native_next_restart_at:
             return
-        restarted = self.native_decoder.restart(clear_latest=True)
-        self._native_failure_epoch_handled = bool(restarted)
+        decoder = self.native_decoder
+        decoder_generation = decoder.lifecycle_generation
+        generation = self._native_restart_generation
+        results = self._native_restart_results
         self._native_recovery.reset()
         self._native_0310_blocked_until_sps = True
-        if restarted:
-            self._native_0310_decoder_restarts += 1
-            self._native_0310_decoder_started_once = True
-            self._native_restart_backoff_s = 0.5
-            self._native_next_restart_at = 0.0
-        else:
-            self._native_next_restart_at = now + self._native_restart_backoff_s
+
+        def recover() -> None:
+            try:
+                restarted = decoder.restart(clear_latest=True, expected_generation=decoder_generation)
+            except Exception as exc:
+                restarted = False
+                health["restart_error"] = f"{type(exc).__name__}: {exc}"
+            # The only manager-owned object touched here is a bounded mailbox.
+            # Source switches and shutdown invalidate completion by generation.
+            try:
+                results.put_nowait((generation, restarted, health))
+            except Full:
+                pass
+
+        worker = threading.Thread(target=recover, name="native-decoder-restart", daemon=True)
+        self._native_restart_thread = worker
+        try:
+            worker.start()
+        except Exception as exc:
+            # ident survives completion. A start wrapper can raise after the
+            # real thread ran, so only a never-admitted thread loses ownership.
+            if worker.ident is None:
+                self._native_restart_thread = None
+            decoder.last_error = f"Native recovery admission failed: {type(exc).__name__}: {exc}"
+            self._native_next_restart_at = time.perf_counter() + self._native_restart_backoff_s
             self._native_restart_backoff_s = min(5.0, self._native_restart_backoff_s * 2.0)
-        self.field_log.emit(
-            "decoder_restart",
-            source="native_0310",
-            restarted=restarted,
-            health=health,
-        )
+            raise
 
     def _build_commit(self) -> str:
         try:
@@ -1379,6 +1331,9 @@ class BackendManager:
         return "UNKNOWN"
 
     def _log_backend_event(self, event: str, **payload: Any) -> None:
+        if self.field_log.snapshot()["closing"]:
+            emit_lifecycle_event(self.field_log, event, **payload)
+            return
         if event == "referee_rx" and isinstance(payload.get("payload"), bytes):
             self.field_log.referee_payload(str(payload.get("topic", "")), payload["payload"])
             return
@@ -1408,18 +1363,77 @@ class BackendManager:
         return True, "DT7 evidence matched"
 
     def _request_input_clear(self, reason: str) -> None:
-        """Clear host input whenever a control authorization epoch ends.
+        """Admit neutral immediately; deliver presentation work on the owner.
 
-        The backend deliberately owns the request so disconnect and scenario
-        transitions cannot depend on a particular GUI path.  The callback is
-        optional for headless tests; production installs it immediately after
-        constructing ``KeyboardControlBridge``.
+        Safety authority has already been revoked by the caller. A worker
+        may enqueue neutral for the asynchronous device writers, but it must
+        never mutate the UI control snapshot or invoke its observer.
         """
+        self._admit_input_clear(reason)
+        if threading.get_ident() != self._input_owner_thread:
+            self._request_device_neutral(reason, worker=True)
+            return
+        self._drain_input_clear()
 
-        self._input_clear_generation += 1
+    def _admit_input_clear(self, reason: str) -> None:
+        try:
+            self._input_clear_requests.put_nowait(str(reason))
+        except Full:
+            pass  # Clearing is idempotent; retain one pending request.
+
+    def _drain_input_clear(self) -> None:
+        if threading.get_ident() != self._input_owner_thread:
+            raise RuntimeError("Input observers must be drained on their owner thread")
+        try:
+            reason = self._input_clear_requests.get_nowait()
+        except Empty:
+            return
+        try:
+            self._apply_input_clear(reason)
+        except Exception as exc:
+            # Removing an item is not successful delivery. Keep a failed clear
+            # pending across polls, coalesced callbacks and repeated re-arms.
+            self._admit_input_clear(reason)
+            self._input_clear_error = f"{type(exc).__name__}: {exc}"
+            if not self.safety.estop_active:
+                self.safety.lock_control("input clear failed; explicit re-arm required", notify=False)
+            emit_lifecycle_event(self.field_log, "input_clear_error", reason=reason,
+                generation=self._input_clear_generation, error=self._input_clear_error)
+            raise
+        self._input_clear_error = ""
+
+    def _input_clear_incomplete(self) -> bool:
+        return bool(self._input_clear_error) or not self._input_clear_requests.empty()
+
+    def _request_device_neutral(self, reason: str, *, worker: bool = False) -> tuple[bool | None, bool | None]:
+        """Revoke angle forwarding and admit fixed neutral without observers."""
         angle_link = getattr(self, "controller_angles", None)
         if angle_link is not None:
             angle_link.disarm(reason)
+        dt7_ok = cc_ok = None
+        link = getattr(self, "_dt7_link", None)
+        if link is not None and not link.wire_neutral:
+            try:
+                if getattr(link, "asynchronous", False):
+                    dt7_ok, _ = link.request_release()
+                elif not worker:
+                    dt7_ok, _ = link.release()
+            except Exception:
+                dt7_ok = False
+        cc_writer = getattr(self, "_cc_link", None)
+        if cc_writer is not None and not getattr(cc_writer, "wire_neutral", True):
+            try:
+                if not worker or getattr(cc_writer, "asynchronous", False):
+                    cc_ok, _ = cc_writer.release_all()
+            except Exception:
+                cc_ok = False
+        return dt7_ok, cc_ok
+
+    def _apply_input_clear(self, reason: str) -> None:
+        """Clear owner-thread control caches before delivering the UI hook."""
+        self._input_clear_generation += 1
+        # Even a broken control/UI adapter cannot skip physical neutral.
+        dt7_ok, cc_ok = self._request_device_neutral(reason)
         control = getattr(self, "_dt7_control_ref", None)
         if control is not None:
             control.dt7_qualification_token = None
@@ -1434,94 +1448,140 @@ class BackendManager:
             control.last_command = None
             control.last_payload = b""
             control.clear_pending()
-        link = getattr(self, "_dt7_link", None)
-        if link is not None and not link.wire_neutral:
-            try:
-                ok, _ = link.release()
-            except Exception:
-                ok = False
-            if control is not None:
-                control.dt7_release_pending = not ok
-        cc_writer = getattr(self, "_cc_link", None)
-        if cc_writer is not None and not getattr(cc_writer, "wire_neutral", True):
-            try:
-                ok, _ = cc_writer.release_all()
-            except Exception:
-                ok = False
-            if control is not None:
-                control.cc_release_pending = not ok
+        if control is not None:
+            if dt7_ok is not None:
+                control.dt7_release_pending = not dt7_ok
+            if cc_ok is not None:
+                control.cc_release_pending = not cc_ok
         hook = self.input_clear_hook
         if hook is not None:
-            try:
-                hook(str(reason))
-            except Exception as exc:
-                self.field_log.emit(
-                    "input_clear_error",
-                    reason=reason,
-                    generation=self._input_clear_generation,
-                    error=f"{type(exc).__name__}: {exc}",
-                )
-                return
-        self.field_log.emit(
+            hook(str(reason))
+        emit_lifecycle_event(self.field_log,
             "input_clear",
             reason=reason,
             generation=self._input_clear_generation,
             callback_installed=hook is not None,
         )
 
+    @property
+    def video_source_snapshot(self) -> VideoSourceSnapshot:
+        pending, inflight, failures = [], [], []
+        for name, status in (("UDP/HEVC", self.udp.stop_status),
+                             ("Native 0x0310", self.native_decoder.stop_status)):
+            if status.pending:
+                pending.append(name)
+            if status.inflight:
+                inflight.append(name)
+            failures.extend(VideoSourceFailure(name, error) for error in status.errors)
+        recovery = self._native_restart_thread
+        if recovery is not None and recovery.is_alive():
+            if "Native 0x0310" not in pending:
+                pending.append("Native 0x0310")
+            if "Native 0x0310" not in inflight:
+                inflight.append("Native 0x0310")
+        request = self._video_source_request
+        return VideoSourceSnapshot(request.source if request is not None else "",
+                                   self._active_video_source, tuple(pending),
+                                   self._video_source_failures, self._video_source_generation,
+                                   tuple(inflight), tuple(failures))
+
+    def retry_active_video_source(self, *, expected_generation: int | None = None) -> None:
+        """Explicit owner-thread retry; reject stale clicks and active closers."""
+        snapshot = self.video_source_snapshot
+        if expected_generation is not None and expected_generation != snapshot.generation:
+            raise RuntimeError("Video-source request changed; retry is stale")
+        if self._backend_transition_blocks_work():
+            raise RuntimeError("Backend transition blocks video-source retry")
+        if snapshot.inflight_resources:
+            raise RuntimeError("Video-source cleanup is still in flight")
+        request = self._video_source_request
+        if request is None or not snapshot.retryable:
+            raise RuntimeError("No failed or pending video-source request to retry")
+        self.set_active_video_source(request.source, start=request.start,
+                                     _hero_transition=True, _retry=True)
+
     def set_active_video_source(self, source_mode: str, *, _hero_transition: bool = False,
-                                start: bool = True) -> None:
+                                start: bool = True, _retry: bool = False) -> None:
+        if (hasattr(self, "_lifecycle") and not self._lifecycle.applying
+                and self._backend_transition_blocks_work()):
+            return
         normalized = str(source_mode or "").strip().lower()
         normalized = {
-            "shark udp": "udp hevc",
-            "udp": "udp hevc",
-            "hevc": "udp hevc",
-            "h265": "udp hevc",
-            "native": "native 0x0310",
-            "0x0310": "native 0x0310",
+            "shark udp": "udp hevc", "udp": "udp hevc", "hevc": "udp hevc",
+            "h265": "udp hevc", "native": "native 0x0310", "0x0310": "native 0x0310",
         }.get(normalized, normalized)
         if not _hero_transition:
             self._normal_video_source = normalized
-        # DeployModeStatusSync=1 owns the video path regardless of the normal
-        # CameraFeed setting. The UDP socket/decoder is stopped during that
-        # authoritative interval, while Native 0x0310 remains lazy until its
-        # first complete SPS/PPS/IDR is received.
         if self._hero_native_override:
             normalized = "native 0x0310"
-        udp_selected = normalized in {"shark udp", "udp", "udp hevc", "hevc", "h265"}
-        if (
-            normalized == self._active_video_source
-            and (not udp_selected or self.udp.running)
-        ):
+        request = VideoSourceRequest(normalized, start)
+        previous = self._video_source_request
+        if (not _retry and previous is not None and previous.source == normalized
+                and self._video_source_failures):
+            # A periodic UI refresh must expose the retained error, not spawn
+            # an unbounded series of retries or claim the failed target ready.
+            raise VideoSourceAdmissionError(self._video_source_failures)
+        udp_selected = normalized == "udp hevc"
+        if (not _retry and normalized == self._active_video_source
+                and (not udp_selected or self.udp.running)):
             return
-        self._active_video_source = normalized
-        if start and udp_selected and not self.udp.running:
-            # The socket and decoder are both lazy. This avoids an unused HEVC
-            # process and an unnecessary UDP bind in Webcam/Native sessions.
-            self.udp.start()
-        elif not udp_selected and self.udp.running:
-            self.udp.stop()
-        self.udp.set_decode_enabled(udp_selected)
-        if normalized not in {"native", "native 0x0310", "0x0310"} and int(
-            getattr(self.state, "deploy_mode", 0) if self.state is not None else 0
-        ) != 1:
-            self.native_decoder.stop()
-            self._native_recovery.reset()
+        if not _retry and previous == request and (
+                self.udp.stop_pending or self.native_decoder.stop_pending):
+            # A regular refresh may observe cleanup, but never grants another
+            # native-close attempt after the previous worker has failed.
+            return
+        if _retry or previous != request:
+            self._video_source_generation += 1
+        self._video_source_request = request
+        self._active_video_source = ""
+        admission = VideoSourceAdmission()
+        if not udp_selected or (_retry and self.udp.stop_pending):
+            # This operation disables HEVC and attempts both native owners,
+            # including a retained stopped session after a failed admission.
+            admission.attempt("UDP/HEVC", self.udp.request_stop)
+        if ((normalized != "native 0x0310" and int(
+                getattr(self.state, "deploy_mode", 0) if self.state is not None else 0) != 1)
+                or (_retry and self.native_decoder.stop_pending)):
+            self._native_restart_generation += 1
             self._native_0310_blocked_until_sps = True
+            admission.attempt("Native recovery reset", self._native_recovery.reset)
+            admission.attempt("Native stop", self.native_decoder.request_stop)
+        if not admission.failures and udp_selected:
+            admission.attempt("HEVC enable", lambda: self.udp.request_decode_enabled(True))
+            if not admission.failures and start and not self.udp.running:
+                admission.attempt("UDP start", self.udp.start)
+        if admission.failures and udp_selected:
+            admission.attempt("Rejected UDP/HEVC target", self.udp.request_stop)
+        if admission.failures and normalized == "native 0x0310":
+            self._native_restart_generation += 1
+            self._native_0310_blocked_until_sps = True
+            admission.attempt("Rejected Native recovery reset", self._native_recovery.reset)
+            admission.attempt("Rejected Native stop", self.native_decoder.request_stop)
+        self._video_source_failures = tuple(admission.failures)
+        admission.raise_if_failed()
+        self._active_video_source = normalized
 
     def sync_frontend_state(self, state: RobotState) -> None:
+        if self._backend_transition_blocks_work():
+            return
         return self.referee_adapter.sync_frontend_state(state)
 
-    def set_client_id(self, robot_id: int) -> None:
-        """机器人档案变更后同步 MQTT client_id 并重建连接。"""
+    def set_client_id(self, robot_id: int | str) -> None:
+        """Change identity without joining Paho's old loop on the UI thread."""
+        self._lifecycle.snapshot()
+        if self._lifecycle.final:
+            raise RuntimeError("Backend is closing; identity replacement is forbidden")
+        profile = (get_profile(self._lifecycle.pending_scenario.referee_profile)
+                   if self._lifecycle.pending_scenario is not None else self.referee)
         try:
-            new_id = self.referee.validate_client_id(str(robot_id))
+            new_id = profile.validate_client_id(str(robot_id))
         except (ValueError, TypeError):
             self.safety.lock_control("invalid referee robot identity")
             self.safety.current_stage = "0"
             self.safety._stage_seen = False
-            self.mqtt.stop(publish_status=False)
+            self.mqtt.stop(publish_status=False, wait=False)
             raise
+        self._lifecycle.update_pending_identity(new_id)
         if new_id == self.mqtt.client_id:
             return
         self.safety.lock_control("referee robot identity changed")
@@ -1529,73 +1589,92 @@ class BackendManager:
         self.safety._stage_seen = False
         self.mqtt.publish_estop_zero()
         was_started = self.mqtt._started
-        self.mqtt.stop(publish_status=False)
+        self.mqtt.stop(publish_status=False, wait=False)
         self.mqtt.client_id = new_id
-        if was_started:
+        if was_started and not self.lifecycle_pending:
             self.mqtt.start()
 
-    def shutdown(self, *, restart: bool = False) -> None:
-        angle_link = getattr(self, "controller_angles", None)
-        if angle_link is not None:
-            angle_link.close()
-        # Best-effort neutral KMC before disconnect.  This does not replace the
-        # robot-side watchdog or F12 E-stop, but prevents an ordinary app exit
-        # or scenario switch from leaving the last movement key latched.
-        if self.mqtt.connected and not self.mqtt.mock_output:
-            try:
-                self.mqtt.publish_estop_zero()
-            except Exception as exc:
-                # Failed network cleanup must never skip local E-stop, the
-                # robot neutral burst, or closing the remaining transports.
-                self._last_estop_zero_ok = False
-                self._last_estop_zero_reason = f"shutdown zero publish failed: {exc}"
-        self.safety.trigger_estop()
-        self.serial.trigger_estop()
-        cc_handle = getattr(self, "_cc_link", None)
-        if cc_handle is not None and not getattr(cc_handle, "wire_neutral", True):
-            try:
-                ok, why = cc_handle.release_all()
-            except Exception as exc:
-                ok, why = False, str(exc)
-            control = getattr(self, "_dt7_control_ref", None)
-            if control is not None:
-                control.cc_enabled = False
-                control.cc_release_pending = not ok
-                control.cc_last_error = "" if ok else str(why)
-        if cc_handle is not None and hasattr(cc_handle, "close"):
-            cc_handle.close()
-        # 队内链路：固件侧没有断流归零，必须主动发零帧覆盖最后一条指令。
-        self.polar.request_estop()
-        # Compatibility keyword only: official MQTT never emits retained
-        # ClientStatus JSON on either scenario switches or application exit.
-        self.mqtt.stop(publish_status=not restart)
-        self.udp.stop()
-        self.serial.stop()
-        # stop() 内部会先发归零突发帧再关口，避免把最后一条驾驶指令冻在车上。
-        self.polar.stop()
-        self.native_decoder.stop()
+    @property
+    def lifecycle_pending(self) -> bool:
+        return self._lifecycle.pending
+
+    @property
+    def lifecycle_closed(self) -> bool:
+        return self._lifecycle.closed
+
+    @property
+    def lifecycle_snapshot(self) -> LifecycleSnapshot:
+        return self._lifecycle.snapshot()
+
+    def _backend_transition_blocks_work(self) -> bool:
+        return (bool(self._referee_change_error) or self._input_clear_incomplete()
+                or self._lifecycle.blocks_work)
+
+    def _capture_teardown_resources(self) -> TeardownResources:
+        self._lifecycle.snapshot()  # Assert owner before reading runtime owners.
+        return TeardownResources(
+            safety=self.safety, mqtt=self.mqtt, udp=self.udp, serial=self.serial,
+            polar=self.polar, native_decoder=self.native_decoder, logger=self.field_log,
+            serial_starter=self._serial_start_thread,
+            native_recovery=self._native_restart_thread,
+            controller_angles=getattr(self, "controller_angles", None),
+            dt7=getattr(self, "_dt7_link", None), cc=getattr(self, "_cc_link", None),
+        )
+
+    def _invalidate_shutdown_runtime(self) -> None:
+        self._native_restart_generation += 1
         self._native_recovery.reset()
-        # DT7 那个 DJI VCOM 是**独占**口：不关句柄，选手端和下一轮调试都得等本进程
-        # 真的退出才拿得到它。放在最后关，顺序不能提前——上面 trigger_estop 触发的
-        # 清零钩子要先把松手帧写出去，写完才允许关口。
-        dt7_handle = getattr(self, "_dt7_link", None)
-        if dt7_handle is not None:
-            try:
-                dt7_handle.close()
-            except Exception:                          # noqa: BLE001
-                pass
-        # This is the existing ordered shutdown path, not a frame callback.
-        # Give daemon writers a bounded chance to finish before Qt/process exit;
-        # accepted neutral requests must never masquerade as completed cleanup.
-        import time as shutdown_time
-        deadline = shutdown_time.perf_counter() + 2.5
-        for name, writer in (("DT7", dt7_handle), ("CC", cc_handle)):
-            if getattr(writer, "asynchronous", False):
-                closed = writer.wait_closed(max(0.0, deadline - shutdown_time.perf_counter()))
-                if not closed or not writer.wire_neutral:
-                    self.field_log.emit("device_shutdown_unconfirmed", device=name,
-                                        closed=closed, error=writer.last_error)
-        self.field_log.emit("backend_shutdown", restart=restart)
+        self._native_0310_blocked_until_sps = True
+        self.polar_bridge.reset()
+        self._polar_gimbal_last = None
+        self.polar_chassis_state_seen = False
+
+    def _finish_stopped_runtime(self) -> None:
+        self._serial_start_thread = None
+        self._native_recovery.reset()
+
+    def request_shutdown(self, *, restart: bool = False,
+                         teardown_tasks: tuple[TeardownTask, ...] = ()) -> int:
+        """UI close request, with optional captured non-Qt presentation workers."""
+        return self._lifecycle.request_shutdown(self._capture_teardown_resources(),
+            restart=restart, teardown_tasks=teardown_tasks)
+
+    @property
+    def initial_shutdown_completion(self) -> ShutdownCompletion | None:
+        return self._lifecycle.initial_shutdown_completion
+
+    @property
+    def shutdown_completion(self) -> ShutdownCompletion | None:
+        return self._lifecycle.shutdown_completion
+
+    def retry_shutdown(self) -> int:
+        """Retry ended failures explicitly, without reopening final authority."""
+        return self._lifecycle.retry_shutdown()
+
+    def _drain_lifecycle_input_clear(self) -> None:
+        """A broken UI observer cannot strand already-admitted resource cleanup."""
+        if threading.get_ident() != self._input_owner_thread:
+            raise RuntimeError("Input observers must be drained on their owner thread")
+        try:
+            self._drain_input_clear()
+        except Exception as exc:
+            if not self._lifecycle.record_input_failure(exc):
+                raise
+
+    def poll_lifecycle(self) -> LifecycleCompletion | None:
+        """Commit resource ownership and input observers on the manager/UI thread."""
+        self._drain_lifecycle_input_clear()
+        return self._lifecycle.poll()
+
+    def _wait_lifecycle(self) -> LifecycleCompletion | None:
+        self._drain_lifecycle_input_clear()
+        return self._lifecycle.wait()
+
+    def shutdown(self, *, restart: bool = False) -> None:
+        """Explicit ordered synchronous shutdown for CLI/tests, never UI ticks."""
+        self._lifecycle.request_shutdown(self._capture_teardown_resources(),
+            restart=restart, device_wait_timeout=2.5)
+        self._wait_lifecycle()
 
     def apply_readiness(
         self,
@@ -1630,6 +1709,8 @@ class BackendManager:
         callers a safe fallback during source transitions.
         """
 
+        if self._video_source_failures:
+            return None, 0.0, ""
         mode = str(source_mode or "Auto").strip().lower()
         want_native = mode in {"auto", "native", "native 0x0310", "0x0310"}
         want_udp = mode in {
@@ -1655,172 +1736,166 @@ class BackendManager:
 
     def _apply_custom_byte_block(self, state: RobotState, data: dict[str, Any]) -> None:
         block = bytes(data.get("data", b""))
-        state.backend_stats["last_custom_block"] = {
-            "len": len(block),
-        }
+        state.backend_stats["last_custom_block"] = {"len": len(block)}
         telemetry = parse_vehicle_telemetry(block)
         if telemetry is not None:
-            previous_sequence = int(state.native_telemetry_frame_seq)
-            status_upper = telemetry.status_text.upper()
-            # Treat a short backward jump as a producer restart/replay,
-            # but do not invalidate calibration at the natural uint32
-            # wrap from 0xffffffff to zero.
-            sequence_restarted = bool(
-                previous_sequence > 0
-                and telemetry.frame_seq < previous_sequence
-                and (previous_sequence - telemetry.frame_seq) < 0x80000000
-            )
-            localisation_reset = bool(
-                sequence_restarted
-                or any(
-                    marker in status_upper
-                    for marker in (
-                        "LOCALIZATION LOST",
-                        "LOCALISATION LOST",
-                        "RELOCALIZING",
-                        "RELOCALISING",
-                        "POSE RESET",
-                        "MAP RESET",
-                    )
+            self._apply_native_telemetry(state, telemetry)
+            return
+        video_chunk = parse_video_0310_chunk(block)
+        if video_chunk is not None:
+            self._apply_native_video_chunk(state, video_chunk)
+
+    def _apply_native_telemetry(self, state: RobotState, telemetry: VehicleTelemetry) -> None:
+        """Publish decoded telemetry, revoking localization trust before diagnostics."""
+        localisation_reset = localization_invalidated(
+            int(state.native_telemetry_frame_seq), telemetry.frame_seq, telemetry.status_text,
+        )
+        state.native_telemetry_at = time.perf_counter()
+        state.native_telemetry_unix_ms = telemetry.unix_ms
+        state.native_telemetry_frame_seq = telemetry.frame_seq
+        state.native_camera_online = telemetry.camera_online
+        state.native_gimbal_online = telemetry.gimbal_online
+        state.native_gimbal_mode = telemetry.gimbal_mode_name
+        state.native_bullet_count = telemetry.bullet_count
+        state.native_bullet_speed = telemetry.bullet_speed
+        state.native_yaw_deg = telemetry.yaw
+        state.native_yaw_velocity = telemetry.yaw_vel
+        state.native_pitch_deg = telemetry.pitch
+        state.native_pitch_velocity = telemetry.pitch_vel
+        state.native_quaternion = telemetry.quaternion
+        state.native_status_text = telemetry.status_text
+        if localisation_reset:
+            state.hero_lob_relocalization_valid = False
+            state.hero_lob_armed = False
+            state.hero_lob_status = "BLOCKED: relocalization invalidated by telemetry reset"
+        state.backend_stats["native_telemetry"] = {
+            "version": telemetry.version,
+            "frame_seq": telemetry.frame_seq,
+            "camera_online": telemetry.camera_online,
+            "gimbal_online": telemetry.gimbal_online,
+            "gimbal_mode": telemetry.gimbal_mode_name,
+            "bullet_speed": telemetry.bullet_speed,
+            "status": telemetry.status_text,
+        }
+
+    def _apply_native_video_chunk(self, state: RobotState, video_chunk: Video0310Chunk) -> None:
+        """Apply continuity decisions while checking live decoder availability."""
+        if self._video_source_failures:
+            return
+        native_selected = self._active_video_source in {
+            "native", "native 0x0310", "0x0310",
+        } or int(getattr(state, "deploy_mode", 0)) == 1
+        if not native_selected:
+            # An unselected Native stream must not wake ffmpeg or
+            # retain a partial recovery epoch in the background.
+            # Selecting Native later waits for fresh SPS/PPS/IDR.
+            self._native_0310_last_sequence = None
+            self._native_0310_blocked_until_sps = True
+            self._native_recovery.reset()
+            return
+        # 0x0310 原生 H.264 流：不保留无限增长的历史码流。
+        # reset 或向前序号缺口后停止喂流，直到下一个 Annex-B
+        # SPS；这与 rm-native-viewer 的正式链路恢复策略一致，
+        # 也避免在 UI tick 内同步 stop/restart ffmpeg。重复/迟到
+        # 分块直接丢弃，防止同一 payload 破坏 NAL 边界。
+        decision = assess_native_video_sequence(
+            sequence=video_chunk.sequence,
+            modulus=video_chunk.sequence_modulus,
+            reset=video_chunk.reset,
+            previous_sequence=self._native_0310_last_sequence,
+        )
+        sequence = decision.sequence
+        if decision.reset:
+            self._native_0310_bytes_since_reset = 0
+            self._native_0310_last_sequence = None
+            self._native_0310_blocked_until_sps = True
+            self._native_failure_epoch_handled = False
+            self._native_recovery.reset()
+        elif decision.dropped_chunks:
+            self._native_0310_dropped_chunks += decision.dropped_chunks
+            self._native_0310_blocked_until_sps = True
+            self._native_failure_epoch_handled = False
+            self._native_recovery.reset()
+        elif not decision.accept_payload:
+            self._native_0310_out_of_order_chunks += 1
+
+        wrote = False
+        payload_to_write = b""
+        if decision.accept_payload:
+            self._native_0310_bytes_since_reset += len(video_chunk.payload)
+            self._native_0310_last_sequence = sequence
+            if (
+                self._native_0310_decoder_started_once
+                and not self.native_decoder.available
+            ):
+                # A crashed decoder has lost its SPS/PPS parser
+                # state even if transport sequence is continuous.
+                self._native_0310_blocked_until_sps = True
+                if not self._native_failure_epoch_handled:
+                    self._native_recovery.reset()
+            payload_to_write = self._native_recovery.feed(video_chunk.payload) or b""
+            self._native_0310_blocked_until_sps = self._native_recovery.blocked
+            if not payload_to_write:
+                self._native_0310_recovery_dropped_chunks += 1
+
+        if payload_to_write and self._native_restart_thread is not None:
+            # Recovery completion is consumed by tick(). Do not let a
+            # transport payload race its process creation or gate reset.
+            payload_to_write = b""
+            self._native_recovery.reset()
+            self._native_0310_blocked_until_sps = True
+            self._native_0310_recovery_dropped_chunks += 1
+        if payload_to_write:
+            if not self.native_decoder.available:
+                # start() never reaps a crashed process: that work is
+                # reserved for the asynchronous health recovery path.
+                started = self.native_decoder.start()
+                if started and self._native_0310_decoder_started_once:
+                    self._native_0310_decoder_restarts += 1
+                self._native_0310_decoder_started_once = bool(
+                    self._native_0310_decoder_started_once or started
                 )
-            )
-            state.native_telemetry_at = time.perf_counter()
-            state.native_telemetry_unix_ms = telemetry.unix_ms
-            state.native_telemetry_frame_seq = telemetry.frame_seq
-            state.native_camera_online = telemetry.camera_online
-            state.native_gimbal_online = telemetry.gimbal_online
-            state.native_gimbal_mode = telemetry.gimbal_mode_name
-            state.native_bullet_count = telemetry.bullet_count
-            state.native_bullet_speed = telemetry.bullet_speed
-            state.native_yaw_deg = telemetry.yaw
-            state.native_yaw_velocity = telemetry.yaw_vel
-            state.native_pitch_deg = telemetry.pitch
-            state.native_pitch_velocity = telemetry.pitch_vel
-            state.native_quaternion = telemetry.quaternion
-            state.native_status_text = telemetry.status_text
-            if localisation_reset:
-                state.hero_lob_relocalization_valid = False
-                state.hero_lob_armed = False
-                state.hero_lob_status = "BLOCKED: relocalization invalidated by telemetry reset"
-            state.backend_stats["native_telemetry"] = {
-                "version": telemetry.version,
-                "frame_seq": telemetry.frame_seq,
-                "camera_online": telemetry.camera_online,
-                "gimbal_online": telemetry.gimbal_online,
-                "gimbal_mode": telemetry.gimbal_mode_name,
-                "bullet_speed": telemetry.bullet_speed,
-                "status": telemetry.status_text,
-            }
-        else:
-            video_chunk = parse_video_0310_chunk(block)
-            if video_chunk is not None:
-                native_selected = self._active_video_source in {
-                    "native", "native 0x0310", "0x0310",
-                } or int(getattr(state, "deploy_mode", 0)) == 1
-                if not native_selected:
-                    # An unselected Native stream must not wake ffmpeg or
-                    # retain a partial recovery epoch in the background.
-                    # Selecting Native later waits for fresh SPS/PPS/IDR.
-                    self._native_0310_last_sequence = None
-                    self._native_0310_blocked_until_sps = True
-                    self._native_recovery.reset()
-                    return
-                # 0x0310 原生 H.264 流：不保留无限增长的历史码流。
-                # reset 或向前序号缺口后停止喂流，直到下一个 Annex-B
-                # SPS；这与 rm-native-viewer 的正式链路恢复策略一致，
-                # 也避免在 UI tick 内同步 stop/restart ffmpeg。重复/迟到
-                # 分块直接丢弃，防止同一 payload 破坏 NAL 边界。
-                modulus = max(1, int(video_chunk.sequence_modulus))
-                sequence = int(video_chunk.sequence) % modulus
-                accept_payload = True
-                if video_chunk.reset:
-                    self._native_0310_bytes_since_reset = 0
-                    self._native_0310_last_sequence = None
-                    self._native_0310_blocked_until_sps = True
+                if started:
                     self._native_failure_epoch_handled = False
-                    self._native_recovery.reset()
-                elif self._native_0310_last_sequence is not None:
-                    expected = (self._native_0310_last_sequence + 1) % modulus
-                    distance = (sequence - expected) % modulus
-                    if distance:
-                        if distance < modulus // 2:
-                            self._native_0310_dropped_chunks += distance
-                            self._native_0310_blocked_until_sps = True
-                            self._native_failure_epoch_handled = False
-                            self._native_recovery.reset()
-                        else:
-                            self._native_0310_out_of_order_chunks += 1
-                            accept_payload = False
-
-                wrote = False
-                payload_to_write = b""
-                if accept_payload:
-                    self._native_0310_bytes_since_reset += len(video_chunk.payload)
-                    self._native_0310_last_sequence = sequence
-                    if (
-                        self._native_0310_decoder_started_once
-                        and not self.native_decoder.available
-                    ):
-                        # A crashed decoder has lost its SPS/PPS parser
-                        # state even if transport sequence is continuous.
-                        self._native_0310_blocked_until_sps = True
-                        if not self._native_failure_epoch_handled:
-                            self._native_recovery.reset()
-                    payload_to_write = self._native_recovery.feed(video_chunk.payload) or b""
-                    self._native_0310_blocked_until_sps = self._native_recovery.blocked
-                    if not payload_to_write:
-                        self._native_0310_recovery_dropped_chunks += 1
-
-                if payload_to_write:
-                    if not self.native_decoder.available:
-                        if self._native_0310_decoder_started_once:
-                            self._native_0310_decoder_restarts += 1
-                        started = self.native_decoder.start()
-                        self._native_0310_decoder_started_once = bool(
-                            self._native_0310_decoder_started_once or started
-                        )
-                        if started:
-                            self._native_failure_epoch_handled = False
-                    if self.native_decoder.available:
+            if self.native_decoder.available:
+                wrote = self.native_decoder.write(payload_to_write)
+                if not wrote:
+                    # Yield briefly to the dedicated stdin writer.
+                    # The owner-thread drain allows a 10 ms retry
+                    # window, without waiting for process teardown.
+                    deadline = time.perf_counter() + 0.010
+                    while not wrote and time.perf_counter() < deadline:
+                        time.sleep(0.0005)
                         wrote = self.native_decoder.write(payload_to_write)
-                        if not wrote:
-                            # Yield briefly to the dedicated stdin writer.
-                            # The MQTT callback remains bounded (<10 ms),
-                            # while a synthetic burst cannot overflow a
-                            # queue that is sized for live 0x0310 cadence.
-                            deadline = time.perf_counter() + 0.010
-                            while not wrote and time.perf_counter() < deadline:
-                                time.sleep(0.0005)
-                                wrote = self.native_decoder.write(payload_to_write)
-                    if not wrote:
-                        # A full/non-running decoder queue is equivalent to
-                        # a transport gap.  Resume only from a future SPS.
-                        self._native_0310_blocked_until_sps = True
-                        self._native_failure_epoch_handled = False
-                        self._native_recovery.reset()
-                state.backend_stats["native_video_0310"] = {
-                    "sequence": sequence,
-                    "reset": video_chunk.reset,
-                    "payload_len": len(video_chunk.payload),
-                    "bytes_since_reset": self._native_0310_bytes_since_reset,
-                    "dropped_chunks": self._native_0310_dropped_chunks,
-                    "out_of_order_chunks": self._native_0310_out_of_order_chunks,
-                    "recovery_dropped_chunks": self._native_0310_recovery_dropped_chunks,
-                    "blocked_until_sps": self._native_0310_blocked_until_sps,
-                    "decoder_restarts": self._native_0310_decoder_restarts,
-                    "payload_accepted": bool(payload_to_write),
-                    "payload_input_len": len(video_chunk.payload),
-                    "payload_decoder_len": len(payload_to_write),
-                    "payload_written": wrote,
-                    "payload_queued": wrote,
-                    "decoder_input_queue": self.native_decoder.input_queue_depth(),
-                    "decoder_input_dropped": self.native_decoder.input_chunks_dropped,
-                    "decoder_ready": self.native_decoder.available,
-                    "decoded_frames": self.native_decoder.frames_decoded,
-                }
-                # The decoder thread advances independently after this
-                # message snapshot; stats() is the authoritative live
-                # source for decoded-frame counters.
+            if not wrote:
+                # A full/non-running decoder queue is equivalent to
+                # a transport gap.  Resume only from a future SPS.
+                self._native_0310_blocked_until_sps = True
+                self._native_failure_epoch_handled = False
+                self._native_recovery.reset()
+        state.backend_stats["native_video_0310"] = {
+            "sequence": sequence,
+            "reset": video_chunk.reset,
+            "payload_len": len(video_chunk.payload),
+            "bytes_since_reset": self._native_0310_bytes_since_reset,
+            "dropped_chunks": self._native_0310_dropped_chunks,
+            "out_of_order_chunks": self._native_0310_out_of_order_chunks,
+            "recovery_dropped_chunks": self._native_0310_recovery_dropped_chunks,
+            "blocked_until_sps": self._native_0310_blocked_until_sps,
+            "decoder_restarts": self._native_0310_decoder_restarts,
+            "payload_accepted": bool(payload_to_write),
+            "payload_input_len": len(video_chunk.payload),
+            "payload_decoder_len": len(payload_to_write),
+            "payload_written": wrote,
+            "payload_queued": wrote,
+            "decoder_input_queue": self.native_decoder.input_queue_depth(),
+            "decoder_input_dropped": self.native_decoder.input_chunks_dropped,
+            "decoder_ready": self.native_decoder.available,
+            "decoded_frames": self.native_decoder.frames_decoded,
+        }
+        # The decoder thread advances independently after this
+        # message snapshot; stats() is the authoritative live
+        # source for decoded-frame counters.
 
     # ------------------------------------------------------------------
     # 下行消息 → RobotState
@@ -1846,6 +1921,8 @@ class BackendManager:
 
     def apply_updates(self, state: RobotState) -> int:
         """消费解码队列并写入 RobotState；返回本次应用的消息条数。"""
+        if self._backend_transition_blocks_work():
+            return 0
         messages = self.mqtt.drain_decoded()
         count = 0
         for _topic, name, data, _ts in messages:
@@ -1930,31 +2007,38 @@ class BackendManager:
             qualification_token=qualification_token,
         )
 
-    def _configure_cc_egress(self, control: Any, settings: dict, module: Any,
-                             allow_drive: bool, estopped: bool) -> None:
+    def _configure_cc_egress(self, control: Any, settings: CustomControllerSettings,
+                             permissions: EgressPermissions) -> None:
         """Apply every CC falling edge before retiring the previous writer."""
-        cc_setting = settings.get("Custom Controller Egress")
-        cc_wanted = bool(cc_setting is not None and cc_setting.value)
+        cc_wanted = settings.requested
         angle_link = getattr(self, "controller_angles", None)
         owned_ports = angle_link.owned_ports if angle_link is not None else ()
-        cc_mock = bool(getattr(settings.get("CC Mock Writes"), "value", True))
-        cc_port = str(getattr(settings.get("CC Port"), "value", "Auto"))
+        cc_mock = settings.mock_output
+        cc_port = settings.conflict_port
         if control is not None and cc_wanted and not cc_mock and owned_ports:
             if cc_port.strip().lower() == "auto" or any(port_key(cc_port) == port_key(p) for p in owned_ports):
                 # A worker's stop request is not proof that its serial handle
                 # has closed. Wait without starting a competing port writer.
                 control.cc_enabled = False
+                previous = getattr(self, "_cc_link", None)
+                if previous is not None:
+                    control.cc_link = previous
+                if (getattr(self, "_cc_was_enabled", False)
+                        or getattr(control, "cc_release_pending", False)
+                        or not getattr(previous, "wire_neutral", True)):
+                    # The replacement port is blocked, but the old writer
+                    # still owns its last keys. Revoke and neutralize it now;
+                    # repeated polls do not replenish its bounded retry budget.
+                    control.release_custom_controller()
                 control.cc_last_error = "角度链路仍占用串口；等待关闭后再启用键鼠出口"
                 self._cc_was_enabled = False
                 return
         if control is not None and cc_wanted:
             link_obj = self._cc_link_for(settings)
             control.cc_link = link_obj
-            control.cc_enabled = bool(not estopped and allow_drive
-                                      and module is not None and module.enabled
+            control.cc_enabled = bool(permissions.may_drive
                                       and not getattr(self, "_cc_reconfigure_blocked", False))
-            spin = settings.get("Allow Spin Key")
-            control.cc_key_mask = 0x0F | (0x10 if (spin is not None and bool(spin.value)) else 0)
+            control.cc_key_mask = 0x0F | (0x10 if settings.spin_allowed else 0)
             if not control.cc_enabled and (getattr(self, "_cc_was_enabled", False)
                                           or getattr(control, "cc_release_pending", False)):
                 # 急停必须把选手端那侧的键鼠也归零。放在写原因**之前**：
@@ -1967,8 +2051,8 @@ class BackendManager:
                                             or control.cc_last_error or "CC 中立帧尚未成功发送")
                     if release_failed else
                     "自定义控制器出口未生效："
-                    + ("急停激活" if estopped else
-                       ("模块 RobotLink 未启用" if not (module is not None and module.enabled)
+                    + ("急停激活" if permissions.estopped else
+                       ("模块 RobotLink 未启用" if not permissions.module_enabled
                         else "未授予 Allow Drive")))
         elif control is not None:
             control.cc_enabled = False
@@ -1977,19 +2061,18 @@ class BackendManager:
                 control.release_custom_controller()
         self._cc_was_enabled = bool(control is not None and control.cc_enabled)
 
-    def _cc_link_for(self, settings: dict) -> "cc_link.CustomControllerLink":
+    def _cc_link_for(self, settings: CustomControllerSettings) -> "cc_link.CustomControllerLink":
         """按 RobotLink 的设置拿（并按需重建）自定义控制器发送器。
 
         端口/速率/mock 变化时才重建对象：串口句柄不能每帧开关一次。
         """
-        port_s = settings.get("CC Port")
-        hz_s = settings.get("CC Hz")
-        mock_s = settings.get("CC Mock Writes")
-        port = str(getattr(port_s, "value", "Auto") or "Auto")
-        hz = float(getattr(hz_s, "value", 30) or 30)
-        mock = bool(getattr(mock_s, "value", True))
+        endpoint = settings.endpoint()
+        port, hz, mock = endpoint.identity
         link = getattr(self, "_cc_link", None)
         self._cc_reconfigure_blocked = False
+        if getattr(link, "startup_failed", False) and not link.closed:
+            self._cc_reconfigure_blocked = True
+            return link
         if (link is None or getattr(link, "closed", False)
                 or (link.port, float(link.max_hz), bool(link.mock_output)) != (port, hz, mock)):
             if link is not None and not getattr(link, "wire_neutral", True):
@@ -2012,8 +2095,11 @@ class BackendManager:
                     self._cc_reconfigure_blocked = True
                     return link
             writer_type = cc_link.CustomControllerLink if mock else cc_link.AsyncCustomControllerLink
-            link = writer_type(port=port, max_hz=hz, mock_output=mock)
-            self._cc_link = link
+            ownership = ({"retain_owner": lambda owner: setattr(self, "_cc_link", owner)}
+                         if not mock else {})
+            link = writer_type(port=port, max_hz=hz, mock_output=mock, **ownership)
+            if getattr(self, "_cc_link", None) is not link:
+                self._cc_link = link
             self._cc_change_key = None
         return link
 
@@ -2108,20 +2194,15 @@ class BackendManager:
         target = state if state is not None else self.state
         if target is None:
             return "none"
-        polar_wants = bool(
-            getattr(target, "polar_link_active", False)
-            and self.polar_arbiter.may_command_gimbal
-            and self._polar_gimbal_last is not None
-        )
-        if polar_wants:
-            return "polar"
         module = registry.get("ArmorAutoAim") if registry is not None else None
-        if module is None or not module.enabled:
-            return "none"
-        mock = module.get_setting("Mock Output") if module else None
-        if mock is not None and bool(mock.value):
-            return "none"
-        return "official"
+        mock = module.get_setting("Mock Output") if module is not None else None
+        return select_gimbal_egress(
+            polar_active=bool(getattr(target, "polar_link_active", False)),
+            polar_authorized=self.polar_arbiter.may_command_gimbal,
+            polar_has_target=self._polar_gimbal_last is not None,
+            official_enabled=bool(module is not None and module.enabled),
+            official_mock=bool(mock is not None and mock.value),
+        )
 
     def publish_vision_control(
         self, *, sequence: int, yaw_deg: float, pitch_deg: float,
@@ -2173,7 +2254,7 @@ class BackendManager:
                 self._last_km_release_reason = str(exc)
         self._estop_triggered_at = time.perf_counter()
         self.safety.trigger_estop()
-        self.serial.trigger_estop()
+        self.serial.request_estop()
         # 队内 0x5A 链路必须同帧锁死：固件侧没有断流归零，不能等下一帧的
         # tick_polar_link 才发现（那一帧之前本地看门狗要 0.2s，车上有速度时太慢）。
         self.polar.request_estop()
@@ -2200,16 +2281,26 @@ class BackendManager:
         return elapsed_ms
 
     def release_estop(self) -> None:
-        self.serial.release_estop()
-        # 权威在 safety；这里只是把队内链路的本地锁存与之同步。
+        self._drain_input_clear()
+        if self._backend_transition_blocks_work():
+            return
+        # Releasing E-stop returns authority only to LOCKED, never ARMED.
         self.safety.release_estop()
+        # A driver-held lock must not stall the UI. The serial latch stays
+        # revoked until this or a later tick can safely restore its generation.
+        self.serial.tick()
 
     def lock_control(self, reason: str = "operator lock") -> None:
         self.safety.lock_control(reason)
         self.field_log.emit("control_lock", reason=reason)
 
     def begin_qualification(self, intents: Any, *, ttl_s: float = 30.0):
+        self._drain_input_clear()
+        if self._backend_transition_blocks_work():
+            raise RuntimeError("Backend lifecycle transition must finish before qualification")
         token = self.safety.begin_qualification(intents, ttl_s=ttl_s)
+        if self._input_clear_incomplete():
+            raise RuntimeError("Input clear must complete before qualification")
         self.field_log.emit(
             "qualification_begin",
             intents=sorted(token.intents),
@@ -2225,6 +2316,12 @@ class BackendManager:
         match_mode: str | None = None,
         video_source: str | None = None,
     ) -> tuple[bool, str]:
+        try:
+            self._drain_input_clear()
+        except Exception:
+            return False, "Input clear must complete before arming"
+        if self._backend_transition_blocks_work():
+            return False, "Backend lifecycle transition must finish before arming"
         if self.safety.estop_active:
             return False, "release E-stop explicitly before arming"
         # Evidence must be minted over the real transport. A mock bridge
@@ -2276,6 +2373,8 @@ class BackendManager:
             self.safety.arm_match(capabilities)
         except ValueError as exc:
             return False, str(exc)
+        if self._input_clear_incomplete():
+            return False, "Input clear must complete before arming"
         cc_writer = getattr(self, "_cc_link", None)
         if getattr(cc_writer, "asynchronous", False) and cc_writer.faulted:
             if not cc_writer.rearm(self.safety.last_transition_at):
@@ -2373,6 +2472,7 @@ class BackendManager:
 
     # ------------------------------------------------------------------
     def stats(self) -> dict[str, Any]:
+        lifecycle = self.lifecycle_snapshot
         native_at = self.native_decoder.latest_timestamp()
         native_width, native_height = self.native_decoder.frame_size()
         if self.state is not None:
@@ -2383,6 +2483,15 @@ class BackendManager:
                 native_info["decoded_frame_at"] = native_at
         return {
             "scenario": self.scenario_key,
+            "lifecycle": {
+                "phase": lifecycle.phase.value,
+                "generation": lifecycle.generation,
+                "pending_resources": list(lifecycle.pending_resources),
+                "failures": [{"resource": item.resource, "error": item.error}
+                             for item in lifecycle.failures],
+                "elapsed_s": lifecycle.elapsed_s,
+                "final": lifecycle.final,
+            },
             "referee_profile": self.referee.profile_id,
             "referee_protocol_version": self.referee.protocol_version,
             "safety": self.safety.stats(),
@@ -2391,21 +2500,7 @@ class BackendManager:
             "serial": self.serial.stats(),
             "controller_angles": self.controller_angles.stats(),
             "polar_link": {
-                **self.polar.stats(),
-                "link_alive": bool(self.polar_bridge.active),
-                "segment_counts": {
-                    f"0x{key:02X}": int(value)
-                    for key, value in sorted(self.polar_bridge.segment_counts.items())
-                },
-                "dropped_segments": self.polar_bridge.dropped,
-                "decode": {
-                    "frames_ok": self.polar.codec.stats.frames_ok,
-                    "crc8_errors": self.polar.codec.stats.crc8_errors,
-                    "crc16_errors": self.polar.codec.stats.crc16_errors,
-                    "unknown_segments": self.polar.codec.stats.unknown_segments,
-                    "length_errors": self.polar.codec.stats.length_errors,
-                    "buffer_overflows": self.polar.codec.stats.buffer_overflows,
-                },
+                **capture_polar_link_health(lambda: self.polar, lambda: self.polar_bridge),
                 "authority": self.polar_arbiter.stats(),
                 "timestamp_roll_detected": self.polar.timestamp.roll_detected,
             },
@@ -2449,7 +2544,7 @@ class BackendManager:
             },
             "field_log": {
                 "path": str(self.field_log.path),
-                "last_error": self.field_log.last_error,
+                **dict(self.field_log.snapshot()),
             },
             "message_apply": {
                 "errors": self._apply_error_count,

@@ -1,0 +1,2 @@
+ACTIVE test_video_dialog_reflects_current_mode_without_persisting_f11
+ACTIVE test_startup_action_keeps_every_page_and_opens_real_modal

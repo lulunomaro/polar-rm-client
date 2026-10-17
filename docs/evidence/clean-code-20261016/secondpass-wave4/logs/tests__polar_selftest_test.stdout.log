@@ -1,0 +1,84 @@
+
+--- test_readonly_by_default ---
+
+--- 默认只读 ---
+ACTIVE test_readonly_by_default
+[PASS] 只读模式跳过控制回环
+[PASS] 只读模式退出码为 0
+[PASS] 连接成功
+[PASS] 下行解码正常
+[PASS] 报告标记为非权威证据
+[PASS] 急停阶段已写归零帧
+[PASS] 机器人只收到零速帧
+
+--- test_single_switch_is_not_enough ---
+
+--- 只给一个开关不允许运动 ---
+ACTIVE test_single_switch_is_not_enough
+[PASS] 缺 --polar-confirm-motion 时仍跳过
+[PASS] 未运动则机器人只收到零速
+[PASS] 缺 --polar-enable-drive 时仍跳过
+
+--- test_motion_loopback_patched_robot ---
+
+--- 两个开关齐给 + 机器人已补消费者 ---
+ACTIVE test_motion_loopback_patched_robot
+[PASS] 控制回环已执行
+[PASS] 底盘响应被确认
+[PASS] 云台响应被确认
+[PASS] 自检退出码 0
+[PASS] 机器人确实收到过非零速度
+[PASS] fire 全程为 0
+[PASS] 最后一帧已归零
+
+--- test_motion_loopback_unpatched_robot ---
+
+--- 机器人未补底盘消费者（当前 master 真实行为）---
+ACTIVE test_motion_loopback_unpatched_robot
+[PASS] 自检判定车未响应
+[PASS] 底盘响应被判 False
+[PASS] 退出码指出无运动响应
+[PASS] 问题清单指向固件消费者
+[PASS] 仍然发完归零帧
+
+--- test_motion_gate_refusals ---
+
+--- 运动前置门的各项拒绝 ---
+[PASS] 机器人编号未知时拒绝运动
+[PASS] 链路不新鲜时拒绝运动
+[PASS] 有部件错误时拒绝运动
+[PASS] 无 0x1E 也无测速坐标时拒绝运动（避免盲开）
+[PASS] 缺 0x1E 但有测速坐标时放行（改用位移证据）
+[PASS] 条件齐备时放行
+
+--- test_position_fallback_verifies_motion ---
+
+--- 无 0x1E 时用 0x0A 位移完成验收 ---
+ACTIVE test_position_fallback_verifies_motion
+[PASS] 无 0x1E 但有坐标时仍允许运动
+[PASS] 靠位移判定为已响应
+[PASS] 证据源标注为 0x0A 位移
+[PASS] 位移量已记录
+[PASS] 自检退出码 0
+[PASS] 无回读且位移不增长时判定为未响应
+[PASS] 位移证据量级入报告
+[PASS] 退出码指出无运动响应
+
+--- test_connect_failure_is_reported ---
+
+--- 连不上时的报告 ---
+[PASS] 端口被占用时退出码为连接失败
+[PASS] 未连接
+[PASS] 报告里有可行动原因
+
+--- test_report_is_written_and_parseable ---
+
+--- 报告落盘 ---
+ACTIVE test_report_is_written_and_parseable
+[PASS] 报告文件已生成
+[PASS] 报告含五个阶段
+[PASS] 报告声明非权威
+[PASS] 报告含已探测端口
+
+============================================================
+ALL POLAR_SELFTEST BEHAVIOUR TESTS PASSED

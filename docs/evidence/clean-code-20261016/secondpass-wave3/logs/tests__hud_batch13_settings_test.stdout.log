@@ -1,0 +1,27 @@
+
+--- test_default_bytes_are_unchanged_by_wiring ---
+[PASS] 默认 Send All 推导出广播（与接线前硬编码 1 一致）  -> 1
+[PASS] 默认 Mark Type 推导出 1（与接线前硬编码 1 一致）  -> 1
+[PASS] 默认配置下 MapClickCmd 逐字节不变  -> 080112070000000000000018012000280030013d000048414500005040 vs 080112070000000000000018012000280030013d000048414500005040
+
+--- test_settings_change_the_actual_wire_fields ---
+[PASS] 关掉 Send All 推导出 0（单发）  -> 0
+[PASS] Mark Type=Attack 推导出 type=1  -> 1
+[PASS] Mark Type=Defense 推导出 type=2  -> 2
+[PASS] Mark Type=Warning 推导出 type=3  -> 3
+[PASS] Mark Type=Custom 推导出 type=4  -> 4
+[PASS] 编码结果里字段 3（类别，proto mode）确实是 3  -> 3
+[PASS] 字段 6（标记模式，proto type）保持 1  -> 1
+[PASS] 编码结果里字段 1（is_send_all）确实是 1  -> 1
+[PASS] 关掉广播后字段 1 变成 0  -> 0
+[PASS] 关掉广播不影响类别（字段之间不得串扰）  -> 3
+[PASS] 关掉广播不影响标记模式  -> 1
+
+--- test_unknown_or_missing_values_fall_back_to_legacy_bytes ---
+[PASS] 未知 Mark Type 回落到 1（Attack，等于接线前）  -> 1
+[PASS] 回落时广播仍保持默认开  -> 1
+[PASS] Send All 是垃圾值时按真值判断，不抛异常  -> 1
+[PASS] 模块 disabled 时谓词仍只看设置项（避免双重判定）
+
+============================================================
+ALL BATCH-13 MAP-MARKER TESTS PASSED

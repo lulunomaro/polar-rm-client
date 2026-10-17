@@ -1,0 +1,13 @@
+test_all_74_default_modules_prewarm_at_dpr_1_and_2 (__main__.DescriptionWrappingTests.test_all_74_default_modules_prewarm_at_dpr_1_and_2) ... ok
+test_empty_descriptions_build_and_new_module_clears_stale_hint (__main__.DescriptionWrappingTests.test_empty_descriptions_build_and_new_module_clears_stale_hint) ... ok
+test_entire_help_card_owns_wheel_without_scrolling_obscured_settings (__main__.DescriptionWrappingTests.test_entire_help_card_owns_wheel_without_scrolling_obscured_settings) ... ok
+test_long_hint_stays_inside_viewport_and_preserves_all_text (__main__.DescriptionWrappingTests.test_long_hint_stays_inside_viewport_and_preserves_all_text) ... ok
+test_lossless_unicode_whitespace_and_grapheme_boundaries (__main__.DescriptionWrappingTests.test_lossless_unicode_whitespace_and_grapheme_boundaries) ... ok
+test_mixed_cjk_line_heights_do_not_clip_fallback_faces (__main__.DescriptionWrappingTests.test_mixed_cjk_line_heights_do_not_clip_fallback_faces) ... ok
+test_module_description_lines_are_scrollable_without_overlapping_controls (__main__.DescriptionWrappingTests.test_module_description_lines_are_scrollable_without_overlapping_controls) ... ok
+test_oversized_help_uses_existing_scroll_route_and_resets_on_new_module (__main__.DescriptionWrappingTests.test_oversized_help_uses_existing_scroll_route_and_resets_on_new_module) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 12.104s
+
+OK

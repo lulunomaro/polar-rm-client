@@ -1,0 +1,64 @@
+....Window shutdown request failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/polar/window_lifecycle.py", line 91, in request_close
+    self.backend.request_shutdown(teardown_tasks=tasks)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: request rejected
+..Window owner action save failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: save
+Window owner action GL failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: GL
+Window owner action done failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: done
+....Window owner action first failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/workspace/shared/client-quality-integration/tests/test_window_lifecycle_controller.py", line 41, in broken
+    raise TypeError("bad input")
+TypeError: bad input
+.......
+----------------------------------------------------------------------
+Ran 17 tests in 0.006s
+
+OK

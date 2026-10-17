@@ -5,7 +5,7 @@ Changing annual prices/command meanings must not change the transaction lifecycl
 from __future__ import annotations
 import math
 from typing import Any
-from ....economy import EconomyContext, EconomyOffer
+from ....economy_values import EconomyContext, EconomyOffer
 
 def _rmuc_time_step(state: Any) -> int:
     remaining = max(0, int(getattr(state, "stage_countdown_sec", 420)))

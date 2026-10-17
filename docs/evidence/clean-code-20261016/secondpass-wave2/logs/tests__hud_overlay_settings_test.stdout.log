@@ -1,0 +1,49 @@
+
+--- test_robot_id_suffix_appears_only_when_enabled ---
+[PASS] 开启时后缀含机器人编号  -> ' #103'
+[PASS] 后缀自带前导空格（拼在标签后不会粘连）  -> ' #103'
+[PASS] 关闭后返回空串（不是返回 #-1 或 0）  -> ''
+
+--- test_unknown_robot_id_is_not_rendered ---
+[PASS] target_id=-1 时不拼后缀
+[PASS] target_id=0 时不拼后缀
+[PASS] target_id 是垃圾值时不抛异常
+[PASS] armor 为 None 时不抛异常
+
+--- test_overlay_module_disabled_yields_no_id ---
+[PASS] 模块关闭时无后缀  -> ''
+
+--- test_crosshair_heat_color_toggle_actually_switches ---
+[PASS] 开启时按热量取色（返回热量状态色）  -> heat-color(heat,0.9)
+[PASS] 热量比例如实传入（90/100 = 0.9）  -> heat-color(heat,0.9)
+[PASS] 关闭后改用 HUD 主色（开关真的能关掉变色）  -> accent-color
+[PASS] 关闭后热量拉满也不变色  -> accent-color
+
+--- test_crosshair_heat_color_is_ratio_safe ---
+[PASS] max_heat=0 时不除零  -> heat-color(heat,50.0)
+[PASS] 设置项缺失时回退到默认（热量色）而不抛异常  -> heat-color(heat,50.0)
+
+--- test_renderer_cpu_choice_blocks_gpu_path ---
+[PASS] GPU Auto 不干预（允许 GPU 路径）
+[PASS] 选 CPU 后阻止 GPU 路径（设置项真的生效）
+[PASS] 大小写不敏感（8 种写法不应造成两种行为）
+[PASS] 选回 GPU Auto 后恢复
+[PASS] 未知取值不干预（不能因为脏数据导致 CPU/GPU 乱切）
+[PASS] 本谓词仅反映 Renderer，不因模块关闭而改口（阻断靠两处叠加）
+
+--- test_armor_boxes_toggle_does_not_step_on_other_switches ---
+[PASS] 默认（开）时判据为 True，与接线前一致
+[PASS] 关掉后判据为 False（线框不再画）
+[PASS] 但不影响 Robot ID 后缀（各开关互不越权）  ->  #105
+[PASS] 模块 disabled 时本判据不加严（保持显示，由模块开关自己负责）
+[PASS] 查不到设置项时保持显示（接线不改变现有观感）
+
+--- test_overlay_distance_switch_owns_the_label_number ---
+[PASS] 开着时标签带距离，且与接线前逐字节相同  -> SIDE 12.3m #101
+[PASS] 关掉后数字真的消失了（而不只是变淡）  -> SIDE #101
+[PASS] 关掉距离不影响机器人编号  -> SIDE #101
+[PASS] 整个模块关掉时仍给距离（fail-open，不顺手抽掉现有画面）  ->  0.0m
+[PASS] 垃圾距离值不致崩
+
+============================================================
+ALL HUD-OVERLAY SETTINGS TESTS PASSED

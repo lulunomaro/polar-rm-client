@@ -1,0 +1,128 @@
+def _publish_polar_authority(self, target: RobotState, *, estopped: bool,
+                             drive_armed: bool, motion_stats: dict[str, Any]) -> None:
+    """Refresh authority/diagnostics even without any referee traffic."""
+    bridge = self.polar_bridge
+    authority = self.polar_arbiter.stats()
+    target.polar_drive_armed = drive_armed
+    target.polar_gimbal_client = self.polar_arbiter.may_command_gimbal
+    target.polar_authority_state = "ESTOP" if estopped else str(authority["state"])
+    target.polar_authority_reason = (
+        "急停激活，队内链路控制已锁零" if estopped else str(authority["reason"] or "")
+    )
+    target.backend_stats["polar_link"] = {
+        **self.polar.stats(),
+        "link_alive": bool(bridge.active),
+        "segment_counts": {
+            f"0x{key:02X}": int(value)
+            for key, value in sorted(bridge.segment_counts.items())
+        },
+        "dropped_segments": bridge.dropped,
+        "decode": {
+            "frames_ok": self.polar.codec.stats.frames_ok,
+            "crc8_errors": self.polar.codec.stats.crc8_errors,
+            "crc16_errors": self.polar.codec.stats.crc16_errors,
+            "unknown_segments": self.polar.codec.stats.unknown_segments,
+            "length_errors": self.polar.codec.stats.length_errors,
+            "buffer_overflows": self.polar.codec.stats.buffer_overflows,
+        },
+        "authority": authority,
+        "motion": motion_stats,
+        "timestamp_roll_detected": self.polar.timestamp.roll_detected,
+    }
+
+
+def stats(self) -> dict[str, Any]:
+    lifecycle = self.lifecycle_snapshot
+    native_at = self.native_decoder.latest_timestamp()
+    native_width, native_height = self.native_decoder.frame_size()
+    if self.state is not None:
+        native_info = self.state.backend_stats.get("native_video_0310")
+        if isinstance(native_info, dict):
+            native_info["decoded_frames"] = self.native_decoder.frames_decoded
+            native_info["decoder_ready"] = self.native_decoder.available
+            native_info["decoded_frame_at"] = native_at
+    return {
+        "scenario": self.scenario_key,
+        "lifecycle": {
+            "phase": lifecycle.phase.value,
+            "generation": lifecycle.generation,
+            "pending_resources": list(lifecycle.pending_resources),
+            "failures": [{"resource": item.resource, "error": item.error}
+                         for item in lifecycle.failures],
+            "elapsed_s": lifecycle.elapsed_s,
+            "final": lifecycle.final,
+        },
+        "referee_profile": self.referee.profile_id,
+        "referee_protocol_version": self.referee.protocol_version,
+        "safety": self.safety.stats(),
+        "mqtt": self.mqtt.stats(),
+        "udp": self.udp.stats(),
+        "serial": self.serial.stats(),
+        "controller_angles": self.controller_angles.stats(),
+        "polar_link": {
+            **self.polar.stats(),
+            "link_alive": bool(self.polar_bridge.active),
+            "segment_counts": {
+                f"0x{key:02X}": int(value)
+                for key, value in sorted(self.polar_bridge.segment_counts.items())
+            },
+            "dropped_segments": self.polar_bridge.dropped,
+            "decode": {
+                "frames_ok": self.polar.codec.stats.frames_ok,
+                "crc8_errors": self.polar.codec.stats.crc8_errors,
+                "crc16_errors": self.polar.codec.stats.crc16_errors,
+                "unknown_segments": self.polar.codec.stats.unknown_segments,
+                "length_errors": self.polar.codec.stats.length_errors,
+                "buffer_overflows": self.polar.codec.stats.buffer_overflows,
+            },
+            "authority": self.polar_arbiter.stats(),
+            "timestamp_roll_detected": self.polar.timestamp.roll_detected,
+        },
+        "native_0310": {
+            "decoder_ready": self.native_decoder.available,
+            "decoded_connected": bool(
+                native_at > 0.0 and time.perf_counter() - native_at <= 2.0
+            ),
+            "decoded_frames": self.native_decoder.frames_decoded,
+            "continuous_decoded_seconds": self.native_decoder.continuous_decoded_seconds,
+            "decoded_frame_at": native_at,
+            "output_width": native_width,
+            "output_height": native_height,
+            "bytes_since_reset": self._native_0310_bytes_since_reset,
+            "dropped_chunks": self._native_0310_dropped_chunks,
+            "out_of_order_chunks": self._native_0310_out_of_order_chunks,
+            "recovery_dropped_chunks": self._native_0310_recovery_dropped_chunks,
+            "blocked_until_sps": self._native_0310_blocked_until_sps,
+            "decoder_restarts": self._native_0310_decoder_restarts,
+            "input_queue": self.native_decoder.input_queue_depth(),
+            "input_dropped": self.native_decoder.input_chunks_dropped,
+            "input_chunks_written": self.native_decoder.input_chunks_written,
+            "input_bytes_written": self.native_decoder.input_bytes_written,
+            "last_error": self.native_decoder.last_error,
+            "decoder_health": self.native_decoder.health(),
+        },
+        "qualification": {
+            "session_id": self.qualification.session.session_id if self.qualification.session else "",
+            "core_ready": self.qualification.core_ready()[0],
+            "reason": self.qualification.core_ready()[1],
+            "capabilities": sorted(self.qualification.capabilities()),
+            "evidence_error": self.qualification.store.last_error,
+        },
+        "safety_evidence": {
+            "estop_triggered_at": self._estop_triggered_at,
+            "estop_zero_publish_ok": self._last_estop_zero_ok,
+            "estop_zero_publish_reason": self._last_estop_zero_reason,
+            "mqtt_disconnect_lock_at": self._mqtt_disconnect_lock_at,
+            "mqtt_reconnected_locked_at": self._mqtt_reconnected_locked_at,
+            "input_clear_generation": self._input_clear_generation,
+        },
+        "field_log": {
+            "path": str(self.field_log.path),
+            **dict(self.field_log.snapshot()),
+        },
+        "message_apply": {
+            "errors": self._apply_error_count,
+            "last_error": self._last_apply_error,
+            "updates": self._official_state_updates_count,
+        },
+    }

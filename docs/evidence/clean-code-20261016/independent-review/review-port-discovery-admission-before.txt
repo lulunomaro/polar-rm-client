@@ -1,0 +1,24 @@
+test_constructor_rejection_clears_admission_and_preserves_error_identity (__main__.PortDiscoveryAdmissionTests.test_constructor_rejection_clears_admission_and_preserves_error_identity) ... FAIL
+test_late_start_error_does_not_clear_a_genuinely_admitted_refresh (__main__.PortDiscoveryAdmissionTests.test_late_start_error_does_not_clear_a_genuinely_admitted_refresh) ... ok
+test_start_rejection_clears_admission_and_allows_invalidated_retry (__main__.PortDiscoveryAdmissionTests.test_start_rejection_clears_admission_and_allows_invalidated_retry) ... FAIL
+
+======================================================================
+FAIL: test_constructor_rejection_clears_admission_and_preserves_error_identity (__main__.PortDiscoveryAdmissionTests.test_constructor_rejection_clears_admission_and_preserves_error_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-review/tests/test_port_discovery_admission.py", line 55, in test_constructor_rejection_clears_admission_and_preserves_error_identity
+    self.assertFalse(serial_ports._port_refresh_running)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_start_rejection_clears_admission_and_allows_invalidated_retry (__main__.PortDiscoveryAdmissionTests.test_start_rejection_clears_admission_and_allows_invalidated_retry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-review/tests/test_port_discovery_admission.py", line 65, in test_start_rejection_clears_admission_and_allows_invalidated_retry
+    self.assertFalse(serial_ports._port_refresh_running)
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+FAILED (failures=2)

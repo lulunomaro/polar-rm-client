@@ -753,11 +753,12 @@ def _vendor_struct_fields(text: str, name: str) -> list:
 
 def test_vendor_type_layout_anchor() -> None:
     print("\n--- 11) 厂商类型定义 == 我们的字节（外部锚点，不是自洽断言）---")
-    if not VENDOR_DUMP.exists():
+    vendor_dump = Path(os.environ.get("POLAR_VENDOR_DUMP") or VENDOR_DUMP).expanduser()
+    if not vendor_dump.is_file():
         SKIPPED.append("没有 dump.cs：厂商类型锚点未跑")
-        print(f"[SKIP] 找不到 {VENDOR_DUMP}")
+        print(f"[SKIP] 找不到 {vendor_dump}")
         return
-    text = VENDOR_DUMP.read_text(encoding="utf-8", errors="replace")
+    text = vendor_dump.read_text(encoding="utf-8", errors="replace")
     prof = dl.load_profile()
     m = re.search(r"class Proto_Prefix[^}]*?CONTROL_PC_ROBOT\s*=\s*(\d+)", text, re.S)
     check("厂商常量 Proto_Prefix.CONTROL_PC_ROBOT 找得到", m is not None)

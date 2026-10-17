@@ -1,0 +1,47 @@
+[PASS] 规格文件存在  -> /workspace/shared/client-quality-integration/rm_client/backend/polar_protocol.json
+[PASS] 规格校验通过（无 error）
+[PASS] 规格版本已声明  -> 1
+  [info] 规格告警：（无）
+[PASS] 规格段号集合 == 代码段号集合（无遗漏无多余）  -> spec_only={} code_only={}
+[PASS] 每个段的 struct 格式串逐字节一致  -> {}
+[PASS] 段数量符合预期（13 个可解码段 + 1 个特殊段）  -> 14 vs 14
+[PASS] 段名与 SEGMENT_NAMES 一致  -> 对比 14 项：{}
+[PASS] 键位表与 RC_KEY_BITS 逐项一致  -> spec={'W': 0, 'S': 1, 'A': 2, 'D': 3, 'SHIFT': 4, 'CTRL': 5, 'Q': 6, 'E': 7, 'R': 8, 'F': 9, 'G': 10, 'Z': 11, 'X': 12, 'C': 13, 'V': 14, 'B': 15} code={'W': 0, 'S': 1, 'A': 2, 'D': 3, 'SHIFT': 4, 'CTRL': 5, 'Q': 6, 'E': 7, 'R': 8, 'F': 9, 'G': 10, 'Z': 11, 'X': 12, 'C': 13, 'V': 14, 'B': 15}
+[PASS] 规格 drive_key_mask == 客户端允许上限 RC_MAX_ALLOWED_KEY_MASK  -> 0x000F vs 0x000F
+[PASS] 客户端掩码只含 W/S/A/D  -> 0xf
+[PASS] 上限不含 Q/E/F 与已废除的 SHIFT（按位真检，不是硬编码相等）  -> 泄露=[] mask=0x000F
+[PASS] drive_key_mask(True) 也不放行 SHIFT（参数已无效）  -> 0xf
+[PASS] RC_MAX_ALLOWED_KEY_MASK 不再包含 SHIFT  -> 0xf
+[PASS] 合法规格不触发任何告警
+[PASS] fire 在 never_set 里（开火权不外移）  -> ('fire',)
+[PASS] RobotCmd 结构串与编码器一致  -> <ffffffffffBBB vs <ffffffffffBBB
+[PASS] VirtualRC 结构串与编码器一致  -> <5h2b3h2BH vs <5h2b3h2BH
+[PASS] 每个兵种的限幅与权限与代码表逐项一致
+[PASS] 未知编号兜底限速不高于步兵  -> 1.5
+[PASS] 0x0A 规格驱动解码 == 现有解码函数  -> {}
+[PASS] 0x03 位域解码 == 现有解码函数  -> {}
+[PASS] 文件缺失时 ok=False 而不是抛异常
+[PASS] JSON 语法错时 ok=False  -> tmpaast78ec.json: JSON 语法错误：Expecting property name enclosed
+[PASS] 段表为空时拒绝整份规格  -> downlink_segments: 缺失或为空
+[PASS] inputs 数量与 struct 不符时拒绝  -> downlink_segments[0](X): inputs 有 2 项但 struct 解出 3 个值（<QQQ = 24 字节）; uplink.virt
+[PASS] 输出引用不存在的输入时拒绝  -> downlink_segments[0](X): 输出 y 引用了不存在的输入 'nope'; uplink.virtual_rc.drive_key_mask
+[PASS] 放宽到含开火相关键位会告警  -> uplink.robot_cmd.never_set: 没有把 fire 列入 never_set；开火权必须始终留在驾驶员手上; uplink.virtual_rc.drive_
+[PASS] 告警文案点名了具体危险键位 Q/E/F  -> uplink.robot_cmd.never_set: 没有把 fire 列入 never_set；开火权必须始终留在驾驶员手上; uplink.virtual_rc.drive_key_mask: 掩码 0xFFFF 包含了不得从上位机注
+[PASS] 告警会点名已废除的 SHIFT（不是恒真断言）  -> uplink.robot_cmd.never_set: 没有把 fire 列入 never_set；开火权必须始终留在驾驶员手上; uplink.virtual_rc.drive_key_mask: 掩码 0xFFFF 包含了不得从上位机注入的键位：['E', 'F', 'Q', 'SHIFT']；Q/E 会启停摩擦轮
+[PASS] fire 不在 never_set 里会告警  -> uplink.robot_cmd.never_set: 没有把 fire 列入 never_set；开火权必须始终留在驾驶员手上; uplink.virtual_rc.drive_
+[PASS] 改 struct 后规格确实带出新格式串  -> <ffff | 
+[PASS] 新增输出字段被规格声明带出  -> ['slip_ratio', 'vx_mps', 'vy_mps', 'wz_rps']
+[PASS] 新增段无需改代码即可被登记  -> <ff
+[PASS] 新增段不影响原有段
+[PASS] 放宽掩码会被告警拦住（可改但不静默）  -> uplink.virtual_rc.drive_key_mask: 掩码 0x00FF 包含了不得从上位机注入的键位：['CTRL', 'E', 'Q', 'S
+[PASS] 新规格校验通过（含 state_fields）
+[PASS] 新段格式串被登记  -> <fH
+[PASS] 新段 state_fields 被收集  -> {'barrel_pressure': 'polar_barrel_pressure', 'jam': 'polar_barrel_jam'}
+[PASS] 新段无需专用解码器即可解出具名字段  -> {'barrel_pressure': 2.75, 'jam': True, 'overheat': True}
+[PASS] 新段无需专用处理器即可落进 overlay  -> {'polar_barrel_pressure': 2.75, 'polar_barrel_jam': True}
+[PASS] 新段不被计为丢弃  -> 0 -> 0
+[PASS] 新段会刷新链路新鲜期  -> 7.045699931040872e-05
+[PASS] 无 state_fields 声明时仍计为丢弃（不造假数据）  -> dropped=1
+
+==============================================================
+ALL POLAR SPEC TESTS PASSED

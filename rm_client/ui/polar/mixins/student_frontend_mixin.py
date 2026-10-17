@@ -37,9 +37,6 @@ class StudentFrontendMixin:
         self.close_match_chat(clear=False)
         self.cancel_quick_action_wheel()
         # Release live inputs on the opening event, not a later Qt key-up.
-        self.control.mock_output = bool(self.backend.mqtt.mock_output)
-        self.control.release_all(self.state, self.registry)
-        self._control_mouse_point = None
         self.overlay_coordinator.request_modal(OverlayKind.STUDENT)
         self.student_ui.open(panel)
         if panel == "settlement":

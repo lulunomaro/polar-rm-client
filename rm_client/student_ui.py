@@ -189,8 +189,8 @@ class StudentUiState:
 
 
 def student_modules() -> list[Any]:
-    # Late import keeps these display adapters independent of the model.
-    from .model import Module, action_setting, bool_setting, mode_setting, number_setting
+    # Catalog extensions depend on settings, not robot runtime state.
+    from .module_settings import Module, action_setting, bool_setting, mode_setting, number_setting
     modules = []
     descriptions = {
         "InjuryStatistics": "按住 ~ 查看 Minecraft 服务器式受伤害计分板；裁判累计数据，不重复相加。",

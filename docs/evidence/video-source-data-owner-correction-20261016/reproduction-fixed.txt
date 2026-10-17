@@ -1,0 +1,4 @@
+native snapshot= VideoSourceSnapshot(requested_source='synthetic', active_source='', pending_resources=('Native 0x0310',), failures=(VideoSourceFailure(phase='Native stop', error='RuntimeError: closer not admitted'),), generation=3, inflight_resources=(), close_failures=()) retryable= True terminate_calls= 0
+native explicit_retry_terminated_process_and_joined_readers=True
+hevc snapshot= VideoSourceSnapshot(requested_source='synthetic', active_source='', pending_resources=('UDP/HEVC',), failures=(VideoSourceFailure(phase='UDP/HEVC/HEVC stop', error='RuntimeError: closer not admitted'),), generation=3, inflight_resources=(), close_failures=()) retryable= True terminate_calls= 0
+hevc explicit_retry_terminated_process_and_joined_readers=True

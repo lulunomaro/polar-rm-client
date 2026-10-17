@@ -189,6 +189,7 @@ print("\n--- 6) 锁定比赛控制必须给 DT7 补一帧松手，否则车带�
 # 最后一帧（W 按着）重复到永远。实测就是这个形状：帧数 1 -> 1。
 from rm_client.model import RobotState as _RS, build_default_registry as _bdr   # noqa: E402
 from rm_client.ui.polar.mixins.input_dispatch_mixin import InputDispatchMixin    # noqa: E402
+from rm_client.ui.polar.pointer_interaction import PointerInteraction           # noqa: E402
 
 bus3 = []
 prof6 = dict(dl.load_profile())
@@ -213,6 +214,7 @@ class _FakeUI:
 
 ui6 = _FakeUI()
 ui6.control = ctl6
+ui6.pointer_interaction = PointerInteraction(drag={"type": "slider"}, binding_module="RobotLink")
 ui6._economy_qualification_token = object()
 ui6._control_mouse_point = object()
 ui6._combat_input_was_allowed = True
@@ -221,6 +223,8 @@ check("锁定清零时补发了（帧数 +1）", len(bus3) == n_w + 1, f"{n_w} -
 keys_after = struct.unpack_from("<H", dl.decode_dt7_frame(bus3[-1])["payload"], 8)[0]
 check("补的那一帧键位是 0（车上那本键位账真的被清）", keys_after == 0, hex(keys_after))
 check("本地键位也清了", ctl6.key_state["W"] is False)
+check("旧输入代际的拖动和绑定也取消",
+      ui6.pointer_interaction.drag is None and ui6.pointer_interaction.binding_module is None)
 
 print("\n" + ("六个复查坑全部钉住" if FAILED == 0 else str(FAILED) + " 条失败"))
 sys.exit(1 if FAILED else 0)

@@ -11,7 +11,7 @@ import time
 
 from PySide6.QtCore import QRectF, Qt
 
-from ..economy import EconomyContext, CATEGORY_TITLES, TRANSACTION_LABELS
+from ..economy_values import EconomyContext, CATEGORY_TITLES, TRANSACTION_LABELS
 from ..student_ui import presentation_data, value_text
 from .animation import Easings
 from .clickgui_gpu import ClickGuiDrawList
@@ -19,6 +19,7 @@ from .cs2_feedback import _css_ease_in_out
 from .gpu_frame_compositor import LensMaterial
 from .theme import color
 from .economy_workspace import _lerp_rect, _layer_transform_rect
+from .economy_interaction import HOLD_SECONDS
 from .student_reload import append_reload_details, reload_detail_height
 from .fonts import cjk_ui_font
 
@@ -81,7 +82,7 @@ def build_grid(host, width, height):
     layout = grid_layout(host.economy_workspace_layer, width, height, progress)
     context = EconomyContext.from_state(host.state)
     offers = host.economy_offers()
-    selected = host.economy_selected_offer()
+    selected = host.reconcile_economy_selection()
     now = time.perf_counter()
     body_alpha, detail_alpha = layout.offers_alpha, layout.detail_alpha
     # All content and hit areas use the SAME final-grid -> animated-root clip.
@@ -211,7 +212,7 @@ def build_grid(host, width, height):
         text = selected.reason or "当前不可用"
     elif selected.confirmation=="hold":
         action = "economy_confirm_hold"
-        hold = max(0,min(1,(now-host.economy_hold_started)/.6)) if host.economy_hold_key==selected.key else 0
+        hold = max(0,min(1,(now-host.economy_hold_started)/HOLD_SECONDS)) if host.economy_hold_key==selected.key else 0
         text = f"确认中 {round(hold*100)}%" if hold else "按住 0.6 秒确认"
     else:
         text = (f"再点一次确认（{max(0,host.economy_armed_until-now):.1f}s）" if host.economy_armed_key==selected.key and now<=host.economy_armed_until

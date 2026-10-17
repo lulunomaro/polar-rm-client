@@ -1,0 +1,92 @@
+QOpenGLWidget is not supported on this platform.
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+test_buff_and_penalty_malformed_order_and_limits_match (tests.test_tactical_map_contract.TacticalMapContractTests.test_buff_and_penalty_malformed_order_and_limits_match) ... ok
+test_click_gates_and_exceptions_do_not_publish_or_toast_early (tests.test_tactical_map_contract.TacticalMapContractTests.test_click_gates_and_exceptions_do_not_publish_or_toast_early) ... ok
+test_frozen_reference_retains_its_own_policy_constants (tests.test_tactical_map_contract.TacticalMapContractTests.test_frozen_reference_retains_its_own_policy_constants) ... ok
+test_map_size_minecraft_and_reentrant_policy_queries_match (tests.test_tactical_map_contract.TacticalMapContractTests.test_map_size_minecraft_and_reentrant_policy_queries_match) ... ok
+test_missing_map_asset_preserves_fallback_raster_and_field_geometry (tests.test_tactical_map_contract.TacticalMapContractTests.test_missing_map_asset_preserves_fallback_raster_and_field_geometry) ... ok
+test_partial_render_failures_preserve_effect_prefix_and_original_error (tests.test_tactical_map_contract.TacticalMapContractTests.test_partial_render_failures_preserve_effect_prefix_and_original_error) ... ok
+test_projection_mirror_clamp_and_click_roundtrip_preserve_backend_boundary (tests.test_tactical_map_contract.TacticalMapContractTests.test_projection_mirror_clamp_and_click_roundtrip_preserve_backend_boundary) ... ok
+test_radar_setting_callback_failures_remain_per_marker_and_lazy (tests.test_tactical_map_contract.TacticalMapContractTests.test_radar_setting_callback_failures_remain_per_marker_and_lazy) ... ok
+test_radar_stale_units_malformed_and_highlight_settings_match_raster (tests.test_tactical_map_contract.TacticalMapContractTests.test_radar_stale_units_malformed_and_highlight_settings_match_raster) ... ok
+test_real_window_complete_scene_raster_commands_and_hits_match (tests.test_tactical_map_contract.TacticalMapContractTests.test_real_window_complete_scene_raster_commands_and_hits_match) ... ok
+test_reference_is_the_exact_fixed_source (tests.test_tactical_map_contract.TacticalMapContractTests.test_reference_is_the_exact_fixed_source) ... ok
+test_rounded_cache_eviction_source_replacement_and_device_failure_match (tests.test_tactical_map_contract.TacticalMapContractTests.test_rounded_cache_eviction_source_replacement_and_device_failure_match) ... ok
+test_rounded_map_transform_dpr_corners_cache_identity_and_allocation_failure (tests.test_tactical_map_contract.TacticalMapContractTests.test_rounded_map_transform_dpr_corners_cache_identity_and_allocation_failure) ... ok
+test_tab_press_autorepeat_reverse_and_resize_keep_continuous_state (tests.test_tactical_map_contract.TacticalMapContractTests.test_tab_press_autorepeat_reverse_and_resize_keep_continuous_state) ... ok
+test_collapsed_targets_obey_density_and_minecraft_without_changing_mode (tests.test_tactical_map_geometry.MapGeometryTests.test_collapsed_targets_obey_density_and_minecraft_without_changing_mode) ... ok
+test_corner_mask_threshold_is_strict_with_antialias_margin (tests.test_tactical_map_geometry.MapGeometryTests.test_corner_mask_threshold_is_strict_with_antialias_margin) ... ok
+test_normal_import_is_qt_model_backend_and_renderer_independent (tests.test_tactical_map_geometry.MapGeometryTests.test_normal_import_is_qt_model_backend_and_renderer_independent) ... ok
+test_projection_inverse_mirroring_and_clamping_across_random_viewports (tests.test_tactical_map_geometry.MapGeometryTests.test_projection_inverse_mirroring_and_clamping_across_random_viewports) ... ok
+test_sampling_clamps_scale_keeps_anisotropic_dimensions_and_offset_keys (tests.test_tactical_map_geometry.MapGeometryTests.test_sampling_clamps_scale_keeps_anisotropic_dimensions_and_offset_keys) ... ok
+test_sampling_tiny_empty_and_invalid_extent_keeps_failure_behavior (tests.test_tactical_map_geometry.MapGeometryTests.test_sampling_tiny_empty_and_invalid_extent_keeps_failure_behavior) ... ok
+test_subpixel_zero_negative_and_nan_behavior_is_explicit (tests.test_tactical_map_geometry.MapGeometryTests.test_subpixel_zero_negative_and_nan_behavior_is_explicit) ... ok
+test_target_clamps_and_expansion_do_not_mutate_collapsed_extent (tests.test_tactical_map_geometry.MapGeometryTests.test_target_clamps_and_expansion_do_not_mutate_collapsed_extent) ... ok
+test_buffs_filter_source_identity_before_active_remaining_and_name (tests.test_tactical_map_telemetry.MapTelemetryTests.test_buffs_filter_source_identity_before_active_remaining_and_name) ... ok
+test_buffs_preserve_overflow_and_bad_mapping_as_failures (tests.test_tactical_map_telemetry.MapTelemetryTests.test_buffs_preserve_overflow_and_bad_mapping_as_failures) ... ok
+test_mechanisms_skip_bad_mapping_and_nonpositive_ids_keep_order (tests.test_tactical_map_telemetry.MapTelemetryTests.test_mechanisms_skip_bad_mapping_and_nonpositive_ids_keep_order) ... ok
+test_normal_import_executes_without_qt_model_backend_renderer_or_clock (tests.test_tactical_map_telemetry.MapTelemetryTests.test_normal_import_executes_without_qt_model_backend_renderer_or_clock) ... ok
+test_penalty_active_latest_dedup_and_three_limit_are_explicit (tests.test_tactical_map_telemetry.MapTelemetryTests.test_penalty_active_latest_dedup_and_three_limit_are_explicit) ... ok
+test_penalty_conversion_skips_invalid_type_and_zeroes_both_invalid_counts (tests.test_tactical_map_telemetry.MapTelemetryTests.test_penalty_conversion_skips_invalid_type_and_zeroes_both_invalid_counts) ... ok
+test_radar_age_admission_and_fade_preserve_inclusive_expiry (tests.test_tactical_map_telemetry.MapTelemetryTests.test_radar_age_admission_and_fade_preserve_inclusive_expiry) ... ok
+test_radar_failures_remain_distinct_for_caller_to_handle (tests.test_tactical_map_telemetry.MapTelemetryTests.test_radar_failures_remain_distinct_for_caller_to_handle) ... ok
+test_radar_metres_centimetres_and_thresholds_keep_units (tests.test_tactical_map_telemetry.MapTelemetryTests.test_radar_metres_centimetres_and_thresholds_keep_units) ... ok
+test_radar_row_detaches_values_without_consuming_or_changing_source (tests.test_tactical_map_telemetry.MapTelemetryTests.test_radar_row_detaches_values_without_consuming_or_changing_source) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 5.416s
+
+OK

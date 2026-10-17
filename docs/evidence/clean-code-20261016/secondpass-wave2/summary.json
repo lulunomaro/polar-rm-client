@@ -1,0 +1,89 @@
+{
+  "tested_commit": "6ad0123c64121b49c6e5f6ec654b3a12ac039aa2",
+  "tested_tree": "860cf7f5c0e3af3f9c8e262041887afd8a807d6b",
+  "source_clean_at_start": true,
+  "run_id": "064ff796054d44ceab7d812d52fc900e",
+  "run_state": "completed",
+  "exit_code": 1,
+  "started_utc": "2026-10-16T10:54:27Z",
+  "result_file_completed_utc": "2026-10-16T11:00:54.235888+00:00",
+  "counts": {
+    "PASS": 259,
+    "SKIP": 12,
+    "INCOMPLETE": 3,
+    "FAIL": 0
+  },
+  "category_counts": {
+    "offline": {
+      "PASS": 258
+    },
+    "firmware": {
+      "SKIP": 12,
+      "INCOMPLETE": 3
+    },
+    "audit": {
+      "PASS": 1
+    }
+  },
+  "source_stability": {
+    "schema_version": 1,
+    "status": "PASS",
+    "detail": "Declared verification source inputs have identical start/end fingerprints",
+    "scope": {
+      "directories": [
+        "rm_client",
+        "tests",
+        "tools",
+        "configs"
+      ],
+      "suffixes": [
+        ".bat",
+        ".c",
+        ".cfg",
+        ".cpp",
+        ".h",
+        ".hpp",
+        ".ini",
+        ".json",
+        ".ps1",
+        ".py",
+        ".spec",
+        ".toml",
+        ".yaml",
+        ".yml"
+      ],
+      "root_files": [
+        "main.py",
+        "requirements*.txt"
+      ],
+      "exclusions": [
+        "hidden directories",
+        "__pycache__"
+      ],
+      "limits": "Start/end comparison only; excludes assets, external fixtures, installed packages and transient edits restored between captures."
+    },
+    "before": {
+      "status": "available",
+      "sha256": "c980f1dd4a95682d282f851a503a024b51318e72a4c08bad8b8dc1df741e0fd4",
+      "file_count": 583
+    },
+    "after": {
+      "status": "available",
+      "sha256": "c980f1dd4a95682d282f851a503a024b51318e72a4c08bad8b8dc1df741e0fd4",
+      "file_count": 583
+    }
+  },
+  "command": "CI=true POLAR_TEAM_CRC_REFERENCE=/workspace/shared/client-quality-external/serial-port-assistant-af97031/CRC8_CRC16.py /workspace/shared/client-quality-venv/bin/python tools/verify_all.py --profile offline --timeout 300 --json /workspace/shared/client-quality-aggregate/wave2/results.json --log-dir /workspace/shared/client-quality-aggregate/wave2/logs",
+  "working_directory": "/workspace/shared/client-quality-integration",
+  "explicit_external_references": [
+    "reference-manifest.json"
+  ],
+  "notes": [
+    "Complete offline profile; its firmware-category prerequisites remain missing.",
+    "The extra audit result is not one of the 273 selected registered checks.",
+    "Serial discovery admission and independently reviewed downward quality guards are included.",
+    "Tactical map work is not included.",
+    "The source and CRC reference bytes were checked before and after; these are distinct evidence boundaries.",
+    "No native desktop GPU, physical devices, Windows packaging or field qualification was performed."
+  ]
+}

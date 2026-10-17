@@ -1,0 +1,15 @@
+test_compatibility_frame_does_not_queue_warmup (__main__.WarmupTests.test_compatibility_frame_does_not_queue_warmup) ... ok
+test_enqueue_does_not_execute_uploads (__main__.WarmupTests.test_enqueue_does_not_execute_uploads) ... ok
+test_escape_and_modal_pause_then_resume_same_queue (__main__.WarmupTests.test_escape_and_modal_pause_then_resume_same_queue) ... ok
+test_failed_upload_cancels_queue_and_releases_context (__main__.WarmupTests.test_failed_upload_cancels_queue_and_releases_context) ... ok
+test_first_paint_never_calls_bulk_prewarm (__main__.WarmupTests.test_first_paint_never_calls_bulk_prewarm) ... ok
+test_hidden_or_invalid_context_does_not_upload (__main__.WarmupTests.test_hidden_or_invalid_context_does_not_upload) ... ok
+test_one_page_each_turn_then_completion (__main__.WarmupTests.test_one_page_each_turn_then_completion) ... ok
+test_successful_gpu_frame_queues_then_resumes_paused_jobs (__main__.WarmupTests.test_successful_gpu_frame_queues_then_resumes_paused_jobs) ... ok
+test_tick_stage_includes_nonrender_work (__main__.WarmupTests.test_tick_stage_includes_nonrender_work) ... ok
+test_warmup_only_current_scale_and_one_font_per_job (__main__.WarmupTests.test_warmup_only_current_scale_and_one_font_per_job) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.346s
+
+OK

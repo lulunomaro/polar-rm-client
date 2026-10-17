@@ -1,0 +1,15 @@
+test_eviction_preserves_requested_pages_and_reclaims_layouts (__main__.ShapedPageTests.test_eviction_preserves_requested_pages_and_reclaims_layouts) ... ok
+test_failed_publication_keeps_known_lines_and_old_texture (__main__.ShapedPageTests.test_failed_publication_keeps_known_lines_and_old_texture) ... ok
+test_glyph_upload_failure_does_not_poison_warm_retry (__main__.ShapedPageTests.test_glyph_upload_failure_does_not_poison_warm_retry) ... ok
+test_missing_line_keeps_existing_texture_and_pixels (__main__.ShapedPageTests.test_missing_line_keeps_existing_texture_and_pixels) ... ok
+test_page_batching_keeps_adjacent_command_order (__main__.ShapedPageTests.test_page_batching_keeps_adjacent_command_order) ... ok
+test_partial_allocation_failure_destroys_only_new_pages_and_retries (__main__.ShapedPageTests.test_partial_allocation_failure_destroys_only_new_pages_and_retries) ... ok
+test_production_page_submission_packs_every_command_once (__main__.ShapedPageTests.test_production_page_submission_packs_every_command_once) ... ok
+test_release_destroys_all_retained_pages_once (__main__.ShapedPageTests.test_release_destroys_all_retained_pages_once) ... ok
+test_render_lock_does_not_change_published_coverage (__main__.ShapedPageTests.test_render_lock_does_not_change_published_coverage) ... ok
+test_sequential_large_sets_do_not_overflow_historical_page (__main__.ShapedPageTests.test_sequential_large_sets_do_not_overflow_historical_page) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.834s
+
+OK

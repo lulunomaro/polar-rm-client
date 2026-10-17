@@ -1,6 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 from pathlib import Path
+import os
 import sys
+
+# The spec executes in the freezing process, not in the packaged application.
+# Cover direct spec invocation as well as build_release.ps1, before hooks import
+# optional SDKs. This is the observed OpenVINO opt-out, not network isolation.
+os.environ["CI"] = "true"
 from PyInstaller.utils.hooks import collect_all
 
 root = Path(SPECPATH).parent

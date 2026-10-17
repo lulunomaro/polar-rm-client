@@ -42,7 +42,17 @@ Python 3.12.14，Linux x86_64，9 轮交错顺序，暖身后测量；GC 在计�
 
 只需本地基线源码，不下载依赖，不开应用或连接硬件：
 
+历史可用性说明（2026-10-16 审计）：`3bf4091` 是当时记录的提交标识，
+尚未确认其公开可达等价提交；当前审计环境也没有该 Git 对象。以下 `git show`
+步骤仅适用于已持有它的仓库，不能据此承诺新克隆能够完整重跑 before 数据。
+缺失时应明确报告基线不可用，不改用当前源码、不自动下载，也不刷新原始成绩。
+若另行取得源文件，先核对原始 JSON 的 `source_sha256.before` 两项：
+animation.py 为 `9349151fbdab0fcaff91431f77cf9592309eb50b02c2b82f00cb9605ae23a036`，
+primitives.py 为 `73ed001a422d3521bc40ce261d08e9091528769fd4dd31bee3d0395ed3d0e344`。
+当前实现的回归测试仍可独立执行；历史基线缺失不是这些测试的通过证据。
+
 ```sh
+git cat-file -e '3bf4091^{commit}' || exit 2
 mkdir -p /tmp/polar-motion-baseline/rm_client/ui/polar
 git show 3bf4091:rm_client/ui/animation.py > /tmp/polar-motion-baseline/rm_client/ui/animation.py
 git show 3bf4091:rm_client/ui/polar/primitives.py > /tmp/polar-motion-baseline/rm_client/ui/polar/primitives.py

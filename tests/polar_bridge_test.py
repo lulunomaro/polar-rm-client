@@ -35,6 +35,7 @@ from rm_client.backend.polar_bridge import (  # noqa: E402
 )
 from rm_client.backend.polar_transport import PolarDriveIntent, PolarLinkTransport  # noqa: E402
 from rm_client.model import RobotState, build_default_registry  # noqa: E402
+from rm_client.control import KeyboardControlBridge  # noqa: E402
 
 FAILED: list[str] = []
 FIRE_OFFSET = 4 + 4 + 36
@@ -497,9 +498,10 @@ def test_spin_command_reaches_robot_without_drive_authorisation() -> None:
     spin = registry.get("SpinMode")
     feed(manager.polar_bridge)
 
-    class FakeControl:
-        # 必须可传参：下面第 3 步要用 FakeControl(vx=1.0) 造一个非零推杆。
+    class FakeControl(KeyboardControlBridge):
+        # Use the real input-clear contract while controlling the test intent.
         def __init__(self, vx: float = 0.0, vy: float = 0.0, wz: float = 0.0) -> None:
+            super().__init__(publisher=None, mock_output=True)
             self.last_command = FakeCommand(vx=vx, vy=vy, wz=wz)
 
     # ---- 前提：操作员没开任何驾驶授权 ----
@@ -731,8 +733,10 @@ def test_manager_gate_requires_three_switches() -> None:
     feed(manager.polar_bridge)  # 让链路看起来是活的
     control = FakeCommand(vx=1.0, vy=0.0, wz=0.0)
 
-    class FakeControl:
-        last_command = control
+    class FakeControl(KeyboardControlBridge):
+        def __init__(self) -> None:
+            super().__init__(publisher=None, mock_output=True)
+            self.last_command = control
 
     # 1) 模块未 enabled
     module.enabled = False
@@ -824,9 +828,10 @@ def test_estop_and_diagnostics_without_tick() -> None:
     link.get_setting("Allow Drive").value = True
     link.get_setting("Vision NUC Occupied").value = False
 
-    class FakeControl:
-        class last_command:  # noqa: N801
-            vx, vy, wz = 1.0, 0.0, 0.0
+    class FakeControl(KeyboardControlBridge):
+        def __init__(self) -> None:
+            super().__init__(publisher=None, mock_output=True)
+            self.last_command = FakeCommand(vx=1.0, vy=0.0, wz=0.0)
 
     # 先正常跑一帧，确认诊断快照进了 backend_stats（不依赖官方 MQTT 流量）
     state.backend_stats = {}
@@ -855,6 +860,8 @@ def test_estop_and_diagnostics_without_tick() -> None:
 
     # F12：不跑任何 tick，trigger_estop 本身就必须锁住队内链路
     manager.trigger_estop()
+    check("F12 input observer 已完成真实控制缓存清理",
+          not manager._input_clear_incomplete() and manager._dt7_control_ref.last_command is None)
     check("F12 直接锁住 0x5A 链路（不等下一帧）", manager.polar._estop_active is True)
     check("F12 已置归零突发窗口", manager.polar._zeros_until > 0.0)
 

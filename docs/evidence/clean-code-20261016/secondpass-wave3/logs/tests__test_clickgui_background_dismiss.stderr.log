@@ -1,0 +1,18 @@
+....E.........
+======================================================================
+ERROR: test_closing_animation_cannot_republish_stale_hotspots (__main__.BackgroundDismissTests.test_closing_animation_cannot_republish_stale_hotspots)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/tests/test_clickgui_background_dismiss.py", line 93, in test_closing_animation_cannot_republish_stale_hotspots
+    self.w.click(row.rect.center().toPoint())
+  File "/workspace/shared/client-quality-integration/tests/test_clickgui_background_dismiss.py", line 55, in click
+    QTest.mouseClick(self, button, pos=point)
+  File "/workspace/shared/client-quality-integration/rm_client/ui/polar/mixins/input_dispatch_mixin.py", line 636, in mousePressEvent
+    and self.tactical_map_field_layout is not None
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: Error calling Python override of QWidget::mousePressEvent(): 'Host' object has no attribute 'tactical_map_field_layout'
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.513s
+
+FAILED (errors=1)

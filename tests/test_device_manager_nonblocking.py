@@ -74,6 +74,7 @@ class ManagerNonblockingTests(unittest.TestCase):
             def close(self):
                 entered.set()
                 unblock.wait(2)
+                self.is_open = False
         polar = self.backend.polar
         polar.port = 'COM3'
         polar.mock_writes = False
@@ -143,9 +144,15 @@ class ManagerNonblockingTests(unittest.TestCase):
     def test_ordered_shutdown_waits_for_workers_and_reports_unconfirmed(self):
         from types import SimpleNamespace
         logs, waits = [], []
-        self.backend.field_log = SimpleNamespace(emit=lambda event, **data: logs.append((event, data)))
+        self.backend.field_log.close(timeout=1)
+        self.backend.field_log = SimpleNamespace(
+            emit=lambda event, **data: logs.append((event, data)),
+            close=lambda **kwargs: True,
+            snapshot=lambda: {"pending_records": 0, "dropped_records": 0,
+                "write_errors": 0, "closed": True, "worker_active": False, "closing": False})
         dt7 = SimpleNamespace(asynchronous=True, wire_neutral=False, last_error='fake missing',
-            release=lambda: (False, 'fake missing'), close=lambda: None,
+            release=lambda: (False, 'fake missing'), request_release=lambda: (False, 'fake missing'),
+            close=lambda: None,
             wait_closed=lambda timeout: (waits.append(timeout) or False))
         cc = SimpleNamespace(asynchronous=True, wire_neutral=False, last_error='fake missing',
             release_all=lambda: (False, 'fake missing'), close=lambda: None,
@@ -157,6 +164,9 @@ class ManagerNonblockingTests(unittest.TestCase):
         events = [data for event, data in logs if event == 'device_shutdown_unconfirmed']
         self.assertEqual({item['device'] for item in events}, {'DT7', 'CC'})
         self.assertTrue(all(not item['closed'] for item in events))
+        self.assertFalse(self.backend.shutdown_completion.resources_released)
+        self.assertFalse(self.backend.shutdown_completion.may_exit)
+        self.assertTrue(self.backend.shutdown_completion.audit.drained)
 
     def test_closed_neutral_writer_is_recreated_after_scenario_shutdown(self):
         module = self.registry.get('RobotLink')

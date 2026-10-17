@@ -1,0 +1,235 @@
+
+--- test_overlay_wins_over_mock ---
+[PASS] 底盘朝向来自 IMU 实测而非正弦
+[PASS] 云台朝向来自 JointState
+[PASS] 云台俯仰已入 HUD 字段
+[PASS] 功率上限来自 0x0A
+[PASS] 底盘能量来自 0x0D
+[PASS] 弹量来自 0x0A
+[PASS] 攻击 buff 转真
+[PASS] 底盘错误位转真 wheel_online
+[PASS] 云台错误位转真
+[PASS] relative_yaw 派生正确
+
+--- test_stale_link_releases_overlay ---
+[PASS] 链路过期后 active 转假
+[PASS] 链路过期后不再冻结 HUD（仿真重新接管，说明 overlay 停手了）
+
+--- test_unknown_overlay_key_is_ignored ---
+[PASS] 未知 overlay 键被 hasattr 安全忽略
+
+--- test_official_containers_not_clobbered ---
+[PASS] map_robots 未被改写成 dict
+[PASS] official_robot_health 仍是 list
+[PASS] robot_positions 未被改写
+
+--- test_arbiter_vision_nuc_has_top_priority ---
+[PASS] 视觉 NUC 占用时即使客户端想控也让位
+[PASS] 占用时不发任何云台角度
+[PASS] NUC 退出且客户端开启后接管
+[PASS] NUC 重新上线立即收回控制权
+[PASS] 客户端自己没开启时保持 PASSIVE
+
+--- test_arbiter_slew_and_conflict_lockout ---
+[PASS] 云台指令被斜率限幅
+[PASS] 误差在容差内时不发散计时
+[PASS] 开始发散后尚未锁出
+[PASS] 发散未过 0.60s 仍不锁出
+[PASS] 反馈持续不收敛则判定为抢环并锁出
+[PASS] 锁出后不再发云台角度
+[PASS] 锁出不会被自动交权清除
+[PASS] 显式清除后回到 PASSIVE
+[PASS] 反馈到位时不触发抢环
+
+--- test_normalize_deg_edges ---
+[PASS] 角度归一到 (-180,180]
+
+--- test_scale_drive_matches_firmware_limits ---
+[PASS] 满杆等于固件限幅 1.5 m/s / 2.0 rad/s
+[PASS] 归一化输入越界被钳制
+[PASS] Speed Scale 生效
+
+--- test_transport_sends_real_frames_and_never_fire ---
+[PASS] 写出了一帧 0x01
+[PASS] 同时写出了一帧 0x04 自转指令
+[PASS] 未要求自转时 0x04 为 NONE（不干预驾驶员）
+[PASS] 0x04 帧长 14
+[PASS] 帧长 49
+[PASS] SOF=0x5A 且段 id=0x01
+[PASS] fire 字节恒 0
+[PASS] 底盘速度按 m/s 上线
+[PASS] tracking 位上线
+[PASS] 看门狗过期后发零帧
+[PASS] 零帧速度全 0
+[PASS] 零帧 fire 仍为 0
+[PASS] 急停后仍发 0x01 但速度归零
+[PASS] 急停后 0x04 显式发 OFF
+[PASS] 急停置位
+
+--- test_spin_command_channel_is_independent_of_drive ---
+[PASS] 无驾驶意图时自转指令仍能发出
+[PASS] 指令值为 ON
+[PASS] 自转指令每 tick 重发（电平语义）
+[PASS] 重发的值不变
+[PASS] 重复设 ON 仍是 ON（不是翻转）
+[PASS] 可以显式关掉（原 SHIFT 方案做不到）
+[PASS] 未知指令值归为 NONE
+[PASS] 0x03 的 key.v 不含 SHIFT 位（bit4）
+[PASS] 0x03 的 key.v 不含 Q/E/F
+
+--- test_spin_command_reaches_robot_without_drive_authorisation ---
+[PASS] 驾驶未授权（前提成立）
+[PASS] 从未要求过自转时发 NONE（不碰驾驶员状态）
+[PASS] 驾驶未授权也能发出开自转（与 drive_armed 解耦）
+[PASS] 连发 5 次仍是 ON（不是边沿翻转）
+[PASS] 上线确有 0x04 帧
+[PASS] 0x04 载荷首字节是 ON
+[PASS] 未收到 0x1F 前不得声称已确认
+[PASS] 收到 0x1F 后记下闭环证据
+[PASS] 0x1F 的自转状态已落进 overlay（供 manager 闭环判定）
+[PASS] 0x1F 的底盘模式已落进 overlay
+[PASS] 回读说还在转时持续发 OFF（真的能关掉）
+[PASS] 确认停转后收敛到 NONE（不锁死遥控器）
+[PASS] 客户端从未主张过自转时，不干预驾驶员的自转
+[PASS] 急停前在发 ON
+[PASS] 急停时不再主张开自转
+[PASS] 未开 Allow Spin Key 时不发自转指令
+
+--- test_spin_off_is_bounded_without_firmware_readback ---
+[PASS] 无回读时先发 OFF
+[PASS] 有界压制后放手为 NONE
+[PASS] 放手后不再认为自己主张过
+[PASS] 重新要求开时立即发 ON
+
+--- test_send_hz_setting_actually_drives_the_link ---
+[PASS] RobotLink 确有 Send Hz 设置项
+[PASS] 拖到 80 后链路频率真的变成 80
+[PASS] 超上限被限幅到 MAX_SEND_HZ
+[PASS] 低于下限被限幅到 5Hz
+[PASS] 垃圾值下频率保持原值且 tick 不抛异常
+[PASS] set_send_hz 对相同值返回 False
+[PASS] set_send_hz 对不同值返回 True
+
+--- test_mock_writes_never_touch_serial ---
+[PASS] mock 模式一格字节都不写
+
+--- test_stub_port_refuses_to_start ---
+[PASS] Stub 端口不会尝试打开硬件
+[PASS] Stub 给出可读原因
+
+--- test_manager_gate_requires_three_switches ---
+[PASS] 模块未开启时不驾驶
+[PASS] 无操作员意图时不驾驶
+[PASS] 三闸全开才驾驶
+[PASS] 下发的确是 m/s 量级速度
+[PASS] Allow Drive 关闭时禁止驾驶
+[PASS] Allow Drive 重新打开后驾驶恢复
+[PASS] 非台架场景没有驾驶能力
+[PASS] NUC 占用时仲裁为 PASSIVE
+[PASS] PASSIVE 时上线的云台角度为 0（不发指令）
+[PASS] NUC 退出 + 客户端开启后接管
+[PASS] 接管后云台角度按弧度上线
+[PASS] 接管帧 fire 仍为 0
+[PASS] manager 已把 overlay 写进 state
+[PASS] shutdown 触发链路急停归零
+
+--- test_estop_and_diagnostics_without_tick ---
+[PASS] 诊断快照已写入 backend_stats
+[PASS] 快照含已收段计数
+[PASS] 快照含解码错误计数
+[PASS] 快照含现场探测到的端口清单
+[PASS] 未连接时有 ASCII 状态码（HUD 可渲染）
+[PASS] 中文原因仍保留在 last_error 供 tooltip/日志
+[PASS] 驾驶已授权
+[PASS] F12 input observer 已完成真实控制缓存清理
+[PASS] F12 直接锁住 0x5A 链路（不等下一帧）
+[PASS] F12 已置归零突发窗口
+[PASS] 急停后驾驶不再授权
+[PASS] 急停后意图全零
+[PASS] HUD 仲裁显示 ESTOP
+[PASS] ESTOP 已写进诊断快照
+[PASS] 释放急停后驾驶恢复
+[PASS] 释放后链路锁存同步清除
+
+--- test_motion_verifier_states ---
+[PASS] 无 0x1E 回读时判为 NO_FEEDBACK 而非误报 OK
+[PASS] NO_FEEDBACK 带可执行原因
+[PASS] 链路断开时判为 NO_LINK
+[PASS] 指令与实测一致时判为 OK
+[PASS] 未给速度时保持 IDLE
+[PASS] 刚开始给速时先给宽限期
+[PASS] 超过宽限仍未动报 NO_MOTION
+[PASS] 持续不响应最终报 STUCK
+[PASS] STUCK 原因指向固件底盘消费者
+[PASS] STUCK 带指令/实测对比数据
+[PASS] 车开始动后从 STUCK 恢复
+[PASS] 0x1E 陈旧时报 STALE_FEEDBACK
+[PASS] 只给旋转也算在试开车
+[PASS] 实测有角速度则判 OK
+
+--- test_motion_verifier_wired_into_manager ---
+[PASS] manager 将实测速度接入校验器
+[PASS] 运动结果进了诊断快照
+[PASS] 持续给速但实测不动能被报出
+[PASS] STUCK 详情已入 state 供 HUD 使用
+
+--- test_polar_link_reconnects_after_plug_in ---
+[PASS] 20 帧内只尝试一次（节律生效）
+[PASS] 未连上时不会假装活跃
+[PASS] 跨过窗口后发生第 2 次尝试
+[PASS] 第 2 次仍未连上
+[PASS] 机器人插上后链路自动恢复
+[PASS] 已连接时不重复重连
+[PASS] 非台架场景不会自动尝试开串口
+
+--- test_drive_channel_gating ---
+[PASS] virtual_rc 通道已授权时发 0x03
+[PASS] 0x01 仍持续发（云台角度只能走 0x01，否则会静默失效）
+[PASS] virtual_rc 纯通道下 0x01 的 speed_vector 写零（避免两套斜坡叠加）
+[PASS] 0x03 携带 key.v 位图
+[PASS] 未授权时第 2 次不再发 0x03（把控制权交回驾驶员）
+[PASS] 从未授权过时根本不发 0x03（不占遥控器）
+[PASS] 未授权时 0x01 照发，保证云台控制不断
+[PASS] UI 停摆后不再持续发 0x03（不冻结遥控器）
+[PASS] both 通道同时发 0x01 与 0x03
+[PASS] 默认通道为 robot_cmd（不发 0x03）
+[PASS] 未曾授权驾驶的急停不占用真实遥控器
+[PASS] 曾活动RC在急停调用返回前立刻释放
+[PASS] RC释放后不反复冻结真实摇杆
+[PASS] 急停 0x03 的 key.v 已清零
+
+--- test_control_keybinds_map_to_protocol_slots ---
+[PASS] 默认绑定与历史物理键一致
+[PASS] 未改绑时 W 解析到 W 槽
+[PASS] 改绑 W 槽为 Up 成功
+[PASS] 按 Up 现在驱动 W 槽
+[PASS] 按 W 不再驱动任何槽
+[PASS] 改绑后 keyboard_value 仍为 bit0
+[PASS] 拒绝把 S 槽也绑到 Up（已被 W 槽占用）
+[PASS] 拒绝后 S 槽保待原绑定
+[PASS] 支持把槽位绑成 None
+[PASS] 绑成 None 后按 A 无输出
+[PASS] 拒绝未知键名
+[PASS] reset_binds 后全部回到默认
+[PASS] Q 确实会出现在官方 keyboard_value 里（所以必须被拦）
+[PASS] Q 经 0x03 上线时被掩码抹掉
+[PASS] Q 本身不出现在上线位图
+[PASS] E 确实会出现在官方 keyboard_value 里（所以必须被拦）
+[PASS] E 经 0x03 上线时被掩码抹掉
+[PASS] E 本身不出现在上线位图
+[PASS] SHIFT 确实会出现在官方 keyboard_value 里（所以必须被拦）
+[PASS] SHIFT 经 0x03 上线时被掩码抹掉
+[PASS] SHIFT 本身不出现在上线位图
+[PASS] F 确实会出现在官方 keyboard_value 里（所以必须被拦）
+[PASS] F 经 0x03 上线时被掩码抹掉
+[PASS] F 本身不出现在上线位图
+
+--- test_gimbal_egress_is_mutually_exclusive ---
+[PASS] 链路未活跃时云台不判给 0x5A
+[PASS] 链路活跃+已授权控云台时，出口判给 polar
+[PASS] 未授权控云台时出口不判给 polar
+[PASS] 此时回到官方 PRM1 出口
+[PASS] 两条出口都不可用时为 none（不默认发）
+
+============================================================
+ALL POLAR_BRIDGE TESTS PASSED

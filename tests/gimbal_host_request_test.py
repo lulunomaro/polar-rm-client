@@ -18,9 +18,10 @@ GIMBAL_AUTO_AIM 的唯一入口是 s[0] 上档，而麦轮上档 = 底盘无条�
 from __future__ import annotations
 
 import os
-import re
 import sys
 import time
+from itertools import product
+from types import SimpleNamespace
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -34,6 +35,10 @@ from rm_client.backend.polar_link import (  # noqa: E402
     PolarFrameCodec,
 )
 from rm_client.backend.polar_transport import PolarLinkTransport  # noqa: E402
+from rm_client.backend.manager import BackendManager  # noqa: E402
+from rm_client.backend.polar_bridge import LINK_FRESH_S, PolarStateBridge  # noqa: E402
+from rm_client.backend.polar_control_policy import ControlGates  # noqa: E402
+from rm_client.backend.robot_link_settings import PolarGimbalSettings  # noqa: E402
 
 FAILED: list[str] = []
 
@@ -105,15 +110,59 @@ def test_estop_withdraws_request() -> None:
 
 
 def test_manager_gate() -> None:
-    src = open(os.path.join(ROOT, "rm_client", "backend", "manager.py"), encoding="utf-8").read()
-    m = re.search(r'(gimbal_setting = settings\.get\("Client Gimbal Control"\).*?'
-                  r'self\.polar\.set_gimbal_host_request)', src, re.S)
-    gate = m.group(1) if m else ""
-    check("manager 计算请求位：三条件闸门（开关+在线+非急停）",
-          m is not None and "bridge.active" in gate and "not estopped" in gate
-          and "gimbal_setting.value" in gate, gate.replace(chr(10), " ")[:160])
-    check("算出的请求位必须交给 transport",
-          "self.polar.set_gimbal_host_request(gimbal_host_request)" in src)
+    # Exercise the production manager decision and encoder together. Do not
+    # latch transport E-stop here: its separate safety layer must not conceal
+    # a manager that incorrectly grants authority while gates.estopped is true.
+    for requested, live, estopped, module_enabled, allow_drive in product((False, True), repeat=5):
+        manager, clock = manager_with_wire()
+        if not live:
+            clock[0] += LINK_FRESH_S + 0.01
+        gates = ControlGates(estopped, module_enabled, allow_drive, manager.polar_bridge.active)
+        manager._apply_polar_gimbal_host_request(
+            SimpleNamespace(dt7_enabled=True), PolarGimbalSettings(requested, False), gates)
+        expected = int(requested and live and not estopped)
+        case = (f"requested={requested}, live={live}, estop={estopped}, "
+                f"module={module_enabled}, drive={allow_drive}")
+        check("manager 三条件闸门且独立于底盘授权: " + case,
+              manager.polar.gimbal_host_request() == expected)
+        manager.polar._pump_tx(time.perf_counter())
+        frames = chassis_frames(manager.polar)
+        check("manager 决策写入真实 0x04 param0: " + case,
+              bool(frames) and all(frame[9] == expected for frame in frames),
+              str([frame[9] for frame in frames]))
+
+
+def manager_with_wire() -> tuple[BackendManager, list[float]]:
+    """Own no worker or device; only the byte-stream sink and clock are fake."""
+    clock = [10.0]
+    manager = BackendManager.__new__(BackendManager)
+    manager.polar_bridge = PolarStateBridge(clock=lambda: clock[0])
+    manager.polar_bridge.last_segment_at = clock[0]
+    manager.polar_bridge.segment_counts[0x01] = 1
+    manager.polar = PolarLinkTransport(port="COM9", mock_writes=False)
+    manager.polar._serial = FakeSerial()
+    manager.polar.connected = True
+    return manager, clock
+
+
+def test_manager_rechecks_late_link_expiry() -> None:
+    manager, clock = manager_with_wire()
+    earlier_gates = ControlGates(False, False, False, manager.polar_bridge.active)
+    settings = PolarGimbalSettings(True, False)
+    manager._apply_polar_gimbal_host_request(None, settings, earlier_gates)
+    manager.polar._pump_tx(time.perf_counter())
+    check("新鲜链路即使禁用底盘也发出云台请求",
+          manager.polar.gimbal_host_request() == 1 and chassis_frames(manager.polar)[-1][9] == 1)
+    manager.polar._serial.written.clear()
+    clock[0] += LINK_FRESH_S + 0.01
+    check("早先 gate 在线，但决策时 bridge 已过期", earlier_gates.link_active
+          and not manager.polar_bridge.active)
+    manager._apply_polar_gimbal_host_request(None, settings, earlier_gates)
+    manager.polar._pump_tx(time.perf_counter())
+    frames = chassis_frames(manager.polar)
+    check("迟到过期撤回上帧请求并写出 param0=0",
+          manager.polar.gimbal_host_request() == 0 and bool(frames)
+          and all(frame[9] == 0 for frame in frames))
 
 
 def main() -> int:
@@ -121,6 +170,7 @@ def main() -> int:
     test_transport_level_semantics()
     test_estop_withdraws_request()
     test_manager_gate()
+    test_manager_rechecks_late_link_expiry()
     print(f"\n合计 {len(FAILED)} 项失败")
     return 1 if FAILED else 0
 

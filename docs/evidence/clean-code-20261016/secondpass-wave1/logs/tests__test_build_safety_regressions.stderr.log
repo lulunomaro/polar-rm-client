@@ -1,0 +1,27 @@
+test_audio_import_does_not_change_immutable_resources (__main__.BuildAndAudioTests.test_audio_import_does_not_change_immutable_resources) ... ok
+test_existing_custom_sound_selections_migrate_without_overwrite (__main__.BuildAndAudioTests.test_existing_custom_sound_selections_migrate_without_overwrite) ... ok
+test_failed_build_retains_diagnostics (__main__.BuildAndAudioTests.test_failed_build_retains_diagnostics) ... ok
+test_launcher_keeps_executable_and_arguments_separate (__main__.BuildAndAudioTests.test_launcher_keeps_executable_and_arguments_separate) ... ok
+test_spec_includes_module_relative_json_files (__main__.BuildAndAudioTests.test_spec_includes_module_relative_json_files) ... ok
+test_unreadable_legacy_audio_does_not_block_ui_construction (__main__.BuildAndAudioTests.test_unreadable_legacy_audio_does_not_block_ui_construction) ... ok
+test_later_edit_refuses_entire_revert_without_partial_writes (__main__.FileProtectionTests.test_later_edit_refuses_entire_revert_without_partial_writes) ... ok
+test_lock_and_later_edit_block_rerun (__main__.FileProtectionTests.test_lock_and_later_edit_block_rerun) ... ok
+test_missing_or_interrupted_snapshot_never_falls_back_to_checkout (__main__.FileProtectionTests.test_missing_or_interrupted_snapshot_never_falls_back_to_checkout) ... ok
+test_path_escape_and_symlink_are_rejected (__main__.FileProtectionTests.test_path_escape_and_symlink_are_rejected) ... ok
+test_rerun_keeps_original_snapshot (__main__.FileProtectionTests.test_rerun_keeps_original_snapshot) ... ok
+test_revert_restores_all_bytes_and_existing_headers (__main__.FileProtectionTests.test_revert_restores_all_bytes_and_existing_headers) ... ok
+test_aggregate_classifies_skips_and_passes_separately (__main__.FirmwareToolIsolationTests.test_aggregate_classifies_skips_and_passes_separately) ... ok
+test_aggregate_timeout_is_incomplete (__main__.FirmwareToolIsolationTests.test_aggregate_timeout_is_incomplete) ... ok
+test_dry_run_entrypoints_preserve_all_fixture_bytes (__main__.FirmwareToolIsolationTests.test_dry_run_entrypoints_preserve_all_fixture_bytes) ... ok
+test_dry_run_missing_prerequisites_never_calls_installer (__main__.FirmwareToolIsolationTests.test_dry_run_missing_prerequisites_never_calls_installer) ... ok
+test_no_destructive_revert_and_no_implicit_prepare (__main__.FirmwareToolIsolationTests.test_no_destructive_revert_and_no_implicit_prepare) ... ok
+test_prepare_compile_checks_receive_exact_target_and_reject_skips (__main__.FirmwareToolIsolationTests.test_prepare_compile_checks_receive_exact_target_and_reject_skips) ... ok
+test_bad_ffmpeg_hash_blocks_execution_and_codec_tests (__main__.PreflightSafetyTests.test_bad_ffmpeg_hash_blocks_execution_and_codec_tests) ... ok
+test_bad_manifest_and_critical_files_block_execution (__main__.PreflightSafetyTests.test_bad_manifest_and_critical_files_block_execution) ... ok
+test_protocol_fallback_blocks_release (__main__.PreflightSafetyTests.test_protocol_fallback_blocks_release) ... ok
+test_valid_integrity_allows_version_probe (__main__.PreflightSafetyTests.test_valid_integrity_allows_version_probe) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.073s
+
+OK

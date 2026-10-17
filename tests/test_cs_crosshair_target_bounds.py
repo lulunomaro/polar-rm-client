@@ -13,6 +13,7 @@ from test_cs_crosshair_visibility import raster,bounds,foreground
 from rm_client.model import build_default_registry
 from rm_client.cs2_crosshair import paint_crosshair,profile_from_module,encode_share_code
 from rm_client.ui.polar.renderers import combat_target_hud as target
+from rm_client.ui.gpu_frame_compositor import GpuFrameCompositor
 
 
 def array(image):
@@ -28,7 +29,9 @@ class TargetHost(target.CombatTargetHudMixin):
         self.uploads=[];self.draw_calls=0;self.clear_calls=0;self.presence_calls=0
         self.target_hud_presence=NS(update=self.update_presence)
         self.menu=False;self.clear_ok=True;self.upload_ok=True
-        self.gpu_compositor=NS(clear_target_layer=self.clear,upload_target_region=self.upload)
+        self.gpu_compositor = GpuFrameCompositor()
+        self.gpu_compositor.clear_target_layer = self.clear
+        self.gpu_compositor.upload_target_region = self.upload
     def clear(self,_functions):
         self.clear_calls+=1;return self.clear_ok
     def upload(self,_functions,image,x,y):
@@ -170,7 +173,7 @@ class TargetBoundsTests(unittest.TestCase):
                 with self.subTest(dpr=dpr,scale=scale):
                     host=TargetHost(1.34)
                     host.module.get_setting('Crosshair Scale').value=scale
-                    compositor=object.__new__(GpuFrameCompositor)
+                    compositor=GpuFrameCompositor()
                     compositor._size=QSize(3840,2160)
                     compositor.target_fbo=NS(bind=lambda:True,release=lambda:None,texture=lambda:17)
                     host.gpu_compositor=compositor

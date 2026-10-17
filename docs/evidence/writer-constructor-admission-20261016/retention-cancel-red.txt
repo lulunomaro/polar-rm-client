@@ -1,0 +1,24 @@
+test_retention_callback_close_cannot_admit_a_second_native_owner (tests.test_writer_retention_cancellation.WriterRetentionCancellationTests.test_retention_callback_close_cannot_admit_a_second_native_owner) ... 
+  test_retention_callback_close_cannot_admit_a_second_native_owner (tests.test_writer_retention_cancellation.WriterRetentionCancellationTests.test_retention_callback_close_cannot_admit_a_second_native_owner) (kind='dt7') ... FAIL
+  test_retention_callback_close_cannot_admit_a_second_native_owner (tests.test_writer_retention_cancellation.WriterRetentionCancellationTests.test_retention_callback_close_cannot_admit_a_second_native_owner) (kind='cc') ... FAIL
+
+======================================================================
+FAIL: test_retention_callback_close_cannot_admit_a_second_native_owner (tests.test_writer_retention_cancellation.WriterRetentionCancellationTests.test_retention_callback_close_cannot_admit_a_second_native_owner) (kind='dt7')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_retention_cancellation.py", line 43, in test_retention_callback_close_cannot_admit_a_second_native_owner
+    self.assertIs(owner._thread, workers[0])
+AssertionError: <Thread(dt7-writer, started daemon 140357761853120)> is not <Thread(dt7-close-retry, started daemon 140357770245824)>
+
+======================================================================
+FAIL: test_retention_callback_close_cannot_admit_a_second_native_owner (tests.test_writer_retention_cancellation.WriterRetentionCancellationTests.test_retention_callback_close_cannot_admit_a_second_native_owner) (kind='cc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_retention_cancellation.py", line 43, in test_retention_callback_close_cannot_admit_a_second_native_owner
+    self.assertIs(owner._thread, workers[0])
+AssertionError: <Thread(cc-writer, started daemon 140357761853120)> is not <Thread(cc-close-retry, started daemon 140357770245824)>
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (failures=2)

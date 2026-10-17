@@ -16,7 +16,7 @@ from rm_client.ui.polar.mixins.input_dispatch_mixin import InputDispatchMixin
 
 APP = QApplication.instance() or QApplication([])
 
-class Host:
+class Host(InputDispatchMixin):
     wheelEvent = InputDispatchMixin.wheelEvent
     def __init__(self):
         self.registry = build_default_registry()

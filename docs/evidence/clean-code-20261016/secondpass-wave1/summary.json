@@ -1,0 +1,87 @@
+{
+  "tested_commit": "c4d3bcf97ef43056bf316bbec593802652120878",
+  "tested_tree": "7133ab90ca589f2b9afaf6e141186b42f5b6d6c1",
+  "source_clean_at_start": true,
+  "run_id": "bbb64591f0d44151b67bd7cccb7fb0b0",
+  "run_state": "completed",
+  "exit_code": 1,
+  "started_utc": "2026-10-16T10:38:25Z",
+  "result_file_completed_utc": "2026-10-16T10:44:51.223799+00:00",
+  "counts": {
+    "PASS": 256,
+    "SKIP": 12,
+    "INCOMPLETE": 4,
+    "FAIL": 0
+  },
+  "category_counts": {
+    "offline": {
+      "PASS": 255,
+      "INCOMPLETE": 1
+    },
+    "firmware": {
+      "SKIP": 12,
+      "INCOMPLETE": 3
+    },
+    "audit": {
+      "PASS": 1
+    }
+  },
+  "source_stability": {
+    "schema_version": 1,
+    "status": "PASS",
+    "detail": "Declared verification source inputs have identical start/end fingerprints",
+    "scope": {
+      "directories": [
+        "rm_client",
+        "tests",
+        "tools",
+        "configs"
+      ],
+      "suffixes": [
+        ".bat",
+        ".c",
+        ".cfg",
+        ".cpp",
+        ".h",
+        ".hpp",
+        ".ini",
+        ".json",
+        ".ps1",
+        ".py",
+        ".spec",
+        ".toml",
+        ".yaml",
+        ".yml"
+      ],
+      "root_files": [
+        "main.py",
+        "requirements*.txt"
+      ],
+      "exclusions": [
+        "hidden directories",
+        "__pycache__"
+      ],
+      "limits": "Start/end comparison only; excludes assets, external fixtures, installed packages and transient edits restored between captures."
+    },
+    "before": {
+      "status": "available",
+      "sha256": "ff2ce877206599388c61ae45f9fcb5d25c75417089f9a7edbe8148c09bac8404",
+      "file_count": 581
+    },
+    "after": {
+      "status": "available",
+      "sha256": "ff2ce877206599388c61ae45f9fcb5d25c75417089f9a7edbe8148c09bac8404",
+      "file_count": 581
+    }
+  },
+  "command": "CI=true /workspace/shared/client-quality-venv/bin/python tools/verify_all.py --profile offline --timeout 300 --json /workspace/shared/client-quality-aggregate/wave1/results.json --log-dir /workspace/shared/client-quality-aggregate/wave1/logs",
+  "working_directory": "/workspace/shared/client-quality-integration",
+  "explicit_external_references": [],
+  "notes": [
+    "The offline profile includes firmware-category checks.",
+    "The extra audit result is not one of the 271 selected registered checks.",
+    "The missing team CRC reference already existed in wave13; it was not newly lost during environment refresh.",
+    "No serial discovery admission patch or later quality ratchet was included.",
+    "Native hardware, desktop GPU, Windows packaging and field qualification were not performed."
+  ]
+}

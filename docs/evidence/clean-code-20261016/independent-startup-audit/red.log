@@ -1,0 +1,10 @@
+candidate 0167a3c2eacad302a143545478a917fc917acbe3
+checks 208 failures 204
+(False, False, None, (('call', 'self.sync_quick_action_wheel_settings', (), ()), ('get', 'self.refresh_config_profiles')))
+(False, False, ('call', 'self.sync_quick_action_wheel_settings', (), ()), (('call', 'self.sync_quick_action_wheel_settings', (), ()), ('get', 'self.refresh_config_profiles')))
+(False, False, ('get', 'self.apply_match_mode'), (('call', 'self.sync_quick_action_wheel_settings', (), ()), ('get', 'self.refresh_config_profiles')))
+(False, False, ('get', 'self.match_mode_manager'), (('call', 'self.sync_quick_action_wheel_settings', (), ()), ('get', 'self.refresh_config_profiles')))
+(False, False, ('get', 'self.match_mode_manager.current'), (('call', 'self.sync_quick_action_wheel_settings', (), ()), ('get', 'self.refresh_config_profiles')))
+(False, False, ('get', 'self.match_mode_manager.current.key'), (('call', 'self.sync_quick_action_wheel_settings', (), ()), ('get', 'self.refresh_config_profiles')))
+(False, False, ('call', 'self.apply_match_mode', ('self.match_mode_manager.current.key',), (('close_home', False), ('announce', False))), (('call', 'self.sync_quick_action_wheel_settings', (), ()), ('get', 'self.refresh_config_profiles')))
+(False, False, ('get', 'self.apply_robot_profile'), (('call', 'self.sync_quick_action_wheel_settings', (), ()), ('get', 'self.refresh_config_profiles')))

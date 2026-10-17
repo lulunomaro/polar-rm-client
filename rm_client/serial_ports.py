@@ -70,6 +70,7 @@ _port_cache = []
 _port_cache_at = float("-inf")
 _port_cache_generation = 0
 _port_scan_lock = threading.Lock()
+_port_refresh_lock = threading.Lock()
 _port_refresh_running = False
 
 
@@ -98,15 +99,32 @@ def list_serial_ports() -> list[dict[str, object]]:
 def port_snapshot() -> list[dict[str, object]]:
     """Immediate GUI snapshot, asynchronously refreshed at most once per TTL."""
     global _port_refresh_running
-    if time.monotonic() - _port_cache_at >= _PORT_CACHE_TTL and not _port_refresh_running:
-        _port_refresh_running = True
+    # Reserve admission independently of the scan lock: a hardware scan, thread
+    # constructor, or start wrapper must not make another snapshot wait for I/O.
+    with _port_refresh_lock:
+        refresh_needed = (time.monotonic() - _port_cache_at >= _PORT_CACHE_TTL
+                          and not _port_refresh_running)
+        if refresh_needed:
+            _port_refresh_running = True
+    if refresh_needed:
         def refresh():
             global _port_refresh_running
             try:
                 list_serial_ports()
             finally:
-                _port_refresh_running = False
-        threading.Thread(target=refresh, name="serial-discovery", daemon=True).start()
+                with _port_refresh_lock:
+                    _port_refresh_running = False
+        worker = None
+        try:
+            worker = threading.Thread(target=refresh, name="serial-discovery", daemon=True)
+            worker.start()
+        except BaseException:
+            # ident remains set after completion. A late start-wrapper error
+            # must not clear this worker's reservation or a newer successor's.
+            if worker is None or worker.ident is None:
+                with _port_refresh_lock:
+                    _port_refresh_running = False
+            raise
     return [dict(entry) for entry in _port_cache]
 
 

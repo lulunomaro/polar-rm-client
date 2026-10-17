@@ -1,0 +1,10 @@
+FAIL: New import cycle including deferred imports: rm_client.backend.referee.registry -> rm_client.backend.referee.rm2026.economy_rules -> rm_client.backend.referee.rm2026.state_adapter -> rm_client.backend.referee.student_legacy.state_adapter -> rm_client.economy -> rm_client.model -> rm_client.scenarios
+FAIL: New import cycle including deferred imports: rm_client.ui.polar.app_entry -> rm_client.ui.polar_app
+FAIL: Responsibility budget grew: rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.build_gpu_economy_workspace decisions 45 -> 77
+FAIL: Responsibility budget grew: rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.build_gpu_economy_workspace statements 131 -> 198
+FAIL: Responsibility budget grew: rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.draw_economy_overlay_compat decisions 33 -> 58
+FAIL: Responsibility budget grew: rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.draw_economy_overlay_compat statements 123 -> 179
+FAIL: Responsibility budget grew: rm_client.ui.polar_app:PolarRMWindow._paint_gpu_frame_cached decisions 46 -> 69
+FAIL: Responsibility budget grew: rm_client.ui.polar_app:PolarRMWindow._paint_gpu_frame_cached max_control_depth 3 -> 5
+FAIL: Responsibility budget grew: rm_client.ui.polar_app:PolarRMWindow._paint_gpu_frame_cached statements 97 -> 167
+FAIL: static quality gates; 190 Python modules, 3211 functions, 0 initialization cycles; no runtime or hardware qualification

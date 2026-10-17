@@ -1,0 +1,71 @@
+def _sync_controller_angles(self, registry: Any) -> dict[str, Any]:
+    """Configure the independent RX relay; never open a device on the UI thread.
+
+    Same human driving gates as the existing serial CC route, plus the
+    relay's explicit arm. MQTT qualification does not authorize or block
+    this separate physical-controller serial link.
+    """
+    if self._backend_transition_blocks_work():
+        self.controller_angles.disarm("Backend transition pending or failed")
+        status = self.controller_angles.stats()
+        if self.state is not None:
+            self.state.backend_stats["controller_angles"] = status
+        return status
+    module = registry.get("ControllerAngles") if registry is not None else None
+    robot = registry.get("RobotLink") if registry is not None else None
+
+    def value(owner, name, fallback):
+        setting = owner.get_setting(name) if owner else None
+        return setting.value if setting is not None else fallback
+
+    config = AngleRelayConfig(
+        enabled=bool(module is not None and module.enabled),
+        rx_port=str(value(module, "Angle RX Port", "Stub")).strip(),
+        tx_port=str(value(module, "Angle TX Port", "Stub")).strip(),
+        forward=bool(value(module, "Forward Angles", False)),
+        mock_output=bool(value(module, "Angle Mock Writes", True)),
+    )
+    authorized = bool(robot is not None and robot.enabled
+                      and value(robot, "Allow Drive", False)
+                      and not self.safety.estop_active)
+    conflict = ""
+    # Do not enumerate/resolve Auto here: that could stall the UI and could
+    # change its answer before an independent owner opens a port. Require
+    # explicit disjoint names while this receiver owns physical hardware.
+    owners = []
+    if robot is not None:
+        if value(robot, "Link Mode", "serial") == "serial":
+            owners.append(("RobotLink", str(value(robot, "Port", "Stub"))))
+        if value(robot, "Custom Controller Egress", False) and not value(robot, "CC Mock Writes", True):
+            owners.append(("CC keymouse", str(value(robot, "CC Port", "Auto"))))
+        if value(robot, "Direct DT7 Egress", False) and value(robot, "DT7 Real TX", False):
+            owners.append(("DT7", str(value(robot, "DT7 Port", "Auto"))))
+    for label, handle in (("CC prior writer", getattr(self, "_cc_link", None)),
+                          ("DT7 prior writer", getattr(self, "_dt7_link", None))):
+        if (handle is not None and not getattr(handle, "mock_output", True)
+                and getattr(handle, "port_handoff_ready", False) is not True):
+            # A generic closed flag is insufficient: the writer must
+            # prove neutral, completed teardown and no retained handle.
+            owners.append((label, str(getattr(handle, "resolved_port", "")
+                                      or getattr(handle, "port", "Auto"))))
+    serial = getattr(self, "serial", None)
+    if serial is not None and getattr(serial, "running", False):
+        owners.append(("referee serial", str(serial.port)))
+    used = {port_key(config.rx_port)}
+    if config.forward and not config.mock_output:
+        used.add(port_key(config.tx_port))
+    if config.enabled:
+        for label, port in owners:
+            if port.strip().lower() == "auto" or (explicit_port(port) and port_key(port) in used):
+                conflict = f"{label} port may conflict; select distinct explicit ports or Stub"
+                break
+    if conflict:
+        config = replace(config, enabled=False)
+        authorized = False
+    self.controller_angles.configure(config, authorized)
+    if conflict:
+        self.controller_angles.disarm(conflict)
+    status = self.controller_angles.stats()
+    if self.state is not None:
+        self.state.backend_stats["controller_angles"] = status
+    return status

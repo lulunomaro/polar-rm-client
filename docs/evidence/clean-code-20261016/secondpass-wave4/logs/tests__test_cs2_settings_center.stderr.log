@@ -1,0 +1,8 @@
+.Saved resolution incompatible with current DPI; using current window
+......This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+......
+----------------------------------------------------------------------
+Ran 13 tests in 1.473s
+
+OK

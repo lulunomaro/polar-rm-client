@@ -1,0 +1,44 @@
+[
+  {
+    "factory": "AsyncDt7KeyMouseLink",
+    "alive_after_error_and_gc": true,
+    "owner_survives": true,
+    "closing": false,
+    "closed": false
+  },
+  {
+    "factory": "AsyncCustomControllerLink",
+    "alive_after_error_and_gc": true,
+    "owner_survives": true,
+    "closing": false,
+    "closed": false
+  },
+  {
+    "raw_port": "not-a-port",
+    "error": "ValueError",
+    "note": null,
+    "displayed_port": "not-a-port",
+    "actual_port": 3333
+  },
+  {
+    "raw_port": "3333.0",
+    "error": "ValueError",
+    "note": null,
+    "displayed_port": "3333.0",
+    "actual_port": 3333
+  },
+  {
+    "raw_port": "3333.5",
+    "error": null,
+    "note": "",
+    "displayed_port": "3333.5",
+    "actual_port": 3333
+  },
+  {
+    "raw_port": "inf",
+    "error": "OverflowError",
+    "note": null,
+    "displayed_port": "inf",
+    "actual_port": 3333
+  }
+]

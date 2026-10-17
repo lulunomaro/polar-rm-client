@@ -1,0 +1,106 @@
+[field] persistent codecs with stdin open
+  ok generate h264 GOP
+  ok start h264
+  ok h264 first frame while stdin open
+  ok h264 first frame under 3 seconds
+  ok h264 stdin remains open
+  ok generate h265 GOP
+  ok start h265
+  ok h265 first frame while stdin open
+  ok h265 first frame under 3 seconds
+  ok h265 stdin remains open
+ACTIVE test_continuous_codecs
+  ok startup codec self-test
+[field] Annex-B recovery
+  ok H264 IDR without SPS/PPS blocked
+  ok H264 complete recovery accepted
+  ok HEVC VPS/SPS/PPS/IDR recovery
+  ok reset forgets stale parameter sets
+  ok split start-code prefix retained
+  ok split parameters wait for IDR
+  ok split recovery completes on next IDR
+  ok fragmented SPS begins
+  ok fragmented SPS payload retained
+  ok fragmented SPS committed at PPS
+  ok full fragmented SPS survives recovery
+[field] decoder crash/loss recovery under five seconds
+  ok start h264 recovery decoder
+  ok queue initial h264 GOP
+  ok initial h264 GOP decoded
+  ok h264 damaged epoch blocked
+  ok restart h264 process
+  ok h264 recovery outputs a frame
+  ok h264 recovery under five seconds
+  ok start h265 recovery decoder
+  ok queue initial h265 GOP
+  ok initial h265 GOP decoded
+  ok h265 damaged epoch blocked
+  ok restart h265 process
+  ok h265 recovery outputs a frame
+  ok h265 recovery under five seconds
+[field] frozen paths
+  ok portable executable determines app root
+  ok portable mode detected
+  ok portable resources
+  ok portable immutable defaults
+  ok portable configs
+  ok portable evidence
+  ok portable binaries
+  ok portable manifest
+  ok source mode detected
+  ok source module determines app root
+  ok source resources
+  ok source immutable defaults
+  ok source config isolated from defaults
+  ok source evidence isolated from defaults
+  ok source runtime override
+  ok runtime override preserves defaults
+  ok app override selects complete portable layout
+  ok resource tree hash deterministic
+  ok resource tree hash detects mutation
+[field] preflight runtime-state isolation
+  ok preflight creates writable config directory
+  ok preflight leaves user config empty
+  ok normal launch seeds immutable default
+[field] capture worker lifecycle
+  ok camera first probe starts
+  ok camera failed probe exits
+  ok camera does not fall through to MSMF
+  ok camera failure enters backoff
+  ok camera backoff blocks hot retry
+  ok local vision idle wait is interruptible
+[field] evidence integrity and hard gate
+  ok signed core evidence ready
+  ok runtime identity matches evidence
+  ok different robot cannot reuse evidence
+  ok PRM1 not inherited from core
+  ok generic runner cannot mint PRM1 evidence
+  ok schema review alone cannot unlock PRM1
+  ok technical rerun invalidates prior human sign-off
+  ok review plus firmware-bound bench and re-sign unlock PRM1
+  ok dynamic evidence expires after 24 hours
+  ok expired evidence cannot resurrect after clock rollback
+  ok tamper detected
+  ok tampered evidence cannot arm
+  ok startup locked
+  ok core authorization works
+  ok PRM1 independent lock
+[field] qualification intent scope
+  ok economy token permits economy only
+  ok economy token cannot move robot
+  ok invalid token use destroys qualification epoch
+[field] bounded log replay
+  ok all accepted field records written without loss
+  ok field writer closed before replay
+  ok bounded rotation
+  ok read-only replay parses records
+  ok portable replay summary
+  ok atomic replay export
+[field] source preflight
+  ok source preflight requires a real FFmpeg executable
+ACTIVE test_source_preflight
+  ok manifest-independent source preflight
+  ok offscreen Qt surface or OpenGL context
+  ok bundled H264 GOP
+  ok bundled HEVC GOP
+FIELD CANDIDATE TESTS PASSED

@@ -1,0 +1,17 @@
+[PASS] 默认取值就是 White（不是从没生效过的 Team）
+[PASS] 默认不产生降级原因  -> White/
+[PASS] 默认观测盒仍是纯白+opacity  -> [PySide6.QtGui.QColor.fromRgbF(1.000000, 1.000000, 1.000000, 0.820005)]
+[PASS] 默认主目标面仍是纯白不透明  -> [PySide6.QtGui.QColor.fromRgbF(1.000000, 1.000000, 1.000000, 1.000000)]
+[PASS] Team：红板变阵营红  -> [PySide6.QtGui.QColor.fromRgbF(1.000000, 0.000000, 0.000000, 0.820005)]
+[PASS] Team：蓝板变阵营蓝  -> [PySide6.QtGui.QColor.fromRgbF(0.000000, 0.000000, 1.000000, 0.820005)]
+[PASS] Team：认不出的板回落纯白（涂错比不涂危险）  -> [PySide6.QtGui.QColor.fromRgbF(1.000000, 1.000000, 1.000000, 0.820005), PySide6.QtGui.QColor.fromRgbF(1.000000, 1.000000, 1.000000, 0.820005)]
+[PASS] Team：主目标面用 aim 板自己的颜色（旧版传 None 测不出这条）  -> [PySide6.QtGui.QColor.fromRgbF(1.000000, 0.000000, 0.000000, 1.000000)]
+[PASS] Accent：全部消费点吃到主题强调色  -> [PySide6.QtGui.QColor.fromRgbF(0.000000, 1.000000, 0.000000, 0.820005)]
+[PASS] Polar Outline：标签按板色（红板变色）  -> [PySide6.QtGui.QColor.fromRgbF(1.000000, 0.000000, 0.000000, 0.820005), PySide6.QtGui.QColor.fromRgbF(1.000000, 1.000000, 1.000000, 0.820005)]
+[PASS] Polar Outline：认不出的板仍纯白  -> [PySide6.QtGui.QColor.fromRgbF(1.000000, 0.000000, 0.000000, 0.820005), PySide6.QtGui.QColor.fromRgbF(1.000000, 1.000000, 1.000000, 0.820005)]
+[PASS] Threat 降级为 Team（无威胁度数据，不谎称按威胁着色）  -> Team/threat score has no data source (vision reports plate color only)
+[PASS] 降级后诊断字段每帧都写（不能停在上帧旧值）  -> Team/threat score has no data source (vision reports plate color only)
+[PASS] 未知取值回落 White 且记录原因  -> White/unknown color mode 'Nonsense'
+[PASS] 设置项整个缺失时按默认 White 回落且不抛异常  -> White/
+
+合计 0 项失败

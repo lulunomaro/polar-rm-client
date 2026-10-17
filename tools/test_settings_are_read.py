@@ -7,6 +7,7 @@
 """
 from __future__ import annotations
 
+import ast
 import re
 import sys
 from pathlib import Path
@@ -40,7 +41,7 @@ def robotlink_settings(model_src: str) -> list:
         return re.findall(
             r"(?:bool_setting|number_setting|mode_setting|action_setting)\(\s*" + chr(34) +
             r"([^" + chr(34) + r"]+)" + chr(34), block)
-    raise AssertionError("model.py 里找不到 RobotLink 模块块")
+    raise AssertionError("声明式目录里找不到 RobotLink 模块块")
 
 
 def _module_settings(model_src: str) -> dict:
@@ -90,6 +91,63 @@ def read_names_in(scopes: list) -> set:
     return names
 
 
+def module_helper_reads(src: str, module_name: str) -> set[str]:
+    """Recognize real setting-helper calls tied to a registry module.
+
+    Mouse input uses get_setting_number/setting_bool rather than settings.get.
+    Associate their first argument with registry.get("RobotLink") in the same
+    function; merely mentioning the module or setting in a comment, UI label,
+    or another module's helper call is not wiring evidence. This deliberately
+    handles unambiguous local aliases, not arbitrary interprocedural data flow.
+    """
+    tree = ast.parse(src.lstrip("\ufeff"))
+
+    def module_lookup(node):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and node.func.attr == "get" and node.args
+                and isinstance(node.func.value, ast.Attribute)
+                and node.func.value.attr == "registry"
+                and isinstance(node.args[0], ast.Constant)
+                and isinstance(node.args[0].value, str)):
+            return node.args[0].value
+        return None
+
+    def local_nodes(node):
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+                continue
+            yield child
+            yield from local_nodes(child)
+
+    names = set()
+    for function in ast.walk(tree):
+        if not isinstance(function, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        nodes = list(local_nodes(function))
+        aliases = {}
+        for node in nodes:
+            if isinstance(node, ast.Assign):
+                targets, value = node.targets, node.value
+            elif isinstance(node, (ast.AnnAssign, ast.AugAssign)):
+                targets, value = [node.target], node.value
+            else:
+                continue
+            for target in targets:
+                if isinstance(target, ast.Name):
+                    aliases.setdefault(target.id, set()).add(module_lookup(value))
+        for node in nodes:
+            if (not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute)
+                    or node.func.attr not in {"get_setting_number", "setting_bool", "setting_mode"}
+                    or len(node.args) < 2):
+                continue
+            module, setting = node.args[:2]
+            matches = (aliases.get(module.id) == {module_name} if isinstance(module, ast.Name)
+                       else module_lookup(module) == module_name)
+            if matches and isinstance(setting, ast.Constant) and isinstance(setting.value, str):
+                names.add(setting.value)
+    return names
+
+
 # 刻意只在界面/其它模块用的项（每条都要写理由，不然就是下一个漏网点）
 UI_ONLY = {
     # 每条都要写理由；空着最严格，但也最容易让人直接删掉这条测试
@@ -104,14 +162,17 @@ UI_ONLY = {
 
 
 def main() -> int:
-    model = (ROOT / "rm_client/model.py").read_text(encoding="utf-8")
-    declared = robotlink_settings(model)
-    files = [p for p in (ROOT / "rm_client").rglob("*.py") if p.name != "model.py"]
+    catalog = (ROOT / "rm_client/module_catalog.py").read_text(encoding="utf-8")
+    declared = robotlink_settings(catalog)
+    files = [p for p in (ROOT / "rm_client").rglob("*.py")
+             if p.name not in {"model.py", "module_catalog.py"}]
     scopes = []
+    helper_names = set()
     for p in files:
-        scopes += functions_mentioning(p.read_text(encoding="utf-8", errors="ignore"),
-                                      "RobotLink")
-    names = read_names_in(scopes)
+        src = p.read_text(encoding="utf-8", errors="ignore")
+        scopes += functions_mentioning(src, "RobotLink")
+        helper_names |= module_helper_reads(src, "RobotLink")
+    names = read_names_in(scopes) | helper_names
     check("抓到 RobotLink 的设置项（数量不对说明解析坏了）", 5 < len(declared) < 40,
           str(len(declared)))
     check("确实找到了读到 RobotLink 设置的代码块（一块都没有说明解析坏了）",
@@ -167,12 +228,12 @@ def main() -> int:
     check("Baud 同理：默认值不覆盖场景/桥接配置", int(manager.polar.baud) == 230400,
           str(manager.polar.baud))
 
-    # ---- Tier B（保守、零误报）：设置名除了 model.py 的声明外，整个包一次都没出现 ----
+    # ---- Tier B（保守、零误报）：设置名除了目录声明外，整个包一次都没出现 ----
     # 上一版把 Tier A 的判据（"提到模块名的函数里取用"）套到所有模块，结果把
     # 通过参数取用的 Limit / Fade 之类全报成没人读 —— 那种噪声会让下一个人直接删掉这条测试。
     texts = [p.read_text(encoding="utf-8", errors="ignore") for p in files]
     blob = "\n".join(texts)
-    all_declared = _module_settings(model)
+    all_declared = _module_settings(catalog)
     dead = sorted({(m, n) for m, names in all_declared.items() for n in names
                    if n and n not in blob})
     print(f"     （Tier B 仅供参考：整包零引用的设置 {len(dead)} 项 —— "

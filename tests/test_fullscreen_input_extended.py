@@ -27,7 +27,8 @@ tree = ast.parse(source.read_text())
 window = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == 'PolarRMWindow')
 focus_method = next(n for n in window.body if isinstance(n, ast.FunctionDef) and n.name == 'focusOutEvent')
 cls = ast.ClassDef(name='FocusHost', bases=[ast.Name(id='Host',ctx=ast.Load())], keywords=[],body=[focus_method],decorator_list=[])
-scope={'Host':Host}
+from rm_client.emergency_actions import request_focus_loss
+scope={'Host':Host, 'request_focus_loss': request_focus_loss}
 exec(compile(ast.fix_missing_locations(ast.Module(body=[cls],type_ignores=[])),str(source),'exec'),scope)
 FocusHost=scope['FocusHost']
 

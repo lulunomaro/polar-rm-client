@@ -1,0 +1,39 @@
+{
+  "before_source_sha256": "fb770caaed98ba4ca459dc4fa65e85112a0d0d552cac7c036fcbbec583cb92fd",
+  "after_source_sha256": "3d5158ce79f515bc751fea31ec6249825deef65da89ac86a5d75ecdabc1c140e",
+  "before": {
+    "decisions": 13061,
+    "files": 209,
+    "functions": 3377,
+    "historical_ui_functions": 50,
+    "historical_ui_modules": 1,
+    "import_edges": 600,
+    "parsed_files": 209,
+    "statements": 37122
+  },
+  "after": {
+    "decisions": 13064,
+    "files": 210,
+    "functions": 3378,
+    "historical_ui_functions": 50,
+    "historical_ui_modules": 1,
+    "import_edges": 601,
+    "parsed_files": 210,
+    "statements": 37124
+  },
+  "delta": {
+    "decisions": 3,
+    "files": 1,
+    "functions": 1,
+    "historical_ui_functions": 0,
+    "historical_ui_modules": 0,
+    "import_edges": 1,
+    "parsed_files": 1,
+    "statements": 2
+  },
+  "gate": {
+    "baseline_revision": "d64f1528e2e1864ef369537c026b6d3f7127f590",
+    "status": "PASS",
+    "violations": []
+  }
+}

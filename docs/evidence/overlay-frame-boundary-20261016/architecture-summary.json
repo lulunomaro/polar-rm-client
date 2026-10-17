@@ -1,0 +1,930 @@
+{
+  "source_commit": "ba96e42d5ec20c95acb4b9b4404f423912e6da76",
+  "baseline_commit": "71ebb0f570441c12eb0d15b0a992c9cc3e805aeb",
+  "scope": "Static source evidence. Local hotspot movement is not whole-tree reduction. Native shader byte identity is not GPU pixel qualification.",
+  "baseline": {
+    "source_tree_sha256": "b3780a24711a1529d57a37b8f09f9903bed6e7c1bf69f5eb25a2bead2eeff577",
+    "summary": {
+      "files": 190,
+      "parsed_files": 190,
+      "functions": 3211,
+      "statements": 36668,
+      "decisions": 12901,
+      "import_edges": 562,
+      "historical_ui_modules": 1,
+      "historical_ui_functions": 50
+    },
+    "runtime_cycles": [],
+    "frame_entry": {
+      "line": 1610,
+      "source_span": 353,
+      "statements": 167,
+      "decisions": 69,
+      "max_control_depth": 5,
+      "parameters": 0,
+      "variadic": false,
+      "self_members": [
+        "_economy_generation",
+        "_economy_restore_pending_generation",
+        "_finalize_economy_restore",
+        "_gpu_background_changed",
+        "_gpu_frame_recording",
+        "_gpu_motion_layer_ready",
+        "_gpu_motion_layer_updated_at",
+        "_gpu_static_ui_key",
+        "_should_defer_hud_static_rebuild",
+        "_startup_static_page_key",
+        "active_clickgui_mode",
+        "anim_duration",
+        "build_gpu_economy_workspace",
+        "build_gpu_startup_launcher",
+        "clickgui_gpu",
+        "context",
+        "defaultFramebufferObject",
+        "devicePixelRatioF",
+        "economy_island",
+        "economy_phase",
+        "economy_visible",
+        "escape_menu_visible",
+        "frame_scheduler",
+        "gpu_compositor",
+        "gpu_static_ui_key",
+        "gui_timeline",
+        "gui_visible",
+        "height",
+        "hero_deploy_ui",
+        "home_visible",
+        "hotspots",
+        "invalidate_transient_overlay_scene",
+        "match_chat",
+        "match_mode_manager",
+        "paint_gpu_background",
+        "paint_gpu_control_backdrop",
+        "paint_gpu_startup_interaction_layer",
+        "paint_gpu_target_hud_layer",
+        "paint_gpu_vision_layer",
+        "paint_priority_interaction_layer",
+        "quick_action_wheel",
+        "registry",
+        "scenario_manager",
+        "setting_mode",
+        "startup_step",
+        "startup_transition_from",
+        "startup_transition_started",
+        "startup_transition_to",
+        "student_ui",
+        "wallpaper_picker_visible",
+        "width"
+      ],
+      "state_reads": [],
+      "state_writes": [],
+      "call_targets": [
+        "BackdropTreatment.resolve",
+        "FinalFrameCompositor",
+        "FrameCompositionPlan",
+        "OverlayScene.resolve",
+        "bool",
+        "build_clickgui_frame",
+        "chinese_enabled",
+        "context.extraFunctions",
+        "device.setDevicePixelRatio",
+        "motion_layer_needs_refresh",
+        "scene.glass_owners",
+        "self._finalize_economy_restore",
+        "self._should_defer_hud_static_rebuild",
+        "self.active_clickgui_mode",
+        "self.anim_duration",
+        "self.build_gpu_economy_workspace",
+        "self.build_gpu_startup_launcher",
+        "self.clickgui_gpu.prepare_frame",
+        "self.clickgui_gpu.render",
+        "self.context",
+        "self.defaultFramebufferObject",
+        "self.devicePixelRatioF",
+        "self.frame_scheduler.force",
+        "self.gpu_compositor.begin_frame",
+        "self.gpu_compositor.begin_static_glass",
+        "self.gpu_compositor.clear_current",
+        "self.gpu_compositor.clear_scene_layers",
+        "self.gpu_compositor.clear_static_glass",
+        "self.gpu_compositor.clear_target_layer",
+        "self.gpu_compositor.clear_vision_layer",
+        "self.gpu_compositor.end_static_glass",
+        "self.gpu_compositor.ensure_size",
+        "self.gpu_compositor.paint_device",
+        "self.gpu_compositor.paint_layer",
+        "self.gpu_compositor.pop_glass_owner",
+        "self.gpu_compositor.push_glass_owner",
+        "self.gpu_compositor.recover_failed_frame",
+        "self.gpu_compositor.recover_rejected_frame",
+        "self.gpu_compositor.release_layer",
+        "self.gpu_static_ui_key",
+        "self.gui_timeline.blur_radius",
+        "self.height",
+        "self.hotspots.clear",
+        "self.invalidate_transient_overlay_scene",
+        "self.paint_gpu_background",
+        "self.paint_gpu_control_backdrop",
+        "self.paint_gpu_startup_interaction_layer",
+        "self.paint_gpu_target_hud_layer",
+        "self.paint_gpu_vision_layer",
+        "self.paint_priority_interaction_layer",
+        "self.registry.get",
+        "self.setting_mode",
+        "self.width",
+        "time.perf_counter",
+        "treatment.apply"
+      ]
+    }
+  },
+  "candidate": {
+    "source_tree_sha256": "bb97fb0cdf4076d69e0146dae401113f933a09ef175954a4a97832c5bd8f3892",
+    "summary": {
+      "decisions": 12970,
+      "files": 191,
+      "functions": 3242,
+      "historical_ui_functions": 50,
+      "historical_ui_modules": 1,
+      "import_edges": 567,
+      "parsed_files": 191,
+      "statements": 36797
+    },
+    "runtime_cycles": [],
+    "gate": {
+      "baseline_revision": "d64f1528e2e1864ef369537c026b6d3f7127f590",
+      "status": "PASS",
+      "violations": []
+    },
+    "changed_module_focus": {
+      "rm_client.ui.polar_app": {
+        "path": "rm_client/ui/polar_app.py",
+        "source_sha256": "6fdc4d39d22ccb1a95f4a0c2dba678c9014bd66291ff11da9fd9a675b59e8520",
+        "fan_in": 2,
+        "fan_out": 86,
+        "functions": {
+          "PolarRMWindow._discard_gpu_command_collections": {
+            "call_targets": [
+              "commands.commands.clear",
+              "commands.images.clear",
+              "commands.rects.clear",
+              "commands.texts.clear",
+              "self._gpu_island_icon_commands.clear"
+            ],
+            "decisions": 1,
+            "line": 4041,
+            "max_control_depth": 1,
+            "parameters": 0,
+            "self_members": [
+              "_collect_gpu_hud_commands",
+              "_collect_gpu_island_icons",
+              "_collect_gpu_quick_action_wheel",
+              "_gpu_hud_commands",
+              "_gpu_island_icon_commands",
+              "_gpu_quick_action_wheel_command",
+              "_gpu_quick_action_wheel_labels"
+            ],
+            "source_span": 18,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 10,
+            "variadic": false
+          },
+          "PolarRMWindow._paint_gpu_frame_cached": {
+            "call_targets": [
+              "BackdropTreatment.resolve",
+              "FinalFrameCompositor",
+              "FrameCompositionPlan",
+              "FrameViewport",
+              "LayerCacheSnapshot",
+              "MotionLayerInputs",
+              "OverlayDrawPorts",
+              "OverlayLayerPlan",
+              "OverlayLayerRenderer",
+              "OverlayScene.resolve",
+              "bool",
+              "chinese_enabled",
+              "context.extraFunctions",
+              "scene.glass_owners",
+              "self._finalize_economy_restore",
+              "self._should_defer_hud_static_rebuild",
+              "self.active_clickgui_mode",
+              "self.anim_duration",
+              "self.context",
+              "self.defaultFramebufferObject",
+              "self.devicePixelRatioF",
+              "self.frame_scheduler.force",
+              "self.gpu_compositor.begin_frame",
+              "self.gpu_compositor.clear_scene_layers",
+              "self.gpu_compositor.clear_target_layer",
+              "self.gpu_compositor.clear_vision_layer",
+              "self.gpu_compositor.ensure_size",
+              "self.gpu_compositor.recover_failed_frame",
+              "self.gpu_compositor.recover_rejected_frame",
+              "self.gpu_static_ui_key",
+              "self.gui_timeline.blur_radius",
+              "self.height",
+              "self.invalidate_transient_overlay_scene",
+              "self.paint_gpu_background",
+              "self.paint_gpu_control_backdrop",
+              "self.paint_gpu_vision_layer",
+              "self.registry.get",
+              "self.setting_mode",
+              "self.width",
+              "time.perf_counter",
+              "treatment.apply"
+            ],
+            "decisions": 46,
+            "line": 1614,
+            "max_control_depth": 3,
+            "parameters": 0,
+            "self_members": [
+              "_economy_generation",
+              "_economy_restore_pending_generation",
+              "_finalize_economy_restore",
+              "_gpu_background_changed",
+              "_gpu_frame_recording",
+              "_gpu_motion_layer_ready",
+              "_gpu_motion_layer_updated_at",
+              "_gpu_static_ui_key",
+              "_should_defer_hud_static_rebuild",
+              "_startup_static_page_key",
+              "active_clickgui_mode",
+              "anim_duration",
+              "clickgui_gpu",
+              "context",
+              "defaultFramebufferObject",
+              "devicePixelRatioF",
+              "economy_island",
+              "economy_phase",
+              "economy_visible",
+              "escape_menu_visible",
+              "frame_scheduler",
+              "gpu_compositor",
+              "gpu_static_ui_key",
+              "gui_timeline",
+              "gui_visible",
+              "height",
+              "hero_deploy_ui",
+              "home_visible",
+              "hotspots",
+              "invalidate_transient_overlay_scene",
+              "match_chat",
+              "match_mode_manager",
+              "paint_gpu_background",
+              "paint_gpu_control_backdrop",
+              "paint_gpu_vision_layer",
+              "quick_action_wheel",
+              "registry",
+              "scenario_manager",
+              "setting_mode",
+              "startup_transition_from",
+              "startup_transition_started",
+              "startup_transition_to",
+              "student_ui",
+              "wallpaper_picker_visible",
+              "width"
+            ],
+            "source_span": 238,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 97,
+            "variadic": false
+          },
+          "PolarRMWindow._paint_gpu_frame_cached.draw_motion": {
+            "call_targets": [
+              "self.begin_gpu_hud_command_collection",
+              "self.begin_gpu_island_icon_collection",
+              "self.begin_gpu_quick_action_wheel_collection",
+              "self.flush_gpu_hud_commands",
+              "self.flush_gpu_island_icons",
+              "self.flush_gpu_quick_action_wheel",
+              "self.menu_overlay_active",
+              "self.paint_clickgui_overlay",
+              "self.paint_hud_motion_overlay",
+              "session.begin_painter",
+              "session.defer_cleanup",
+              "session.end_painter"
+            ],
+            "decisions": 5,
+            "line": 1772,
+            "max_control_depth": 1,
+            "parameters": 2,
+            "self_members": [
+              "_discard_gpu_command_collections",
+              "begin_gpu_hud_command_collection",
+              "begin_gpu_island_icon_collection",
+              "begin_gpu_quick_action_wheel_collection",
+              "flush_gpu_hud_commands",
+              "flush_gpu_island_icons",
+              "flush_gpu_quick_action_wheel",
+              "gpu_compositor",
+              "menu_overlay_active",
+              "paint_clickgui_overlay",
+              "paint_hud_motion_overlay"
+            ],
+            "source_span": 23,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 15,
+            "variadic": false
+          },
+          "PolarRMWindow._paint_gpu_frame_cached.draw_static": {
+            "call_targets": [
+              "self.paint_overlay"
+            ],
+            "decisions": 0,
+            "line": 1764,
+            "max_control_depth": 0,
+            "parameters": 1,
+            "self_members": [
+              "paint_overlay"
+            ],
+            "source_span": 7,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          }
+        }
+      },
+      "rm_client.ui.polar.overlay_layers": {
+        "path": "rm_client/ui/polar/overlay_layers.py",
+        "source_sha256": "91f5486e1a38aaf30bc92ffb0fede894d6aa224c486347aa3feeaadd5c182dd6",
+        "fan_in": 1,
+        "fan_out": 4,
+        "functions": {
+          "CommandRenderer.prepare_frame": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 220,
+            "max_control_depth": 0,
+            "parameters": 2,
+            "self_members": [],
+            "source_span": 1,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "CommandRenderer.render": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 221,
+            "max_control_depth": 0,
+            "parameters": 6,
+            "self_members": [],
+            "source_span": 4,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "FrameViewport.__post_init__": {
+            "call_targets": [
+              "ValueError",
+              "any",
+              "isinstance",
+              "math.isfinite",
+              "round",
+              "type"
+            ],
+            "decisions": 11,
+            "line": 44,
+            "max_control_depth": 3,
+            "parameters": 0,
+            "self_members": [
+              "height",
+              "pixel_ratio",
+              "width"
+            ],
+            "source_span": 16,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 12,
+            "variadic": false
+          },
+          "LayerCacheSnapshot.__post_init__": {
+            "call_targets": [
+              "TypeError",
+              "ValueError",
+              "_validate_key",
+              "isinstance",
+              "math.isfinite",
+              "type"
+            ],
+            "decisions": 5,
+            "line": 71,
+            "max_control_depth": 2,
+            "parameters": 0,
+            "self_members": [
+              "motion_ready",
+              "motion_updated_at",
+              "startup_key",
+              "static_key"
+            ],
+            "source_span": 13,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 10,
+            "variadic": false
+          },
+          "LayerCompositor.begin_static_glass": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 205,
+            "max_control_depth": 0,
+            "parameters": 0,
+            "self_members": [],
+            "source_span": 1,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "LayerCompositor.clear_current": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 210,
+            "max_control_depth": 0,
+            "parameters": 2,
+            "self_members": [],
+            "source_span": 1,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "LayerCompositor.clear_static_glass": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 204,
+            "max_control_depth": 0,
+            "parameters": 0,
+            "self_members": [],
+            "source_span": 1,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "LayerCompositor.clear_target_layer": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 212,
+            "max_control_depth": 0,
+            "parameters": 1,
+            "self_members": [],
+            "source_span": 1,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "LayerCompositor.end_static_glass": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 206,
+            "max_control_depth": 0,
+            "parameters": 0,
+            "self_members": [],
+            "source_span": 1,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "LayerCompositor.paint_device": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 209,
+            "max_control_depth": 0,
+            "parameters": 1,
+            "self_members": [],
+            "source_span": 1,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "LayerCompositor.paint_layer": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 213,
+            "max_control_depth": 0,
+            "parameters": 4,
+            "self_members": [],
+            "source_span": 4,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "LayerCompositor.pop_glass_owner": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 208,
+            "max_control_depth": 0,
+            "parameters": 0,
+            "self_members": [],
+            "source_span": 1,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "LayerCompositor.push_glass_owner": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 207,
+            "max_control_depth": 0,
+            "parameters": 1,
+            "self_members": [],
+            "source_span": 1,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "LayerCompositor.release_layer": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 211,
+            "max_control_depth": 0,
+            "parameters": 1,
+            "self_members": [],
+            "source_span": 1,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "MotionLayerInputs.__post_init__": {
+            "call_targets": [
+              "TypeError",
+              "any",
+              "type"
+            ],
+            "decisions": 2,
+            "line": 93,
+            "max_control_depth": 1,
+            "parameters": 0,
+            "self_members": [
+              "chat_open",
+              "escape_visible",
+              "radial_visible",
+              "student_visible"
+            ],
+            "source_span": 4,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 3,
+            "variadic": false
+          },
+          "MotionLayerInputs.needs_refresh": {
+            "call_targets": [
+              "motion_layer_needs_refresh"
+            ],
+            "decisions": 0,
+            "line": 102,
+            "max_control_depth": 0,
+            "parameters": 2,
+            "self_members": [
+              "chat_open",
+              "escape_visible",
+              "radial_visible",
+              "student_visible"
+            ],
+            "source_span": 6,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "MotionLayerInputs.priority_active": {
+            "call_targets": [],
+            "decisions": 3,
+            "line": 99,
+            "max_control_depth": 0,
+            "parameters": 0,
+            "self_members": [
+              "chat_open",
+              "escape_visible",
+              "radial_visible",
+              "student_visible"
+            ],
+            "source_span": 2,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "OverlayLayerPlan.__post_init__": {
+            "call_targets": [
+              "TypeError",
+              "ValueError",
+              "_validate_key",
+              "any",
+              "isinstance",
+              "type"
+            ],
+            "decisions": 25,
+            "line": 130,
+            "max_control_depth": 1,
+            "parameters": 0,
+            "self_members": [
+              "economy_gpu",
+              "motion",
+              "prepare_clickgui",
+              "scene",
+              "startup_key",
+              "static_key",
+              "static_mode",
+              "storage_generation",
+              "viewport"
+            ],
+            "source_span": 34,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 32,
+            "variadic": false
+          },
+          "OverlayLayerRenderer._clear_overlay": {
+            "call_targets": [
+              "device.setDevicePixelRatio",
+              "self.compositor.clear_current",
+              "self.compositor.paint_device",
+              "self.compositor.release_layer"
+            ],
+            "decisions": 2,
+            "line": 304,
+            "max_control_depth": 1,
+            "parameters": 3,
+            "self_members": [
+              "compositor"
+            ],
+            "source_span": 8,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 7,
+            "variadic": false
+          },
+          "OverlayLayerRenderer._command_layer": {
+            "call_targets": [
+              "bool",
+              "device.setDevicePixelRatio",
+              "self.command_renderer.render",
+              "self.compositor.clear_current",
+              "self.compositor.paint_device",
+              "self.compositor.release_layer"
+            ],
+            "decisions": 5,
+            "line": 313,
+            "max_control_depth": 1,
+            "parameters": 5,
+            "self_members": [
+              "command_renderer",
+              "compositor"
+            ],
+            "source_span": 20,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 11,
+            "variadic": false
+          },
+          "OverlayLayerRenderer._economy_layer": {
+            "call_targets": [
+              "draws.economy_commands",
+              "self._command_layer",
+              "self.command_renderer.prepare_frame",
+              "self.compositor.clear_target_layer",
+              "self.compositor.pop_glass_owner",
+              "self.compositor.push_glass_owner"
+            ],
+            "decisions": 2,
+            "line": 334,
+            "max_control_depth": 1,
+            "parameters": 3,
+            "self_members": [
+              "_command_layer",
+              "command_renderer",
+              "compositor"
+            ],
+            "source_span": 15,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 11,
+            "variadic": false
+          },
+          "OverlayLayerRenderer._motion_layers": {
+            "call_targets": [
+              "draws.priority_interaction",
+              "draws.target_hud",
+              "plan.motion.needs_refresh",
+              "replace",
+              "self._prepare_clickgui",
+              "self.clock",
+              "self.compositor.clear_target_layer",
+              "self.compositor.paint_layer"
+            ],
+            "decisions": 7,
+            "line": 361,
+            "max_control_depth": 2,
+            "parameters": 4,
+            "self_members": [
+              "_prepare_clickgui",
+              "clock",
+              "compositor"
+            ],
+            "source_span": 26,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 18,
+            "variadic": false
+          },
+          "OverlayLayerRenderer._prepare_clickgui": {
+            "call_targets": [
+              "PreparedClickGui",
+              "draws.clickgui_frame",
+              "self.command_renderer.prepare_frame",
+              "self.compositor.pop_glass_owner",
+              "self.compositor.push_glass_owner"
+            ],
+            "decisions": 1,
+            "line": 350,
+            "max_control_depth": 1,
+            "parameters": 2,
+            "self_members": [
+              "command_renderer",
+              "compositor"
+            ],
+            "source_span": 10,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 8,
+            "variadic": false
+          },
+          "OverlayLayerRenderer._static_layer": {
+            "call_targets": [
+              "draws.clear_startup_interactions",
+              "draws.startup_commands",
+              "replace",
+              "self._clear_overlay",
+              "self._command_layer",
+              "self.command_renderer.prepare_frame",
+              "self.compositor.begin_static_glass",
+              "self.compositor.clear_static_glass",
+              "self.compositor.end_static_glass",
+              "self.compositor.paint_layer"
+            ],
+            "decisions": 10,
+            "line": 262,
+            "max_control_depth": 3,
+            "parameters": 4,
+            "self_members": [
+              "_clear_overlay",
+              "_command_layer",
+              "command_renderer",
+              "compositor"
+            ],
+            "source_span": 41,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 30,
+            "variadic": false
+          },
+          "OverlayLayerRenderer._static_layer.draw_static": {
+            "call_targets": [
+              "draws.static_hud",
+              "self.compositor.begin_static_glass",
+              "self.compositor.push_glass_owner",
+              "session.begin_painter",
+              "session.defer_cleanup"
+            ],
+            "decisions": 0,
+            "line": 291,
+            "max_control_depth": 0,
+            "parameters": 1,
+            "self_members": [
+              "compositor"
+            ],
+            "source_span": 7,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 6,
+            "variadic": false
+          },
+          "OverlayLayerRenderer.render": {
+            "call_targets": [
+              "draws.startup_interaction",
+              "self._economy_layer",
+              "self._motion_layers",
+              "self._static_layer"
+            ],
+            "decisions": 8,
+            "line": 241,
+            "max_control_depth": 1,
+            "parameters": 4,
+            "self_members": [
+              "_economy_layer",
+              "_motion_layers",
+              "_static_layer",
+              "compositor"
+            ],
+            "source_span": 20,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 14,
+            "variadic": false
+          },
+          "PreparedClickGui.atlas_prepared": {
+            "call_targets": [],
+            "decisions": 0,
+            "line": 175,
+            "max_control_depth": 0,
+            "parameters": 0,
+            "self_members": [
+              "frame"
+            ],
+            "source_span": 2,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "PreparedClickGui.commands": {
+            "call_targets": [],
+            "decisions": 1,
+            "line": 171,
+            "max_control_depth": 0,
+            "parameters": 0,
+            "self_members": [
+              "frame"
+            ],
+            "source_span": 2,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 1,
+            "variadic": false
+          },
+          "_validate_key": {
+            "call_targets": [
+              "TypeError",
+              "ValueError",
+              "isinstance",
+              "math.isfinite"
+            ],
+            "decisions": 7,
+            "line": 26,
+            "max_control_depth": 2,
+            "parameters": 1,
+            "self_members": [],
+            "source_span": 10,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 9,
+            "variadic": false
+          }
+        }
+      },
+      "rm_client.ui.gpu_frame_compositor": {
+        "path": "rm_client/ui/gpu_frame_compositor.py",
+        "source_sha256": "138dafdff00b5920f78610d0a559c241b81e530a92bfef47467f6aafb5687693",
+        "fan_in": 9,
+        "fan_out": 1,
+        "functions": {
+          "GpuFrameCompositor.reject_frame": {
+            "call_targets": [],
+            "decisions": 2,
+            "line": 619,
+            "max_control_depth": 1,
+            "parameters": 2,
+            "self_members": [
+              "_frame_rejection"
+            ],
+            "source_span": 9,
+            "state_reads": [],
+            "state_writes": [],
+            "statements": 2,
+            "variadic": false
+          }
+        }
+      }
+    }
+  },
+  "compositor_shader_literal_sha256": {
+    "before": [
+      "4fd5ce7dfed87f31686126e82c5e08b460d89bb84967db558e165bd0f7a0ddd8",
+      "e5714a5d75f7b3f679f3d0e5a2f5f5b1b16a6aa5341f50265c526b4b2c44a8ca",
+      "05a126b2409c16269f890c6647aea3c935261ddcc4e8cd94ec842e44a7e0ccf9",
+      "077f8f999f1b2b69dbb4c6204f74ddd680c1659bf68257a17c56477efc52bed3",
+      "fc0960f3ee1fc6a09f287c25d760a323a063c7c4b16f36d86d261651f9e621e3"
+    ],
+    "after": [
+      "4fd5ce7dfed87f31686126e82c5e08b460d89bb84967db558e165bd0f7a0ddd8",
+      "e5714a5d75f7b3f679f3d0e5a2f5f5b1b16a6aa5341f50265c526b4b2c44a8ca",
+      "05a126b2409c16269f890c6647aea3c935261ddcc4e8cd94ec842e44a7e0ccf9",
+      "077f8f999f1b2b69dbb4c6204f74ddd680c1659bf68257a17c56477efc52bed3",
+      "fc0960f3ee1fc6a09f287c25d760a323a063c7c4b16f36d86d261651f9e621e3"
+    ]
+  }
+}

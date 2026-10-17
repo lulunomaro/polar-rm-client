@@ -3,6 +3,7 @@ from __future__ import annotations
 import struct
 import time
 from enum import Enum
+from functools import partial
 
 from PySide6.QtCore import QRectF
 from PySide6.QtGui import QImage
@@ -13,6 +14,8 @@ from PySide6.QtOpenGL import (
     QOpenGLTexture,
     QOpenGLVertexArrayObject,
 )
+
+from .gl_resources import GlDrawBindings, GlResourceOwner, destroy_created
 
 
 class TextureOrigin(str, Enum):
@@ -40,6 +43,7 @@ class StartupGpuCompositor:
     def __init__(self) -> None:
         self.available = False
         self.last_error = ""
+        self.resources = GlResourceOwner("startup")
         self.program: QOpenGLShaderProgram | None = None
         self._uniforms: dict[str, int] = {}
         self._position_attribute = -1
@@ -48,6 +52,7 @@ class StartupGpuCompositor:
         self.current: QOpenGLTexture | None = None
         self.previous: QOpenGLTexture | None = None
         self.spare: QOpenGLTexture | None = None
+        self._pending_texture: QOpenGLTexture | None = None
         self.texture_size: tuple[int, int] = (0, 0)
         self.current_key = 0
         self.previous_key = 0
@@ -61,7 +66,25 @@ class StartupGpuCompositor:
     def initialize(self) -> bool:
         if self.available:
             return True
+        if self.program is not None or self.resources.release_pending:
+            try:
+                self.release()
+            except Exception:
+                # Do not replace a native owner whose previous cleanup failed.
+                return False
+        self.last_error = ""
+        bindings = GlDrawBindings(None, self.vertex_buffer, self.vertex_array)
+
+        self.available = self.resources.run(
+            "initialize", partial(self._initialize_resources, bindings), cleanup=bindings.cleanup,
+            rejection=lambda: bindings.rejection or self.last_error, on_reject=self._release_actions,
+        )
+        self.last_error = self.resources.last_error
+        return self.available
+
+    def _initialize_resources(self, bindings: GlDrawBindings) -> bool:
         program = QOpenGLShaderProgram()
+        self.program = program
         vertex = """
             #version 330
             layout(location = 0) in vec2 position;
@@ -118,20 +141,16 @@ class StartupGpuCompositor:
         if not self.vertex_array.create():
             self.last_error = "GPU compositor VAO creation failed"
             return False
-        self.vertex_buffer.create()
-        if not self.vertex_buffer.isCreated():
+        if not self.vertex_buffer.create() or not self.vertex_buffer.isCreated():
             self.last_error = "无法创建启动页顶点缓冲"
             return False
         vertices = struct.pack("8f", -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0)
-        self.vertex_array.bind()
-        self.vertex_buffer.bind()
+        bindings.bind_vertex_array()
+        if not bindings.bind_buffer():
+            return False
         self.vertex_buffer.allocate(vertices, len(vertices))
-        self.vertex_buffer.release()
-        self.vertex_array.release()
-        self.program = program
         self._uniforms = uniforms
         self._position_attribute = position_attribute
-        self.available = True
         return True
 
     @staticmethod
@@ -149,10 +168,11 @@ class StartupGpuCompositor:
         texture.setWrapMode(QOpenGLTexture.WrapMode.ClampToEdge)
         return texture
 
-    @staticmethod
-    def _allocate_texture(width: int, height: int) -> QOpenGLTexture:
+    def _allocate_texture(self, width: int, height: int) -> QOpenGLTexture:
         """Allocate immutable RGBA storage; size and format never mutate in-place."""
         texture = QOpenGLTexture(QOpenGLTexture.Target.Target2D)
+        # Keep ownership even if a wrapper raises after allocating native storage.
+        self._pending_texture = texture
         if not texture.create():
             raise RuntimeError("Unable to create video texture")
         texture.setFormat(QOpenGLTexture.TextureFormat.RGBA8_UNorm)
@@ -166,22 +186,43 @@ class StartupGpuCompositor:
 
     def _upload_next_frame(self, image: QImage, origin: TextureOrigin) -> QOpenGLTexture:
         source = normalize_image_for_texture(image, origin)
-        # 媒体帧只在上传时统一转换一次坐标原点。此后所有纹理和 FBO
-        # 都使用 OpenGL 左下原点，页面合成阶段不再重复翻转。
-        reusable = self.spare
-        self.spare = None
-        if reusable is not None and (reusable.width() != source.width() or reusable.height() != source.height()):
-            reusable.destroy()
-            reusable = None
-        if reusable is None:
-            reusable = self._allocate_texture(source.width(), source.height())
-        reusable.setData(
-            QOpenGLTexture.PixelFormat.RGBA,
-            QOpenGLTexture.PixelType.UInt8,
-            source.constBits(),
-        )
-        self.texture_size = (source.width(), source.height())
-        return reusable
+        candidate = None
+        cleanup_candidate = False
+
+        def upload() -> bool:
+            nonlocal candidate, cleanup_candidate
+            # A failed candidate is never reused or replaced before cleanup.
+            # This retry is bounded to one attempt per explicit update request.
+            self._release_texture("_pending_texture")
+            reusable = self.spare
+            if reusable is not None and (reusable.width() != source.width() or reusable.height() != source.height()):
+                self._release_texture("spare")
+                reusable = None
+            cleanup_candidate = True
+            if reusable is None:
+                reusable = self._allocate_texture(source.width(), source.height())
+            self._pending_texture = reusable
+            self.spare = None
+            # Source normalization supplies the existing one-time origin flip.
+            reusable.setData(
+                QOpenGLTexture.PixelFormat.RGBA,
+                QOpenGLTexture.PixelType.UInt8,
+                source.constBits(),
+            )
+            candidate = reusable
+            self._pending_texture = None
+            self.texture_size = (source.width(), source.height())
+            return True
+
+        def discard_candidate():
+            if cleanup_candidate:
+                yield "candidate_texture", partial(self._release_texture, "_pending_texture")
+
+        try:
+            self.resources.run("upload", upload, on_reject=discard_candidate, reraise=True)
+        finally:
+            self.last_error = self.resources.last_error
+        return candidate
 
     def update_frame(
         self,
@@ -241,16 +282,19 @@ class StartupGpuCompositor:
     def render(self, functions, canvas: QRectF, *, interpolate: bool = True) -> bool:
         if not self.available or self.program is None or self.current is None:
             return False
-        try:
+        bindings = GlDrawBindings(self.program, self.vertex_buffer, self.vertex_array)
+
+        def draw() -> bool:
             functions.glDisable(0x0B71)
             functions.glDisable(0x0C11)
-            self.vertex_array.bind()
-            self.program.bind()
-            self.current.bind(0)
+            bindings.bind_vertex_array()
+            if not bindings.bind_program():
+                return False
+            bindings.bind_texture(self.current, 0)
             functions.glUniform1i(self._uniforms["currentTex"], 0)
             has_previous = interpolate and self.previous is not None and not self.previous_rect.isEmpty()
             if has_previous:
-                self.previous.bind(1)
+                bindings.bind_texture(self.previous, 1)
                 functions.glUniform1i(self._uniforms["previousTex"], 1)
             current_uv = self._uv_rect(self.current_rect, canvas)
             previous_uv = self._uv_rect(self.previous_rect, canvas) if has_previous else current_uv
@@ -264,48 +308,48 @@ class StartupGpuCompositor:
             # FBO 纹理已经是 OpenGL 原点，不能再次翻转。
             flip_y = self.texture_origin == TextureOrigin.TOP_LEFT_IMAGE
             functions.glUniform1i(self._uniforms["flipY"], 1 if flip_y else 0)
-            self.vertex_buffer.bind()
-            self.program.enableAttributeArray(self._position_attribute)
+            if not bindings.bind_buffer():
+                return False
+            bindings.enable_attribute(self._position_attribute)
             self.program.setAttributeBuffer(self._position_attribute, self._GL_FLOAT, 0, 2, 2 * 4)
             functions.glDrawArrays(self._GL_TRIANGLE_STRIP, 0, 4)
-            self.program.disableAttributeArray(self._position_attribute)
-            self.vertex_buffer.release()
-            self.vertex_array.release()
-            if has_previous and self.previous is not None:
-                self.previous.release()
-            self.current.release()
-            self.program.release()
             return True
-        except Exception as exc:
-            # 绝不能让一次驱动/绑定失败留下未完成的 GL 帧。
-            self.last_error = str(exc)
-            self.available = False
-            try:
-                self.vertex_buffer.release()
-                self.vertex_array.release()
-                self.current.release()
-                if self.previous is not None:
-                    self.previous.release()
-                self.program.release()
-            except Exception:
-                pass
-            return False
 
-    def release(self) -> None:
-        for texture in (self.current, self.previous, self.spare):
-            if texture is not None:
-                texture.destroy()
-        self.current = None
-        self.previous = None
-        self.spare = None
-        self.texture_size = (0, 0)
-        if self.vertex_buffer.isCreated():
-            self.vertex_buffer.destroy()
-        if self.vertex_array.isCreated():
-            self.vertex_array.destroy()
+        accepted = self.resources.run("render", draw, cleanup=bindings.cleanup, rejection=lambda: bindings.rejection)
+        self.last_error = self.resources.last_error
+        if self.resources.last_result.primary_fault or self.resources.last_result.cleanup_faults:
+            self.available = False
+        return accepted
+
+    def _release_texture(self, name: str) -> None:
+        texture = getattr(self, name)
+        if texture is not None:
+            texture.destroy()
+            setattr(self, name, None)
+
+    def _release_program(self) -> None:
         if self.program is not None:
             self.program.removeAllShaders()
-        self.program = None
+            self.program = None
+
+    def _release_actions(self):
+        return (
+            *((name, partial(self._release_texture, name)) for name in ("current", "previous", "spare", "_pending_texture")),
+            ("buffer", partial(destroy_created, self.vertex_buffer)),
+            ("vertex_array", partial(destroy_created, self.vertex_array)),
+            ("program", self._release_program),
+        )
+
+    def release(self) -> None:
+        self.available = False
+        self.texture_size = (0, 0)
+        self.current_key = 0
+        self.previous_key = 0
+        self.current_rect = QRectF()
+        self.previous_rect = QRectF()
         self._uniforms = {}
         self._position_attribute = -1
-        self.available = False
+        try:
+            self.resources.release(self._release_actions())
+        finally:
+            self.last_error = self.resources.last_error

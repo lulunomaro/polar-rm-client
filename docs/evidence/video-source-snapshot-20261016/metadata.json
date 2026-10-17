@@ -1,0 +1,37 @@
+{
+  "source_commit": "f85359947d6d2a29c1b1ddeab6c6cafb9327fd95",
+  "production_patch": "e5fc526",
+  "production_patch_in_review": "17b33d91c2cda3a59226621a3909ee02ff480929",
+  "review_test_commit": "f85359947d6d2a29c1b1ddeab6c6cafb9327fd95",
+  "executed_at_utc": "2026-10-16T07:09:09Z",
+  "python": "3.12.14",
+  "focused": {
+    "suites": 23,
+    "methods": 152,
+    "skipped": 0,
+    "exit_code": 0,
+    "result": "PASS"
+  },
+  "repeat": {
+    "rounds": 30,
+    "methods": 240,
+    "skipped": 0,
+    "exit_code": 0,
+    "result": "PASS"
+  },
+  "negative_control": {
+    "removed": "same-request stop-pending guard",
+    "expected_assertion_failures": 1,
+    "errors": 0,
+    "wrapper_exit_code": 0
+  },
+  "scope": "Focused current-owner snapshot and admission evidence with fake native boundaries; not aggregate, UI, hardware or GPU qualification",
+  "log_normalization": "Trailing whitespace removed and checkout path redacted; diagnostic content unchanged",
+  "static": {
+    "result": "PASS",
+    "modules": 184,
+    "functions": 3122,
+    "initialization_cycles": 0,
+    "exit_code": 0
+  }
+}

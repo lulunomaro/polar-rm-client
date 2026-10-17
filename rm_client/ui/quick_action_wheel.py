@@ -8,44 +8,8 @@ from typing import Any
 from .animation import step_damped_spring
 
 
-ACTION_LABELS: dict[str, str] = {
-    "economy": "Economy",
-    "economy_ammo": "Ammo",
-    "toggle_armor_autoaim": "Auto Aim",
-    "toggle_armor_lock": "Armor Lock",
-    "match_chat": "Match Chat",
-    "toggle_spin": "Spin Mode",
-    "toggle_friction": "Friction Wheel",
-    "clickgui": "ClickGUI",
-}
-
-ACTION_ICONS: dict[str, str] = {
-    "economy": "EC",
-    "economy_ammo": "AM",
-    "toggle_armor_autoaim": "AI",
-    "toggle_armor_lock": "LK",
-    "match_chat": "CH",
-    "toggle_spin": "SP",
-    "toggle_friction": "FW",
-    "clickgui": "UI",
-}
-
-DEFAULT_ACTIONS = (
-    "economy",
-    "economy_ammo",
-    "toggle_armor_autoaim",
-    "toggle_armor_lock",
-    "match_chat",
-    "toggle_spin",
-    "toggle_friction",
-    "clickgui",
-)
-
-SECTOR_INDEXES = {
-    4: (0, 2, 4, 6),
-    6: (0, 1, 2, 4, 5, 6),
-    8: tuple(range(8)),
-}
+from ..quick_actions import ACTION_LABELS, ACTION_ICONS, DEFAULT_ACTIONS, SECTOR_INDEXES
+from ..configuration.wheel import WheelConfiguration
 
 
 @dataclass(frozen=True)
@@ -92,29 +56,26 @@ class QuickActionWheelState:
         custom_labels: list[str] | tuple[str, ...] | None = None,
         custom_icons: list[str] | tuple[str, ...] | None = None,
     ) -> None:
-        if sector_count is not None:
-            self.sector_count = min((4, 6, 8), key=lambda item: abs(item - int(sector_count)))
-        if radius is not None:
-            self.radius = max(72.0, min(180.0, float(radius)))
-        if dead_zone is not None:
-            self.dead_zone = max(18.0, min(self.radius * 0.72, float(dead_zone)))
-        if show_labels is not None:
-            self.show_labels = bool(show_labels)
-        if label_style is not None:
-            value = str(label_style)
-            self.label_style = value if value in {"Action", "Compact", "Off"} else "Action"
-        if icon_style is not None:
-            value = str(icon_style)
-            self.icon_style = value if value in {"Initials", "Dot", "Off"} else "Initials"
-        if actions is not None:
-            clean = [action if action in ACTION_LABELS else DEFAULT_ACTIONS[index % 8] for index, action in enumerate(actions)]
-            self.actions = (clean + list(DEFAULT_ACTIONS))[:8]
-        if custom_labels is not None:
-            labels = [str(value)[:24] for value in custom_labels]
-            self.custom_labels = (labels + [""] * 8)[:8]
-        if custom_icons is not None:
-            icons = [str(value)[:4] for value in custom_icons]
-            self.custom_icons = (icons + [""] * 8)[:8]
+        values = {
+            "sectors": sector_count, "radius": radius, "dead_zone": dead_zone,
+            "show_labels": show_labels, "label_style": label_style, "icon_style": icon_style,
+            "actions": list(actions) if actions is not None else None,
+            "labels": list(custom_labels) if custom_labels is not None else None,
+            "icons": list(custom_icons) if custom_icons is not None else None,
+        }
+        base = WheelConfiguration().overlay(self.export_config())
+        self._apply_configuration(base.overlay({key: value for key, value in values.items() if value is not None}))
+
+    def _apply_configuration(self, config: WheelConfiguration) -> None:
+        self.sector_count = config.sectors
+        self.radius = config.radius
+        self.dead_zone = config.dead_zone
+        self.show_labels = config.show_labels
+        self.label_style = config.label_style
+        self.icon_style = config.icon_style
+        self.actions = list(config.actions)
+        self.custom_labels = list(config.labels)
+        self.custom_icons = list(config.icons)
 
     def open(
         self,
@@ -224,20 +185,5 @@ class QuickActionWheelState:
     def load_config(self, data: Any) -> None:
         if not isinstance(data, dict):
             return
-        from ..config_store import validate_client_config
-
-        validate_client_config({"quick_action_wheel": data})
-        actions = data.get("actions")
-        labels = data.get("labels")
-        icons = data.get("icons")
-        self.configure(
-            sector_count=int(data.get("sectors", self.sector_count)),
-            radius=float(data.get("radius", self.radius)),
-            dead_zone=float(data.get("dead_zone", self.dead_zone)),
-            show_labels=bool(data.get("show_labels", self.show_labels)),
-            label_style=str(data.get("label_style", self.label_style)),
-            icon_style=str(data.get("icon_style", self.icon_style)),
-            actions=actions if isinstance(actions, (list, tuple)) else None,
-            custom_labels=labels if isinstance(labels, (list, tuple)) else None,
-            custom_icons=icons if isinstance(icons, (list, tuple)) else None,
-        )
+        base = WheelConfiguration().overlay(self.export_config())
+        self._apply_configuration(base.overlay(data))

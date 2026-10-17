@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import importlib.util as ilu
+import contextlib
+import io
 import shutil
 import sys
 import tempfile
@@ -25,6 +27,17 @@ def check(name, ok, detail=""):
     global FAILED
     print(f"{'[ OK ]' if ok else '[FAIL]'} {name}" + (f"  {detail}" if detail else ""))
     FAILED += 0 if ok else 1
+
+
+@contextlib.contextmanager
+def expected_failure_output():
+    """Label deliberately rejected fixture operations, not test assertions."""
+    captured = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(captured):
+            yield
+    finally:
+        print(captured.getvalue().replace("[FAIL]", "[EXPECTED-FAIL]"), end="")
 
 
 def main() -> int:
@@ -60,12 +73,14 @@ def main() -> int:
         check("带 f 后缀的输入也不会变成 0.5ff",
               "#define MOUSE_SENSITIVITY (0.5f)" in hero.read_text(encoding="utf-8"))
         n_before = len(step.failures)
-        phb.switch_mouse_sensitivity(Path(td) / "missing", step, "0.5")
+        with expected_failure_output():
+            phb.switch_mouse_sensitivity(Path(td) / "missing", step, "0.5")
         check("找不到文件时记一条失败，不是静默返回",
               len(step.failures) == n_before + 1, str(step.failures[-1:]))
         hero.write_text("#define SOMETHING_ELSE 1\n", encoding="utf-8")
         n_before = len(step.failures)
-        phb.switch_mouse_sensitivity(repo, step, "0.5")
+        with expected_failure_output():
+            phb.switch_mouse_sensitivity(repo, step, "0.5")
         check("文件在但宏写法变了也要报错（上游改了不能装看不见）",
               len(step.failures) == n_before + 1, str(step.failures[-1:]))
         shutil.rmtree(td, ignore_errors=True)
@@ -137,8 +152,10 @@ def main() -> int:
                   phb.check_clean(Path(td3), st) is True and not st.failures)
             st2 = phb.Step()
             phb.git = fake_git(False)
+            with expected_failure_output():
+                clean = phb.check_clean(Path(td3), st2)
             check("别人改的文件仍然要拒绝（不能为了幂等把闸门拆了）",
-                  phb.check_clean(Path(td3), st2) is False and bool(st2.failures))
+                  clean is False and bool(st2.failures))
     finally:
         phb.git = real_git
 
@@ -179,7 +196,8 @@ def main() -> int:
         other = repo5 / "application" / "nope.h"
         p5.write_text("#define NOTHING_HERE 1\n", encoding="utf-8")
         st6 = phb.Step()
-        phb.switch_robot(repo5, st6, "hero")
+        with expected_failure_output():
+            phb.switch_robot(repo5, st6, "hero")
         check("找不到任何兵种 include 时报错而不是乱插", bool(st6.failures), str(st6.failures))
         check("步兵参数文件也在 OWNED 里", phb.INFANTRY_PARAM_REL in phb.OWNED)
         check("ROBOT_PROFILES 两个兵种的参数文件都在 OWNED 里",

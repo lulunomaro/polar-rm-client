@@ -1,0 +1,109 @@
+QOpenGLWidget is not supported on this platform.
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+F.QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.FFFF
+======================================================================
+FAIL: test_actual_hud_false_rejects_cache_present_and_restore_then_recovers (__main__.CommandRejectionTests.test_actual_hud_false_rejects_cache_present_and_restore_then_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-frame-boundary/tests/test_gpu_command_frame_rejection.py", line 57, in test_actual_hud_false_rejects_cache_present_and_restore_then_recovers
+    self.assertFalse(result["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_real_renderer_internal_fault_keeps_original_diagnostics_and_rejects_frame (__main__.CommandRejectionTests.test_real_renderer_internal_fault_keeps_original_diagnostics_and_rejects_frame)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-frame-boundary/tests/test_gpu_command_frame_rejection.py", line 91, in test_real_renderer_internal_fault_keeps_original_diagnostics_and_rejects_frame
+    self.assertTrue(compositor.frame_rejected)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_specialized_flush_false_results_mark_frame_and_clear_collections (__main__.CommandRejectionTests.test_specialized_flush_false_results_mark_frame_and_clear_collections) (stage='island')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-frame-boundary/tests/test_gpu_command_frame_rejection.py", line 132, in test_specialized_flush_false_results_mark_frame_and_clear_collections
+    self.assertTrue(compositor.frame_rejected)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_specialized_flush_false_results_mark_frame_and_clear_collections (__main__.CommandRejectionTests.test_specialized_flush_false_results_mark_frame_and_clear_collections) (stage='wheel')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-frame-boundary/tests/test_gpu_command_frame_rejection.py", line 132, in test_specialized_flush_false_results_mark_frame_and_clear_collections
+    self.assertTrue(compositor.frame_rejected)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_specialized_flush_false_results_mark_frame_and_clear_collections (__main__.CommandRejectionTests.test_specialized_flush_false_results_mark_frame_and_clear_collections) (stage='wheel_labels')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-frame-boundary/tests/test_gpu_command_frame_rejection.py", line 132, in test_specialized_flush_false_results_mark_frame_and_clear_collections
+    self.assertTrue(compositor.frame_rejected)
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.694s
+
+FAILED (failures=5)

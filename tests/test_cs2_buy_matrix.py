@@ -48,7 +48,7 @@ class Host:
     def anim_duration(self,value):return value
     def add_hotspot(self,r,action,payload=None,tooltip=""):self.hotspots.append((QRectF(r),action,payload))
     def economy_offers(self,category=None):return [o for o in self.offers if category is None or o.category==category]
-    def economy_selected_offer(self):return next(o for o in self.offers if o.key==self.economy_selected_key)
+    def reconcile_economy_selection(self):return next(o for o in self.offers if o.key==self.economy_selected_key)
     def select_economy_offer(self,key):self.calls.append(key);self.economy_selected_key=key
 
 

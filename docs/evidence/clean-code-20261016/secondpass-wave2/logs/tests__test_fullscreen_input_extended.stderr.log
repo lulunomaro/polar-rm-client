@@ -1,0 +1,9 @@
+.......This plugin does not support raise()
+This plugin does not support grabbing the keyboard
+..This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+...
+----------------------------------------------------------------------
+Ran 12 tests in 1.494s
+
+OK

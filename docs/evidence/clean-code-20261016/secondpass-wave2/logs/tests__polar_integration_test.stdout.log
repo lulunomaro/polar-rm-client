@@ -1,0 +1,66 @@
+
+--- 机器人已补底盘消费者 ---
+[PASS] 链路自动连上（无需重开场景）
+[PASS] 机器人已收到上位机帧
+[PASS] 已收下行段数 >= 5
+[PASS] CRC 错误为 0
+[PASS] HUD 底盘朝向为真值
+[PASS] HUD 功率上限为真值
+[PASS] 实测速度已入 state
+[PASS] 机器人收到了 RobotCmd
+[PASS] 按 W 上线的前向速度 = 1.5 m/s
+[PASS] 上线的侧向/角速度为 0
+[PASS] fire 字节恒为 0
+[PASS] 实测速度跟着起来
+[PASS] 指令-实测校验判为 OK
+[PASS] 松杆后上线速度归零
+[PASS] F12 同帧锁住链路
+ACTIVE test_patched_robot
+[PASS] F12 后机器人确实收到了新帧
+[PASS] F12 后上线的全是零速（无一例外的 1.5）
+[PASS] 急停期间驾驶被拒
+[PASS] 拔线后链路判为不活跃
+[PASS] 链路不活跃时禁止驾驶
+
+--- 机器人未补底盘消费者（当前 master 真实行为）---
+[PASS] 链路正常连上
+ACTIVE test_unpatched_robot
+[PASS] 机器人确实收到了 1.5 m/s
+[PASS] 但实测速度恒为 0（没人消费）
+[PASS] 客户端必须报出车未响应
+[PASS] NO_MOTION 阶段就已经给出解释（不能只给个黄字）
+[PASS] 持续不响应升级为 STUCK
+[PASS] STUCK 原因指向固件底盘消费者
+[PASS] HUD 芯片 MOT 未点亮
+
+--- 大疆官方场景 + 已补底盘消费者的机器人 ---
+[PASS] 当前场景确实为 OfficialEvent
+[PASS] 官方场景的 allow_polar_drive 为 False（旧代码会因此短路）
+[PASS] 官方场景下链路能自动连上
+[PASS] 官方场景不会把 RobotLink 强制关掉（不自动开，但不禁止手开）
+[PASS] 官方场景下能手动启用模块并授权驾驶
+[PASS] 官方场景：drive_armed 为真
+[PASS] 官方场景：机器人收到了非零前向速度
+[PASS] 官方场景：fire 字节仍恒为 0
+[PASS] 官方场景：指令-实测交叉校验判为 OK
+[PASS] 无自瞄目标时云台角保持 0（不会乱发角度）
+ACTIVE test_drive_works_in_official_scenario
+[PASS] 官方场景：松杆后速度归零
+
+--- sim2real：真实 omni build（无 0x1E）+ 方案 B（key.v 驾驶）---
+[PASS] 链路已连上
+[PASS] 仿真机器人不发 0x1E（匹配真实 omni build）
+[PASS] 通道设置已作用到 transport
+[PASS] 0x0A 位置上报在驾驶期间被反复记录（不是一次）
+[PASS] 记录到的坐标真的在变（位移有得算）
+[PASS] 判出 OK 后不再退回（无自相消除振荡）
+[PASS] virtual_rc 通道下 key.v 已上线
+[PASS] 机器人因 key.v 被消费而真的动了
+[PASS] 客户端靠 0x0A 位移而非 0x1E 判出车辆响应
+[PASS] 位移确实进入了运动校验（不是恒为 0）
+[PASS] note_position 在已有指令时不重锁基准点（基准应保持不变）
+ACTIVE test_sim2real_plan_b_on_real_omni_build
+[PASS] 松杆后机器人速度回落
+
+============================================================
+ALL POLAR INTEGRATION TESTS PASSED

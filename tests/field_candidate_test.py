@@ -8,6 +8,7 @@ import tempfile
 import threading
 import time
 import sys
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -146,16 +147,54 @@ def test_decoder_recovery_after_loss() -> None:
 
 def test_runtime_paths() -> None:
     print("[field] frozen paths")
-    paths = RuntimePaths.discover(executable=r"C:\Portable\POLAR-RM.exe", frozen=True, environ={})
-    require(paths.resource_root == Path(r"C:\Portable\resources"), "portable resources")
-    require(paths.configs_root == Path(r"C:\Portable\user_data\configs"), "portable configs")
-    require(paths.evidence_root == Path(r"C:\Portable\field_evidence"), "portable evidence")
-    source = RuntimePaths.discover(
-        module_file=r"C:\Source\rm_custom_client\rm_client\runtime_paths.py",
-        frozen=False,
-        environ={},
-    )
-    require(source.configs_root == Path(r"C:\Source\rm_custom_client\user_data\configs"), "source config isolated from defaults")
+    with tempfile.TemporaryDirectory() as directory:
+        # RuntimePaths uses the host filesystem. A Windows drive literal is a
+        # relative filename on POSIX, not a portable way to test frozen layout.
+        # Native absolute paths exercise the same contract on Windows and POSIX.
+        root = Path(directory).resolve()
+        portable_root = root / "Portable Client"
+        paths = RuntimePaths.discover(
+            executable=str(portable_root / "POLAR-RM.exe"), frozen=True, environ={}
+        )
+        require(paths.app_root == portable_root, "portable executable determines app root")
+        require(not paths.source_mode, "portable mode detected")
+        require(paths.resource_root == portable_root / "resources", "portable resources")
+        require(paths.defaults_root == portable_root / "defaults", "portable immutable defaults")
+        require(paths.configs_root == portable_root / "user_data" / "configs", "portable configs")
+        require(paths.evidence_root == portable_root / "field_evidence", "portable evidence")
+        require(paths.bin_root == portable_root / "bin", "portable binaries")
+        require(paths.manifest_path == portable_root / "BUILD_MANIFEST.json", "portable manifest")
+
+        source_root = root / "Source Client"
+        module_file = source_root / "rm_client" / "runtime_paths.py"
+        source = RuntimePaths.discover(module_file=module_file, frozen=False, environ={})
+        require(source.source_mode, "source mode detected")
+        require(source.app_root == source_root, "source module determines app root")
+        require(source.resource_root == source_root, "source resources")
+        require(source.defaults_root == source_root / "configs", "source immutable defaults")
+        require(
+            source.configs_root == source_root / "user_data" / "configs",
+            "source config isolated from defaults",
+        )
+        require(
+            source.evidence_root == source_root / "user_data" / "field_evidence",
+            "source evidence isolated from defaults",
+        )
+
+        data_root = root / "Isolated Runtime"
+        isolated = RuntimePaths.discover(
+            module_file=module_file,
+            frozen=False,
+            environ={"POLAR_USER_DATA_ROOT": str(data_root)},
+        )
+        require(isolated.configs_root == data_root / "configs", "source runtime override")
+        require(isolated.defaults_root == source.defaults_root, "runtime override preserves defaults")
+        overridden = RuntimePaths.discover(
+            module_file=module_file,
+            frozen=False,
+            environ={"POLAR_APP_ROOT": str(portable_root), "POLAR_USER_DATA_ROOT": str(data_root)},
+        )
+        require(overridden == paths, "app override selects complete portable layout")
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         (root / "b").mkdir()
@@ -389,6 +428,8 @@ def test_rotating_log_and_replay() -> None:
         logger = RotatingJsonlLogger(Path(directory), max_bytes=1024, backups=2)
         for index in range(80):
             logger.emit("publish_result", index=index, detail="x" * 100)
+        require(logger.flush(timeout=2.0), "all accepted field records written without loss")
+        require(logger.close(timeout=2.0), "field writer closed before replay")
         files = sorted(Path(directory).glob("*.jsonl*"))
         require(1 <= len(files) <= 3, "bounded rotation")
         records = list(ReadOnlyFieldReplay(files).records())
@@ -402,11 +443,24 @@ def test_rotating_log_and_replay() -> None:
 
 def test_source_preflight() -> None:
     print("[field] source preflight")
-    report = run_preflight(official=False, codec_selftest=True)
+    ffmpeg = resolve_ffmpeg_executable()
+    require(bool(ffmpeg), "source preflight requires a real FFmpeg executable")
+    # Source checkouts need not contain the Windows release binary. Preflight
+    # deliberately requires an explicit source FFmpeg path; use the same real
+    # executable exercised by the codec tests without weakening bundle checks.
+    with tempfile.TemporaryDirectory() as directory, patch.dict(
+        os.environ,
+        {"POLAR_FFMPEG": str(ffmpeg), "POLAR_USER_DATA_ROOT": directory},
+    ):
+        report = run_preflight(official=False, codec_selftest=True)
     checks = {item.key: item for item in report.checks}
     non_gl = [item for item in report.checks if item.key != "qt_opengl"]
-    require(all(item.passed for item in non_gl), "manifest-independent source preflight")
-    # Some Windows Qt offscreen plugins expose a valid surface but no GL
+    failures = "; ".join(f"{item.key}: {item.detail}" for item in non_gl if not item.passed)
+    require(
+        all(item.passed for item in non_gl),
+        f"manifest-independent source preflight{': ' + failures if failures else ''}",
+    )
+    # Some Qt offscreen plugins expose a valid surface but no GL
     # context. The release script repeats this check on the real desktop/WGL
     # platform before both runtime GPU smokes.
     require(

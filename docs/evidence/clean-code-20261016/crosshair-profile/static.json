@@ -1,0 +1,34 @@
+{
+  "gate": {
+    "baseline_revision": "d64f1528e2e1864ef369537c026b6d3f7127f590",
+    "status": "PASS",
+    "violations": []
+  },
+  "source_tree_sha256": "7fa50764a5ce52234c4274c7f43c81c94e9fe724aee10e777589b20aa54678a8",
+  "summary": {
+    "decisions": 13069,
+    "files": 209,
+    "functions": 3368,
+    "historical_ui_functions": 50,
+    "historical_ui_modules": 1,
+    "import_edges": 600,
+    "parsed_files": 209,
+    "statements": 37123
+  },
+  "runtime_cycles": [],
+  "all_import_cycles": [],
+  "baseline": {
+    "source_tree_sha256": "6ae54216d9d09eeeae53e7da28f68274c64cc8e713dc65804de89ec99a76af70",
+    "summary": {
+      "decisions": 13069,
+      "files": 208,
+      "functions": 3368,
+      "historical_ui_functions": 50,
+      "historical_ui_modules": 1,
+      "import_edges": 598,
+      "parsed_files": 208,
+      "statements": 37123
+    }
+  },
+  "scope": "Complete measured production tree; compact report omits per-function inventories."
+}

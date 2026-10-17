@@ -1,0 +1,35 @@
+
+--- test_default_card_set_and_colors_unchanged ---
+[PASS] 默认四张卡都出现（与改动前无条件建卡一致）  -> ['GIMPOWER', 'POWERLIM', 'SPEEDLIM', 'CAP']
+[PASS] GIMPOWER 默认发光量未变  -> 0.1
+[PASS] POWERLIM 默认发光量未变  -> 0.1
+[PASS] SPEEDLIM 默认发光量未变  -> 0.1
+[PASS] CAP 默认发光量未变  -> 0.1
+[PASS] 默认电压 24V 不告警（改动前该卡从不告警）
+[PASS] 默认电容不告警（电容默认高于阈值）
+[PASS] POWERLIM 保留原有 ratio>0.78 规则
+
+--- test_gimbal_power_three_settings_work ---
+[PASS] 关掉 Show Voltage 后 GIMPOWER 卡消失
+[PASS] 但不影响其他三张卡
+[PASS] 电压 12V 低于阈值 18V 时告警（方向：低为险）
+[PASS] 电压回升到 25V 后不告警
+[PASS] 告警且开 Glow Alert 时发光加强  -> 0.32
+[PASS] 关掉 Glow Alert 后发光回到基线（开关真能关）
+[PASS] 阈值 0 视为关闭告警，而不是永远告警
+[PASS] 垃圾阈值不抛异常且归为不告警
+
+--- test_three_consumers_agree_on_show_switches ---
+[PASS] Capacitor.Show Bar=True 时三处都显示  -> card=True telemetry=True
+[PASS] Capacitor.Show Bar=False 时两处一起消失（不再一处有效一处无效）
+[PASS] PowerLimit.Show Limit=True 时三处都显示  -> card=True telemetry=True
+[PASS] PowerLimit.Show Limit=False 时两处一起消失（不再一处有效一处无效）
+[PASS] SpeedLimit.Show Speed=True 时三处都显示  -> card=True telemetry=True
+[PASS] SpeedLimit.Show Speed=False 时两处一起消失（不再一处有效一处无效）
+
+--- test_missing_config_fails_open ---
+[PASS] 设置项缺失时卡片仍显示
+[PASS] 未登记的卡片标签默认显示（不误伤）
+
+============================================================
+ALL BATCH-14 STATUS-CARD TESTS PASSED

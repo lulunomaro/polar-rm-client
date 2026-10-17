@@ -11,6 +11,7 @@ import time
 from typing import Any, Callable
 
 from .model import RobotState
+from .backend.resource_close import close_resource, release_capture
 from .tongji_bridge import TongjiPacket
 
 
@@ -340,129 +341,276 @@ class CameraCaptureWorker:
         self.open_failures = 0
         self.read_failures = 0
         self._stop_event = threading.Event()
+        self._unreleased_capture: Any = None
+        self._capture_close_error: Exception | None = None
+        self._capture_close_error_reported = False
+        self._capture_close_revision = 0
+        self._lifecycle_lock = threading.RLock()
+        self._close_lock = threading.Lock()
+        self._close_requests = 0
+        self._epoch = 0
+        self._start_done = threading.Event()
+        self._start_done.set()
 
     def configure(self, camera_id: int, size: tuple[int, int]) -> None:
-        self.camera_id = camera_id
-        self.size = (max(160, int(size[0])), max(120, int(size[1])))
+        """Set the next start's target; callers stop before changing a live stream."""
+        with self._lifecycle_lock:
+            self.camera_id = camera_id
+            self.size = (max(160, int(size[0])), max(120, int(size[1])))
+
+    @property
+    def cleanup_pending(self) -> bool:
+        with self._lifecycle_lock:
+            return bool(self._close_requests) or (not self.running and (
+                not self._start_done.is_set() or
+                (self._thread is not None and self._thread.is_alive())))
+
+    @property
+    def cleanup_error(self) -> str:
+        with self._lifecycle_lock:
+            return str(self._capture_close_error or "")
 
     def start(self) -> bool:
-        if self.running:
-            return True
-        if self._thread is not None and self._thread.is_alive():
-            return False
-        if time.perf_counter() < self.retry_after:
-            return False
-        stop_event = threading.Event()
-        self._stop_event = stop_event
-        self.running = True
-        self._thread = threading.Thread(
-            target=self._run,
-            args=(stop_event,),
-            name="polar-camera",
-            daemon=True,
-        )
+        with self._lifecycle_lock:
+            if self._capture_close_error is not None or self._close_requests:
+                return False
+            if self.running:
+                return True
+            if not self._start_done.is_set() or (self._thread is not None and self._thread.is_alive()):
+                return False
+            if time.perf_counter() < self.retry_after:
+                return False
+            self._epoch += 1
+            epoch = self._epoch
+            stop_event = threading.Event()
+            start_done = threading.Event()
+            try:
+                thread = threading.Thread(
+                    target=self._run,
+                    args=(stop_event, epoch, start_done, (self.camera_id, self.size)),
+                    name="polar-camera",
+                    daemon=True,
+                )
+            except Exception as exc:
+                self._mark_capture_failure(f"Camera worker start failed: {exc}")
+                raise
+            self._stop_event, self._start_done = stop_event, start_done
+            self._thread = thread
+            self.running = True
+        # Thread.start may itself be delayed. Keep the revocation lock free;
+        # the worker's admission gate prevents native open before it resolves.
         try:
-            self._thread.start()
-        except Exception:
-            self.running = False
-            self._thread = None
+            thread.start()
+        except Exception as exc:
+            with self._lifecycle_lock:
+                self.running = False
+                self.connected = False
+                self._epoch += 1
+                stop_event.set()
+                self._mark_capture_failure(f"Camera worker start failed: {exc}")
+                # A wrapper can raise after admission, even after exit. Only
+                # a genuinely unstarted placeholder can be discarded here.
+                if thread.ident is None:
+                    self._thread = None
             raise
-        return True
+        finally:
+            start_done.set()
+        with self._lifecycle_lock:
+            return epoch == self._epoch and not stop_event.is_set()
 
-    def stop(self) -> None:
-        self.running = False
-        self._stop_event.set()
-        thread = self._thread
-        if thread is not None and thread.is_alive() and thread is not threading.current_thread():
-            thread.join(timeout=1.2)
-        if thread is None or not thread.is_alive():
-            self._thread = None
-        self.connected = False
+    def stop(self, *, wait: bool = True) -> None:
+        """Revoke frames immediately; wait=False never joins or releases native.
+
+        The existing worker remains the sole capture cleanup owner. Default
+        wait preserves the legacy bounded stop; close() confirms full teardown.
+        """
+        with self._lifecycle_lock:
+            self.running = False
+            self.connected = False
+            self._epoch += 1
+            self._stop_event.set()
+            thread, start_done = self._thread, self._start_done
+            with self._lock:
+                self._latest = None
+        if wait and thread is not threading.current_thread():
+            timeout = 1.2
+            if not start_done.is_set():
+                began = time.perf_counter()
+                start_done.wait(timeout)
+                timeout = max(0.0, timeout - (time.perf_counter() - began))
+            if thread is not None and thread.is_alive():
+                thread.join(timeout=timeout)
+        with self._lifecycle_lock:
+            if self._thread is thread and start_done.is_set() and (thread is None or not thread.is_alive()):
+                self._thread = None
+
+    def close(self) -> None:
+        """Strict wait and explicit failed-release retry, on a teardown worker."""
+        if self._thread is threading.current_thread():
+            self.stop(wait=False)
+            raise RuntimeError("Camera cannot wait for its own worker")
+        with self._lifecycle_lock:
+            # A close queued before failure reporting is only a waiter. A
+            # revision also prevents two queued retries consuming one error.
+            retry_revision = self._capture_close_revision if self._capture_close_error_reported else None
+            self._close_requests += 1
+        try:
+            with self._close_lock:
+                with self._lifecycle_lock:
+                    thread, start_done = self._thread, self._start_done
+                self.stop()
+                start_done.wait()
+                if thread is not None and getattr(thread, "ident", True) is not None:
+                    thread.join()
+                with self._lifecycle_lock:
+                    if self._thread is thread:
+                        self._thread = None
+                    retry_capture = self._unreleased_capture if (
+                        self._capture_close_error is not None and
+                        retry_revision == self._capture_close_revision) else None
+                if retry_capture is not None:
+                    try:
+                        release_capture(retry_capture)
+                    except Exception as exc:
+                        self._record_release_failure(retry_capture, exc)
+                    else:
+                        with self._lifecycle_lock:
+                            self._unreleased_capture = None
+                            self._capture_close_error = None
+                            self._capture_close_error_reported = False
+                with self._lifecycle_lock:
+                    error = self._capture_close_error
+                    if error is not None:
+                        self._capture_close_error_reported = True
+                if error is not None:
+                    raise RuntimeError(f"Camera capture release failed: {error}") from error
+        finally:
+            with self._lifecycle_lock:
+                self._close_requests -= 1
 
     def latest_frame(self) -> CapturedFrame | None:
         with self._lock:
             return self._latest
 
-    def _mark_capture_failure(self, message: str) -> None:
-        self.last_error = message
-        self.open_failures += 1
-        # Device probing can enter native multimedia backends.  A bounded
-        # exponential retry prevents a missing camera from consuming a core or
-        # repeatedly exercising a broken Windows MSMF driver.
-        delay = min(5.0, 0.5 * (2 ** min(4, self.open_failures - 1)))
-        self.retry_after = time.perf_counter() + delay
+    def _is_current(self, stop_event: threading.Event, epoch: int) -> bool:
+        with self._lifecycle_lock:
+            return self.running and epoch == self._epoch and not stop_event.is_set()
 
-    def _run(self, stop_event: threading.Event) -> None:
+    def _mark_capture_failure(self, message: str) -> None:
+        with self._lifecycle_lock:
+            self.last_error = message
+            self.open_failures += 1
+            # Avoid hot retries of missing devices, broken native backends,
+            # and unavailable OS worker slots.
+            delay = min(5.0, 0.5 * (2 ** min(4, self.open_failures - 1)))
+            self.retry_after = time.perf_counter() + delay
+
+    def _record_release_failure(self, capture: Any, error: Exception) -> None:
+        with self._lifecycle_lock:
+            self._unreleased_capture = capture
+            self._capture_close_error = error
+            self._capture_close_error_reported = False
+            self._capture_close_revision += 1
+            self.last_error = f"Camera capture release failed: {error}"
+
+    def _run(self, stop_event: threading.Event, epoch: int | None = None,
+             start_done: threading.Event | None = None,
+             config: tuple[int, tuple[int, int]] | None = None) -> None:
+        if start_done is not None:
+            start_done.wait()
+        with self._lifecycle_lock:
+            epoch = self._epoch if epoch is None else epoch
+            camera_id, size = config if config is not None else (self.camera_id, self.size)
         capture: Any = None
         produced_frame = False
         try:
-            import cv2  # type: ignore
-        except Exception as exc:  # pragma: no cover - local camera stack
-            self._mark_capture_failure(str(exc))
-            self.running = False
-            return
-        try:
-            # Windows is the release target.  Do not fall through to OpenCV's
-            # automatic MSMF backend after DirectShow fails: several drivers
-            # report an opened stream and then throw native access violations
-            # forever from read().  Other platforms retain their native auto
-            # backend.
-            if os.name == "nt" and hasattr(cv2, "CAP_DSHOW"):
-                capture = cv2.VideoCapture(self.camera_id, cv2.CAP_DSHOW)
-            else:  # pragma: no cover - Windows is the packaged target
-                capture = cv2.VideoCapture(self.camera_id)
-            if capture is None or not capture.isOpened():
-                self._mark_capture_failure("摄像头不可用")
+            if not self._is_current(stop_event, epoch):
                 return
-            capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.size[0])
-            capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.size[1])
-            self.connected = True
+            import cv2  # type: ignore
+
+            # Windows must not fall through from DirectShow to MSMF: some
+            # drivers claim an open stream then repeatedly crash in read().
+            if os.name == "nt" and hasattr(cv2, "CAP_DSHOW"):
+                capture = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
+            else:  # pragma: no cover - Windows is the packaged target
+                capture = cv2.VideoCapture(camera_id)
+            if not self._is_current(stop_event, epoch):
+                return
+            opened = capture is not None and capture.isOpened()
+            with self._lifecycle_lock:
+                if not self._is_current(stop_event, epoch):
+                    return
+                if not opened:
+                    self._mark_capture_failure("摄像头不可用")
+                    return
+            for prop, value in ((cv2.CAP_PROP_FRAME_WIDTH, size[0]), (cv2.CAP_PROP_FRAME_HEIGHT, size[1])):
+                if not self._is_current(stop_event, epoch):
+                    return
+                capture.set(prop, value)
+            with self._lifecycle_lock:
+                if not self._is_current(stop_event, epoch):
+                    return
+                self.connected = True
             consecutive_read_failures = 0
-            while self.running and not stop_event.is_set():
+            while self._is_current(stop_event, epoch):
                 ok, bgr = capture.read()
+                with self._lifecycle_lock:
+                    if not self._is_current(stop_event, epoch):
+                        return
+                    if not ok or bgr is None:
+                        consecutive_read_failures += 1
+                        self.read_failures += 1
+                        if consecutive_read_failures >= 12:
+                            self._mark_capture_failure("摄像头连续读取失败")
+                            return
                 if not ok or bgr is None:
-                    consecutive_read_failures += 1
-                    self.read_failures += 1
-                    if consecutive_read_failures >= 12:
-                        self._mark_capture_failure("摄像头连续读取失败")
-                        break
                     stop_event.wait(0.025)
                     continue
-                produced_frame = True
-                consecutive_read_failures = 0
-                self.open_failures = 0
-                self.retry_after = 0.0
-                self.last_error = ""
-                if bgr.shape[1] != self.size[0] or bgr.shape[0] != self.size[1]:
-                    bgr = cv2.resize(bgr, self.size, interpolation=cv2.INTER_LINEAR)
+                if bgr.shape[1] != size[0] or bgr.shape[0] != size[1]:
+                    bgr = cv2.resize(bgr, size, interpolation=cv2.INTER_LINEAR)
+                if not self._is_current(stop_event, epoch):
+                    return
                 rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
-                self._sequence += 1
-                frame = CapturedFrame(self._sequence, time.time_ns(), int(rgb.shape[1]), int(rgb.shape[0]), rgb, bgr)
-                with self._lock:
-                    self._latest = frame
-                callback = self.on_frame
+                with self._lifecycle_lock:
+                    if not self._is_current(stop_event, epoch):
+                        return
+                    produced_frame = True
+                    consecutive_read_failures = 0
+                    self.open_failures = 0
+                    self.retry_after = 0.0
+                    self.last_error = ""
+                    self._sequence += 1
+                    frame = CapturedFrame(self._sequence, time.time_ns(), int(rgb.shape[1]), int(rgb.shape[0]), rgb, bgr)
+                    with self._lock:
+                        self._latest = frame
+                    callback = self.on_frame
+                # An already-admitted callback may finish on this retained
+                # worker. Never hold UI revocation across arbitrary callbacks.
                 if callback is not None:
                     try:
                         callback(frame)
                     except Exception as exc:
-                        # A UI callback fault may drop one frame, but must not
-                        # abandon the only capture owner without diagnostics.
-                        self.last_error = f"摄像头回调失败: {exc}"
+                        with self._lifecycle_lock:
+                            if self._is_current(stop_event, epoch):
+                                self.last_error = f"摄像头回调失败: {exc}"
         except Exception as exc:  # pragma: no cover - driver dependent
-            self._mark_capture_failure(f"摄像头异常: {exc}")
+            with self._lifecycle_lock:
+                if self._is_current(stop_event, epoch):
+                    self._mark_capture_failure(f"摄像头异常: {exc}")
         finally:
             if capture is not None:
                 try:
-                    capture.release()
-                except Exception:
-                    pass
-            self.connected = False
-            self.running = False
-            if not produced_frame and not self.last_error and not stop_event.is_set():
-                self._mark_capture_failure("摄像头未输出画面")
-            if self._thread is threading.current_thread():
-                self._thread = None
-
+                    release_capture(capture)
+                except Exception as exc:
+                    self._record_release_failure(capture, exc)
+            with self._lifecycle_lock:
+                if self._thread is threading.current_thread() or epoch == self._epoch:
+                    self.connected = False
+                    self.running = False
+                    if not produced_frame and not self.last_error and not stop_event.is_set():
+                        self._mark_capture_failure("摄像头未输出画面")
+            # Keep the thread slot until an observer confirms actual exit.
+            # Native destruction can still run as this frame unwinds.
 
 class TongjiVisionBridge:
     """与 WSL/Ubuntu 同济桥接进程通信的最新帧优先 TCP 客户端。"""
@@ -477,6 +625,14 @@ class TongjiVisionBridge:
         self.results_received = 0
         self.frames_sent = 0
         self._thread: threading.Thread | None = None
+        self._unreleased_socket: socket.socket | None = None
+        self._socket_close_error: Exception | None = None
+        self._socket_close_error_reported = False
+        self._lifecycle_lock = threading.RLock()
+        self._close_lock = threading.Lock()
+        self._closing = False
+        self._epoch = 0
+        self._stop_event = threading.Event()
         self._lock = threading.Lock()
         self._pending: tuple[int, int, int, int, bytes] | None = None
         self._receive_buffer = bytearray()
@@ -486,35 +642,131 @@ class TongjiVisionBridge:
         self.host = host
         self.port = max(1, min(65535, int(port)))
 
-    def start(self) -> None:
-        if self.running:
-            return
-        self.running = True
-        self._thread = threading.Thread(target=self._run, name="tongji-bridge", daemon=True)
-        self._thread.start()
+    @property
+    def cleanup_pending(self) -> bool:
+        with self._lifecycle_lock:
+            return self._closing or (not self.running and self._thread is not None and self._thread.is_alive())
 
-    def stop(self) -> None:
-        self.running = False
-        if self._thread is not None and self._thread.is_alive():
-            self._thread.join(timeout=1.0)
-        self._thread = None
-        self.connected = False
+    @property
+    def cleanup_error(self) -> str:
+        with self._lifecycle_lock:
+            return str(self._socket_close_error or "")
+
+    def start(self) -> None:
+        with self._lifecycle_lock:
+            if self.running or self._closing:
+                return
+            if self._thread is not None and self._thread.is_alive():
+                return
+            if self._socket_close_error is not None:
+                return
+            self._epoch += 1
+            self._stop_event = threading.Event()
+            thread = threading.Thread(target=self._run, args=(self._epoch,), name="tongji-bridge", daemon=True)
+            self._thread = thread
+            self.running = True
+            try:
+                thread.start()
+            except Exception:
+                self.running = False
+                self._epoch += 1
+                self._stop_event.set()
+                # Only a genuinely unstarted thread is safe to discard.
+                if thread.ident is None:
+                    self._thread = None
+                raise
+
+    def stop(self, *, wait: bool = True) -> None:
+        """Revoke results immediately; the existing worker owns socket close.
+
+        wait=False never joins or closes a native handle. Default wait retains
+        the legacy bounded wait; only close() confirms complete teardown.
+        """
+        with self._lifecycle_lock:
+            self.running = False
+            self.connected = False
+            self._epoch += 1
+            self._stop_event.set()
+            thread = self._thread
+            with self._lock:
+                self._pending = None
+            self.last_result = None
+        if wait and thread is not None and thread.is_alive() and thread is not threading.current_thread():
+            thread.join(timeout=1.0)
+        with self._lifecycle_lock:
+            if self._thread is thread and (thread is None or not thread.is_alive()):
+                self._thread = None
+
+    def close(self) -> None:
+        """Strict wait and explicit retry, only on a teardown worker."""
+        if self._thread is threading.current_thread():
+            self.stop(wait=False)
+            raise RuntimeError("Vision bridge cannot wait for its own worker")
+        with self._lifecycle_lock:
+            # A duplicate close already queued before the first failure was
+            # reported is a waiter, not an authorization to retry that error.
+            retry_reported = self._socket_close_error is not None and self._socket_close_error_reported
+        with self._close_lock:
+            with self._lifecycle_lock:
+                self._closing = True
+                thread = self._thread
+            try:
+                self.stop()
+                if thread is threading.current_thread():
+                    raise RuntimeError("Vision bridge cannot wait for its own worker")
+                if thread is not None:
+                    thread.join()
+                with self._lifecycle_lock:
+                    if self._thread is thread:
+                        self._thread = None
+                if self._socket_close_error is not None and retry_reported:
+                    try:
+                        close_resource(self._unreleased_socket)
+                        if self._unreleased_socket.fileno() != -1:
+                            raise OSError("Socket remained open after close")
+                    except Exception as exc:
+                        self._socket_close_error = exc
+                    else:
+                        self._unreleased_socket = None
+                        self._socket_close_error = None
+                        self._socket_close_error_reported = False
+                if self._socket_close_error is not None:
+                    self._socket_close_error_reported = True
+                    raise RuntimeError(f"Vision bridge socket close failed: {self._socket_close_error}") from self._socket_close_error
+            finally:
+                with self._lifecycle_lock:
+                    self._closing = False
 
     def submit_bgr(self, frame: CapturedFrame, quality: int = 82) -> None:
+        with self._lifecycle_lock:
+            if not self.running:
+                return
+            epoch = self._epoch
         try:
             import cv2  # type: ignore
 
             ok, encoded = cv2.imencode(".jpg", frame.bgr, [int(cv2.IMWRITE_JPEG_QUALITY), max(35, min(95, int(quality)))])
             if ok:
-                self.submit_jpeg(frame.sequence, frame.timestamp_ns, frame.width, frame.height, bytes(encoded))
+                jpeg = bytes(encoded)
+                with self._lifecycle_lock:
+                    if self.running and epoch == self._epoch:
+                        self.submit_jpeg(frame.sequence, frame.timestamp_ns, frame.width, frame.height, jpeg)
         except Exception as exc:  # pragma: no cover - depends on optional cv2
             self.last_error = str(exc)
 
     def submit_jpeg(self, sequence: int, timestamp_ns: int, width: int, height: int, jpeg: bytes) -> None:
         if not jpeg:
             return
-        with self._lock:
-            self._pending = (int(sequence), int(timestamp_ns), int(width), int(height), bytes(jpeg))
+        with self._lifecycle_lock:
+            if not self.running:
+                return
+            epoch = self._epoch
+        frame = (int(sequence), int(timestamp_ns), int(width), int(height), bytes(jpeg))
+        with self._lifecycle_lock:
+            if not self.running or epoch != self._epoch:
+                return
+            with self._lock:
+                self._pending = frame
 
     def latest_result(self, max_age_ms: float = 420.0) -> VisionResult | None:
         result = self.last_result
@@ -530,16 +782,22 @@ class TongjiVisionBridge:
             self._pending = None
             return frame
 
-    def _run(self) -> None:
-        while self.running:
+    def _run(self, epoch: int | None = None) -> None:
+        with self._lifecycle_lock:
+            epoch = self._epoch if epoch is None else epoch
+            stop_event = self._stop_event
+        while self.running and epoch == self._epoch:
             sock: socket.socket | None = None
             try:
                 sock = socket.create_connection((self.host, self.port), timeout=0.6)
                 sock.settimeout(0.025)
-                self.connected = True
-                self.last_error = ""
+                with self._lifecycle_lock:
+                    if not self.running or epoch != self._epoch:
+                        return
+                    self.connected = True
+                    self.last_error = ""
                 self._receive_buffer.clear()
-                while self.running:
+                while self.running and epoch == self._epoch:
                     frame = self._take_pending()
                     if frame is not None:
                         sequence, timestamp_ns, width, height, jpeg = frame
@@ -550,28 +808,37 @@ class TongjiVisionBridge:
                         data = sock.recv(262144)
                         if not data:
                             raise ConnectionError("同济桥接器已关闭连接")
+                        if not self.running or epoch != self._epoch:
+                            break
                         self._receive_buffer.extend(data)
-                        self._parse_packets()
+                        self._parse_packets(epoch)
                     except socket.timeout:
                         pass
             except (OSError, ConnectionError) as exc:
                 self.last_error = str(exc)
                 self.connected = False
-                time.sleep(0.20)
+                stop_event.wait(0.20)
             finally:
                 self.connected = False
                 if sock is not None:
                     try:
-                        sock.close()
-                    except OSError:
-                        pass
+                        close_resource(sock)
+                        if sock.fileno() != -1:
+                            raise OSError("Socket remained open after close")
+                    except Exception as exc:
+                        with self._lifecycle_lock:
+                            self._unreleased_socket = sock
+                            self._socket_close_error = exc
+                            self.last_error = f"Vision bridge socket close failed: {exc}"
+                            self.running = False
 
     @staticmethod
     def _send_packet(sock: socket.socket, packet_type: int, sequence: int, timestamp_ns: int, payload: bytes) -> None:
         header = PACKET_HEADER.pack(PROTOCOL_MAGIC, PROTOCOL_VERSION, packet_type, sequence, timestamp_ns, len(payload))
         sock.sendall(header + payload)
 
-    def _parse_packets(self) -> None:
+    def _parse_packets(self, epoch: int | None = None) -> None:
+        epoch = self._epoch if epoch is None else epoch
         while len(self._receive_buffer) >= PACKET_HEADER.size:
             magic, version, packet_type, sequence, timestamp_ns, payload_size = PACKET_HEADER.unpack(self._receive_buffer[:PACKET_HEADER.size])
             if magic != PROTOCOL_MAGIC or version != PROTOCOL_VERSION or payload_size > 4_000_000:
@@ -593,9 +860,14 @@ class TongjiVisionBridge:
             if not isinstance(data, dict):
                 continue
             result = VisionResult.from_payload(sequence, timestamp_ns, data)
-            self.last_result = result
-            self.results_received += 1
-            callback = self.on_result
+            with self._lifecycle_lock:
+                if not self.running or epoch != self._epoch:
+                    return
+                self.last_result = result
+                self.results_received += 1
+                callback = self.on_result
+            # Already-admitted callbacks finish on this retained worker. Never
+            # hold the UI revocation lock across arbitrary callback code.
             if callback is not None:
                 callback(result)
 

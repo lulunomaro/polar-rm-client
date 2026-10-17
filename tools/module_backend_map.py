@@ -28,12 +28,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from rm_client.model import CATEGORIES, build_default_registry  # noqa: E402
+from tools.quality.runtime_sources import legacy_implementation_sources  # noqa: E402
 
 PKG = ROOT / "rm_client"
 SPEC = json.loads((PKG / "backend" / "polar_protocol.json").read_text(encoding="utf-8"))
 
-# 不参与"实现落点"统计的文件：中英翻译表里每个模块名都出现一次，纯噪音
-SKIP_FILES = {"jello_locale.py", "model.py"}
+# 注册表声明与翻译表中的名字不是消费者证据。用确切路径，避免误排除同名实现文件。
+DECLARATION_PATHS = frozenset({"model.py", "module_catalog.py", "ui/jello_locale.py"})
 WINDOW = 8   # 证据行上下各取这么多行做字段扫描。
 # 为什么这么小：窗口一大就会把隔壁模块的字段算进来（实测 26 行时
 # System 类模块普遍被记成在读 0x0A/0x08，一眼就是假信号）。
@@ -99,8 +100,23 @@ def segment_fields() -> dict[str, list[str]]:
     return dict(out)
 
 
-def py_files() -> list[Path]:
-    return [p for p in sorted(PKG.rglob("*.py")) if p.name not in SKIP_FILES]
+def py_files(*, include_legacy: bool = False) -> list[Path]:
+    legacy = legacy_implementation_sources(ROOT)
+    return [p for p in sorted(PKG.rglob("*.py")) if p.relative_to(PKG).as_posix() not in DECLARATION_PATHS
+            and (include_legacy or p not in legacy)]
+
+
+def legacy_module_mentions(legacy: dict[Path, str]) -> dict[str, list[tuple[Path, int]]]:
+    """Retain historical evidence separately; never count it as live coverage."""
+    mentions = {module.name: [] for module in build_default_registry().modules}
+    patterns = {name: re.compile(rf"(?<![A-Za-z0-9_]){re.escape(name)}(?![A-Za-z0-9_])")
+                for name in mentions}
+    for path in sorted(legacy):
+        for line, text in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            for name, pattern in patterns.items():
+                if pattern.search(text):
+                    mentions[name].append((path, line))
+    return {name: locations for name, locations in mentions.items() if locations}
 
 
 #: "清单文件"判据：**同时**满足"出现的模块名够多"和"密度够高"。
@@ -160,10 +176,28 @@ def _cat_counts(modules) -> "Counter[str]":
     return _C(m.category for m in modules)
 
 
+def retained_manual_section(path: Path) -> str:
+    """Preserve maintained prose exactly, including its line endings.
+
+    Never synthesize old field claims when an output has no manual section.
+    An unreadable existing file raises before any output is overwritten.
+    """
+    if path.exists():
+        content = path.read_bytes().decode("utf-8")
+        heading = re.search(r"^## 4\.", content, re.MULTILINE)
+        if heading is not None:
+            return content[heading.start():]
+    return ("## 4. 人工维护的链路索引与验证范围\n\n"
+            "本节尚未维护。自动名字搜索不能生成链路实现或现场资格结论；"
+            "请先核对当前源码与独立验证证据，再补充人工索引。\n")
+
+
 def main() -> int:
     registry = build_default_registry()
     modules = registry.modules
     files = py_files()
+    legacy = legacy_implementation_sources(ROOT)
+    legacy_mentions = legacy_module_mentions(legacy)
     hits = build_index(files)
     dropped = getattr(build_index, '_dropped', [])
     fields = segment_fields()
@@ -201,11 +235,11 @@ def main() -> int:
     a = out.append
     a("# 模块 ↔ 后端实现 对照（通俗版，脚本生成）")
     a("")
-    a("> 生成命令：`python tools/module_backend_map.py`（本文件即其输出，改代码后重跑即可）")
+    a("> 生成命令：`python tools/module_backend_map.py`（更新自动段；第 4 节已有人工内容原样保留）")
     a("> ")
     a("> **怎么读**：一行 = 一个模块。`附近出现的段字段`=模块名附近 8 行内数到的段字段（**弱证据，只用来指路**，见第 4 节）")
     a("> `其它通路`=官方裁判 / MQTT / 本地视觉 / 串口这几条非段通路；`上行`=它会不会往车里发东西；`主要落点`=可直接点开核对的文件")
-    a("> 整行数据列全空 = 这个模块后端其实没人喂数据")
+    a("> 空列仅表示该搜索窗口没有命中；不能据此证明没有数据消费者。历史 Tk 实现单列，不能算作当前 Qt 运行路径覆盖。")
     a("")
     a("## 0. 先弄清楚：客户端的数据一共从哪几条路进来")
     a("")
@@ -242,7 +276,7 @@ def main() -> int:
             up_txt = "、".join(
                 f"{UPLINK_CN[k].split(' ')[0]}x{v}" for k, v in up.items()
             ) or "—"
-            loc = "、".join(f"`{p}`" for p, _ in where.most_common(2)) or "（只在注册表里出现，**没有消费端**）"
+            loc = "、".join(f"`{p}`" for p, _ in where.most_common(2)) or "（当前搜索未找到名字证据，需核查通用或动态消费者）"
             a(f"| **{m.name}** | {'开' if m.enabled else '关'} | {len(m.settings)} "
               f"| {seg_txt} | {chan_txt} | {up_txt} | {loc} |")
         # 出现注册表里但分类不在 CATEGORIES 的，兜底单独列出，避免漏模块
@@ -253,10 +287,10 @@ def main() -> int:
         for m, *_ in extra:
             a(f"- {m.name}")
     a("")
-    a("## 2. 真·没有后端的模块")
+    a("## 2. 当前运行源码中未找到名字证据的模块")
     a("")
-    a("下面这些模块的名字**只出现在注册表**（rm_client/model.py 的 build_default_registry()）里，")
-    a("全仓没有任何实现读它 —— 界面上能勾、能存盘，但什么都不会发生。")
+    a("下面这些模块在当前运行源码搜索范围内未找到模块名证据。通用处理、动态查找和跨函数数据流仍需人工核查，")
+    a("不能据此宣称功能无效；历史 Tk 消费端见下一节，也不能代替当前 Qt 路径的行为测试。")
     a("")
     dry = [m.name for m, h, *_ in rows if not h]
     if dry:
@@ -264,17 +298,36 @@ def main() -> int:
         a("|---|---|---:|---|")
         for name in dry:
             mm = registry.get(name)
-            a(f"| **{name}** | {mm.category} | {len(mm.settings)} | 要么接上、要么从界面删掉；"
-              f"留着比删掉更坏：操作员会以为它在起作用 |")
+            a(f"| **{name}** | {mm.category} | {len(mm.settings)} | 核查当前 Qt 路径的真实消费者与行为测试 |")
     else:
-        a("（本轮没有查到零消费端的模块。）")
+        a("（本轮每个模块均有名字落点；不代表每个设置或数据通路已经接通。）")
     a("")
     a("> 为什么这里**不列**「有 UI 落点但没数到段字段」那一档：这个客户端的数据流是")
     a("> PolarStateBridge.apply(段) 写进共享的 RobotState，渲染层再读 state.xxx，")
     a("> 而「本模块开没开」是在别处判的。名字邻近度抓不到这种跨函数数据流，所以那种空列全凭运气，")
     a("> 不作判定依据（第一版把 48 个模块全误判成「不碰机器人数据」，就是这条坑）。")
     a("")
+    a("## 2.1 保留的历史 Tk 实现（不计当前运行覆盖）")
+    a("")
+    a("这里只对已验证的兼容入口做窄范围分类，不声称完成全程序可达性分析。旧文件移动到新名字不算功能改善；")
+    a("AST 结构度量仍保留这些函数和复杂度，设置孤儿审计的口径也不因此自动改变。")
+    if legacy:
+        for path, proof in sorted(legacy.items()):
+            a(f"- `{path.relative_to(ROOT).as_posix()}`：{proof}")
+        a("")
+        a("| 模块 | 历史名字证据（不计当前覆盖） |")
+        a("|---|---|")
+        for name, locations in sorted(legacy_mentions.items()):
+            evidence = "、".join(f"`{path.relative_to(ROOT).as_posix()}:{line}`" for path, line in locations[:3])
+            a(f"| {name} | {evidence} |")
+    else:
+        a("（未获得可验证的历史入口排除证据；所有非清单源码继续纳入搜索。）")
+    a("")
     a("## 3. 已知不准的地方（别当真到那份上）")
+    a("")
+    a("注册表声明与翻译表不作为消费者证据：" + "、".join(
+        f"`rm_client/{path}`" for path in sorted(DECLARATION_PATHS)) + "。")
+    a("声明移动到 module_catalog.py 不会增加实现覆盖；它仍计入 AST 源码度量。")
     if dropped:
         a("")
         a("先交代被整文件丢掉的「清单文件」（它们只列名字、不含实现）：")
@@ -286,47 +339,10 @@ def main() -> int:
     a("2. 通用字段名（如 `energy`、`heat`）在多个段里都有，出现次数会被各段都记一份；")
     a("3. `—` 不等于\"这个模块一定没用\"，只等于\"在它自己那几行代码附近没找到这类关键字\"；")
     a("4. 真要改某个模块，先看第 1 列模块名在 `polar_app.py` / `ui/` 里的实现，别看这张表。")
-    # ---------------- 5. 人写的重点模块对照 ----------------
-    # 机器只能数名字，说不出"这个模块的数据其实从哪个函数进来"。
-    # 这一节是逐条核过代码写的（带 file:line）。表格单元格里要换行只能用 <br>，
-    # 直接放换行符会把整行 Markdown 表格打断。
-    a("## 4. 重点模块：数据到底从哪个函数进来（人写的，带行号）")
-    a("")
-    a("第 1 节是机器数出来的，只会指路；这一节是逐条核过代码写的。要改哪个模块，先看这里。")
-    a("")
-    a("### 开车 / 控车这条线（队内 0x5A 上行）")
-    a("")
-    a("| 模块 | 后端实现在哪 | 说人话 |")
-    a("|---|---|---|")
-    a("| **RobotLink** | 编码：`backend/polar_link.py:597 encode_robot_cmd`(0x01)、`<br>:636 encode_virtual_rc`(0x03 键位图)、`<br>:678 encode_chassis_cmd`(0x04 自转+云台直控)；`<br>成帧与串口：`backend/polar_transport.py:487 / :506 / :513`；`<br>开关判定：`backend/manager.py:371` | 整条「客户端往车里发东西」的路都归它。松键时它会补发一次全零（`:513`），所以固件那边不会因为停发而冻在最后一帧 |")
-    a("| **SpinMode** / **AutoSpinOnHit** | `auto_spin.py:44`（受击后限时开自转）→ 上面那个 `encode_chassis_cmd()`（上行 0x04）；状态回读是固件下行 0x1F | 以前只能借 SHIFT 键，而固件对 SHIFT 是边沿翻转 —— **关不掉**；现在是显式 ON/OFF + 回读闭环 |")
-    a("| **EmergencyStop** | 行为在 `backend/safety.py`(OfficialSafety) 与 `manager.py:222 release_estop()`；但注册表里那个 `EmergencyStop` 模块**没有任何代码读它** | 急停本身是真有的，只是「界面那个模块条目」和它之间没接线 —— 界面上那个开关是装饰 |")
-    a("")
-    a("### 看数据这条线")
-    a("")
-    a("| 模块 | 后端实现在哪 | 说人话 |")
-    a("|---|---|---|")
-    a("| **HUD** / **CombatTargetHUD** / **RobotOverlay** / **RadarOverlay** / **TacticalMap** | 渲染在 `ui/polar_app.py` 与 `ui/polar/renderers/*`；数据一律读共享的 `RobotState`，由 `backend/polar_bridge.py` 的 `apply(segment)` 按段号写进来 | 队内 15 个下行段和官方裁判报文**汇到同一个 RobotState**，所以这些面板不区分数据是谁给的 —— 这也是「没插 USB 线时界面照样动」的原因 |")
-    a("| **BuffTimeline** | `ui/polar/renderers/tactical_map.py`（地图下方那条带）；数据是下行 0x0D Buff | 这个模块以前一个消费者都没有，现在才真有一排标签；带上的剩余秒数就是「时间轴」开关管的东西 |")
-    a("| **CameraFeed** / **TongjiVisionBridge** / **Armor3DESP** | `backend/video_backend.py` + `ui/polar/mixins/video_backend_mixin.py`；3D 线框在 `renderers/esp_wireframe.py` | 走本地视觉这一路，跟队内 0x5A 无关，不插 USB 线也能用 |")
-    a("| **MQTTLink** / **UDPVideo** | `backend/mqtt_backend.py` / `backend/video_backend.py` | 界面上有「自动连接 / 重组」这类开关，但**刻意没接**（接上会让官方场景自己去抢端口），理由写在 `tools/SETTINGS_GAPS.md` |")
-    a("| **SerialBridge** | `backend/serial_backend.py`（官方裁判串口那一路） | 与队内 0x5A 是两条互相独立的串口链路，互不代管 |")
-    a("| **HeroLob** | 26 个设置项，主要被 `ui/polar/mixins/` 引用 | 英雄投石那套界面参数；**注意**它和固件里的「英雄兵种」是两回事，固件侧不接这些参数 |")
-    a("")
-    a("### 和这次 DT7 适配直接相关的那一条")
-    a("")
-    a("上行 0x03 的键位图到了车上是**或**进 `rc_ctrl.key.v` 的 —— 固件那边叫 `HOST_RC_HOST_KEYS` 这本账（`tools/firmware/host_bridge/RC_LINKS.md` §3）。而比赛链路本身是「电脑 USB 插 DT7 → 无线 → 车上 DR16 → UART3 的 18 字节帧」，那个帧自带驾驶员的键位与鼠标。两者是叠加、不是互相接管：驾驶员松手或客户端掉线，各自那份账都会归零。")
-    a("")
-    a("### 还有一条我们客户端暂时走不了、但你们现场用过的路")
-    a("")
-    a("以前打比赛是**大疆官方客户端 USB 连 DT7** 开车 —— 这说明 DT7 的 USB 口就是 PC 键鼠的注入通道，")
-    a("而固件侧（SBUS 18 字节 -> key.v / mouse -> 底盘与云台）本来就是通的、不用改一行。")
-    a("本客户端缺的只有「PC <-> DT7」那一段 DJI 私有协议：全仓搜过 dt7/dr16/hid/joystick，没有任何实现。")
-    a("侦察工具已写好：`python tools/dt7_hid_probe.py --watch 20`（零依赖，先定它是 HID 设备还是 CDC 虚拟串口），")
-    a("`--capture`（需 `pip install hidapi`）能把报文直接读出来。细节见 `tools/firmware/host_bridge/RC_LINKS.md` 第 7 节。")
-    a("")
-    text = "\n".join(out) + "\n"
-    (ROOT / "MODULE_BACKEND_MAP.md").write_text(text, encoding="utf-8")
+    # Human-reviewed evidence is not inferred or regenerated from name counts.
+    manual = retained_manual_section(ROOT / "MODULE_BACKEND_MAP.md")
+    text = "\n".join(out) + "\n\n" + manual
+    (ROOT / "MODULE_BACKEND_MAP.md").write_bytes(text.encode("utf-8"))
     print(f"写出 {ROOT/'MODULE_BACKEND_MAP.md'}，{len(text)} 字符，模块 {len(modules)} 个")
     for m, h, seg, chan, up, where in rows[:6]:
         print(" ", m.name, "| seg", seg.most_common(3), "| chan", chan, "| up", up)

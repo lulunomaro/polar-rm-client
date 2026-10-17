@@ -1,0 +1,61 @@
+FFFF
+======================================================================
+FAIL: test_frozen_metadata_does_not_follow_candidate_changes (test_referee_frontend_projection_contract.RefereeFrontendProjectionContract.test_frozen_metadata_does_not_follow_candidate_changes) (metadata='_HEALTH_ROLE_ORDER')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/next-audit/tests/test_referee_frontend_projection_contract.py", line 84, in test_frozen_metadata_does_not_follow_candidate_changes
+    self.assertEqual(observe(frozen(), changes)[:3], expected)
+AssertionError: Tuples differ: ([('r[1566 chars]id': 7, 'name': 'Sentry', 'hp': 100, 'max': 60[3198 chars]0}]}) != ([('r[1566 chars]id': 1, 'name': 'Hero', 'hp': 100, 'max': 600,[3198 chars]0}]})
+
+First differing element 0:
+[('re[1565 chars]id': 7, 'name': 'Sentry', 'hp': 100, 'max': 60[1446 chars]0}])]
+[('re[1565 chars]id': 1, 'name': 'Hero', 'hp': 100, 'max': 600,[1446 chars]0}])]
+
+Diff is 11037 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_frozen_metadata_does_not_follow_candidate_changes (test_referee_frontend_projection_contract.RefereeFrontendProjectionContract.test_frozen_metadata_does_not_follow_candidate_changes) (metadata='DEFAULT_MAX_HEALTH')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/next-audit/tests/test_referee_frontend_projection_contract.py", line 84, in test_frozen_metadata_does_not_follow_candidate_changes
+    self.assertEqual(observe(frozen(), changes)[:3], expected)
+AssertionError: Tuples differ: ([('r[1603 chars]ax': 999, 'state': 'ALIVE', 'x': None, 'y': No[3161 chars]0}]}) != ([('r[1603 chars]ax': 600, 'state': 'ALIVE', 'x': None, 'y': No[3161 chars]0}]})
+
+First differing element 0:
+[('re[1602 chars]ax': 999, 'state': 'ALIVE', 'x': None, 'y': No[1409 chars]0}])]
+[('re[1602 chars]ax': 600, 'state': 'ALIVE', 'x': None, 'y': No[1409 chars]0}])]
+
+Diff is 8983 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_frozen_metadata_does_not_follow_candidate_changes (test_referee_frontend_projection_contract.RefereeFrontendProjectionContract.test_frozen_metadata_does_not_follow_candidate_changes) (metadata='ROBOT_ID_NAMES')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/next-audit/tests/test_referee_frontend_projection_contract.py", line 84, in test_frozen_metadata_does_not_follow_candidate_changes
+    self.assertEqual(observe(frozen(), changes)[:3], expected)
+AssertionError: Tuples differ: ([('r[1578 chars]e': 'Wrong hero', 'hp': 100, 'max': 600, 'stat[3164 chars]0}]}) != ([('r[1578 chars]e': 'Hero', 'hp': 100, 'max': 600, 'state': 'A[3186 chars]0}]})
+
+First differing element 0:
+[('re[1577 chars]e': 'Wrong hero', 'hp': 100, 'max': 600, 'stat[1423 chars]0}])]
+[('re[1577 chars]e': 'Hero', 'hp': 100, 'max': 600, 'state': 'A[1434 chars]0}])]
+
+Diff is 9521 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_frozen_metadata_does_not_follow_candidate_changes (test_referee_frontend_projection_contract.RefereeFrontendProjectionContract.test_frozen_metadata_does_not_follow_candidate_changes) (metadata='BUFF_TYPE_NAMES')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/next-audit/tests/test_referee_frontend_projection_contract.py", line 84, in test_frozen_metadata_does_not_follow_candidate_changes
+    self.assertEqual(observe(frozen(), changes)[:3], expected)
+AssertionError: Tuples differ: ([('r[2978 chars]e': 'Wrong buff', 'active': True, 'remaining':[1782 chars]0}]}) != ([('r[2978 chars]e': 'Attack Boost', 'active': True, 'remaining[1786 chars]0}]})
+
+First differing element 0:
+[('re[2977 chars]e': 'Wrong buff', 'active': True, 'remaining':[32 chars]0}])]
+[('re[2977 chars]e': 'Attack Boost', 'active': True, 'remaining[34 chars]0}])]
+
+Diff is 7676 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 1 test in 0.043s
+
+FAILED (failures=4)

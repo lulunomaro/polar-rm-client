@@ -1,0 +1,101 @@
+test_no_device_real_time_100hz_tick_retry_budget (dt7_test.DT7WorkerTests.test_no_device_real_time_100hz_tick_retry_budget) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.502s
+
+OK
+250 real-time 100Hz ticks / 2.500s: scans=4, retries=3, caller median=0.0718ms max=0.6162ms
+{
+  "phase_summary": {
+    "poll": {
+      "count": 749,
+      "slowest": [
+        {
+          "phase": "poll",
+          "wall_ms": 0.081575,
+          "thread_cpu_ms": 0.0822
+        },
+        {
+          "phase": "poll",
+          "wall_ms": 0.079539,
+          "thread_cpu_ms": 0.080095
+        },
+        {
+          "phase": "poll",
+          "wall_ms": 0.036852,
+          "thread_cpu_ms": 0.036448
+        },
+        {
+          "phase": "poll",
+          "wall_ms": 0.034414,
+          "thread_cpu_ms": 0.034379
+        },
+        {
+          "phase": "poll",
+          "wall_ms": 0.028959,
+          "thread_cpu_ms": 0.029152
+        }
+      ]
+    },
+    "send": {
+      "count": 250,
+      "slowest": [
+        {
+          "phase": "send",
+          "wall_ms": 0.291675,
+          "thread_cpu_ms": 0.292168
+        },
+        {
+          "phase": "send",
+          "wall_ms": 0.184962,
+          "thread_cpu_ms": 0.186225
+        },
+        {
+          "phase": "send",
+          "wall_ms": 0.173776,
+          "thread_cpu_ms": 0.089798
+        },
+        {
+          "phase": "send",
+          "wall_ms": 0.160694,
+          "thread_cpu_ms": 0.161596
+        },
+        {
+          "phase": "send",
+          "wall_ms": 0.145846,
+          "thread_cpu_ms": 0.147044
+        }
+      ]
+    },
+    "release": {
+      "count": 249,
+      "slowest": [
+        {
+          "phase": "release",
+          "wall_ms": 0.566341,
+          "thread_cpu_ms": 0.569161
+        },
+        {
+          "phase": "release",
+          "wall_ms": 0.152866,
+          "thread_cpu_ms": 0.153423
+        },
+        {
+          "phase": "release",
+          "wall_ms": 0.132621,
+          "thread_cpu_ms": 0.132966
+        },
+        {
+          "phase": "release",
+          "wall_ms": 0.118172,
+          "thread_cpu_ms": 0.011637
+        },
+        {
+          "phase": "release",
+          "wall_ms": 0.112178,
+          "thread_cpu_ms": 0.112728
+        }
+      ]
+    }
+  }
+}

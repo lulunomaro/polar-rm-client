@@ -6,6 +6,8 @@
 
 # --- Python env / bytecode ---
 .venv/
+# Exact Linux verification environment documented in docs/quality_gates.md
+/.venv-verification/
 venv/
 env/
 __pycache__/
@@ -83,3 +85,15 @@ _pdf_extract.txt
 .venv-polar.broken-*/
 assets/ui_sounds/custom/*
 !assets/ui_sounds/custom/.gitkeep
+
+# Root scratch workspaces and temporary files (do not hide fixtures or evidence)
+/tmp*/
+/temp/
+/.tmp/
+/tmp_*
+/_tmp_*
+*.tmp
+*.temp
+
+# Generated GPU smoke screenshot; intentional visual baselines stay tracked
+/tests/_gpu_renderer_runtime.png

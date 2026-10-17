@@ -307,6 +307,8 @@ def test_decoded_video_timestamp_and_source_selection() -> None:
         def stop(self, **_kwargs: object) -> None:
             self.available = False
 
+        request_stop = stop
+
     now = time.perf_counter()
     mjpeg = object()
     h265 = object()
@@ -360,6 +362,7 @@ def test_decoded_video_timestamp_and_source_selection() -> None:
     # Synthetic is a renderer-owned test pattern. It must never inherit a
     # stale UDP/native frame through BackendManager's Auto source fallback.
     manager_stub = object.__new__(BackendManager)
+    manager_stub._video_source_failures = ()
     manager_stub.native_decoder = FakeDecoder(object(), now + 2.0)
     manager_stub.udp = type(
         "FakeUdp",
@@ -396,9 +399,9 @@ def test_decoded_video_timestamp_and_source_selection() -> None:
     manager._normal_video_source = "udp hevc"
     manager._active_video_source = "udp hevc"
     manager.udp.running = True
-    manager.udp.stop = lambda: setattr(manager.udp, "running", False)  # type: ignore[method-assign]
+    manager.udp.request_stop = lambda: setattr(manager.udp, "running", False)  # type: ignore[method-assign]
     manager.udp.start = lambda: setattr(manager.udp, "running", True)  # type: ignore[method-assign]
-    manager.udp.set_decode_enabled = lambda _enabled: None  # type: ignore[method-assign]
+    manager.udp.request_decode_enabled = lambda _enabled: None  # type: ignore[method-assign]
     manager._apply_one(state, "DeployModeStatusSync", {"status": 1})
     check("Hero deploy stops UDP decoder", not manager.udp.running)
     check("Hero deploy selects Native 0x0310", manager._active_video_source == "native 0x0310")

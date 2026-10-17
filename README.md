@@ -14,18 +14,26 @@ Jello 结算/飞镖/性能面板、原经济区补弹详情、MC 判罚/连杀�
 > 弹丸、补血、复活和空中支援的规则与正式请求边界见
 > [《POLAR-RM 经济操作与裁判链路》](README_经济操作与裁判链路.md)。
 
-这是一个使用 Python 编写的 RoboMaster 2026 自定义客户端。当前版本按本机 JAR 的字节码常量、原始资源和调用时序一比一移植 Sigma Jello 5.1.0 ClickGUI（不是风格模仿），并提供同一套 RM 模块注册表、共享设置系统、进入 HUD 后启用摄像头图传、POLAR 风格覆盖层、按键绑定捕获、本地配置文件，以及 MQTT/UDP/串口等通信接口预留。
+这是一个使用 Python / PySide6 编写的 RoboMaster 2026 自定义客户端。当前版本按本机 JAR 的字节码常量、原始资源和调用时序移植 Sigma Jello 5.1.0 ClickGUI，并提供 RM 模块注册表、共享设置系统、进入 HUD 后启用摄像头图传、POLAR 风格覆盖层、按键绑定捕获、本地配置，以及由 `BackendManager` 编排的 MQTT/UDP/串口后端。通信代码已实现不等于完成现场资格验证，当前仍为 **NOT READY FOR REAL MATCH**。
 
 ## 运行
 
 ```powershell
-cd rm_custom_client
+# 在仓库根目录执行
 python -m venv .venv
-.\.venv\Scripts\pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements-core.txt
 .\.venv\Scripts\python.exe main.py
 ```
 
-`requirements.txt` 只装 **Python 包**（PySide6、OpenCV、OpenVINO、numpy、MQTT/串口等）。
+`requirements-core.txt` 包含 GUI、图像和通信的核心 Python 依赖；需要同济 Local
+推理时，再安装 `requirements.txt`（另含 OpenVINO）。`requirements-build.txt`
+用于发布/编译验证，不是现场运行依赖。这些清单都不是模型、素材或 FFmpeg 的下载器。
+
+开发前先读 [贡献与验证约定](CONTRIBUTING.md) 和 [当前架构与所有权](docs/architecture.md)。
+正式入口是 `main.py`：它先处理运行目录、preflight、回放和队内链路自检，再进入
+`rm_client.ui.polar_app.main`，实际 Qt 装配位于 `rm_client/ui/polar/app_entry.py`。
+`rm_client/app.py` 是惰性兼容入口，直接运行也进入 Qt；历史 Tk 实现保留在
+`rm_client/legacy_tk_app.py`，只有显式访问旧导出时才加载，不属于当前主窗口。
 
 击杀特效（GD656 图/音）和同济 Local 检测权重（`yolov5.xml/.bin`）**已随本仓库资源目录提供**，不是 pip 包，无需再从 GitHub 用 pip 安装。完整同济 C++ 自瞄工程见 [TongjiSuperPower/sp_vision_25](https://github.com/TongjiSuperPower/sp_vision_25)，仅在真机/UDP 外挂时另 clone 编译。详情见 `requirements.txt` 注释与 `THIRD_PARTY_NOTICES.md`。
 
@@ -52,7 +60,7 @@ python -m venv .venv
 
 第一级选择运行场景：
 
-- `OfficialEvent`：官方赛事网络预设；裁判系统 MQTT 上行按比赛阶段/10 Hz 门禁开放，真实串口、底盘和发射输出仍默认 mock/stub。
+- `OfficialEvent`：官方赛事网络预设；裁判系统 MQTT 上行按年度协议限频和比赛阶段门禁运行，键鼠控制还需资格证据和本次进程人工 Arm。队内链路有独立模块开关与安全门禁；不能把场景选择当作真实输出授权。
 - `CampusSimulation`：校内模拟或 SharkDataServer 本地仿真预设。
 - `LabDebug`：实验室本地调试，使用摄像头或合成图传。
 
@@ -157,9 +165,9 @@ python -m venv .venv
 - `Load On Start`：默认开启，启动时加载当前配置。
 - `Save Current`：立即保存当前界面配置。
 - `Reload Profile`：重新读取当前配置。
-- `Import Config`：打开文件选择器，把外部 `.json` 配置复制进 `configs/` 并加入 Profile 列表。
+- `Import Config`：打开文件选择器，把外部 `.json` 配置复制进运行时 `user_data/configs/` 并加入 Profile 列表。
 
-配置加载顺序是：默认模块注册表 -> 当前场景/比赛模式默认值 -> 用户配置覆盖 -> 运行时连接参数同步。坏字段会被跳过，不会让客户端无法启动。
+配置加载顺序是：默认模块注册表 -> 当前场景/比赛模式默认值 -> 用户配置覆盖 -> 运行时连接参数同步。兼容的未知字段可以忽略；已知字段类型错误或非有限 JSON 数值会在修改前拒绝整份配置，保留原设置。运行时切换异步完成，只有确认成功后才提交；失败会恢复设置并保持控制锁定。
 
 ## UI 缩放
 
@@ -191,24 +199,32 @@ PRM1 自瞄/小陀螺仍是独立 `LOCKED MOCK` 能力；客户端不提供自�
 
 ## 接入点
 
-- 摄像头：OpenCV 摄像头作为当前机器人图传；摄像头不可用时绘制合成场地图传。
-- UDP：`UDPVideoReceiver` 按 SharkDataSever 的 8 字节包头重组图传分片。
-- MQTT：`MQTTTransport` 可在代码中启用，用于订阅 SharkDataSever 主题。
-- 官方自定义客户端桥：`OfficialMqttBridge` 保留 `KeyboardMouseControl` 和 `CustomControl` 发布边界，真实发布默认 mock。
-- 串口：`SerialBridgeStub` 保留未来 RS232/机器人桥接边界。
-- 串口帧编解码：`RefereeFrameCodec` 实现 RoboMaster 风格 `0xA5` 帧头、CRC8 头校验、`cmd_id`、载荷和 CRC16 尾校验。
+- 统一编排：`rm_client/backend/manager.py::BackendManager` 管理场景切换、后端生命周期、状态应用、安全门禁及输出归属；窗口的 `mqtt`、`udp`、`serial` 是这些后端的兼容引用。
+- 摄像头：`CameraCaptureWorker` 在后台采集，窗口消费帧；启动页不提前打开摄像头。合成画面不能作为真图传通过的证据。
+- MQTT：`RmMqttBackend` 按裁判 profile 订阅、解码并缓冲消息，`BackendManager.apply_updates()` 消费队列并更新 `RobotState`；发布经过 `OfficialSafety` 和资格门禁。
+- 图传：`RmVideoBackend` 处理 Shark UDP 重组与解码；原生 `0x0310` 由 manager 管理独立 H.264 解码器。不要把已组好的图像再送回分片重组入口。
+- 官方串口：`RmSerialBackend` 处理 `0xA5` 帧，默认 `Stub` / mock；它明确拒绝把 `0x0310/0x0311` 写进该串口。
+- 队内机器人链路：`PolarLinkTransport` / `PolarStateBridge` 处理独立的 `0x5A` 通道，协议规格位于 `rm_client/backend/polar_protocol.json`。它与官方裁判通道并行，规则见 [AGENT.md](AGENT.md)。
+- 其他控制链路：DT7、`0x0306` 自定义键鼠与 `ControllerAngleRelay` 各有自己的配置、端口所有权和门禁，不能复用一个“已连接”标志表示全部就绪。
 
-## 冒烟测试
+`rm_client/transports.py` 中的 `OfficialMqttBridge`、`UDPVideoReceiver`、
+`SerialBridgeStub` 仍是后端复用的基础/兼容接口；旧 `MQTTTransport` 不是当前
+窗口的生产 MQTT 实例。具体所有权和仍存在的耦合见 [架构说明](docs/architecture.md)。
 
-```powershell
-.\.venv\Scripts\python.exe tests\smoke_test.py
-.\.venv\Scripts\python.exe tests\backend_protocol_test.py
-.\.venv\Scripts\python.exe tests\field_candidate_test.py
-.\.venv\Scripts\python.exe tests\gpu_compositor_test.py
-.\.venv\Scripts\python.exe tests\gpu_renderer_runtime_smoke.py
-.\.venv\Scripts\python.exe tests\startup_gpu_runtime_smoke.py
-.\.venv\Scripts\python.exe tests\transition_visual_check.py
+## 验证入口
+
+以下 `python` 应使用刚安装依赖的同一解释器，并从仓库根目录运行：
+
+```sh
+python tools/verify_all.py --list --profile all
+python tools/verify_all.py --profile offline --json tmp_quality/verification.json --log-dir tmp_quality/logs
+python tools/verify_all.py --test tests/backend_protocol_test.py
 ```
+
+测试注册表由 `tools/test_registry.py` 维护；发布验证也消费同一份清单。
+离线检查、桌面 OpenGL、视觉检查和固件检查的条件不同，具体运行方法见
+[贡献与验证约定](CONTRIBUTING.md#验证与证据)。`SKIP` / `INCOMPLETE` 不是通过，
+离线通过也不证明真机、Windows GPU 或正式赛事链路已验证。
 
 ## 模块切换与击杀音效
 
@@ -238,8 +254,19 @@ PRM1 自瞄/小陀螺仍是独立 `LOCKED MOCK` 能力；客户端不提供自�
 pip 或网络。运行时只认可便携包 `bin/ffmpeg.exe`，OfficialEvent 还会校验
 FFmpeg 与 `BUILD_MANIFEST.json` 的哈希。
 
+构建机需要 Windows、可用桌面/OpenGL 和完整构建依赖。发布脚本不安装依赖；
+先在选定环境手动准备 `requirements.txt` 与 `requirements-build.txt`。
+默认使用仓库 `.venv\Scripts\python.exe`；启动器创建的 `.venv-polar` 或其他
+环境须显式传 `-PythonPath`（相对路径按调用时的工作目录解析）。测试、规格校验与
+PyInstaller 都使用这个解释器，不依赖 PATH 上另一个 `pyinstaller.exe`。
+Linux 验证锁文件不能替代 Windows 打包验证。
+
 ```powershell
+# 也可使用已准备的 .venv-polar；以下创建独立发布环境
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-build.txt
 .\tools\build_release.ps1 `
+  -PythonPath '.\.venv\Scripts\python.exe' `
   -GitRef <explicit-commit> `
   -FfmpegPath '<local-ffmpeg.exe>' `
   -TexasWallpaperPath '<local-texas.mp4>' `

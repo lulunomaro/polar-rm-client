@@ -1,0 +1,205 @@
+EEEEEEEE.FFFFFFFF
+======================================================================
+ERROR: test_cleanup_failure_preserves_primary_failure_and_reports_secondary (__main__.ConfigurationQuiescenceTests.test_cleanup_failure_preserves_primary_failure_and_reports_secondary) (caller='match', fault='lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 78, in test_cleanup_failure_preserves_primary_failure_and_reports_secondary
+    self.assertIn("clear failed", " ".join(caught.exception.__notes__))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute '__notes__'. Did you mean: '__ne__'?
+
+======================================================================
+ERROR: test_cleanup_failure_preserves_primary_failure_and_reports_secondary (__main__.ConfigurationQuiescenceTests.test_cleanup_failure_preserves_primary_failure_and_reports_secondary) (caller='match', fault='release')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 78, in test_cleanup_failure_preserves_primary_failure_and_reports_secondary
+    self.assertIn("clear failed", " ".join(caught.exception.__notes__))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute '__notes__'. Did you mean: '__ne__'?
+
+======================================================================
+ERROR: test_cleanup_failure_preserves_primary_failure_and_reports_secondary (__main__.ConfigurationQuiescenceTests.test_cleanup_failure_preserves_primary_failure_and_reports_secondary) (caller='robot', fault='lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 78, in test_cleanup_failure_preserves_primary_failure_and_reports_secondary
+    self.assertIn("clear failed", " ".join(caught.exception.__notes__))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute '__notes__'. Did you mean: '__ne__'?
+
+======================================================================
+ERROR: test_cleanup_failure_preserves_primary_failure_and_reports_secondary (__main__.ConfigurationQuiescenceTests.test_cleanup_failure_preserves_primary_failure_and_reports_secondary) (caller='robot', fault='release')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 78, in test_cleanup_failure_preserves_primary_failure_and_reports_secondary
+    self.assertIn("clear failed", " ".join(caught.exception.__notes__))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute '__notes__'. Did you mean: '__ne__'?
+
+======================================================================
+ERROR: test_cleanup_failure_preserves_primary_failure_and_reports_secondary (__main__.ConfigurationQuiescenceTests.test_cleanup_failure_preserves_primary_failure_and_reports_secondary) (caller='binds', fault='lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 78, in test_cleanup_failure_preserves_primary_failure_and_reports_secondary
+    self.assertIn("clear failed", " ".join(caught.exception.__notes__))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute '__notes__'. Did you mean: '__ne__'?
+
+======================================================================
+ERROR: test_cleanup_failure_preserves_primary_failure_and_reports_secondary (__main__.ConfigurationQuiescenceTests.test_cleanup_failure_preserves_primary_failure_and_reports_secondary) (caller='binds', fault='release')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 78, in test_cleanup_failure_preserves_primary_failure_and_reports_secondary
+    self.assertIn("clear failed", " ".join(caught.exception.__notes__))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute '__notes__'. Did you mean: '__ne__'?
+
+======================================================================
+ERROR: test_cleanup_failure_preserves_primary_failure_and_reports_secondary (__main__.ConfigurationQuiescenceTests.test_cleanup_failure_preserves_primary_failure_and_reports_secondary) (caller='reload', fault='lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 78, in test_cleanup_failure_preserves_primary_failure_and_reports_secondary
+    self.assertIn("clear failed", " ".join(caught.exception.__notes__))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute '__notes__'. Did you mean: '__ne__'?
+
+======================================================================
+ERROR: test_cleanup_failure_preserves_primary_failure_and_reports_secondary (__main__.ConfigurationQuiescenceTests.test_cleanup_failure_preserves_primary_failure_and_reports_secondary) (caller='reload', fault='release')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 78, in test_cleanup_failure_preserves_primary_failure_and_reports_secondary
+    self.assertIn("clear failed", " ".join(caught.exception.__notes__))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute '__notes__'. Did you mean: '__ne__'?
+
+======================================================================
+FAIL: test_each_caller_clears_pending_after_lock_or_release_failure (__main__.ConfigurationQuiescenceTests.test_each_caller_clears_pending_after_lock_or_release_failure) (caller='match', fault='lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 65, in test_each_caller_clears_pending_after_lock_or_release_failure
+    self.assertEqual(host.trace, expected)
+AssertionError: Lists differ: ['lock'] != ['lock', 'clear']
+
+Second list contains 1 additional elements.
+First extra element 1:
+'clear'
+
+- ['lock']
++ ['lock', 'clear']
+
+======================================================================
+FAIL: test_each_caller_clears_pending_after_lock_or_release_failure (__main__.ConfigurationQuiescenceTests.test_each_caller_clears_pending_after_lock_or_release_failure) (caller='match', fault='release')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 65, in test_each_caller_clears_pending_after_lock_or_release_failure
+    self.assertEqual(host.trace, expected)
+AssertionError: Lists differ: ['lock', 'release'] != ['lock', 'release', 'clear']
+
+Second list contains 1 additional elements.
+First extra element 2:
+'clear'
+
+- ['lock', 'release']
++ ['lock', 'release', 'clear']
+?                   +++++++++
+
+
+======================================================================
+FAIL: test_each_caller_clears_pending_after_lock_or_release_failure (__main__.ConfigurationQuiescenceTests.test_each_caller_clears_pending_after_lock_or_release_failure) (caller='robot', fault='lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 65, in test_each_caller_clears_pending_after_lock_or_release_failure
+    self.assertEqual(host.trace, expected)
+AssertionError: Lists differ: ['lock'] != ['lock', 'clear']
+
+Second list contains 1 additional elements.
+First extra element 1:
+'clear'
+
+- ['lock']
++ ['lock', 'clear']
+
+======================================================================
+FAIL: test_each_caller_clears_pending_after_lock_or_release_failure (__main__.ConfigurationQuiescenceTests.test_each_caller_clears_pending_after_lock_or_release_failure) (caller='robot', fault='release')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 65, in test_each_caller_clears_pending_after_lock_or_release_failure
+    self.assertEqual(host.trace, expected)
+AssertionError: Lists differ: ['lock', 'release'] != ['lock', 'release', 'clear']
+
+Second list contains 1 additional elements.
+First extra element 2:
+'clear'
+
+- ['lock', 'release']
++ ['lock', 'release', 'clear']
+?                   +++++++++
+
+
+======================================================================
+FAIL: test_each_caller_clears_pending_after_lock_or_release_failure (__main__.ConfigurationQuiescenceTests.test_each_caller_clears_pending_after_lock_or_release_failure) (caller='binds', fault='lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 65, in test_each_caller_clears_pending_after_lock_or_release_failure
+    self.assertEqual(host.trace, expected)
+AssertionError: Lists differ: ['lock'] != ['lock', 'clear']
+
+Second list contains 1 additional elements.
+First extra element 1:
+'clear'
+
+- ['lock']
++ ['lock', 'clear']
+
+======================================================================
+FAIL: test_each_caller_clears_pending_after_lock_or_release_failure (__main__.ConfigurationQuiescenceTests.test_each_caller_clears_pending_after_lock_or_release_failure) (caller='binds', fault='release')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 65, in test_each_caller_clears_pending_after_lock_or_release_failure
+    self.assertEqual(host.trace, expected)
+AssertionError: Lists differ: ['lock', 'release'] != ['lock', 'release', 'clear']
+
+Second list contains 1 additional elements.
+First extra element 2:
+'clear'
+
+- ['lock', 'release']
++ ['lock', 'release', 'clear']
+?                   +++++++++
+
+
+======================================================================
+FAIL: test_each_caller_clears_pending_after_lock_or_release_failure (__main__.ConfigurationQuiescenceTests.test_each_caller_clears_pending_after_lock_or_release_failure) (caller='reload', fault='lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 65, in test_each_caller_clears_pending_after_lock_or_release_failure
+    self.assertEqual(host.trace, expected)
+AssertionError: Lists differ: ['lock'] != ['lock', 'clear']
+
+Second list contains 1 additional elements.
+First extra element 1:
+'clear'
+
+- ['lock']
++ ['lock', 'clear']
+
+======================================================================
+FAIL: test_each_caller_clears_pending_after_lock_or_release_failure (__main__.ConfigurationQuiescenceTests.test_each_caller_clears_pending_after_lock_or_release_failure) (caller='reload', fault='release')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 65, in test_each_caller_clears_pending_after_lock_or_release_failure
+    self.assertEqual(host.trace, expected)
+AssertionError: Lists differ: ['lock', 'release'] != ['lock', 'release', 'clear']
+
+Second list contains 1 additional elements.
+First extra element 2:
+'clear'
+
+- ['lock', 'release']
++ ['lock', 'release', 'clear']
+?                   +++++++++
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.070s
+
+FAILED (failures=8, errors=8)

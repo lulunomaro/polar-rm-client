@@ -162,15 +162,16 @@ class CombatTargetHudMixin:
             fb_w = max(1, int(round(float(width) * float(ratio))))
             fb_h = max(1, int(round(float(height) * float(ratio))))
             picture = QPicture()
-            painter = QPainter(picture)
-            painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
-            painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
-            painter.setRenderHint(QPainter.RenderHint.TextAntialiasing, True)
-            painter.translate(fb_w * 0.5, fb_h * 0.5)
-            painter.scale(pixel_scale, pixel_scale)
-            painter.translate(-logical_width * 0.5, -logical_height * 0.5)
-            self.draw_crosshair(painter, logical_width, logical_height)
-            painter.end()
+            def record_crosshair(painter) -> None:
+                painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
+                painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+                painter.setRenderHint(QPainter.RenderHint.TextAntialiasing, True)
+                painter.translate(fb_w * 0.5, fb_h * 0.5)
+                painter.scale(pixel_scale, pixel_scale)
+                painter.translate(-logical_width * 0.5, -logical_height * 0.5)
+                self.draw_crosshair(painter, logical_width, logical_height)
+            if not self.gpu_compositor.paint_raster(picture, record_crosshair, phase="target.record"):
+                return False
             bounds = picture.boundingRect()
             if bounds.isEmpty():
                 return True
@@ -187,9 +188,11 @@ class CombatTargetHudMixin:
                     if image.isNull():
                         return False
                     image.fill(0)
-                    painter = QPainter(image)
-                    painter.drawPicture(QPointF(2 - x, 2 - y), picture)
-                    painter.end()
+                    if not self.gpu_compositor.paint_raster(
+                        image, lambda painter: painter.drawPicture(QPointF(2 - x, 2 - y), picture),
+                        phase="target.tile",
+                    ):
+                        return False
                     # A huge gap/circle may put all primitives offscreen, or
                     # leave only a thin arm in a tile. Avoid uploading and
                     # sanitizing transparent full-frame-equivalent patches.
@@ -208,21 +211,22 @@ class CombatTargetHudMixin:
             return True
         image = QImage(roi_px, roi_px, QImage.Format.Format_ARGB32_Premultiplied)
         image.fill(0)
-        painter = QPainter(image)
-        painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
-        painter.setRenderHint(QPainter.RenderHint.TextAntialiasing, True)
-        # Map full logical HUD space so the screen center lands on the patch center.
-        painter.translate(roi_px * 0.5, roi_px * 0.5)
-        painter.scale(pixel_scale, pixel_scale)
-        painter.translate(-logical_width * 0.5, -logical_height * 0.5)
-        if target_visible:
-            self.draw_combat_target_hud_layer(
-                painter, logical_width, logical_height, module, presence=presence,
-            )
-        elif crosshair is not None and crosshair.enabled:
-            self.draw_crosshair(painter, logical_width, logical_height)
-        painter.end()
+        def draw_target(painter) -> None:
+            painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+            painter.setRenderHint(QPainter.RenderHint.TextAntialiasing, True)
+            # Map full logical HUD space so the screen center lands on the patch center.
+            painter.translate(roi_px * 0.5, roi_px * 0.5)
+            painter.scale(pixel_scale, pixel_scale)
+            painter.translate(-logical_width * 0.5, -logical_height * 0.5)
+            if target_visible:
+                self.draw_combat_target_hud_layer(
+                    painter, logical_width, logical_height, module, presence=presence,
+                )
+            elif crosshair is not None and crosshair.enabled:
+                self.draw_crosshair(painter, logical_width, logical_height)
+        if not self.gpu_compositor.paint_raster(image, draw_target, phase="target.raster"):
+            return False
 
         fb_w = max(1, int(round(float(width) * float(ratio))))
         fb_h = max(1, int(round(float(height) * float(ratio))))

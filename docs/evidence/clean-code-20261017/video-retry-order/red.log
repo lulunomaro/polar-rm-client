@@ -1,0 +1,15 @@
+E
+======================================================================
+ERROR: test_explicit_retry_retries_failed_native_close_without_replaying_refresh (tests.test_backend_video_source_nonblocking.BackendVideoSourceTests.test_explicit_retry_retries_failed_native_close_without_replaying_refresh)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/next-native-close/tests/test_backend_video_source_nonblocking.py", line 197, in test_explicit_retry_retries_failed_native_close_without_replaying_refresh
+    self.backend.retry_active_video_source()
+  File "/workspace/shared/next-native-close/rm_client/backend/manager.py", line 1496, in retry_active_video_source
+    raise RuntimeError("Video-source cleanup is still in flight")
+RuntimeError: Video-source cleanup is still in flight
+
+----------------------------------------------------------------------
+Ran 1 test in 0.015s
+
+FAILED (errors=1)

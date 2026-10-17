@@ -1,0 +1,42 @@
+
+--- test_capacitor_percent_prefers_real_fields ---
+[PASS] 有可信 max 时用 current/max 算比例（忽略 mock 值）  -> 20
+[PASS] 真值变化时结果跟着变（不是缓存住的常数）  -> 50
+[PASS] max_buffer_energy=0 时退回 capacitor_percent 且不除零  -> 99
+[PASS] 超过上限钳到 100  -> 100
+[PASS] 负值钳到 0  -> 0
+[PASS] 垃圾值退回 capacitor_percent 而不抛异常  -> 99
+
+--- test_warn_threshold_is_live_on_real_data ---
+[PASS] 真实缓冲 60% 时不告警
+[PASS] 真实缓冲跌到 10% 时告警（不再被 mock 值骗过）  -> effective=10
+
+--- test_show_depth_controls_depth_edges_only ---
+[PASS] 开启时是完整 12 边盒  -> 12
+[PASS] 关掉后只剩前框 4 边  -> 4
+[PASS] 关掉后的 4 条正是开启时的 4 条前框边（对象身份比）  -> off=[(P(0,0), P(10,0)), (P(10,0), P(10,10)), (P(10,10), P(0,10)), (P(0,10), P(0,0))] front_in_on=[(P(0,0), P(10,0)), (P(10,0), P(10,10)), (P(10,10), P(0,10)), (P(0,10), P(0,0))]
+[PASS] 关掉后不再引用任何背面点（只去深度线，不碰前框）  -> [(P(0,0), P(10,0)), (P(10,0), P(10,10)), (P(10,10), P(0,10)), (P(0,10), P(0,0))]
+[PASS] 前框确实是 front[i]->front[i+1]
+[PASS] back 缺失时退化为 4 边而不崩
+[PASS] front 不合法时返回空（不抛）
+
+--- test_show_depth_fails_open_without_setting ---
+[PASS] 默认（未改设置）为显示深度
+[PASS] 设置项缺失时仍显示深度（保持接线前行为）
+[PASS] 模块关闭时谓词仍只看 Show Depth 取值（不额外改口）
+
+--- test_pulse_locked_only_breathes_when_locked ---
+[PASS] 未锁定时一律不脉冲（哪怕开关开着）
+[PASS] 已锁定且开关开时有脉冲且幅度在 0..1  -> max=0.919
+[PASS] 关掉开关后即使已锁定也恒为 0（alpha 回退到原常量）
+[PASS] 模块关闭时不脉冲
+[PASS] 查不到设置项时按开关存在处理（默认开）
+
+--- test_radar_high_light_can_be_disabled_without_hiding_blips ---
+[PASS] 开启时高亮生效
+[PASS] 关闭时高亮取消
+[PASS] 查不到设置项时保持现行为
+[PASS] 模块关闭时仍返回 True：隐藏整个面板由模块开关负责，不由样式开关越权
+
+============================================================
+ALL BATCH-9 SETTINGS TESTS PASSED

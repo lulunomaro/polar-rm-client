@@ -1,0 +1,14 @@
+test_constructor_rejection_clears_admission_and_preserves_error_identity (test_port_discovery_admission.PortDiscoveryAdmissionTests.test_constructor_rejection_clears_admission_and_preserves_error_identity) ... ok
+test_finished_worker_is_not_mistaken_for_rejected_start (test_port_discovery_admission.PortDiscoveryAdmissionTests.test_finished_worker_is_not_mistaken_for_rejected_start) ... ok
+test_invalidation_discards_inflight_result_without_starting_automatic_replacement (test_port_discovery_admission.PortDiscoveryAdmissionTests.test_invalidation_discards_inflight_result_without_starting_automatic_replacement) ... ok
+test_late_old_error_cannot_clear_an_admitted_successor (test_port_discovery_admission.PortDiscoveryAdmissionTests.test_late_old_error_cannot_clear_an_admitted_successor) ... ok
+test_late_start_error_does_not_clear_a_genuinely_admitted_refresh (test_port_discovery_admission.PortDiscoveryAdmissionTests.test_late_start_error_does_not_clear_a_genuinely_admitted_refresh) ... ok
+test_pending_constructor_does_not_block_other_snapshots_or_duplicate_admission (test_port_discovery_admission.PortDiscoveryAdmissionTests.test_pending_constructor_does_not_block_other_snapshots_or_duplicate_admission) ... ok
+test_rejected_admission_leaves_cache_and_invalidation_evidence_unchanged (test_port_discovery_admission.PortDiscoveryAdmissionTests.test_rejected_admission_leaves_cache_and_invalidation_evidence_unchanged) ... ok
+test_simultaneous_snapshot_callers_share_one_admitted_scan (test_port_discovery_admission.PortDiscoveryAdmissionTests.test_simultaneous_snapshot_callers_share_one_admitted_scan) ... ok
+test_start_rejection_clears_admission_and_allows_invalidated_retry (test_port_discovery_admission.PortDiscoveryAdmissionTests.test_start_rejection_clears_admission_and_allows_invalidated_retry) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.018s
+
+OK

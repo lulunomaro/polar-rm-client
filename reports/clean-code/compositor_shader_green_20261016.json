@@ -1,0 +1,169 @@
+{
+  "baseline": "a3fddee9d8884dd6e73f71fbee40de848adc377f",
+  "red_checkpoint": "fff2b95",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "production_file": "rm_client/ui/gpu_frame_compositor.py",
+  "production_sha256": "230d693c0656956c6f6a15867319e8df75df6b54a25c49698c7c1fd07f05ca4b",
+  "changed_existing_methods": [
+    "_initialize_resources",
+    "_compile"
+  ],
+  "added_methods": [
+    "_install_program"
+  ],
+  "unchanged_existing_methods": 57,
+  "checks": [
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_compositor*.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 60 tests in 0.118s",
+        "OK"
+      ],
+      "output_sha256": "6861723a8883943418c2e719d6091c2bc2de75d0f6d6aa4c12dc44acd36157a6"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_specialized_gl*.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 23 tests in 0.143s",
+        "OK"
+      ],
+      "output_sha256": "94cbc509dd9a7f0c08a9c7f94bfbc69dd4f00de06cc0483239f4d8588fde656c"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_cached*.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 7 tests in 15.616s",
+        "OK"
+      ],
+      "output_sha256": "38fa08e965602ebc5c4b50d4acb0839eae2d3302649e270123f069d9103201b1"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_gpu_command*.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 12 tests in 3.156s",
+        "OK"
+      ],
+      "output_sha256": "07a7bc342643f53785993144bff723bcd01e45c47487f5a63387c8b8a1d77e61"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_render_owner_boundaries.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 8 tests in 0.056s",
+        "OK"
+      ],
+      "output_sha256": "d679fc3ad8e7eab020d24d55774886d0d611584cafd122a5cfd169337c6f9cbb"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_render_performance_regressions.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 15 tests in 0.192s",
+        "OK"
+      ],
+      "output_sha256": "59ad8e9676ea71375d4a775aac2a1f4a9239383f582bc491dbdbeaa0b4632576"
+    },
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_clickgui_renderer_faults.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Ran 6 tests in 0.005s",
+        "OK"
+      ],
+      "output_sha256": "b95b5805bef96b568b1b2424b637003cd6f306e6312d682e4f2e4e23f635b26a"
+    },
+    {
+      "arguments": [
+        "tests/gpu_compositor_test.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "gpu compositor test passed"
+      ],
+      "output_sha256": "720641531434a0c4491b2f816efe8d748fcbd9e0961d463e55db0c751f4b9ca5"
+    },
+    {
+      "arguments": [
+        "tests/api_freeze_test.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "PASS: \u4e0e\u57fa\u7ebf api_freeze_baseline.json \u4e00\u81f4"
+      ],
+      "output_sha256": "2f0e160ed9c412701a04976e0599981c5f3964f1c3545d3a930ea5d5da382b60"
+    },
+    {
+      "arguments": [
+        "tools/quality_gate.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "PASS: static quality gates; 208 Python modules, 3372 functions, 0 initialization cycles; no runtime or hardware qualification"
+      ],
+      "output_sha256": "f2326d025de8a6629d479ab69bbdf496e68b106b3b4be3a33c630644095d0d7f"
+    }
+  ],
+  "limits": [
+    "Inert GL handles and Qt offscreen raster only; no desktop native GL, DPI, driver state or performance qualification."
+  ]
+}

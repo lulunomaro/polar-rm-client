@@ -13,7 +13,18 @@ from __future__ import annotations
 
 import socket
 import select
+import threading
 from typing import Any
+
+from .resource_close import close_resource
+
+
+class StreamOpenError(RuntimeError):
+    """A failed open still owns a native resource requiring explicit cleanup."""
+
+    def __init__(self, owner: Any, cause: Exception) -> None:
+        super().__init__(str(cause))
+        self.resource_owner = owner
 
 
 class TcpByteStream:
@@ -28,6 +39,7 @@ class TcpByteStream:
         self.connect_timeout = float(connect_timeout_s)
         self._sock = None
         self.is_open = False
+        self._close_lock = threading.Lock()
 
     def open(self) -> None:
         if self.is_open and self._sock is not None:
@@ -35,6 +47,7 @@ class TcpByteStream:
         self.close()
         sock = socket.create_connection((self.host, self.tcp_port),
                                         timeout=self.connect_timeout)
+        self._sock = sock
         try:
             sock.settimeout(self.timeout)
             try:
@@ -42,14 +55,13 @@ class TcpByteStream:
             except OSError:
                 pass
         except Exception:
-            sock.close()
+            self.close()
             raise
-        self._sock = sock
         self.is_open = True
 
     def read(self, size: int = 512) -> bytes:
         sock = self._sock
-        if sock is None:
+        if sock is None or not self.is_open:
             raise ConnectionError("TCP 未连接")
         if int(size) <= 0:
             return b""
@@ -81,15 +93,18 @@ class TcpByteStream:
         return len(payload)
 
     def close(self) -> None:
-        sock, self._sock = self._sock, None
-        self.is_open = False
-        if sock is None:
-            return
-        for act in (lambda: sock.shutdown(socket.SHUT_RDWR), lambda: sock.close()):
+        with self._close_lock:
+            sock = self._sock
+            self.is_open = False
+            if sock is None:
+                return
+            # ENOTCONN from shutdown is benign; native close failure is not.
             try:
-                act()
+                sock.shutdown(socket.SHUT_RDWR)
             except OSError:
                 pass
+            close_resource(sock)
+            self._sock = None
 
 
 def open_serial(port: str, baud: int) -> Any:
@@ -111,7 +126,12 @@ def open_stream(transport: str, *, port: str = "", baud: int = 115200,
         if not target:
             raise RuntimeError("TCP 模式要填桥接主机地址（车上小电脑的 IP）")
         stream = TcpByteStream(target, int(tcp_port))
-        stream.open()
+        try:
+            stream.open()
+        except Exception as exc:
+            if stream._sock is not None:
+                raise StreamOpenError(stream, exc) from exc
+            raise
         return stream
     if mode != "serial":
         raise ValueError("未知字节流模式：{0}".format(mode))

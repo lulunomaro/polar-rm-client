@@ -12,6 +12,7 @@ import sys
 import time
 from types import SimpleNamespace as NS
 import unittest
+from unittest.mock import patch
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,6 +26,7 @@ from rm_client.model import build_default_registry
 from rm_client.ui.hero_locale import hero_text
 from rm_client.ui.jello_locale import chinese_enabled
 from rm_client.ui.cs2_video_settings import smooth_video
+from rm_client.ui import gpu_frame_compositor as gpu
 
 
 def production_methods(texts):
@@ -62,6 +64,7 @@ def production_methods(texts):
     scope = dict(QRectF=QRectF, Qt=Qt, QColor=QColor, QPainter=RecordingPainter,
                  time=time, chinese_enabled=chinese_enabled, hero_text=hero_text, smooth_video=smooth_video)
     exec(compile(ast.fix_missing_locations(module), "background_display_methods", "exec"), scope)
+    scope["WindowMethods"].painter_type = RecordingPainter
     return scope["WindowMethods"]
 
 
@@ -135,12 +138,16 @@ class BackgroundDisplayLocaleTests(unittest.TestCase):
                     builds.append(layer)
                     return image
 
-                window.gpu_compositor = NS(
-                    background_fbo=object(), paint_device=paint_device,
-                    set_scene_uv_offset=lambda *args: None,
-                    clear_current=lambda *args, **kwargs: image.fill(Qt.transparent),
-                    release_layer=lambda *args: None,
-                )
+                # Exercise the real pass/session and cleanup boundary. Only
+                # the final FBO device is raster-backed; native GL is inert.
+                window.gpu_compositor = gpu.GpuFrameCompositor()
+                window.gpu_compositor.background_fbo = object()
+                window.gpu_compositor.paint_device = paint_device
+                window.gpu_compositor.clear_current = lambda *args, **kwargs: image.fill(Qt.transparent)
+                window.gpu_compositor.release_layer = lambda *args: None
+                recorder = patch.object(gpu, "QPainter", window.painter_type)
+                recorder.start()
+                self.addCleanup(recorder.stop)
                 background_keys = []
                 blur_keys = []
                 images = []

@@ -1242,25 +1242,19 @@ class EspWireframeMixin:
         batch = self.build_vision_wire_batch(width, height, result, module) if result is not None and module is not None else VisionWireBatch()
         if batch.labels.commands:
             self.clickgui_gpu.prepare_frame(batch.labels, ratio)
-        if not self.gpu_compositor.begin_vision_layer(functions):
-            return False
-        try:
+        def render() -> bool:
             if not native_owner or result is None:
-                return native_owner
+                return True
             if not self.vision_wire_gpu.render(functions, batch, width, height, ratio):
                 return False
             if batch.labels.commands and not self.clickgui_gpu.render(
-                functions,
-                batch.labels,
-                width,
-                height,
-                ratio,
-                atlas_prepared=True,
+                functions, batch.labels, width, height, ratio, atlas_prepared=True,
             ):
                 return False
             return True
-        finally:
-            self.gpu_compositor.end_vision_layer()
+
+        accepted = self.gpu_compositor.render_vision_layer(functions, render)
+        return accepted and native_owner
 
     def robot_armor_boxes_visible(self) -> bool:
         """`RobotOverlay / Armor Boxes`：要不要画装甲线框本体。

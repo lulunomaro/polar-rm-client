@@ -1,0 +1,19 @@
+{
+  "tested_head": "9fb0cb6194647b0e93505424d96c85959c331406",
+  "tested_tree": "efdea1024bbafac2c7583bfcc28349d7d4c6329c",
+  "author_tests": {
+    "quality_methods": 41,
+    "responsibility_methods": 1,
+    "responsibility_limit_plus_one_subtests": 27,
+    "pure_domain_forbidden_import_subtests": 84,
+    "actual_domain_methods": 10
+  },
+  "commands": [
+    "CI=true /workspace/shared/client-quality-venv/bin/python tests/test_quality_gates.py",
+    "CI=true /workspace/shared/client-quality-venv/bin/python tests/test_quality_ratchet_baseline.py",
+    "CI=true /workspace/shared/client-quality-venv/bin/python tests/test_referee_domain_boundaries.py",
+    "/workspace/shared/client-quality-venv/bin/python tools/quality_gate.py --json /workspace/shared/client-quality-aggregate/ratchet-9fb0cb6/architecture.json"
+  ],
+  "working_directory": "/workspace/shared/client-quality-ratchet",
+  "scope": "Author focused/static evidence, not a complete offline aggregate or native/hardware qualification."
+}

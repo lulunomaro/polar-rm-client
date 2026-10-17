@@ -1,0 +1,6 @@
+ACTIVE test_disconnect_retries_bounded_and_lock_callback_ui_only
+2000 failed-disconnect UI ticks: scans=4, neutral attempts=3, input-clear callbacks=1
+ACTIVE test_no_device_real_time_100hz_tick_retry_budget
+250 real-time 100Hz ticks / 2.500s: scans=4, retries=3, caller median=0.0574ms max=0.3729ms
+ACTIVE test_slow_open_drops_stale_motion_before_first_write
+fake 19.3ms scan / blocked write: enqueue median=0.0030ms max=0.0272ms, calls=[('scan', 'dt7-writer'), ('open', 'dt7-writer'), ('write', 'dt7-writer'), ('write', 'dt7-writer'), ('close', 'dt7-writer')]

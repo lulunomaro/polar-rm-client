@@ -1,0 +1,28 @@
+
+--- C 路闭环自检工具的判据 ---
+[ OK ] 造的 Debug 帧能被解码器解出 km_key  [21]
+[ OK ] 假车认帧 -> 判 PASS  verdict=PASS sent=3 base=0 样本=1227
+[ OK ] 发出去的每一帧都是厂商那 22 字节  [22, 22, 22, 22]
+[ OK ] 结束一定补了松手帧（最后几帧键位为 0）  0
+[ OK ] 键位确实是按 vendor2026 位序发出去的  0x1000
+[ OK ] 一次自检在秒级完成（现场等不起）  0.27s
+[ OK ] DT7 不理这帧 -> NO-CHANGE（不许误判成通）  NO-CHANGE
+[ OK ] 键位漂了 3 位 -> PARTIAL（说明帧被吃、载荷错位）  PARTIAL
+[ OK ] 读不到车上回读 -> NO-READBACK，判定不成立  NO-READBACK
+[ OK ] profile 未确认 -> BLOCKED 且一帧都不写  BLOCKED frames=0
+[ OK ] 基线已含目标位时不许判 PASS（防假阳性）  NO-CHANGE base=4096
+[ OK ] 运动键 D 拒绝且不打开硬件  BLOCKED
+[ OK ] 证据文件真的落盘且能读回  {'tool': 'dt7_wireless_selftest', 'link': 'C (PC -> DT7 VCOM -> DR16 -> UART3 ->
+[ OK ] 证据里记录了当时用的帧型设置（换 profile 后结论才可追溯）  {'frame_variant': 'dji_rc_v1', 'crc_variant': 'rc_check', 'cmd_wire': 8192, 'cmd_confirmed': True, 'payload_layout': '<hhhBBHH', 'baudrate': 961200, 'max_hz': 30.0}
+[ OK ] 目录不存在时自动建（现场不会因为你少建一层文件夹就没证据）  /tmp/tmpt6xluee3/evidence/dt7.json
+[ OK ] DT7 保持最后一帧时判 STUCK（粘键，需要现场规矩）  STUCK held=1948
+[ OK ] 粘键判定必须建立在停发之后的样本上（不是停发之前）  1948
+[ OK ] DT7 会过期清零时判 EXPIRES（安全侧）  EXPIRES 停发后键位自己掉回基线 = DT7 会过期清零（安全侧）
+[ OK ] 清零这一支必须真的先按住过再掉回（防止空判）  {'keys': ['X'], 'bits': 4096, 'press_frames': 7, 'held_after_stop': None, 'dropped_after_stop': True, 'verdict': 'EXPIRES', 'note': '停发后键位自己掉回基线 = DT7 会过期清零（安全侧）', 'tail_samples': 2836, 'held_tail': 1103, 'clear_after_s': 0.25, 'tail_span_s': 0.601}
+[ OK ] 读不到回读时粘键测试判不成立（不许当成安全）  NO-READBACK
+[ OK ] profile 没定案时粘键测试也不碰 DT7  BLOCKED frames=0
+[ OK ] 清零延时是量出来的（有界且落在停发窗口内，不是拿采样数乘猜的周期）  0.25s / 窗口 0.601s
+[ OK ] 判成粘键时不许有一个假的清零延时  None
+[ OK ] 粘键测试的报告字段齐（结论要能进 --report）  ['bits', 'clear_after_s', 'dropped_after_stop', 'held_after_stop', 'held_tail', 'keys', 'note', 'press_frames', 'tail_samples', 'tail_span_s', 'verdict']
+
+闭环自检工具判据全部通过

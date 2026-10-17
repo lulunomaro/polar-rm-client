@@ -1,0 +1,2 @@
+ACTIVE test_dictionaries_have_one_source_owner_and_are_not_copied_on_reexport
+ACTIVE test_ui_value_consumers_work_with_transaction_import_forbidden

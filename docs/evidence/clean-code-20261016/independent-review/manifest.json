@@ -1,0 +1,252 @@
+{
+  "scope": "Independent direct checks on separate fixed candidate sources; not an aggregate integration result. Overlapping methods/repetitions are not additive coverage.",
+  "environment": {
+    "python": "3.12.14",
+    "interpreter": "/workspace/shared/client-quality-venv/bin/python",
+    "platform": "Linux offscreen",
+    "CI": "true",
+    "QT_QPA_PLATFORM": "offscreen",
+    "POLAR_DISABLE_LOCAL_CAPTURE": "1",
+    "POLAR_DISABLE_MEDIA_PRELOAD": "1"
+  },
+  "artifacts": [
+    {
+      "file": "review-vision-selection-corrected.txt",
+      "sha256": "73509ddc48277bae909891b49688deb7da1b1de992af32d0cc38b2cc64bf0935",
+      "source_commit": "661daedbe6ea0a0509d7a2214277965361d941b8",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_vision_selection test_vision_activation_contract test_window_vision_runtime test_vision_stop_admission test_vision_stop_review test_vision_refresh_heartbeat test_camera_activation_contract test_camera_window_heartbeat test_window_construction test_window_failed_launch test_window_tick_contract test_window_async_lifecycle test_window_assembly test_ui_state_regressions",
+      "methods": 173,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-constructor-timer-red.txt",
+      "sha256": "34b25304ab52e73f2dc513379f56ba3714419ab6b04094268c144bd7649a0e34",
+      "source_commit": "1173a2e9c4758e14a138f45b5c5a04ec7d62ac23",
+      "kind": "defect-reproduction",
+      "result": "EXPECTED FAILURE",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_window_constructor_failure; direct probe_timer_admission() separately records actual state",
+      "methods": 1,
+      "expected_failures": 1
+    },
+    {
+      "file": "review-constructor-timer-fixed-corrected.txt",
+      "sha256": "05dde1d80dcc977435a2c36a7fc07d695ce0b6c688f15ed9d3ca3e3a427d3cf9",
+      "source_commit": "cd80ec74955639b1a4b529c979b462cd50cd7887",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_window_constructor_failure test_window_constructor_delayed_cleanup test_window_assembly test_window_construction test_window_failed_launch test_qt_launch_abort test_app_entry_contract test_window_async_lifecycle test_window_tick_contract test_ui_state_regressions test_window_lifecycle_controller",
+      "methods": 132,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-profile-save-state.txt",
+      "sha256": "630d143f00734c36d3a577e0d4977193138236878afb25313f2cd100814ef6b8",
+      "source_commit": "9d3a849ec0fe3328f8fb3d5ae5506d5a28bb6279",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_profile_save_state test_profile_save_contract test_profile_save_identity test_profile_close_admission test_profile_close_pending test_profile_file_transactions test_configuration_transactions test_configuration_boundaries test_configuration_commands test_async_configuration test_pending_configuration test_scenario_configuration_guard test_ui_state_regressions test_window_construction test_window_async_lifecycle test_window_constructor_failure test_window_constructor_delayed_cleanup test_window_tick_contract",
+      "methods": 247,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-profile-save-baseline.txt",
+      "sha256": "33c250a366e131f2e74653cf8c599624f4d225beca520d4bdcb8e9d5a5d2fda1",
+      "source_commit": "77b4c923d1a7e9d65ae8efab4a80804e361a4248",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_profile_save_contract",
+      "methods": 29,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-normal-video-timeline.txt",
+      "sha256": "c2b5baebae2f5aade94ad671e10b0e529ceb4f49613b544158a58bc11f01c5f5",
+      "source_commit": "f542fcc19d7d43a38a89c802a8d343afa4989b83",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_normal_video_timeline test_normal_video_timeline_contract test_window_normal_frame test_window_construction test_window_tick_contract test_window_vision_runtime test_camera_activation_contract test_vision_activation_contract test_window_video_recovery test_video_source_retry_admission test_framebuffer_generation test_window_async_lifecycle test_window_constructor_failure test_window_constructor_delayed_cleanup test_ui_state_regressions",
+      "methods": 212,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-normal-timeline-baseline.txt",
+      "sha256": "45c9b21dabbb1d83f1f0bc6ff4256ce46a0a2e0184b5da9a0bf4758a52a302cd",
+      "source_commit": "5700c6cbaadbddd0884fa1b56fbfdd7d70889aa1",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_normal_video_timeline_contract",
+      "methods": 30,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-normal-timeline-smoke.txt",
+      "sha256": "7bb8f1b5861c972f9a7a1b29fff23ca3813eaddbfb30c96f3fd1464711b2146a",
+      "source_commit": "f542fcc19d7d43a38a89c802a8d343afa4989b83",
+      "kind": "selected-smoke-functions",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -c \"from smoke_test import test_hero_native_video_isolation_and_authoritative_lock as a, test_normal_backend_video_freshness_and_source_ownership as b; a(); b()\"",
+      "functions": 2
+    },
+    {
+      "file": "review-economy-value-alignment.txt",
+      "sha256": "5d8b7d1a9dce0656cc2a92da272dd84cb0f1d0d7168b1616fa263521acfaad83",
+      "source_commit": "f3e0d04e61e6560f8bc2090c20a0be5378c285f9",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_economy_value_dependencies test_economy_selection test_economy_interaction test_economy_interaction_characterization test_economy_content test_economy_scene_failures test_economy_confirmation test_economy_presentation test_economy_layout test_economy_display_locale test_cs2_buy_matrix test_keyboard_routing_characterization test_window_economy_commands test_window_api_contract",
+      "methods": 145,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-economy-domain-aligned.txt",
+      "sha256": "b6eb4445946ab1e02ded415f14f9419c83d4b489eb6ca78f0ab2a139a08bb6b3",
+      "source_commit": "f3e0d04e61e6560f8bc2090c20a0be5378c285f9",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_referee_domain_boundaries test_referee_domain_characterization test_referee_projection_policy test_referee_state_characterization",
+      "methods": 35,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-economy-labels-baseline.txt",
+      "sha256": "783fe2acee6538e9d19f95fadb33b9a7051509de0585b2e63d4225e19046db74",
+      "source_commit": "d86f34453932a56c787f5e905b47ee54e15c3966",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_economy_value_dependencies",
+      "methods": 3,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-serial-discovery-fixed.txt",
+      "sha256": "0f9180bc3b1a9c29493327bf77cbc3ae026fdce17733da358c4acf11cb732961",
+      "source_commit": "633e48d09c21a6968c906e0a043ffaca10d8ad13",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_port_discovery_admission",
+      "methods": 9,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-serial-discovery-adjacent.txt",
+      "sha256": "d2f51aa012e82a67ca80935295818770ecb2162463b91198c9d5565e842ccf32",
+      "source_commit": "633e48d09c21a6968c906e0a043ffaca10d8ad13",
+      "kind": "unittest",
+      "result": "PASS",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_port_discovery_admission test_dt7_worker_dispatch test_device_manager_nonblocking test_default_catalog_characterization test_device_egress_characterization test_backend_angle_lifecycle test_serial_reader_admission test_serial_starter_admission test_serial_lifecycle_regressions",
+      "methods": 77,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "review-serial-discovery-repeat.txt",
+      "sha256": "3c825df21457d07eeeb5119cd4c75ea0ef963b16f47e901804d05e0d8857c017",
+      "source_commit": "633e48d09c21a6968c906e0a043ffaca10d8ad13",
+      "kind": "repeated-unittest",
+      "result": "PASS",
+      "command": "Load test_port_discovery_admission with unittest.defaultTestLoader on each of 100 iterations; assert successful, testsRun == 9 and no skips.",
+      "repetitions": 100,
+      "methods_per_repetition": 9,
+      "executions": 900
+    },
+    {
+      "file": "review-port-discovery-admission-before.txt",
+      "sha256": "bddc01c7b695aee8df942c3c1fbcc0a665f3272f59255504d775f9bcffe0a246",
+      "source_commit": "706b136998a9ee1746c35932eeeea09d0ce133d5",
+      "kind": "defect-reproduction",
+      "result": "FAIL",
+      "command": "PYTHONPATH=tests:. \"$PY\" -m unittest -v test_port_discovery_admission",
+      "methods": 3,
+      "passed": 1,
+      "failed": 2,
+      "errors": 0
+    },
+    {
+      "file": "review-vision-api.txt",
+      "sha256": "b08298035e97427c54ebef5f0156c6b5af2837c6b797f0b43fa3f3346b73973b",
+      "source_commit": "661daedbe6ea0a0509d7a2214277965361d941b8",
+      "kind": "actual-window-api",
+      "result": "PASS",
+      "command": "With a fresh POLAR_USER_DATA_ROOT: \"$PY\" tests/api_freeze_test.py"
+    },
+    {
+      "file": "review-constructor-timer-api.txt",
+      "sha256": "b08298035e97427c54ebef5f0156c6b5af2837c6b797f0b43fa3f3346b73973b",
+      "source_commit": "cd80ec74955639b1a4b529c979b462cd50cd7887",
+      "kind": "actual-window-api",
+      "result": "PASS",
+      "command": "With a fresh POLAR_USER_DATA_ROOT: \"$PY\" tests/api_freeze_test.py"
+    },
+    {
+      "file": "review-profile-save-api.txt",
+      "sha256": "b08298035e97427c54ebef5f0156c6b5af2837c6b797f0b43fa3f3346b73973b",
+      "source_commit": "9d3a849ec0fe3328f8fb3d5ae5506d5a28bb6279",
+      "kind": "actual-window-api",
+      "result": "PASS",
+      "command": "With a fresh POLAR_USER_DATA_ROOT: \"$PY\" tests/api_freeze_test.py"
+    },
+    {
+      "file": "review-normal-timeline-api.txt",
+      "sha256": "b08298035e97427c54ebef5f0156c6b5af2837c6b797f0b43fa3f3346b73973b",
+      "source_commit": "f542fcc19d7d43a38a89c802a8d343afa4989b83",
+      "kind": "actual-window-api",
+      "result": "PASS",
+      "command": "With a fresh POLAR_USER_DATA_ROOT: \"$PY\" tests/api_freeze_test.py"
+    },
+    {
+      "file": "review-economy-values-api.txt",
+      "sha256": "b08298035e97427c54ebef5f0156c6b5af2837c6b797f0b43fa3f3346b73973b",
+      "source_commit": "f3e0d04e61e6560f8bc2090c20a0be5378c285f9",
+      "kind": "actual-window-api",
+      "result": "PASS",
+      "command": "With a fresh POLAR_USER_DATA_ROOT: \"$PY\" tests/api_freeze_test.py"
+    },
+    {
+      "file": "review-normal-timeline-quality-summary.json",
+      "sha256": "97d14ddb9bc4ebbd55dcec702c6b850816e8d5ad3731b8eae8d1cdc89c7427f5",
+      "source_commit": "f542fcc19d7d43a38a89c802a8d343afa4989b83",
+      "kind": "static-summary",
+      "result": "PASS",
+      "command": "\"$PY\" tools/quality_gate.py --json full-report.json; omit only modules detail for this summary"
+    },
+    {
+      "file": "review-economy-values-quality-summary.json",
+      "sha256": "cae5b30964cb818b289da2dc425676fd1aec4e801f88762d4339acfa3a6cd9bb",
+      "source_commit": "f3e0d04e61e6560f8bc2090c20a0be5378c285f9",
+      "kind": "static-summary",
+      "result": "PASS",
+      "command": "\"$PY\" tools/quality_gate.py --json full-report.json; omit only modules detail for this summary"
+    },
+    {
+      "file": "review-serial-discovery-quality-summary.json",
+      "sha256": "06718111307b57d36839dc2a1052beb594ed13fadcdc2c378e5c5a9f09bc36db",
+      "source_commit": "633e48d09c21a6968c906e0a043ffaca10d8ad13",
+      "kind": "static-summary",
+      "result": "PASS",
+      "command": "\"$PY\" tools/quality_gate.py --json full-report.json; omit only modules detail for this summary"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "source_tree_sha256": "2112b3f1c0c583adaf7f5e26daf90061c619697bd398b84b4d0b64d30999b191",
+  "summary": {
+    "files": 204,
+    "parsed_files": 204,
+    "functions": 3342,
+    "statements": 36957,
+    "decisions": 12999,
+    "import_edges": 592,
+    "historical_ui_modules": 1,
+    "historical_ui_functions": 50
+  },
+  "runtime_cycles": [],
+  "all_import_cycles": [],
+  "violations": [],
+  "ratchet_candidates": [
+    {
+      "symbol": "rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.build_gpu_economy_workspace",
+      "budget": {
+        "decisions": 80,
+        "max_control_depth": 3,
+        "statements": 218
+      },
+      "actual": {
+        "decisions": 45,
+        "max_control_depth": 3,
+        "statements": 131
+      }
+    },
+    {
+      "symbol": "rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.draw_economy_overlay_compat",
+      "budget": {
+        "decisions": 61,
+        "max_control_depth": 3,
+        "statements": 199
+      },
+      "actual": {
+        "decisions": 33,
+        "max_control_depth": 3,
+        "statements": 123
+      }
+    },
+    {
+      "symbol": "rm_client.ui.polar_app:PolarRMWindow._paint_gpu_frame_cached",
+      "budget": {
+        "decisions": 69,
+        "max_control_depth": 5,
+        "statements": 167
+      },
+      "actual": {
+        "decisions": 46,
+        "max_control_depth": 3,
+        "statements": 97
+      }
+    }
+  ]
+}

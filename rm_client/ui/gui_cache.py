@@ -52,8 +52,10 @@ class ClickGuiLayerCache:
             layer.setRenderHint(QPainter.RenderHint.TextAntialiasing, True)
             layer.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform, True)
             layer.scale(dpr, dpr)
-            build(layer, QRectF(0.0, 0.0, rect.width(), rect.height()))
-            layer.end()
+            try:
+                build(layer, QRectF(0.0, 0.0, rect.width(), rect.height()))
+            finally:
+                layer.end()
             image.setDevicePixelRatio(dpr)
             self._images[cache_key] = image
             self._images.move_to_end(cache_key)

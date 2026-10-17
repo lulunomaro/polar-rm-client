@@ -10,6 +10,8 @@ import threading
 import copy
 import time
 from .dt7_link import Dt7KeyMouseLink
+from .resource_close import close_resource
+from .writer_thread import WriterThread
 
 
 class _WorkerSafety:
@@ -36,11 +38,19 @@ class _WorkerSafety:
 
 
 class AsyncDt7KeyMouseLink:
-    """Production facade; synchronous codec/link remains usable by offline tools."""
+    """Production facade; synchronous codec/link remains usable by offline tools.
+
+    ``retain_owner`` may publish the initialized facade to its caller before
+    worker admission. Keep that owner through a constructor failure until
+    ``closed`` is confirmed. The original exception also receives a best-effort
+    ``failed_writer`` attribute for callers using the original constructor API.
+    The callback runs outside the worker lock. If it calls ``close()``, the
+    constructor returns that sealed owner without admitting another writer.
+    """
     asynchronous = True
 
     def __init__(self, *, port="Auto", profile=None, mock_output=True, safety=None,
-                 link=None, release_attempts=3, max_intent_age_s=0.15):
+                 link=None, release_attempts=3, max_intent_age_s=0.15, retain_owner=None):
         self.port = port
         self.profile = dict(profile or {})
         self.mock_output = bool(mock_output)
@@ -74,8 +84,40 @@ class AsyncDt7KeyMouseLink:
         self.last_send_rate_limited = False
         self._last_error = ""
         self._link.safety = _WorkerSafety(self)
-        self._thread = threading.Thread(target=self._run, name="dt7-writer", daemon=True)
-        self._thread.start()
+        self._worker = WriterThread(self._cv)
+        self.startup_failed = False
+        admission_reserved = False
+        try:
+            if retain_owner is not None:
+                retain_owner(self)
+            with self._cv:
+                if self._closing:
+                    return  # The retention callback already cancelled this owner.
+                self._worker.reserve()
+                admission_reserved = True
+            self._worker.start_reserved(self._run, "dt7-writer")
+        except BaseException as exc:
+            self.startup_failed = True
+            # A defensive start wrapper may admit the real worker then raise.
+            # Cancel that owner, or request cleanup for a never-admitted one.
+            # Neither cleanup admission nor exception annotation may replace
+            # the primary failure. retain_owner is the independent owner path.
+            try:
+                with self._cv:
+                    # A finished failed finalizer stays an explicit retry;
+                    # the admission error must not silently run it again.
+                    if not self._closing:
+                        self._last_error = "DT7 writer admission failed; close required"
+                    never_admitted = self._worker.never_admitted
+                    if not self._closing or (admission_reserved and never_admitted):
+                        self.close()
+            except BaseException:
+                pass
+            try:
+                exc.failed_writer = self
+            except BaseException:
+                pass
+            raise
 
     def __getattr__(self, name):
         return getattr(self._link, name)
@@ -151,8 +193,15 @@ class AsyncDt7KeyMouseLink:
         return True, "queued"
 
     def release(self, now=None):
+        """Owner-thread compatibility entry point, including observer delivery."""
         self.poll()
+        return self.request_release()
+
+    def request_release(self):
+        """Admit bounded neutral from any thread without invoking observers."""
         with self._cv:
+            if self._closing:
+                return self.wire_neutral, self.last_error or "DT7 writer closed"
             if self._release_exhausted:
                 return False, self.last_error
             if not self._release_pending:
@@ -186,6 +235,8 @@ class AsyncDt7KeyMouseLink:
     def retry_release(self):
         """Explicit recovery only; ordinary heartbeat cannot reset the budget."""
         with self._cv:
+            if self._closing:
+                return False, "DT7 writer closed"
             self._release_exhausted = False
             self._release_pending = False
         return self.release()
@@ -312,27 +363,67 @@ class AsyncDt7KeyMouseLink:
                         self._inflight = False
                         self._cv.notify_all()
         finally:
-            self._link.close()
+            self._finalize_close()
+
+    def _finalize_close(self):
+        """Runs only on the sole writer or an explicit background close retry."""
+        with self._cv:
+            self._closing = True
+            self._latest = None
+        try:
+            close_resource(self._link)
+        except Exception as exc:
+            with self._cv:
+                self._last_error = f"DT7 close unconfirmed; explicit close retry required: {exc}"
+                self._fault = self._last_error
+                self._fault_reported = False
+                self._cv.notify_all()
+        else:
             self._closed.set()
 
     def close(self):
         # UI shutdown never joins a potentially blocked OS driver. The sole
         # owner finishes bounded neutral best-effort then closes in finally.
-        self.release()
         with self._cv:
-            self._closing = True
-            self._generation += 1
-            self._latest = None
-            self._cv.notify_all()
+            if not self._closing:
+                try:
+                    self.request_release()
+                finally:
+                    self._closing = True
+                    self._generation += 1
+                    self._latest = None
+                    self._cv.notify_all()
+            if not self._worker.starting and not self.closed and not self.worker_alive:
+                # An unadmitted owner may still hold an injected native link
+                # or a neutral barrier. Run its normal drain off the caller.
+                never_admitted = self._worker.never_admitted
+                target = self._run if never_admitted else self._finalize_close
+                self._worker.start(target, "dt7-close-retry")
 
     @property
     def closed(self):
         return self._closed.is_set()
 
     @property
+    def _thread(self):
+        """Compatibility view of the sole retained worker (never a second owner)."""
+        return self._worker.thread
+
+    @property
     def worker_alive(self):
-        return self._thread.is_alive()
+        return self._worker.alive
+
+    @property
+    def port_handoff_ready(self):
+        """Proof for another owner: neutral, no retained handle, worker gone."""
+        return bool(
+            self.closed and not self.worker_alive
+            and getattr(self._link, "_handle", self._link) is None
+            and not getattr(self._link, "_handle_close_failed", True)
+            and self.wire_neutral and not self.release_pending
+        )
 
     def wait_closed(self, timeout=2.0):
-        """Test/non-UI cleanup only."""
-        return self._closed.wait(timeout)
+        """Background/test cleanup only; None explicitly waits without a deadline."""
+        self._worker.join(timeout)
+        return self.closed

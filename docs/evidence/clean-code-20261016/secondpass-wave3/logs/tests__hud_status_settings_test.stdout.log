@@ -1,0 +1,83 @@
+
+--- test_base_outpost_row_toggles_across_all_three_builders ---
+[PASS] 全开时三个构造器都有基地/前哨行  -> {'groups': ['RED BASE YOU', 'BLUE BASE', 'OUTPOST', 'GOLD', 'AMMO'], 'rings': ['BASE', 'EBASE', 'OUT', 'GOLD'], 'bars': ['OWN BASE', 'ENEMY BASE', 'OUTPOST', 'GOLD']}
+[PASS] 关掉 Own Base：groups 里没有基地行  -> ['BLUE BASE', 'OUTPOST', 'GOLD', 'AMMO']
+[PASS] 关掉 Own Base：rings 里没有 BASE  -> ['EBASE', 'OUT', 'GOLD', 'AMMO']
+[PASS] 关掉 Own Base：bars 里没有 OWN BASE  -> ['ENEMY BASE', 'OUTPOST', 'GOLD', 'AMMO']
+[PASS] 关掉 Enemy Base 后三处都没有敌方基地行  -> {'groups': ['OUTPOST', 'GOLD', 'AMMO'], 'rings': ['OUT', 'GOLD', 'AMMO', 'HEAT'], 'bars': ['OUTPOST', 'GOLD', 'AMMO', 'HEAT/PWR']}
+[PASS] 关掉 Outposts 后三处都没有前哨行  -> {'groups': ['GOLD', 'AMMO'], 'rings': ['GOLD', 'AMMO', 'HEAT'], 'bars': ['GOLD', 'AMMO', 'HEAT/PWR']}
+
+--- test_shield_toggle_changes_base_detail ---
+[PASS] Shield 开时基地提示含护盾  -> Red BASE 5000/5000 SHIELD 880
+[PASS] Shield 关时基地提示不含护盾（内容真的变了）  -> Red BASE 5000/5000
+
+--- test_victory_point_toggles_in_3v3 ---
+[PASS] 全开时两处分VP行 + CTRL行  -> {'groups': ['RED YOU', 'BLUE', 'CTRL', 'GOLD'], 'rings': ['ALLY', 'ENEMY', 'CTRL', 'HEAT'], 'bars': ['ALLY VP', 'ENEMY VP', 'CONTROL', 'GOLD']}
+[PASS] 关掉 Control Zone：三处都无控制行  -> {'groups': ['RED YOU', 'BLUE', 'GOLD'], 'rings': ['ALLY', 'ENEMY', 'HEAT'], 'bars': ['ALLY VP', 'ENEMY VP', 'GOLD', 'AMMO']}
+[PASS] 关掉 Victory Points：三处都无 VP 行  -> {'groups': ['GOLD'], 'rings': ['HEAT'], 'bars': ['GOLD', 'AMMO', 'HEAT/PWR']}
+
+--- test_team_status_toggle_changes_label_suffix ---
+[PASS] 开时有一方标了 YOU  -> ['RED YOU', 'BLUE', 'CTRL', 'GOLD']
+[PASS] 关时没有任何标签带 YOU  -> ['RED', 'BLUE', 'CTRL', 'GOLD']
+[PASS] 但行本身仍在（内容开关不得删行）  -> 4 -> 4
+
+--- test_gold_and_tech_level_toggles ---
+[PASS] Gold 开时三处都有 GOLD  -> {'groups': ['RED BASE YOU', 'BLUE BASE', 'OUTPOST', 'GOLD', 'AMMO'], 'rings': ['BASE', 'EBASE', 'OUT', 'GOLD'], 'bars': ['OWN BASE', 'ENEMY BASE', 'OUTPOST', 'GOLD']}
+[PASS] Tech Level 开时提示含 / T3  -> GOLD 220 / T3
+[PASS] Tech Level 关时提示不含科技等级，但行还在  -> GOLD 220
+[PASS] 关掉 Gold 后三处都没有 GOLD  -> {'groups': ['RED BASE YOU', 'BLUE BASE', 'OUTPOST', 'AMMO'], 'rings': ['BASE', 'EBASE', 'OUT', 'AMMO'], 'bars': ['OWN BASE', 'ENEMY BASE', 'OUTPOST', 'AMMO']}
+
+--- test_ammo_type_and_show_cost ---
+[PASS] 17mm 时主显示是 17mm  -> AMMO 17mm 150 | 42mm 9 | PRICE 50
+[PASS] Show Cost 开时含 PRICE  -> AMMO 17mm 150 | 42mm 9 | PRICE 50
+[PASS] 切到 42mm 后主显示跟着变（设置项真的影响内容）  -> AMMO 42mm 9 | 42mm 9 | PRICE 50
+[PASS] 关掉 Show Cost 后不再显示价格  -> AMMO 42mm 9 | 42mm 9
+
+--- test_speed_and_heat_row_toggles ---
+[PASS] 开关都在时有 SPEED 行  -> ['HEAT', 'POWER', 'SPEED', 'CAP']
+[PASS] 关掉 Show Speed 后无 SPEED 行  -> ['HEAT', 'POWER', 'CAP']
+[PASS] 关 SPEED 不影响 CAP/POWER 判据（各开关互不串扰）
+[PASS] 关掉 Heat 后 rings/bars 都无 HEAT 行  -> {'groups': ['RED BASE YOU', 'BLUE BASE', 'OUTPOST', 'GOLD', 'AMMO'], 'rings': ['BASE', 'EBASE', 'OUT', 'GOLD'], 'bars': ['OWN BASE', 'ENEMY BASE', 'OUTPOST', 'GOLD']}
+
+--- test_match_timer_header_toggles ---
+[PASS] 全开时顶栏含阶段名与倒计时  -> 7v7  PLAYING  02:00  SCORE 3:1
+[PASS] 全开时顶栏含分数  -> 7v7  PLAYING  02:00  SCORE 3:1
+[PASS] 关掉 Show Stage 后阶段与倒计时都消失  -> 7v7  SCORE 3:1
+[PASS] 但分数仍在（开关不得串扰）  -> 7v7  SCORE 3:1
+[PASS] 关掉 Show Scores 后分数消失  -> 7v7  PLAYING  02:00
+[PASS] 但阶段仍在  -> 7v7  PLAYING  02:00
+[PASS] 3v3 下 Show Scores 显示 VP而不是 SCORE  -> 3v3  NOT_STARTED  07:00  VP 80:40
+
+--- test_match_timer_pulse_window_and_direction ---
+[PASS] 倒计时 120s 时不脉冲  -> 0.0
+[PASS] 倒计时 12s 时有脉冲且幅度在 0..1  -> max=0.057
+[PASS] 越接近结束脉冲包络越强  -> 3s=0.085 25s=0.016
+[PASS] 倒计时 0 不脉冲（未开始/超时不得误报为紧急）
+[PASS] 负倒计时不脉冲
+[PASS] 恰在窗口上边界 30s 不脉冲
+[PASS] 关掉开关后即使在窗口内也不脉冲
+[PASS] MatchTimer 模块关闭时不脉冲
+
+--- test_power_pulse_only_when_actually_over_limit ---
+[PASS] 未超限（ratio=0.5）不脉冲
+[PASS] 恰在限额（ratio=1.0）不脉冲
+[PASS] 超限 10% 时有脉冲且幅度在 0..1  -> max=0.037
+[PASS] 超限越多脉冲包络越强
+[PASS] 关掉开关后即使超限也不脉冲
+[PASS] 不影响其他卡（Capacitor 即使 ratio>1 也不脉冲）
+[PASS] 不影响其他卡（SpeedLimit 即使 ratio>1 也不脉冲）
+[PASS] 不影响其他卡（ThermalPowerPanel 即使 ratio>1 也不脉冲）
+[PASS] 不影响其他卡（GOLD 即使 ratio>1 也不脉冲）
+[PASS] ratio 是垃圾值时不抛异常
+
+--- test_capacitor_glow_amount_respects_use_glow ---
+[PASS] 开启时有外发光且为正常量  -> 0.11
+[PASS] 关闭后 CAP 卡外发光归零
+[PASS] 但不得影响其他卡的外发光  -> 0.11
+
+--- test_disabled_module_still_yields_no_rows ---
+[PASS] 相关模块全关时三处都没有状态行  -> {'groups': [], 'rings': [], 'bars': []}
+[PASS] 同时遥测行也空  -> []
+
+============================================================
+ALL HUD-STATUS SETTINGS TESTS PASSED

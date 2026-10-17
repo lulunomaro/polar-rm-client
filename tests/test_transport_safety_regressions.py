@@ -8,6 +8,7 @@ from __future__ import annotations
 import ast
 import copy
 import json
+import os
 from pathlib import Path
 import socket
 import struct
@@ -23,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from rm_client.backend.cc_link import CustomControllerLink, decode_cc_frame
+from rm_client.backend.device_egress_settings import CustomControllerSettings, EgressPermissions
 from rm_client.backend.polar_transport import PolarDriveIntent, PolarLinkTransport
 from rm_client.backend import polar_link, polar_spec
 from rm_client.backend.referee.registry import get_profile, UnsupportedRefereeProfile
@@ -76,6 +78,22 @@ class FakeSerial:
 
 
 class TransportSafetyTests(unittest.TestCase):
+    def manager_runtime(self):
+        """Real lifecycle boundary with no sockets, devices, Qt, or git probe."""
+        from rm_client.backend.manager import BackendManager
+        root = tempfile.TemporaryDirectory()
+        self.addCleanup(root.cleanup)
+        with patch.dict(os.environ, {"POLAR_USER_DATA_ROOT": root.name}), patch.object(
+                BackendManager, "_build_commit", return_value="TEST"):
+            backend = BackendManager(workspace=root.name)
+        self.assertTrue(backend.field_log.close(timeout=1))
+        backend.field_log = SimpleNamespace(emit=lambda *a, **k: None,
+            close=lambda **k: True, snapshot=lambda: {
+                "pending_records": 0, "dropped_records": 0, "write_errors": 0,
+                "closed": True, "worker_active": False, "closing": False})
+        self.addCleanup(backend.shutdown)
+        return backend
+
     def make_transport(self):
         transport = PolarLinkTransport(port="TEST", mock_writes=False)
         serial = FakeSerial()
@@ -204,9 +222,9 @@ class TransportSafetyTests(unittest.TestCase):
                     release_custom_controller=lambda: released.append(True))
                 link = SimpleNamespace()
                 manager = SimpleNamespace(_cc_was_enabled=True, _cc_link_for=lambda settings: link)
-                settings = {"Custom Controller Egress": SimpleNamespace(value=edge != "egress")}
-                module = SimpleNamespace(enabled=edge != "module")
-                configure(manager, control, settings, module, edge != "allow_drive", edge == "estop")
+                settings = CustomControllerSettings(requested_value=edge != "egress")
+                permissions = EgressPermissions(edge != "module", edge != "allow_drive", edge == "estop")
+                configure(manager, control, settings, permissions)
                 self.assertFalse(control.cc_enabled)
                 self.assertEqual(released, [True])
 
@@ -224,7 +242,7 @@ class TransportSafetyTests(unittest.TestCase):
                                release_all=lambda: (False, "offline"))
         locks = []
         manager = SimpleNamespace(_cc_link=link, safety=SimpleNamespace(lock_control=locks.append))
-        settings = {"CC Port": SimpleNamespace(value="NEW"), "CC Mock Writes": SimpleNamespace(value=False)}
+        settings = CustomControllerSettings(port_value="NEW", mock_value=False)
         method = manager_method("_cc_link_for", cc_link=SimpleNamespace(CustomControllerLink=CustomControllerLink))
         self.assertIs(method(manager, settings), link)
         self.assertTrue(manager._cc_reconfigure_blocked)
@@ -322,14 +340,12 @@ class TransportSafetyTests(unittest.TestCase):
         self.assertTrue(safety.can_publish("MapClickCmd", now=4.0)[0])
 
     def test_map_downlink_category_uses_official_field_three(self):
-        from rm_client.backend.referee.rm2026.contract import FIELDS, ALIASES
-        apply = isolated("rm_client/backend/referee/rm2026/state_adapter.py", "_apply_one",
-                         owner="Rm2026StateAdapter", namespace={"FIELDS": FIELDS, "ALIASES": ALIASES, "time": time})
-        clean = isolated("rm_client/backend/referee/rm2026/state_adapter.py", "_clean", owner="Rm2026StateAdapter")
-        state = SimpleNamespace(map_markers=[], referee_snapshot={})
-        adapter = SimpleNamespace(_clean=clean, _economy_signature=lambda state: ())
+        from rm_client.backend.referee.rm2026.state_adapter import Rm2026StateAdapter
+        from rm_client.model import RobotState
+        state = RobotState()
+        adapter = Rm2026StateAdapter(SimpleNamespace())
         for category, expected in ((1, "attack"), (2, "defense"), (3, "warning"), (4, "custom")):
-            apply(adapter, state, "MapClickInfo", {"mode": category, "type": 1, "map_x": 1.0, "map_y": 2.0})
+            adapter._apply_one(state, "MapClickInfo", {"mode": category, "type": 1, "map_x": 1.0, "map_y": 2.0})
             self.assertEqual(state.map_markers[-1]["kind"], expected)
 
     def test_video_gap_resets_gate_before_feeding_more_interframes(self):
@@ -379,38 +395,35 @@ class TransportSafetyTests(unittest.TestCase):
 
     def test_scenario_sets_identity_and_endpoints_before_any_start(self):
         from rm_client.scenarios import SCENARIOS
-        events = []
-        backend = SimpleNamespace(state=None, _active_video_source="udp hevc",
-            shutdown=lambda **kwargs: events.append("shutdown"),
-            set_client_id=lambda robot_id: events.append(("identity", robot_id)),
-            _config_from_registry=lambda config, registry: config,
-            _apply_config=lambda config: events.append("configure"),
-            safety=SimpleNamespace(release_estop=lambda: events.append("release_latch")))
+        backend = self.manager_runtime()
+        starts = []
         for name in ("mqtt", "udp", "serial", "polar"):
-            setattr(backend, name, SimpleNamespace(start=lambda name=name: events.append(("start", name)),
-                request_start=lambda name=name: events.append(("start", name))))
-        manager_method("apply_scenario", SCENARIOS=SCENARIOS)(backend, "OfficialEvent", robot_id=103)
-        self.assertEqual(events[:4], ["shutdown", ("identity", 103), "configure", "release_latch"])
-        self.assertEqual(len([event for event in events if isinstance(event, tuple) and event[0] == "start"]), 4)
-        events.clear()
-        manager_method("apply_scenario", SCENARIOS=SCENARIOS)(backend, "OfficialEvent", start=False)
-        self.assertFalse(any(isinstance(event, tuple) and event[0] == "start" for event in events))
+            resource = getattr(backend, name)
+            callback = lambda name=name: starts.append((name, backend.mqtt.client_id,
+                backend.mqtt.host, backend.scenario_key, backend.safety.control_state.value))
+            setattr(resource, "request_start" if name == "polar" else "start", callback)
+        backend.apply_scenario("OfficialEvent", robot_id=103)
+        self.assertEqual({item[0] for item in starts}, {"mqtt", "udp", "serial", "polar"})
+        self.assertTrue(all(item[1:] == ("103", SCENARIOS["OfficialEvent"].connection.mqtt_host,
+                                       "OfficialEvent", "LOCKED") for item in starts))
+        starts.clear()
+        backend.apply_scenario("OfficialEvent", start=False)
+        self.assertFalse(starts)
 
     def test_identity_failures_remain_locked(self):
-        method = manager_method("set_client_id")
-        safety = OfficialSafety()
+        backend = self.manager_runtime()
+        safety = backend.safety
         safety.arm_match(["core_kmc"])
         stopped = []
-        backend = SimpleNamespace(safety=safety, referee=get_profile(),
-            mqtt=SimpleNamespace(stop=lambda **kwargs: stopped.append(True), client_id="3"))
+        backend.mqtt.stop = lambda **kwargs: stopped.append(kwargs)
         with self.assertRaises(ValueError):
-            method(backend, 999)
+            backend.set_client_id(999)
         self.assertEqual(safety.control_state.value, "LOCKED")
-        self.assertEqual(stopped, [True])
+        self.assertEqual(stopped, [{"publish_status": False, "wait": False}])
         safety.arm_match(["core_kmc"])
         backend.mqtt.publish_estop_zero = lambda: (_ for _ in ()).throw(OSError("publish failed"))
         with self.assertRaises(OSError):
-            method(backend, 103)
+            backend.set_client_id(103)
         self.assertEqual(safety.control_state.value, "LOCKED")
 
     def test_cc_pending_release_never_replays_motion(self):
@@ -462,7 +475,7 @@ class TransportSafetyTests(unittest.TestCase):
         backend = SimpleNamespace(safety=safety, _km_seq=1,
             mqtt=SimpleNamespace(publish_estop_zero=lambda: (_ for _ in ()).throw(OSError("MQTT unavailable"))),
             publish_km_release=lambda: (_ for _ in ()).throw(OSError("KM unavailable")),
-            serial=SimpleNamespace(trigger_estop=lambda: calls.append("serial")),
+            serial=SimpleNamespace(request_estop=lambda: calls.append("serial")),
             polar=SimpleNamespace(request_estop=lambda: calls.append("polar")),
             field_log=SimpleNamespace(emit=lambda *args, **kwargs: None))
         result = manager_method("trigger_estop", time=time)(backend)
@@ -477,11 +490,11 @@ class TransportSafetyTests(unittest.TestCase):
         safety = OfficialSafety()
         bridge = SimpleNamespace(active=True)
         bridge.reset = lambda: setattr(bridge, "active", False)
-        backend = SimpleNamespace(_input_clear_generation=0, _dt7_control_ref=control, input_clear_hook=None,
-            field_log=SimpleNamespace(emit=lambda *args, **kwargs: None), safety=safety,
-            polar_bridge=bridge, polar=SimpleNamespace(request_estop=lambda: None))
-        safety.input_clear_hook = lambda reason: manager_method("_request_input_clear")(backend, reason)
-        manager_method("_invalidate_polar_epoch")(backend, "endpoint changed")
+        backend = self.manager_runtime()
+        backend._dt7_control_ref = control
+        backend.polar_bridge = bridge
+        safety = backend.safety
+        backend._invalidate_polar_epoch("endpoint changed")
         bridge.active = True  # First fresh telemetry on the new connection.
         self.assertFalse(keys["W"])
         self.assertIsNone(control.last_command)
@@ -489,14 +502,10 @@ class TransportSafetyTests(unittest.TestCase):
         self.assertEqual(safety.control_state.value, "LOCKED")
 
     def test_scenario_reload_preserves_preexisting_operator_estop(self):
-        from rm_client.scenarios import SCENARIOS
-        safety = OfficialSafety()
-        safety.trigger_estop()
-        backend = SimpleNamespace(state=None, safety=safety,
-            shutdown=lambda **kwargs: None, _config_from_registry=lambda config, registry: config,
-            _apply_config=lambda config: None)
-        manager_method("apply_scenario", SCENARIOS=SCENARIOS)(backend, "LabDebug", start=False)
-        self.assertTrue(safety.estop_active)
+        backend = self.manager_runtime()
+        backend.safety.trigger_estop()
+        backend.apply_scenario("LabDebug", start=False)
+        self.assertTrue(backend.safety.estop_active)
 
     def test_missing_opencv_is_visible_and_never_claims_decoder_ready(self):
         import builtins
@@ -514,22 +523,30 @@ class TransportSafetyTests(unittest.TestCase):
         self.assertEqual(decoder.last_error, decoder.dependency_error)
 
     def test_shutdown_network_exception_still_zeros_and_closes_every_output(self):
+        backend = self.manager_runtime()
         calls = []
-        safety = OfficialSafety()
-        backend = SimpleNamespace(safety=safety,
-            mqtt=SimpleNamespace(connected=True, mock_output=False,
-                publish_estop_zero=lambda: (_ for _ in ()).throw(OSError("MQTT unavailable")),
-                stop=lambda **kwargs: calls.append("mqtt stop")),
-            serial=SimpleNamespace(trigger_estop=lambda: calls.append("serial zero"), stop=lambda: calls.append("serial stop")),
-            polar=SimpleNamespace(request_estop=lambda: calls.append("polar zero"), stop=lambda: calls.append("polar stop")),
-            udp=SimpleNamespace(stop=lambda: calls.append("udp stop")),
-            native_decoder=SimpleNamespace(stop=lambda: calls.append("decoder stop")),
-            _native_recovery=SimpleNamespace(reset=lambda: None),
-            field_log=SimpleNamespace(emit=lambda *args, **kwargs: None))
-        manager_method("shutdown")(backend)
-        self.assertTrue(safety.estop_active)
+        backend.mqtt.connected, backend.mqtt.mock_output = True, False
+        backend.mqtt.publish_estop_zero = lambda: (_ for _ in ()).throw(OSError("MQTT unavailable"))
+        for label, resource, method in (
+                ("mqtt stop", backend.mqtt, "stop"),
+                ("serial zero", backend.serial, "request_estop"),
+                ("serial stop", backend.serial, "stop"),
+                ("polar zero", backend.polar, "request_estop"),
+                ("polar stop", backend.polar, "stop"),
+                ("udp stop", backend.udp, "stop"),
+                ("decoder stop", backend.native_decoder, "stop")):
+            original = getattr(resource, method)
+            def record(*args, label=label, original=original, **kwargs):
+                calls.append(label)
+                return original(*args, **kwargs)
+            setattr(resource, method, record)
+        backend.shutdown()
+        self.assertTrue(backend.safety.estop_active)
         self.assertLess(calls.index("polar zero"), calls.index("polar stop"))
-        self.assertEqual(set(calls), {"serial zero", "polar zero", "mqtt stop", "serial stop", "polar stop", "udp stop", "decoder stop"})
+        self.assertLess(calls.index("serial zero"), calls.index("serial stop"))
+        self.assertEqual(set(calls), {"serial zero", "polar zero", "mqtt stop", "serial stop",
+                                     "polar stop", "udp stop", "decoder stop"})
+        self.assertIn("MQTT unavailable", backend.lifecycle_snapshot.failures[0].error)
 
     def test_v2_is_explicitly_unsupported(self):
         with self.assertRaisesRegex(UnsupportedRefereeProfile, "NOT supported"):

@@ -1,0 +1,25 @@
+{
+  "all_import_cycles": [],
+  "gate": {
+    "baseline_revision": "d64f1528e2e1864ef369537c026b6d3f7127f590",
+    "status": "PASS",
+    "violations": []
+  },
+  "runtime_cycles": [],
+  "schema_version": 1,
+  "source_directories": [
+    "rm_client"
+  ],
+  "source_tree_sha256": "2112b3f1c0c583adaf7f5e26daf90061c619697bd398b84b4d0b64d30999b191",
+  "summary": {
+    "decisions": 12999,
+    "files": 204,
+    "functions": 3342,
+    "historical_ui_functions": 50,
+    "historical_ui_modules": 1,
+    "import_edges": 592,
+    "parsed_files": 204,
+    "statements": 36957
+  },
+  "syntax_errors": []
+}

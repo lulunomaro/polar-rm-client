@@ -1,0 +1,9 @@
+test_all_runtime_and_transitive_versions_are_exactly_pinned (__main__.VerificationDependencyLockTests.test_all_runtime_and_transitive_versions_are_exactly_pinned) ... ok
+test_install_policy_requires_wheels_hashes_and_official_index (__main__.VerificationDependencyLockTests.test_install_policy_requires_wheels_hashes_and_official_index) ... ok
+test_platform_scope_is_explicit_and_does_not_replace_runtime_ranges (__main__.VerificationDependencyLockTests.test_platform_scope_is_explicit_and_does_not_replace_runtime_ranges) ... ok
+test_provenance_includes_the_telemetry_consent_dependency (__main__.VerificationDependencyLockTests.test_provenance_includes_the_telemetry_consent_dependency) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK

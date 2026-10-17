@@ -1,0 +1,19 @@
+{
+  "source_commit": "ecd58d3ab75e451f677fb8db48c8b407d1c380eb",
+  "review_base_commit": "911549d9ef46c21ab90f46b92af3157ab0adf984",
+  "executed_at_utc": "2026-10-16T06:56:25Z",
+  "python": "3.12.14",
+  "paho_mqtt": "2.1.0",
+  "pyside6": "6.8.2",
+  "suite_count": 21,
+  "test_method_count": 144,
+  "exit_code": 0,
+  "result": "PASS",
+  "skipped": 0,
+  "scope": "Focused isolated integration; fake device/process/socket boundaries; not aggregate or hardware acceptance",
+  "reviewer_regression_commits": [
+    "0550274",
+    "bb995b9"
+  ],
+  "log_normalization": "Trailing whitespace removed; diagnostic content unchanged"
+}

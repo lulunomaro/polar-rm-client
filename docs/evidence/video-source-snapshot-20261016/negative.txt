@@ -1,0 +1,15 @@
+test_same_target_refresh_does_not_retry_ended_native_close_for_udp_target (tests.test_video_source_snapshot.VideoSourceSnapshotTests.test_same_target_refresh_does_not_retry_ended_native_close_for_udp_target) ... FAIL
+
+======================================================================
+FAIL: test_same_target_refresh_does_not_retry_ended_native_close_for_udp_target (tests.test_video_source_snapshot.VideoSourceSnapshotTests.test_same_target_refresh_does_not_retry_ended_native_close_for_udp_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<review-checkout>/tests/test_video_source_snapshot.py", line 80, in test_same_target_refresh_does_not_retry_ended_native_close_for_udp_target
+    self.assertIs(self.backend.native_decoder._stop_worker, first)
+AssertionError: <Thread(mjpeg-stop-h265, started daemon 140220262237888)> is not <Thread(mjpeg-stop-h265, stopped daemon 140220262237888)>
+
+----------------------------------------------------------------------
+Ran 1 test in 0.006s
+
+FAILED (failures=1)
+EXPECTED NEGATIVE: removing same-request guard replaces failed native stopper

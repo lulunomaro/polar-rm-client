@@ -1,0 +1,31 @@
+{
+  "source_commit": "ba96e42d5ec20c95acb4b9b4404f423912e6da76",
+  "scope": "Exact-source focused offline review artifacts; no global aggregate or native GPU qualification.",
+  "artifacts_sha256": {
+    "api_freeze_test.log": "39fb4c2aa136d7df4d624347005dac38528b25f08c087a563c7e2585d75792a6",
+    "architecture-summary.json": "5dccdfe3fce14d8f4fa6599c084b1b88508dea8c1fc13743fb61ff70b8b51e4c",
+    "architecture.md": "1c2e27b113d1e5a7766778d694c6807e3e451bf4b5e40e4bcd4a56848a794987",
+    "collection-lifetime-before-complete.log": "ca54883495fb5d1eaa29d4484eb39bcc13c9f1173ca3214d5adc38118d14890d",
+    "command-rejection-red.log": "e3130f4d6569dba9323281f0c7d5216533c63b6983ea16e8b7211958dac54fa9",
+    "quality-gate.log": "2a7c1fa3e1842dbb7fbd2618183fb42c2d699a547577ea4a6828c9134fa2a1d8",
+    "rejection-precedence-before.log": "006f93e314ffa46b30ed4a7fd3f0053527f5c6a6a7fa85b47934c14b0d90acb5",
+    "results.json": "10ffa77f5a5e221a1b7637ed602423ca38efc6a79430bc909d1d67f75eeca5bc",
+    "test_cached_frame_contract.log": "2970b15b0f5c1204209ff486f54cc71518003a69b19f989eea71457cb03a3201",
+    "test_cached_window_layers.log": "7efd66ade7a45fb64e39844baf2168414a137d250ab53ef87f0f331ca149e971",
+    "test_clickgui_frame_contract.log": "0c73c4747e31db6dbcd63bf52108d07f12f8e380bd7055701b44890c0bdfe686",
+    "test_clickgui_renderer_faults.log": "065c7d15facfd20f14fb9182747be315f3349fa1d5e1a0e966047509f4bfa9b1",
+    "test_compositor_fault_diagnostics.log": "902456cc30ad84d4531da1d72ac1224d688ef2a8c43d5ebd746f1e4d739f4ba9",
+    "test_compositor_plan.log": "a93cfa7bf7fe0a1507bc3830da553ec02bf6af25c6d91f43ef4927e91e89b690",
+    "test_framebuffer_generation.log": "9ad858ae88fe74e9dab93395ec7524c415ac56f55d494e8c6f53f834993245de",
+    "test_fullscreen_composition.log": "0a9c9456990cceb87d2218b8202088981aeb4e400c06f2efafd54860602e0e35",
+    "test_gpu_command_collection_lifetime.log": "7de4f223e531e9cf844d99cb74386a2a3379b9854712114f53227cd82e30f5e6",
+    "test_gpu_command_frame_rejection.log": "40d117f8cf74433569f0f8d4969feacf19cbfa573f918df99a1e4cf8afb66217",
+    "test_gpu_warmup_budget.log": "e39dd69ceee0f14cc37196a1e600bb6a43de183b7364a94dec4f29453137a6be",
+    "test_overlay_layer_boundary.log": "8513c8b94f6ff4ea3d79f64910580bd2a8f5dcc6d4ea59f758f2c1af07f3e300",
+    "test_specialized_gl_initialization.log": "6a10cfcf96cbead10ddab7d7df040bb7f3eb2d7dafd8ae8110286d54daea311a",
+    "test_specialized_gl_owners.log": "b994e0ff9617d019e6f007d8165b456047f75cb22a67d365fb44b1c6fb25fbe8",
+    "test_ui_state_regressions.log": "1234c4b28ae99b6d588aca3c3d9813a03212b189833dce55d76de5f96df0ec27",
+    "test_window_api_contract.log": "34541ce9ad6a3cfb439ee6d2e465643af489b8f44c18f8e81d55328fc49757ae",
+    "test_window_normal_frame.log": "0880a525c3c2ae3bbcded69cf3bbbf399ccee88531904bff9c16a2aaca964eb6"
+  }
+}

@@ -34,6 +34,49 @@ class AudioTests(unittest.TestCase):
         self.devices.start()
     def tearDown(self):
         self.pool.close(); self.devices.stop(); self.temp.cleanup()
+    def test_worker_retirement_requires_owner_seal(self):
+        executor = Mock()
+        self.pool._executor = executor
+        with self.assertRaisesRegex(RuntimeError, 'sealed on its owner thread'):
+            self.pool.wait_closed()
+        executor.shutdown.assert_not_called()
+    def test_owner_close_never_joins_and_worker_retirement_waits(self):
+        executor = Mock()
+        self.pool._executor = executor
+        with patch.object(self.pool, 'stop') as stop:
+            self.pool.close()
+        self.assertTrue(self.pool._closed)
+        stop.assert_called_once_with()
+        executor.shutdown.assert_called_once_with(wait=False, cancel_futures=True)
+        self.pool.wait_closed()
+        self.assertEqual(executor.shutdown.call_args_list,
+            [unittest.mock.call(wait=False, cancel_futures=True),
+             unittest.mock.call(wait=True, cancel_futures=True)])
+    def test_playback_stop_failure_does_not_prevent_worker_retirement(self):
+        executor = Mock()
+        self.pool._executor = executor
+        with patch.object(self.pool, 'stop', side_effect=OSError('playback stop failed')):
+            with self.assertRaisesRegex(OSError, 'playback stop failed'):
+                self.pool.close()
+        self.assertTrue(self.pool._closed)
+        executor.shutdown.assert_not_called()
+        self.pool.wait_closed()
+        executor.shutdown.assert_called_once_with(wait=True, cancel_futures=True)
+    def test_closed_preload_cannot_create_voices_or_decode_work(self):
+        self.pool.close()
+        with patch.object(ReliableAudioPool, 'preload') as preload, patch.object(self.pool, '_queue_decode') as decode:
+            self.pool.preload(('cue.wav', 'cue.ogg'))
+        preload.assert_not_called()
+        decode.assert_not_called()
+    def test_queued_decode_completion_after_seal_never_replays(self):
+        self.pool._waiting['cue.ogg'].append((time.monotonic(), 55))
+        self.pool.close()
+        with patch.object(ReliableAudioPool, 'preload') as preload, patch.object(ReliableAudioPool, 'play') as play:
+            self.pool._converted('cue.ogg', self.root/'cached.wav', '')
+        self.assertFalse(self.pool._waiting)
+        self.assertFalse(self.pool._decoded)
+        preload.assert_not_called()
+        play.assert_not_called()
     def test_card_unsupported_types_use_original_normal_cue(self):
         renderer = object.__new__(KillFxRenderer)
         for kind in ('ASSIST', 'DESTROY_VEHICLE'):

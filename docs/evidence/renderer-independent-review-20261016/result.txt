@@ -1,0 +1,203 @@
+Render stage initialize.retire.release.present_program failed: OSError: retained present_program
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2020, in <lambda>
+    *((f"release.{name}", lambda name=name: release_program(name)) for name in (
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2013, in release_program
+    program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2020, in <lambda>
+    *((f"release.{name}", lambda name=name: release_program(name)) for name in (
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2013, in release_program
+    program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: retained present_program
+Render stage initialize.retire.release.blur_program failed: OSError: retained blur_program
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2020, in <lambda>
+    *((f"release.{name}", lambda name=name: release_program(name)) for name in (
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2013, in release_program
+    program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2020, in <lambda>
+    *((f"release.{name}", lambda name=name: release_program(name)) for name in (
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2013, in release_program
+    program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: retained blur_program
+Render stage initialize.retire.release.jello_blur_program failed: OSError: retained jello_blur_program
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2020, in <lambda>
+    *((f"release.{name}", lambda name=name: release_program(name)) for name in (
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2013, in release_program
+    program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2020, in <lambda>
+    *((f"release.{name}", lambda name=name: release_program(name)) for name in (
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2013, in release_program
+    program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: retained jello_blur_program
+Render stage initialize.retire.release.glass_program failed: OSError: retained glass_program
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2020, in <lambda>
+    *((f"release.{name}", lambda name=name: release_program(name)) for name in (
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2013, in release_program
+    program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2020, in <lambda>
+    *((f"release.{name}", lambda name=name: release_program(name)) for name in (
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2013, in release_program
+    program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: retained glass_program
+Render stage initialize.retire.release.vertex-buffer failed: OSError: retained vertex_buffer
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2004, in destroy_buffer
+    self.vertex_buffer.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2004, in destroy_buffer
+    self.vertex_buffer.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: retained vertex_buffer
+Render stage initialize.retire.release.vertex-array failed: OSError: retained vertex_array
+Traceback (most recent call last):
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2008, in destroy_array
+    self.vertex_array.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 241, in _attempt_gl_cleanup
+    if release() is False:
+       ^^^^^^^^^
+  File "/workspace/shared/clean-render/rm_client/ui/gpu_frame_compositor.py", line 2008, in destroy_array
+    self.vertex_array.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: retained vertex_array
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.011s
+
+OK

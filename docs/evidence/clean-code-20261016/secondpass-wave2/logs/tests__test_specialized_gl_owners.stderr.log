@@ -1,0 +1,1248 @@
+Render stage startup.release.cleanup.program failed: RuntimeError: shader removal defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 332, in _release_program
+    self.program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: shader removal defect
+Render stage wheel.release.cleanup.program failed: RuntimeError: shader removal defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/quick_action_wheel_gpu.py", line 281, in _release_program
+    self.program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: shader removal defect
+Render stage island.release.cleanup.program failed: RuntimeError: shader removal defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/island_icon_gpu.py", line 294, in _release_program
+    self.program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: shader removal defect
+Render stage vision.release.cleanup.program failed: RuntimeError: shader removal defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/vision_wire_gpu.py", line 394, in _release_program
+    self.program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: shader removal defect
+.Render stage startup.release.cleanup.current failed: OSError: first owner destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: first owner destroy defect
+Render stage wheel.release.cleanup.buffer failed: OSError: first owner destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: first owner destroy defect
+Render stage island.release.cleanup.buffer failed: OSError: first owner destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: first owner destroy defect
+Render stage vision.release.cleanup.buffer failed: OSError: first owner destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: first owner destroy defect
+.Render stage startup.release.cleanup.buffer failed: OSError: buffer destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: buffer destroy defect
+Render stage startup.release.cleanup.vertex_array failed: ValueError: array destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+ValueError: array destroy defect
+Render stage startup.release.cleanup.program failed: TypeError: shader removal defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 332, in _release_program
+    self.program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: shader removal defect
+Render stage wheel.release.cleanup.buffer failed: OSError: buffer destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: buffer destroy defect
+Render stage wheel.release.cleanup.vertex_array failed: ValueError: array destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+ValueError: array destroy defect
+Render stage wheel.release.cleanup.program failed: TypeError: shader removal defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/quick_action_wheel_gpu.py", line 281, in _release_program
+    self.program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: shader removal defect
+Render stage island.release.cleanup.buffer failed: OSError: buffer destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: buffer destroy defect
+Render stage island.release.cleanup.vertex_array failed: ValueError: array destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+ValueError: array destroy defect
+Render stage island.release.cleanup.program failed: TypeError: shader removal defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/island_icon_gpu.py", line 294, in _release_program
+    self.program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: shader removal defect
+Render stage vision.release.cleanup.buffer failed: OSError: buffer destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: buffer destroy defect
+Render stage vision.release.cleanup.vertex_array failed: ValueError: array destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 112, in destroy_created
+    resource.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+ValueError: array destroy defect
+Render stage vision.release.cleanup.program failed: TypeError: shader removal defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/vision_wire_gpu.py", line 394, in _release_program
+    self.program.removeAllShaders()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: shader removal defect
+.Render stage startup.render failed: TypeError: original draw defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 315, in draw
+    functions.glDrawArrays(self._GL_TRIANGLE_STRIP, 0, 4)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: original draw defect
+Render stage startup.render.cleanup.buffer failed: OSError: buffer cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: buffer cleanup defect
+Render stage wheel.render failed: TypeError: original draw defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/quick_action_wheel_gpu.py", line 177, in draw
+    functions.glDrawArrays(_GL_TRIANGLES, 0, 6)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: original draw defect
+Render stage wheel.render.cleanup.buffer failed: OSError: buffer cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: buffer cleanup defect
+Render stage island.render failed: TypeError: original draw defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/island_icon_gpu.py", line 183, in draw
+    functions.glDrawArrays(_GL_TRIANGLES, 0, len(payload) // stride)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: original draw defect
+Render stage island.render.cleanup.buffer failed: OSError: buffer cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: buffer cleanup defect
+Render stage vision.render failed: TypeError: original draw defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/vision_wire_gpu.py", line 337, in draw
+    functions.glDrawArrays(_GL_TRIANGLES, 0, self.last_vertex_count)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: original draw defect
+Render stage vision.render.cleanup.buffer failed: OSError: buffer cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: buffer cleanup defect
+..Render stage startup.render.cleanup.attribute.0 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+Render stage wheel.render.cleanup.attribute.0 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+Render stage wheel.render.cleanup.attribute.1 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+Render stage island.render.cleanup.attribute.0 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+Render stage island.render.cleanup.attribute.1 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+Render stage island.render.cleanup.attribute.2 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+Render stage island.render.cleanup.attribute.3 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+Render stage vision.render.cleanup.attribute.0 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+Render stage vision.render.cleanup.attribute.1 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+Render stage vision.render.cleanup.attribute.2 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+Render stage vision.render.cleanup.attribute.3 failed: OSError: attribute cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: attribute cleanup defect
+.Render stage startup.render failed: TypeError: attribute format defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 314, in draw
+    self.program.setAttributeBuffer(self._position_attribute, self._GL_FLOAT, 0, 2, 2 * 4)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: attribute format defect
+Render stage wheel.render failed: TypeError: attribute format defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/quick_action_wheel_gpu.py", line 176, in draw
+    self.program.setAttributeBuffer(location, _GL_FLOAT, offset, 2, stride)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: attribute format defect
+Render stage island.render failed: TypeError: attribute format defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/island_icon_gpu.py", line 182, in draw
+    self.program.setAttributeBuffer(location, _GL_FLOAT, offset, size, stride)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: attribute format defect
+Render stage vision.render failed: TypeError: attribute format defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/vision_wire_gpu.py", line 336, in draw
+    self.program.setAttributeBuffer(location, _GL_FLOAT, offset, size, stride)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: attribute format defect
+.Render stage startup.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 291, in draw
+    if not bindings.bind_program():
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 134, in bind_program
+    self._program_bound = bool(self.program.bind())
+                               ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage startup.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 311, in draw
+    if not bindings.bind_buffer():
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 141, in bind_buffer
+    self._buffer_bound = bool(self.buffer.bind())
+                              ^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage startup.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 290, in draw
+    bindings.bind_vertex_array()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 148, in bind_vertex_array
+    self.vertex_array.bind()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage startup.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 313, in draw
+    bindings.enable_attribute(self._position_attribute)
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 156, in enable_attribute
+    self.program.enableAttributeArray(location)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage startup.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 293, in draw
+    bindings.bind_texture(self.current, 0)
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 152, in bind_texture
+    texture.bind(unit)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage startup.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 297, in draw
+    bindings.bind_texture(self.previous, 1)
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 152, in bind_texture
+    texture.bind(unit)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage wheel.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/quick_action_wheel_gpu.py", line 139, in draw
+    if not bindings.bind_program():
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 134, in bind_program
+    self._program_bound = bool(self.program.bind())
+                               ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage wheel.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/quick_action_wheel_gpu.py", line 170, in draw
+    if not bindings.bind_buffer():
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 141, in bind_buffer
+    self._buffer_bound = bool(self.buffer.bind())
+                              ^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage wheel.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/quick_action_wheel_gpu.py", line 169, in draw
+    bindings.bind_vertex_array()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 148, in bind_vertex_array
+    self.vertex_array.bind()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage wheel.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/quick_action_wheel_gpu.py", line 175, in draw
+    bindings.enable_attribute(location)
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 156, in enable_attribute
+    self.program.enableAttributeArray(location)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage island.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/island_icon_gpu.py", line 163, in draw
+    if not bindings.bind_program():
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 134, in bind_program
+    self._program_bound = bool(self.program.bind())
+                               ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage island.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/island_icon_gpu.py", line 171, in draw
+    if not bindings.bind_buffer():
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 141, in bind_buffer
+    self._buffer_bound = bool(self.buffer.bind())
+                              ^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage island.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/island_icon_gpu.py", line 170, in draw
+    bindings.bind_vertex_array()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 148, in bind_vertex_array
+    self.vertex_array.bind()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage island.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/island_icon_gpu.py", line 181, in draw
+    bindings.enable_attribute(location)
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 156, in enable_attribute
+    self.program.enableAttributeArray(location)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage vision.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/vision_wire_gpu.py", line 322, in draw
+    if not bindings.bind_program():
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 134, in bind_program
+    self._program_bound = bool(self.program.bind())
+                               ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage vision.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/vision_wire_gpu.py", line 330, in draw
+    if not bindings.bind_buffer():
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 141, in bind_buffer
+    self._buffer_bound = bool(self.buffer.bind())
+                              ^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage vision.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/vision_wire_gpu.py", line 329, in draw
+    bindings.bind_vertex_array()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 148, in bind_vertex_array
+    self.vertex_array.bind()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+Render stage vision.render failed: TypeError: failure after native admission
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/vision_wire_gpu.py", line 335, in draw
+    bindings.enable_attribute(location)
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 156, in enable_attribute
+    self.program.enableAttributeArray(location)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 239, in partial_bind
+    raise TypeError("failure after native admission")
+TypeError: failure after native admission
+....Render stage wheel.render failed: TypeError: original draw defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/quick_action_wheel_gpu.py", line 177, in draw
+    functions.glDrawArrays(_GL_TRIANGLES, 0, 6)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: original draw defect
+Render stage wheel.render.cleanup.disable_blend failed: OSError: blend cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 205, in disable
+    raise OSError("blend cleanup defect")
+OSError: blend cleanup defect
+Render stage island.render failed: TypeError: original draw defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/island_icon_gpu.py", line 183, in draw
+    functions.glDrawArrays(_GL_TRIANGLES, 0, len(payload) // stride)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: original draw defect
+Render stage island.render.cleanup.disable_blend failed: OSError: blend cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 205, in disable
+    raise OSError("blend cleanup defect")
+OSError: blend cleanup defect
+Render stage vision.render failed: TypeError: original draw defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/vision_wire_gpu.py", line 337, in draw
+    functions.glDrawArrays(_GL_TRIANGLES, 0, self.last_vertex_count)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: original draw defect
+Render stage vision.render.cleanup.disable_blend failed: OSError: blend cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_specialized_gl_owners.py", line 205, in disable
+    raise OSError("blend cleanup defect")
+OSError: blend cleanup defect
+....
+----------------------------------------------------------------------
+Ran 15 tests in 0.094s
+
+OK

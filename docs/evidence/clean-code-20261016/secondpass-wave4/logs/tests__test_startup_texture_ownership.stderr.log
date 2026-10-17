@@ -1,0 +1,309 @@
+Render stage startup.upload failed: TypeError: candidate create defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 203, in upload
+    reusable = self._allocate_texture(source.width(), source.height())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 176, in _allocate_texture
+    if not texture.create():
+           ^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: candidate create defect
+Render stage startup.upload.cleanup.candidate_texture failed: OSError: candidate cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: candidate cleanup defect
+Render stage startup.upload failed: OSError: candidate cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 196, in upload
+    self._release_texture("_pending_texture")
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: candidate cleanup defect
+Render stage startup.upload failed: TypeError: candidate allocateStorage defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 203, in upload
+    reusable = self._allocate_texture(source.width(), source.height())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 181, in _allocate_texture
+    texture.allocateStorage(QOpenGLTexture.PixelFormat.RGBA, QOpenGLTexture.PixelType.UInt8)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: candidate allocateStorage defect
+Render stage startup.upload.cleanup.candidate_texture failed: OSError: candidate cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: candidate cleanup defect
+Render stage startup.upload failed: OSError: candidate cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 196, in upload
+    self._release_texture("_pending_texture")
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: candidate cleanup defect
+Render stage startup.upload failed: TypeError: candidate setMinificationFilter defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 203, in upload
+    reusable = self._allocate_texture(source.width(), source.height())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 182, in _allocate_texture
+    texture.setMinificationFilter(QOpenGLTexture.Filter.Linear)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: candidate setMinificationFilter defect
+Render stage startup.upload.cleanup.candidate_texture failed: OSError: candidate cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: candidate cleanup defect
+Render stage startup.upload failed: OSError: candidate cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 196, in upload
+    self._release_texture("_pending_texture")
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: candidate cleanup defect
+Render stage startup.upload failed: TypeError: candidate setData defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 207, in upload
+    reusable.setData(
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: candidate setData defect
+Render stage startup.upload.cleanup.candidate_texture failed: OSError: candidate cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: candidate cleanup defect
+Render stage startup.upload failed: OSError: candidate cleanup defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 196, in upload
+    self._release_texture("_pending_texture")
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 62, in _clean
+    action()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: candidate cleanup defect
+.Render stage startup.upload failed: OSError: old-size texture destroy defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 199, in upload
+    self._release_texture("spare")
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 327, in _release_texture
+    texture.destroy()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: old-size texture destroy defect
+..Render stage startup.upload failed: TypeError: upload payload defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 207, in upload
+    reusable.setData(
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: upload payload defect
+Render stage startup.upload failed: TypeError: upload payload defect
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/gl_resources.py", line 78, in run
+    accepted = bool(action())
+                    ^^^^^^^^
+  File "/workspace/shared/client-quality-integration/rm_client/ui/startup_gl.py", line 207, in upload
+    reusable.setData(
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: upload payload defect
+..
+----------------------------------------------------------------------
+Ran 5 tests in 0.014s
+
+OK

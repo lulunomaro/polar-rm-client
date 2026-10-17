@@ -1,0 +1,109 @@
+
+--- prepare_hero_build 新增选项 ---
+[ OK ] 块注释里的 #define 被剥掉  |#ifndef X|#define X 1|#endif||#define Z 3|
+[ OK ] 注释外的 #define 留着
+[ OK ] 字符串里的 // 不会被当注释
+[ OK ] 剥注释后还能看见 ifndef
+
+[3d] MOUSE_SENSITIVITY -> 0.5（application/robot_param_mecannum_hero.h）
+  [OK]   MOUSE_SENSITIVITY：#define MOUSE_SENSITIVITY (100000.0f)  ->  #define MOUSE_SENSITIVITY (0.5f)
+[ OK ] 英雄参数被改成可用量级  #define MOUSE_SENSITIVITY (0.5f)
+[ OK ] 旁边的宏不受影响
+
+[3d] MOUSE_SENSITIVITY -> 1.2（application/robot_param_mecannum_hero.h）
+  [OK]   MOUSE_SENSITIVITY：#define MOUSE_SENSITIVITY (0.5f)  ->  #define MOUSE_SENSITIVITY (1.2f)
+[ OK ] 再改一次是替换不是叠加（只有一行定义）  #define MOUSE_SENSITIVITY (1.2f)
+
+[3d] MOUSE_SENSITIVITY -> 0.5f（application/robot_param_mecannum_hero.h）
+  [OK]   MOUSE_SENSITIVITY：#define MOUSE_SENSITIVITY (1.2f)  ->  #define MOUSE_SENSITIVITY (0.5f)
+[ OK ] 带 f 后缀的输入也不会变成 0.5ff
+
+[3d] MOUSE_SENSITIVITY -> 0.5（application/robot_param_mecannum_hero.h）
+  [EXPECTED-FAIL] 找不到英雄参数文件  -> /tmp/tmpzo4xq6nl/missing/application/robot_param_mecannum_hero.h
+[ OK ] 找不到文件时记一条失败，不是静默返回  ['找不到英雄参数文件']
+
+[3d] MOUSE_SENSITIVITY -> 0.5（application/robot_param_mecannum_hero.h）
+  [EXPECTED-FAIL] 英雄参数里找不到 MOUSE_SENSITIVITY 定义  -> 上游改了写法，请同步本脚本
+[ OK ] 文件在但宏写法变了也要报错（上游改了不能装看不见）  ['英雄参数里找不到 MOUSE_SENSITIVITY 定义']
+[ OK ] 默认 MOUSE_SENSITIVITY 在可用量级（角速度=1000*(每帧像素)/S）  20000
+[ OK ] 默认值不是死配置 0.5（那是配套没有鼠标的遥控器的）  20000
+
+[3c] 键鼠链路 -> CL_KM_VT（--km vt）
+  [OK]   __CONTROL_LINK_KM = CL_KM_VT（驾驶键位 only）
+[ OK ] --km vt 把宏写在**注释外**（编译器真看得见，不是靠 ifndef 兜底）  CL_KM_VT
+[ OK ] ifndef 兜底块还在（幂等重跑不会叠出两份）  2
+
+[3c] 键鼠链路 -> CL_KM_RC（--km rc，并放开 Q/E 开火键位）
+  [OK]   先摘掉旧的键鼠链路块，再按本次参数插回
+  [OK]   __CONTROL_LINK_KM = CL_KM_RC（含 Q/E 开火键位）
+[ OK ] --km rc 换档也真的生效（切回来同样要有效）
+[ OK ] --km-fire-keys 的 KM_KEY_ALLOWED_MASK 也在注释外（开火键位不再静默失效）
+
+[3c] 键鼠链路 -> CL_KM_VT（--km vt）
+  [OK]   先摘掉旧的键鼠链路块，再按本次参数插回
+  [OK]   __CONTROL_LINK_KM = CL_KM_VT（驾驶键位 only）
+[ OK ] 不给 --km-fire-keys 时必须**没有**开火掩码（不偷偷扩权）
+[ OK ] 重跑不会把块叠成两份
+[ OK ] 英雄参数文件在 OWNED 名单里（第二次 prepare 不会被拒）
+[ OK ] robot_param.h 也在 OWNED 里
+
+[2/6] 检查工作树
+  [OK]   检测到本脚本此前的改动：application/robot_param_mecannum_hero.h, application/typedef/host_km_link.h（将继续并保证幂等）
+[ OK ] 只有本脚本碰过的改动时 check_clean 放行（幂等重跑）
+
+[2/6] 检查工作树
+  [OK]   检测到本脚本此前的改动：application/robot_param_mecannum_hero.h（将继续并保证幂等）
+  [EXPECTED-FAIL] 工作树有非本脚本范围的改动，拒绝执行以免做出半套修改  -> application/somebody_else.c
+         请先提交或 stash 这些改动，再重跑本脚本。
+[ OK ] 别人改的文件仍然要拒绝（不能为了幂等把闸门拆了）
+
+[3/6] 切兵种配置 -> hero（application/robot_param_mecannum_hero.h）
+  [OK]   include 已指向 application/robot_param_mecannum_hero.h
+[ OK ] 步兵 -> 英雄切得动  #include "robot_param_mecannum_hero.h"   // hero（prepare_hero_build.py --robot hero）
+[ OK ] 切过去时把另一条留成注释（现场能一眼回切）
+
+[3/6] 切兵种配置 -> hero（application/robot_param_mecannum_hero.h）
+  [OK]   已经是 hero 配置（幂等跳过）
+[ OK ] 重复切同一兵种是幂等（不会叠出两行 include）
+
+[3/6] 切兵种配置 -> infantry（application/robot_param_omni_infantry.h）
+  [OK]   include 已指向 application/robot_param_omni_infantry.h
+[ OK ] 英雄 -> 步兵也切得回来（认得出被注释掉的那行）  #include "robot_param_omni_infantry.h"   // infantry（prepare_hero_build.py --robot infantry）
+
+[3/6] 切兵种配置 -> hero（application/robot_param_mecannum_hero.h）
+  [OK]   include 已指向 application/robot_param_mecannum_hero.h
+[ OK ] 来回切三次仍然只有一行生效 include  #include "robot_param_mecannum_hero.h"   // hero（prepare_hero_build.py --robot hero）
+
+[3/6] 切兵种配置 -> hero（application/robot_param_mecannum_hero.h）
+  [OK]   已经是 hero 配置（幂等跳过）
+
+[3/6] 切兵种配置 -> infantry（application/robot_param_omni_infantry.h）
+  [OK]   include 已指向 application/robot_param_omni_infantry.h
+
+[3/6] 切兵种配置 -> hero（application/robot_param_mecannum_hero.h）
+  [OK]   include 已指向 application/robot_param_mecannum_hero.h
+
+[3/6] 切兵种配置 -> infantry（application/robot_param_omni_infantry.h）
+  [OK]   include 已指向 application/robot_param_omni_infantry.h
+
+[3/6] 切兵种配置 -> hero（application/robot_param_mecannum_hero.h）
+  [OK]   include 已指向 application/robot_param_mecannum_hero.h
+
+[3/6] 切兵种配置 -> infantry（application/robot_param_omni_infantry.h）
+  [OK]   include 已指向 application/robot_param_omni_infantry.h
+[ OK ] 来回切 6 次后 include 只有两条（1 生效 + 1 备选），不攒重复注释行  ['#include "robot_param_omni_infantry.h"   // infantry（prepare_hero_build.py --robot infantry）', '// #include "robot_param_mecannum_hero.h"   // 另一个兵种，切回时取消注释']
+[ OK ] 切换兵种不许动文件里别的内容
+
+[3/6] 切兵种配置 -> hero（application/robot_param_mecannum_hero.h）
+  [EXPECTED-FAIL] robot_param.h 里找不到英雄/步兵任一条 include  -> 上游改了写法，请同步本脚本
+[ OK ] 找不到任何兵种 include 时报错而不是乱插  ['robot_param.h 里找不到英雄/步兵任一条 include']
+[ OK ] 步兵参数文件也在 OWNED 里
+[ OK ] ROBOT_PROFILES 两个兵种的参数文件都在 OWNED 里
+
+[3d] MOUSE_SENSITIVITY -> 1000（application/robot_param_omni_infantry.h）
+  [OK]   MOUSE_SENSITIVITY：#define MOUSE_SENSITIVITY (40000.0f)  ->  #define MOUSE_SENSITIVITY (1000f)
+[ OK ] 步兵档改的是步兵参数文件
+[ OK ] 改步兵时不许顺手动英雄的文件
+[ OK ] ROBOT_PROFILES 两个兵种的参数文件都在 OWNED 里
+
+prepare_hero_build 新选项全部通过

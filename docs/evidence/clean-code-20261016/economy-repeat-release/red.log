@@ -1,0 +1,170 @@
+test_higher_priority_owners_keep_release_before_economy (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_higher_priority_owners_keep_release_before_economy) ... ok
+test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) ...
+  test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Return: 16777220>, elapsed=0.3) ... FAIL
+  test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Return: 16777220>, elapsed=0.7) ... FAIL
+  test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Return: 16777220>, elapsed=10) ... FAIL
+  test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Enter: 16777221>, elapsed=0.3) ... FAIL
+  test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Enter: 16777221>, elapsed=0.7) ... FAIL
+  test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Enter: 16777221>, elapsed=10) ... FAIL
+test_repeat_sequence_then_physical_release_submits_once (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_sequence_then_physical_release_submits_once) ... FAIL
+test_short_physical_release_still_cancels_with_feedback (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_short_physical_release_still_cancels_with_feedback) ... ok
+test_baseline_repeat_release_cancels_short_hold_or_submits_long_hold (test_economy_keyboard_release.FrozenRepeatReleaseEvidence.test_baseline_repeat_release_cancels_short_hold_or_submits_long_hold) ... ok
+
+======================================================================
+FAIL: test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Return: 16777220>, elapsed=0.3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 53, in test_repeat_release_retains_hold_before_and_after_threshold
+    InputDispatchMixin.keyReleaseEvent(host, release(code, repeat=True))
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/input_dispatch_mixin.py", line 1189, in keyReleaseEvent
+    self.finish_economy_hold()
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 27, in <lambda>
+    host.finish_economy_hold = lambda: EconomyMixin.finish_economy_hold(host)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/economy_mixin.py", line 436, in finish_economy_hold
+    elapsed = time.perf_counter() - self.economy_hold_started
+              ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: repeat consulted hold clock
+
+======================================================================
+FAIL: test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Return: 16777220>, elapsed=0.7)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 53, in test_repeat_release_retains_hold_before_and_after_threshold
+    InputDispatchMixin.keyReleaseEvent(host, release(code, repeat=True))
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/input_dispatch_mixin.py", line 1189, in keyReleaseEvent
+    self.finish_economy_hold()
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 27, in <lambda>
+    host.finish_economy_hold = lambda: EconomyMixin.finish_economy_hold(host)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/economy_mixin.py", line 436, in finish_economy_hold
+    elapsed = time.perf_counter() - self.economy_hold_started
+              ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: repeat consulted hold clock
+
+======================================================================
+FAIL: test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Return: 16777220>, elapsed=10)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 53, in test_repeat_release_retains_hold_before_and_after_threshold
+    InputDispatchMixin.keyReleaseEvent(host, release(code, repeat=True))
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/input_dispatch_mixin.py", line 1189, in keyReleaseEvent
+    self.finish_economy_hold()
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 27, in <lambda>
+    host.finish_economy_hold = lambda: EconomyMixin.finish_economy_hold(host)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/economy_mixin.py", line 436, in finish_economy_hold
+    elapsed = time.perf_counter() - self.economy_hold_started
+              ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: repeat consulted hold clock
+
+======================================================================
+FAIL: test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Enter: 16777221>, elapsed=0.3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 53, in test_repeat_release_retains_hold_before_and_after_threshold
+    InputDispatchMixin.keyReleaseEvent(host, release(code, repeat=True))
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/input_dispatch_mixin.py", line 1189, in keyReleaseEvent
+    self.finish_economy_hold()
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 27, in <lambda>
+    host.finish_economy_hold = lambda: EconomyMixin.finish_economy_hold(host)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/economy_mixin.py", line 436, in finish_economy_hold
+    elapsed = time.perf_counter() - self.economy_hold_started
+              ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: repeat consulted hold clock
+
+======================================================================
+FAIL: test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Enter: 16777221>, elapsed=0.7)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 53, in test_repeat_release_retains_hold_before_and_after_threshold
+    InputDispatchMixin.keyReleaseEvent(host, release(code, repeat=True))
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/input_dispatch_mixin.py", line 1189, in keyReleaseEvent
+    self.finish_economy_hold()
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 27, in <lambda>
+    host.finish_economy_hold = lambda: EconomyMixin.finish_economy_hold(host)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/economy_mixin.py", line 436, in finish_economy_hold
+    elapsed = time.perf_counter() - self.economy_hold_started
+              ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: repeat consulted hold clock
+
+======================================================================
+FAIL: test_repeat_release_retains_hold_before_and_after_threshold (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_release_retains_hold_before_and_after_threshold) (code=<Key.Key_Enter: 16777221>, elapsed=10)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 53, in test_repeat_release_retains_hold_before_and_after_threshold
+    InputDispatchMixin.keyReleaseEvent(host, release(code, repeat=True))
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/input_dispatch_mixin.py", line 1189, in keyReleaseEvent
+    self.finish_economy_hold()
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 27, in <lambda>
+    host.finish_economy_hold = lambda: EconomyMixin.finish_economy_hold(host)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-interactions/rm_client/ui/polar/mixins/economy_mixin.py", line 436, in finish_economy_hold
+    elapsed = time.perf_counter() - self.economy_hold_started
+              ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: repeat consulted hold clock
+
+======================================================================
+FAIL: test_repeat_sequence_then_physical_release_submits_once (test_economy_keyboard_release.EconomyPhysicalReleaseTests.test_repeat_sequence_then_physical_release_submits_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-interactions/tests/test_economy_keyboard_release.py", line 63, in test_repeat_sequence_then_physical_release_submits_once
+    self.assertEqual(host.economy_hold_key, OFFER.key)
+AssertionError: '' != 'small'
++ small
+
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.012s
+
+FAILED (failures=7)

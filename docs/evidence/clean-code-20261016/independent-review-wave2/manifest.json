@@ -1,0 +1,125 @@
+{
+  "scope": "Independent checks on exact candidate sources, not an aggregate or native qualification. Counts overlap and cannot be summed into coverage.",
+  "environment": {
+    "python": "3.12.14",
+    "interpreter": "/workspace/shared/client-quality-venv/bin/python",
+    "qt": "offscreen",
+    "CI": "true",
+    "POLAR_AUTOSTART": "0",
+    "POLAR_DISABLE_LOCAL_CAPTURE": "1",
+    "POLAR_DISABLE_MEDIA_PRELOAD": "1"
+  },
+  "artifacts": [
+    {
+      "file": "review-ratchet-detached-tests.txt",
+      "sha256": "05ba2d762cec56310ca11ceb62438248c1dcb0b239a5f34fe69f024b735411ad",
+      "source_commit": "a6031717b9ecd576803f7c3a3a2d6ca290640c76",
+      "kind": "unittest",
+      "command": "$PY -m unittest tests.test_quality_gates tests.test_quality_ratchet_baseline -v",
+      "methods": 40,
+      "result": "PASS",
+      "metric_negative_subtests": 27
+    },
+    {
+      "file": "review-ratchet-pure-roots.txt",
+      "sha256": "106875cb1aeb6a99212c9c31238443c3b8f7074db726183e497170d1e5cd8e56",
+      "source_commit": "9fb0cb6194647b0e93505424d96c85959c331406",
+      "kind": "unittest",
+      "command": "$PY -m unittest tests.test_quality_gates tests.test_quality_ratchet_baseline tests.test_referee_domain_boundaries -v",
+      "methods": 52,
+      "result": "PASS",
+      "pure_root_import_negative_subtests": 84,
+      "metric_negative_subtests": 27
+    },
+    {
+      "file": "review-map-baseline-tests.txt",
+      "sha256": "b3bc15c36c30f450ab5ae226755423a0ecfdf955fa96866c9e228c9b294480e3",
+      "source_commit": "add1fb6270065afa1264bc8c41703f67df0ca2c4",
+      "kind": "pre-extraction unittest",
+      "command": "$PY tests/test_tactical_map_contract.py -v",
+      "methods": 11,
+      "result": "PASS"
+    },
+    {
+      "file": "review-map-candidate-tests.txt",
+      "sha256": "1f0dabcff4be8c3fb6b5b63c8ff2bd7c6fbd01eaa62fc620269be2a8b725ff6a",
+      "source_commit": "9a585e23a3eeb421c769bb125ee8ff4b2148ee6d",
+      "kind": "unittest",
+      "command": "PYTHONPATH=tests:. $PY -m unittest tests.test_tactical_map_contract tests.test_tactical_map_geometry tests.test_tactical_map_telemetry tests.test_window_api_contract -v",
+      "methods": 72,
+      "result": "PASS"
+    },
+    {
+      "file": "review-map-final-tests.txt",
+      "sha256": "f60b44a00ee61645fa1cafc250fc6da55ee60038ab9d00497e6d6a2024481b85",
+      "source_commit": "93981b89b1e03d723fe91469c86eec56550a4335",
+      "kind": "unittest",
+      "command": "PYTHONPATH=tests:. $PY -m unittest tests.test_tactical_map_contract tests.test_tactical_map_geometry tests.test_tactical_map_telemetry tests.test_window_api_contract -v",
+      "methods": 73,
+      "result": "PASS"
+    },
+    {
+      "file": "review-map-api.txt",
+      "sha256": "2f0e160ed9c412701a04976e0599981c5f3964f1c3545d3a930ea5d5da382b60",
+      "source_commit": "9a585e23a3eeb421c769bb125ee8ff4b2148ee6d",
+      "kind": "api contract",
+      "command": "$PY tests/api_freeze_test.py",
+      "result": "PASS",
+      "established_members": 1114,
+      "signatures": 540
+    },
+    {
+      "file": "review-ratchet-detached-architecture-summary.json",
+      "sha256": "62f80beba86376dfb6a8f6a8efeffa6f95e02224a929f0b92f1adb26668dcca1",
+      "source_commit": "a6031717b9ecd576803f7c3a3a2d6ca290640c76",
+      "kind": "static summary",
+      "command": "$PY tools/quality_gate.py --json /tmp/review-ratchet-detached-architecture.json",
+      "result": "PASS",
+      "omission": "Per-module mapping is omitted; full static report was inspected locally."
+    },
+    {
+      "file": "review-ratchet-pure-roots-architecture-summary.json",
+      "sha256": "62f80beba86376dfb6a8f6a8efeffa6f95e02224a929f0b92f1adb26668dcca1",
+      "source_commit": "9fb0cb6194647b0e93505424d96c85959c331406",
+      "kind": "static summary",
+      "command": "$PY tools/quality_gate.py --json /tmp/review-ratchet-pure-roots-architecture.json",
+      "result": "PASS",
+      "omission": "Per-module mapping is omitted; full static report was inspected locally."
+    },
+    {
+      "file": "review-map-final-architecture-summary.json",
+      "sha256": "c5861835ec0ffc5c2e13583e51f527ad8dce02d7e41349800dbe64a41699a695",
+      "source_commit": "184db558ace3d0a207c631ca072c254e1a5f5768",
+      "kind": "static summary",
+      "command": "$PY tools/quality_gate.py --json /tmp/review-map-final-architecture.json",
+      "result": "PASS",
+      "omission": "Per-module mapping is omitted; full static report was inspected locally."
+    },
+    {
+      "file": "review-residual-probes.txt",
+      "sha256": "0ba80d7294559b25421a9b8675f5a9680700063150fc3c0e3594591db1d2d35d",
+      "source_commit": "c4d3bcf97ef43056bf316bbec593802652120878",
+      "kind": "independent defect probes",
+      "command": "PYTHONPATH=. $PY /tmp/probe-residual-review.py",
+      "result": "Two bounded counterexamples reproduced; no production changes"
+    },
+    {
+      "file": "probe-residual-review.py",
+      "sha256": "f4bdd9af7e2a4406cda3da2146db396685878227adbe68f46440496a972d2e19",
+      "source_commit": "c4d3bcf97ef43056bf316bbec593802652120878",
+      "kind": "reproduction script",
+      "command": "PYTHONPATH=. $PY probe-residual-review.py",
+      "scope": "Real owner/manager objects, inert native boundaries; explicit cleanup"
+    },
+    {
+      "file": "review-ratchet-original-source-negative.txt",
+      "sha256": "2c09f1ae9f3bf92951744605cd16c2a79e893e02025abfcc85fd1bca223b72f6",
+      "source_commit": "71ebb0f570441c12eb0d15b0a992c9cc3e805aeb",
+      "kind": "actual original-source negative control",
+      "command": "$PY tools/quality_gate.py --root /workspace/shared/client-review-map-baseline --json /tmp/review-ratchet-original-source-negative.json",
+      "checker_commit": "9fb0cb6194647b0e93505424d96c85959c331406",
+      "result": "Expected exit 1: both actual original deferred SCCs and seven lowered metric dimensions rejected; initialization SCCs remain zero",
+      "root_commit": "add1fb6 (tests/docs only, production source exact original)"
+    }
+  ]
+}

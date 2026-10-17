@@ -16,6 +16,7 @@ from typing import Any
 
 from ..protocol import MAX_REFEREE_PAYLOAD, RefereeFrameCodec, crc8, crc16
 from ..transports import SerialBridgeStub
+from .resource_close import close_resource
 
 
 class RmSerialBackend(SerialBridgeStub):
@@ -40,17 +41,21 @@ class RmSerialBackend(SerialBridgeStub):
         self.last_frame_at = 0.0
         self.estop_active = False
         self._serial = None
+        self._close_error = ""
         self._reader: threading.Thread | None = None
         self._running = False
         self._rx: deque[Any] = deque(maxlen=64)
         self._rx_lock = threading.Lock()
         self._lifecycle_lock = threading.RLock()
         self._write_lock = threading.RLock()
+        self._estop_guard = threading.Lock()
+        self._estop_generation = 0
 
     # ------------------------------------------------------------------
     def start(self) -> None:
         with self._lifecycle_lock:
-            if self._running or (self._reader is not None and self._reader.is_alive()):
+            if (self._running or self._serial is not None
+                    or (self._reader is not None and self._reader.is_alive())):
                 return
             if str(self.port).strip().lower() in ("", "stub", "none"):
                 self.connected = False
@@ -73,14 +78,14 @@ class RmSerialBackend(SerialBridgeStub):
                 self._reader = threading.Thread(target=self._read_loop, name="rm-serial", daemon=True)
                 self._reader.start()
             except Exception as exc:
+                # Only a never-admitted reader is unjoinable. Keep real
+                # started/finished owners for the normal strict close path.
+                if self._reader is not None and self._reader.ident is None:
+                    self._reader = None
                 self.connected = self._running = False
                 self.last_error = str(exc)
-                self._serial = None
-                if stream is not None:
-                    try:
-                        stream.close()
-                    except Exception:
-                        pass
+                self._serial = stream
+                self._disconnect_locked()
 
     def stop(self) -> None:
         with self._lifecycle_lock:
@@ -98,15 +103,26 @@ class RmSerialBackend(SerialBridgeStub):
                 self._rx.clear()
             self.last_frame_at = 0.0
 
+    @property
+    def cleanup_complete(self) -> bool:
+        return (self._serial is None and not self._running
+                and (self._reader is None or not self._reader.is_alive()))
+
     def _disconnect_locked(self) -> None:
-        stream, self._serial = self._serial, None
+        stream = self._serial
         self.connected = False
         self._running = False
         if stream is not None:
             try:
-                stream.close()
-            except Exception:
-                pass
+                close_resource(stream)
+            except Exception as exc:
+                # Keep the ambiguous owner unavailable for writes/replacement.
+                # A later explicit stop may retry this exact handle.
+                self._close_error = f"Serial close unconfirmed: {type(exc).__name__}: {exc}"
+                self.last_error = self._close_error
+                return
+            self._serial = None
+        self._close_error = ""
 
     # ------------------------------------------------------------------
     def write_frame(self, cmd_id: int, data: bytes = b"") -> tuple[bool, str]:
@@ -183,18 +199,46 @@ class RmSerialBackend(SerialBridgeStub):
     # 心跳/急停
     # ------------------------------------------------------------------
     def tick(self, now: float | None = None) -> None:
-        # 与 safety 双向同步急停状态（避免粘滞/矛盾）
-        if self.safety is not None:
-            with self._write_lock:
-                self.estop_active = bool(self.safety.estop_active)
+        # Revocation must not wait for a driver-held write lock. Restoring a
+        # permissive local latch can wait until a later tick; never block UI.
+        if self.safety is None:
+            return
+        with self._estop_guard:
+            generation = self._estop_generation
+        if self.safety.estop_active:
+            self.request_estop()
+            return
+        if self._write_lock.acquire(blocking=False):
+            try:
+                desired = bool(self.safety.estop_active)
+                with self._estop_guard:
+                    if generation == self._estop_generation:
+                        self.estop_active = desired
+            finally:
+                self._write_lock.release()
+
+    def request_estop(self) -> None:
+        """Revoke subsequent writes without waiting for a driver-held lock.
+
+        Bytes already inside the driver cannot be recalled. Every later
+        admission checks this latch again under the write lock.
+        """
+        # This metadata guard never encloses a driver wait or safety read.
+        # Pairing generation/latch prevents a stale UI restoration from
+        # clearing a request that arrived after its safety snapshot.
+        with self._estop_guard:
+            self._estop_generation += 1
+            self.estop_active = True
 
     def trigger_estop(self) -> None:
         with self._write_lock:
-            self.estop_active = True
+            self.request_estop()
 
     def release_estop(self) -> None:
         with self._write_lock:
-            self.estop_active = False
+            with self._estop_guard:
+                self._estop_generation += 1
+                self.estop_active = False
 
     def write_stop_command(self) -> tuple[bool, str]:
         """拒绝伪造串口 0x0311；调用方应使用 BackendManager.trigger_estop。"""

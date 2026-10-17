@@ -1,0 +1,111 @@
+
+--- test_crc_cross_check ---
+[SKIP] 未找到队内 CRC8_CRC16.py 参考实现，跳过三方对拍
+
+--- test_joint_state ---
+[PASS] 段 0x1D 整帧一次性消费
+[PASS] 0x1D JointState 解出
+[PASS] 0x1D 字段与符号
+
+--- test_imu ---
+[PASS] 段 0x02 整帧一次性消费
+[PASS] 0x02 IMU 解出 6 个量
+[PASS] 0x02 yaw 与角速度
+
+--- test_robot_status ---
+[PASS] 段 0x0A 整帧一次性消费
+[PASS] 0x0A RobotStatus 解出
+[PASS] 0x0A 位域与全字段
+
+--- test_robot_state_info_bitfields ---
+[PASS] 段 0x03 整帧一次性消费
+[PASS] 0x03 解出
+[PASS] 0x03 位域按 LSB-first 拆分（与队内 data_procecss.py 同序）
+
+--- test_game_status_and_buff_and_extras ---
+[PASS] 段 0x04 整帧一次性消费
+[PASS] 0x04 game_type/game_progress 位域
+[PASS] 段 0x0D 整帧一次性消费
+[PASS] 0x0D Buff 字段
+[PASS] 段 0x0F 整帧一次性消费
+[PASS] 0x0F ShootData 初速/射速（自瞄与吊射标定真值）
+[PASS] 段 0x06 整帧一次性消费
+[PASS] 0x06 全场 HP 按 ally 序（仅己方）
+[PASS] 段 0x11 整帧一次性消费
+[PASS] 0x11 RFID 状态
+[PASS] 段 0x13 整帧一次性消费
+[PASS] 0x13 地面机器人位置
+[PASS] 段 0x1E 整帧一次性消费
+[PASS] 0x1E RobotMotion vx/vy/wz
+[PASS] 段 0x07 整帧一次性消费
+[PASS] 0x07 Event
+[PASS] 段 0x08 整帧一次性消费
+[PASS] 0x08 裁判警告
+
+--- test_debug_segment ---
+[PASS] 段 0x01 整帧一次性消费
+[PASS] 0x01 Debug 解出
+[PASS] 0x01 具名浮点位（空名被丢弃）
+
+--- test_stream_split_and_resync ---
+[PASS] 噪声前缀 + 逐字节分片仍解出 2 段
+[PASS] 假 SOF 只造成有限次 crc8 失败，不崩不丢后续帧
+[PASS] 半帧不消费
+[PASS] 损坏帧被丢弃且计数
+[PASS] 未启用段跳过不报错
+[PASS] 载荷长度不符被拒
+
+--- test_robot_cmd_layout ---
+[PASS] RobotCmd 整帧 49 字节
+[PASS] SOF 为 0x5A
+[PASS] len 字段 = 4 + 39 = 43
+[PASS] id 字段 = 0x01 且位于帧头内
+[PASS] 帧头 CRC8 自校验通过
+[PASS] 整帧 CRC16 自校验通过
+[PASS] 9 个浮点字段顺序正确
+[PASS] fric_on / tracking 可置位
+[PASS] 未显式给的 chassis 姿态/腿长保持 0
+
+--- test_fire_bit_invariant ---
+[PASS] encode_robot_cmd 签名不含 fire 参数
+[PASS] 500 组随机输入 fire 字节恒为 0
+
+--- test_timestamp_monotonic_contract ---
+[PASS] 2000 次调用严格递增
+[PASS] 发出的值始终可打包为 u32
+[PASS] 未跨回绕边界时不报 roll
+[PASS] 同一实例连续调用仍逐次变大
+[PASS] 带 floor 续接后仍大于上一会话末值
+[PASS] 跨 u32 边界时 roll_detected 置位
+[PASS] 回绕后发出的值仍是合法 u32
+[PASS] 零帧时间戳序列也严格递增
+
+--- test_unit_conversion_guard ---
+[PASS] deg->rad 正确
+[PASS] rad->deg 正确
+[PASS] 往返一致
+
+--- test_virtual_rc_layout ---
+[PASS] VirtualRC 整帧 32 字节
+[PASS] SOF=0x5A
+[PASS] len 字段 = 26
+[PASS] id 字段 = 0x03
+[PASS] 帧头 CRC8 自洽
+[PASS] 整帧 CRC16 自洽
+[PASS] 时间戳落在偏移 4
+[PASS] ch[5] 为 int16 LE
+[PASS] s[2] 为 int8
+[PASS] key.v 在偏移 28、为 u16
+[PASS] mouse/press 默认全零
+
+--- test_key_bit_order_matches_official_keyboard ---
+[PASS] RC_KEY_BITS 与官方 KEYBOARD_BITS 位序逐项一致
+[PASS] W+D 打包为 0x09
+[PASS] 空输入为 0
+[PASS] 掩码只含 W/S/A/D 四位
+[PASS] Q/E/SHIFT/F 等所有非驾驶键均被掩码拦下
+[PASS] 全 16 键同时按下也只漏出 W/S/A/D
+[PASS] encode_virtual_rc 在字节层也强制裁到 0x0F
+
+============================================================
+ALL POLAR_LINK TESTS PASSED

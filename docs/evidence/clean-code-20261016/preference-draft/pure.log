@@ -1,0 +1,12 @@
+test_accept_clears_forced_intent_but_follow_live_does_not (test_preference_draft.PreferenceDraftTests.test_accept_clears_forced_intent_but_follow_live_does_not) ... ok
+test_accept_copies_snapshot_and_exposes_read_only_baseline (test_preference_draft.PreferenceDraftTests.test_accept_copies_snapshot_and_exposes_read_only_baseline) ... ok
+test_clean_observation_occurs_exactly_once_and_failures_propagate (test_preference_draft.PreferenceDraftTests.test_clean_observation_occurs_exactly_once_and_failures_propagate) ... ok
+test_edit_partitions_retain_input_order_and_all_categories (test_preference_draft.PreferenceDraftTests.test_edit_partitions_retain_input_order_and_all_categories) ... ok
+test_forced_intent_short_circuits_observation (test_preference_draft.PreferenceDraftTests.test_forced_intent_short_circuits_observation) ... ok
+test_import_does_not_require_qt_model_or_backend (test_preference_draft.PreferenceDraftTests.test_import_does_not_require_qt_model_or_backend) ... ok
+test_missing_baseline_still_fails_instead_of_accepting_new_fields (test_preference_draft.PreferenceDraftTests.test_missing_baseline_still_fails_instead_of_accepting_new_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.040s
+
+OK

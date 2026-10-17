@@ -1,0 +1,245 @@
+{
+  "changes": {
+    "rm_client.backend.manager:BackendManager._tick_polar_link_ready": {
+      "after": {
+        "decisions": 10,
+        "max_control_depth": 1,
+        "statements": 27
+      },
+      "before": {
+        "decisions": 134,
+        "max_control_depth": 4,
+        "statements": 191
+      },
+      "reason": "Detached gate/readback/spin policy values and focused orchestration; differential policy and manager characterization tests retained."
+    },
+    "rm_client.config_store:apply_registry_config": {
+      "after": {
+        "decisions": 3,
+        "max_control_depth": 1,
+        "statements": 6
+      },
+      "before": {
+        "decisions": 61,
+        "max_control_depth": 4,
+        "statements": 114
+      },
+      "reason": "Delegates validated finite-JSON preparation and rollback-aware application to explicit configuration boundaries; invalid-input and transaction rollback tests retained."
+    },
+    "rm_client.ui.polar.mixins.config_actions_mixin:ConfigActionsMixin.handle_config_action": {
+      "after": {
+        "decisions": 4,
+        "max_control_depth": 1,
+        "statements": 7
+      },
+      "before": {
+        "decisions": 64,
+        "max_control_depth": 4,
+        "statements": 132
+      },
+      "reason": "Exact command resolution and focused adapters replace the command chain; command routing, cancellation and fail-closed effect tests retained."
+    },
+    "rm_client.ui.polar.mixins.config_actions_mixin:ConfigActionsMixin.handle_qualification_action": {
+      "after": {
+        "decisions": 2,
+        "max_control_depth": 1,
+        "statements": 8
+      },
+      "before": {
+        "decisions": 74,
+        "max_control_depth": 3,
+        "statements": 142
+      },
+      "reason": "Exact command selection and pure qualification observations separate from evidence mutations; command and observation characterization retained."
+    },
+    "rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.build_gpu_economy_workspace": {
+      "after": {
+        "decisions": 80,
+        "max_control_depth": 3,
+        "statements": 218
+      },
+      "before": {
+        "decisions": 90,
+        "max_control_depth": 3,
+        "statements": 240
+      },
+      "reason": "Shared bounded economy-confirmation presentation removed duplicated confirmation logic; both rendering paths remain characterized. Geometry work after this snapshot is not credited."
+    },
+    "rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.draw_economy_overlay_compat": {
+      "after": {
+        "decisions": 61,
+        "max_control_depth": 3,
+        "statements": 199
+      },
+      "before": {
+        "decisions": 73,
+        "max_control_depth": 3,
+        "statements": 221
+      },
+      "reason": "Shared bounded economy-confirmation presentation removed duplicated confirmation logic; both rendering paths remain characterized. Geometry work after this snapshot is not credited."
+    },
+    "rm_client.ui.polar_app:PolarRMWindow._paint_gpu_frame_cached": {
+      "after": {
+        "decisions": 69,
+        "max_control_depth": 5,
+        "statements": 167
+      },
+      "before": {
+        "decisions": 92,
+        "max_control_depth": 5,
+        "statements": 226
+      },
+      "reason": "Explicit frame/painter ownership and focused rendering collaborators reduce direct orchestration; fallback, cleanup and real CPU-frame tests retained. Native GL remains unqualified."
+    },
+    "rm_client.ui.polar_app:PolarRMWindow.on_tick": {
+      "after": {
+        "decisions": 1,
+        "max_control_depth": 1,
+        "statements": 11
+      },
+      "before": {
+        "decisions": 55,
+        "max_control_depth": 2,
+        "statements": 111
+      },
+      "reason": "Delegates timing to an explicit clock/controller and retains lifecycle admission; stage order, faults and real normal/pending/resumed frame tests retained."
+    }
+  },
+  "measured_git_tree": "21aca3d5ba93ee5d442dd0d4e690c465002917d4",
+  "measured_local_commit": "f70bae188540d37671062afd8dfa00eead90e7ea",
+  "measured_source_sha256": "433636b750e4a50c654637ce6df0677b7db519bd33bbd9c534140922b2c5dd78",
+  "schema_version": 1,
+  "scope": "Reviewed downward-only limits; not a runtime, GL or hardware acceptance report.",
+  "source_identity_note": "The commit is local stage provenance. Reproduction requires only the checked-out source and committed budgets; the source digest is independent of Git ancestry.",
+  "unchanged": [
+    "lint_debt",
+    "runtime_cycles",
+    "paint_overlay budget",
+    "original source provenance"
+  ],
+  "validation": {
+    "growth_mutations": [
+      {
+        "metric": "statements",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.backend.manager:BackendManager._tick_polar_link_ready"
+      },
+      {
+        "metric": "decisions",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.backend.manager:BackendManager._tick_polar_link_ready"
+      },
+      {
+        "metric": "max_control_depth",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.backend.manager:BackendManager._tick_polar_link_ready"
+      },
+      {
+        "metric": "statements",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.config_store:apply_registry_config"
+      },
+      {
+        "metric": "decisions",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.config_store:apply_registry_config"
+      },
+      {
+        "metric": "max_control_depth",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.config_store:apply_registry_config"
+      },
+      {
+        "metric": "statements",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.config_actions_mixin:ConfigActionsMixin.handle_config_action"
+      },
+      {
+        "metric": "decisions",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.config_actions_mixin:ConfigActionsMixin.handle_config_action"
+      },
+      {
+        "metric": "max_control_depth",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.config_actions_mixin:ConfigActionsMixin.handle_config_action"
+      },
+      {
+        "metric": "statements",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.config_actions_mixin:ConfigActionsMixin.handle_qualification_action"
+      },
+      {
+        "metric": "decisions",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.config_actions_mixin:ConfigActionsMixin.handle_qualification_action"
+      },
+      {
+        "metric": "max_control_depth",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.config_actions_mixin:ConfigActionsMixin.handle_qualification_action"
+      },
+      {
+        "metric": "statements",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.build_gpu_economy_workspace"
+      },
+      {
+        "metric": "decisions",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.build_gpu_economy_workspace"
+      },
+      {
+        "metric": "max_control_depth",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.build_gpu_economy_workspace"
+      },
+      {
+        "metric": "statements",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.draw_economy_overlay_compat"
+      },
+      {
+        "metric": "decisions",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.draw_economy_overlay_compat"
+      },
+      {
+        "metric": "max_control_depth",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar.mixins.economy_mixin:EconomyMixin.draw_economy_overlay_compat"
+      },
+      {
+        "metric": "statements",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar_app:PolarRMWindow._paint_gpu_frame_cached"
+      },
+      {
+        "metric": "decisions",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar_app:PolarRMWindow._paint_gpu_frame_cached"
+      },
+      {
+        "metric": "max_control_depth",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar_app:PolarRMWindow._paint_gpu_frame_cached"
+      },
+      {
+        "metric": "statements",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar_app:PolarRMWindow.on_tick"
+      },
+      {
+        "metric": "decisions",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar_app:PolarRMWindow.on_tick"
+      },
+      {
+        "metric": "max_control_depth",
+        "result": "rejected_limit_plus_one",
+        "symbol": "rm_client.ui.polar_app:PolarRMWindow.on_tick"
+      }
+    ],
+    "measured_source_gate": "PASS"
+  }
+}

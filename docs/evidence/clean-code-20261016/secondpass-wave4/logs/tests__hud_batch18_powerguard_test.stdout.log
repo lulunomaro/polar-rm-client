@@ -1,0 +1,41 @@
+[PASS] 模块关着、clean=True 时比例 0.0 配色不变  -> #101010 vs #101010
+[PASS] 模块关着、clean=True 时比例 0.5 配色不变  -> #101010 vs #101010
+[PASS] 模块关着、clean=True 时比例 0.77 配色不变  -> #101010 vs #101010
+[PASS] 模块关着、clean=True 时比例 0.79 配色不变  -> #202020 vs #202020
+[PASS] 模块关着、clean=True 时比例 0.91 配色不变  -> #202020 vs #202020
+[PASS] 模块关着、clean=True 时比例 0.95 配色不变  -> #303030 vs #303030
+[PASS] 默认配置下 PowerGuard 就是关着的
+[PASS] 模块关着、clean=False 时比例 0.0 配色不变  -> #56fff0 vs #56fff0
+[PASS] 模块关着、clean=False 时比例 0.5 配色不变  -> #56fff0 vs #56fff0
+[PASS] 模块关着、clean=False 时比例 0.77 配色不变  -> #56fff0 vs #56fff0
+[PASS] 模块关着、clean=False 时比例 0.79 配色不变  -> #56fff0 vs #56fff0
+[PASS] 模块关着、clean=False 时比例 0.91 配色不变  -> #56fff0 vs #56fff0
+[PASS] 模块关着、clean=False 时比例 0.95 配色不变  -> #56fff0 vs #56fff0
+[PASS] 默认配置下 PowerGuard 就是关着的
+[PASS] 热量 100 未达阈值 180 -> 不额外告警（比例只有 0.42）  -> #101010
+[PASS] 热量刚到阈值 180 就告警（>= 边界含等号）
+[PASS] 比例只有 0.75 时被顶到 warning 档  -> #202020
+[PASS] 已经在 danger 档时不得被降级成 warning  -> #303030
+[PASS] 阈值 180 时热量 180 告警
+[PASS] 把阈值**调高**到 200 后不再告警（越高越宽松，方向正确）
+[PASS] 把阈值**调低**到 100 后更早告警
+[PASS] 阈值 0 = 关掉这项，不强行告警
+[PASS] 垃圾阈值不致崩也不告警
+[PASS] 模块关闭后即使阈值极低也不参与
+[PASS] 小地图遥测行 同步进入告警色  -> #202020
+[PASS] 顶栏战况行 同步进入告警色  -> #202020
+[PASS] 圆环战况行 同步进入告警色  -> #202020
+[PASS] 液态地图 HEAT 同步进入告警色  -> #202020
+[PASS] 3v3 圆环行同样同步  -> ['HEAT']
+[PASS] 打开 PowerGuard 热量阈值不改变功率行颜色  -> PySide6.QtGui.QColor.fromRgbF(0.188235, 0.188235, 0.188235, 1.000000) vs PySide6.QtGui.QColor.fromRgbF(0.188235, 0.188235, 0.188235, 1.000000)
+[PASS] 但热量行自己确实变了（证明上面那条不是空比）  -> PySide6.QtGui.QColor.fromRgbF(0.062745, 0.062745, 0.062745, 1.000000) vs PySide6.QtGui.QColor.fromRgbF(0.125490, 0.125490, 0.125490, 1.000000)
+[PASS] 默认配下 7v7 顶栏拿不到热量行（四行预算限制）  -> ['OWN BASE', 'ENEMY BASE', 'OUTPOST', 'GOLD']
+[PASS] 两个模块都关着 -> 不告警（=接线前行为）
+[PASS] 只有 Capacitor(Warn=25)、电容 20% -> 告警（既有行为不回退）
+[PASS] PowerGuard 阈值更松时不得放松结论（仍告警）
+[PASS] 电容 28%：Cap=25 单独时不告警
+[PASS] 再开 PowerGuard(=30) 后取更严的那个 -> 告警
+[PASS] PowerGuard 关掉后它的阈值完全不参与（不会偷偷收紧）
+[PASS] 状态卡片 CAP 与遥测行共用同一结论  -> True
+
+合计 0 项失败

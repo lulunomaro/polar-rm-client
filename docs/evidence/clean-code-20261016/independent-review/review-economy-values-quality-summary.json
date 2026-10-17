@@ -1,0 +1,32 @@
+{
+  "all_import_cycles": [
+    [
+      "rm_client.ui.polar.app_entry",
+      "rm_client.ui.polar_app"
+    ]
+  ],
+  "gate": {
+    "baseline_revision": "d64f1528e2e1864ef369537c026b6d3f7127f590",
+    "status": "PASS",
+    "violations": []
+  },
+  "runtime_cycles": [],
+  "schema_version": 1,
+  "source_directories": [
+    "rm_client"
+  ],
+  "source_tree_sha256": "ae00bbbe6d97cc7713cb3026a40dbc8cff7416eb3b9125b8e839a4c051fd9137",
+  "summary": {
+    "decisions": 12899,
+    "files": 195,
+    "functions": 3232,
+    "historical_ui_functions": 50,
+    "historical_ui_modules": 1,
+    "import_edges": 578,
+    "parsed_files": 195,
+    "statements": 36697
+  },
+  "syntax_errors": [],
+  "omitted_detail": "Per-module/function detail omitted; retained gate, source hash, full-tree totals and both cycle graphs.",
+  "full_report_sha256": "0706f8acaee2afe1880f138a1cecfd3e8a99264d22493be3ca22c67b4e070eb8"
+}

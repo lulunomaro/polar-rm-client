@@ -1,0 +1,220 @@
+[protocol] uplink roundtrip
+  ok perf shooter=3
+  ok perf chassis=4
+  ok dart target=5
+  ok dart open
+  ok dart confirm
+  ok map is_send_all
+  ok map robot_id fixed 7 bytes
+  ok map category is field 3 (proto mode)
+  ok map enemy
+  ok map ascii
+  ok map marking mode is field 6 (proto type)
+  ok map x
+  ok map y
+  ok km mouse_x
+  ok km mouse_y
+  ok km left
+  ok km key
+  ok cc len
+  ok vision custom payload bounded
+  ok vision custom payload versioned
+  ok spin custom payload bounded
+  ok spin custom payload versioned
+  ok spin custom payload direction/flags
+  ok spin manager mock publishes
+  ok spin manager uses CustomControl
+  ok spin manager wraps team payload
+  ok AssemblyCommand encodes
+  ok HeroDeployModeEventCommand encodes
+  ok RuneActivateCommand encodes
+  ok SentryCtrlCommand encodes
+  ok AirSupportCommand encodes
+  ok CommonCommand encodes
+  ok MapClickCmd encodes
+[protocol] downlink decode
+  ok GameStatus round
+  ok GameStatus stage
+  ok GameStatus countdown
+  ok GameStatus paused
+  ok GUS base
+  ok GUS outpost
+  ok GUS enemy base
+  ok GUS robot_health
+  ok GUS bullets
+  ok RDS health
+  ok RDS heat
+  ok RDS ammo
+  ok RDS remote_heal
+  ok POS id
+  ok POS x
+  ok POS yaw
+  ok Radar count
+  ok Radar highlight
+  ok Rune status
+  ok Rune rings
+[safety] hard gate modes
+  ok fail-closed before GameStatus
+  ok LabDebug blocks real publish
+  ok Campus fighting remains locked
+  ok qualification token allows specified intent
+  ok qualification token cannot widen intent
+  ok armed core KMC allowed
+  ok KMC 75Hz limited
+  ok PRM1 remains separately locked
+  ok Estop blocks
+  ok Estop release requires re-arm
+[video] codec detect
+  ok mjpeg detect
+  ok h265 detect
+  ok unknown detect
+[video] decoded timestamp + source selection
+  ok decoded freshness probe avoids packet-only state
+  ok freshest UDP decode wins
+  ok encoded timestamp cannot refresh stale image
+  ok stale decoded freshness resets
+  ok stale MJPEG image released
+  ok released MJPEG cannot freeze
+  ok UDP decoder restart stays off receive thread
+  ok decoder input queue is bounded and non-blocking
+  ok decoder input drop is observable
+  ok synthetic source cannot reuse backend frame
+  ok manager auto picks freshest source
+  ok manager honors native source
+  ok Hero deploy stops UDP decoder
+  ok Hero deploy selects Native 0x0310
+  ok Hero has no UDP fallback
+  ok Hero native loss yields no camera/UDP frame
+  ok Hero exit restores normal UDP source
+  ok native SPS finder 4-byte
+  ok native SPS finder 3-byte
+  ok native SPS finder rejects non-SPS
+  ok native reset blocks until SPS
+  ok native gap blocks corrupt continuation
+  ok native stream retains no unbounded bytearray
+  ok native sequence gap counted
+  ok native duplicate rejected
+  ok native resumes exactly at SPS
+  ok native payload writes bounded
+  ok native gaps do not synchronously restart ffmpeg
+  ok native decoder crash waits for SPS
+  ok native decoder restarts only at SPS
+[serial] mock + reject video-link 0x0311
+  ok stub not connected
+  ok serial 0x0311 rejected
+  ok other serial mock write ok
+[manager] apply_updates -> RobotState
+  ok applied 6 messages
+  ok state stage MATCH
+  ok state red_score
+  ok state base_health
+  ok state official_robot_health
+  ok state official_robot_bullets
+  ok infantry projectile allowance mapped
+  ok state module_status
+  ok state positions
+  ok state rune phase
+  ok state rune progress
+  ok state active_penalty
+  ok hero static status applied
+  ok blue hero projectile allowance remapped
+  ok empty projectile vector applied
+  ok empty projectile vector clears HUD
+  ok perf default infantry
+[manager] real decoder metadata + per-message isolation
+  ok present metadata does not crash
+  ok module values applied
+  ok performance values applied after bad message
+  ok bad message counted
+[protocol] V1.3.1 map direction + 5+5 health order
+  ok map downlink decoded
+  ok blue ally order
+  ok blue enemy order
+[manager] neutral shutdown + consumed readiness
+  ok readiness consumed into state
+  ok readiness remains fail closed
+  ok shutdown emits neutral KMC
+  ok shutdown neutral payload exact
+  ok shutdown latches local estop
+  ok shutdown emits no undocumented JSON topic
+[manager] reconnect retained-status safety
+  ok restart emits neutral KMC
+  ok restart omits retained offline
+  ok start false keeps transports stopped
+  ok new scenario starts fail closed
+[manager] control epoch clears host input
+  ok explicit lock requests input clear
+  ok MQTT timeout requests input clear
+  ok reconnect does not re-arm
+  ok input clear generation is observable
+[protocol] regression fixes
+  ok empty payload -> {}
+  ok truncated varint -> {}
+  ok varint masked 64-bit
+  ok present marker
+  ok missing field default
+  ok robot_id default 7 bytes
+  ok MapClickCmd uplink
+  ok MapClickInfo downlink
+  ok MapClickInfo not uplink
+  ok custom_control >30 raises
+  ok custom_control 30 ok
+  ok topic unknown -> empty
+  ok topic known
+  ok mixed packed+unpacked
+[serial] partial frame retention
+  ok one complete frame
+  ok consumed == len(frame_a)
+  ok partial retained
+[video] codec regressions
+  ok h264 sps
+  ok trailing start code no crash
+  ok prefixed mjpeg
+  ok hevc vps
+[mqtt] publish rc + estop mock + client_id
+  ok disconnected publish rc -> False
+  ok connected publish ok
+  ok 10Hz after real publish
+  ok estop blocks mock
+  ok client_id updated
+[frontend] backend -> HUD data sync
+  ok official scene clears mock projectile allowance
+  ok applied 6
+  ok frontend synced flag
+  ok robot_rows real hp
+  ok local row hp
+  ok local row pos
+  ok local row modules
+  ok enemy row hp
+  ok dead row
+  ok map_robots real
+  ok buff_rows real
+  ok authoritative buff drives HUD indicator
+  ok LabDebug buff indicator keeps explicit fallback
+  ok official state never reuses mock buff fallback
+  ok other robot buff does not light local indicator
+  ok authoritative inactive buff suppresses mock fallback
+  ok empty module status adds no HUD row
+  ok official module status maps to stable HUD chips
+  ok official rows survive 60Hz model tick
+  ok official values survive 60Hz model tick
+  ok first MapClick applied
+  ok first MapClick retained
+  ok MapClick survives next model tick
+  ok scenario reset clears injury baseline
+  ok scenario reset preserves monotonic hit revision
+  ok scenario reset clears authoritative projectile vector
+[native] 0x0310 H.264 reassembly -> persistent decoder
+  ok h264 bytes generated
+  ok native decoder ready
+  ok native decoded frames
+  ok native latest frame
+[decoder] ContinuousMjpegDecoder h264 end-to-end
+  ok decoder start
+ACTIVE test_persistent_h264_decoder
+  ok h264 frame decoded
+[decoder] MJPEG stream splitter (no ffmpeg needed)
+  ok jpeg encode ok
+  ok two frames split
+  ok splitter drained
+\nALL PASSED (198 checks)

@@ -1,0 +1,32 @@
+.FFF
+======================================================================
+FAIL: test_failed_descriptor_close_retains_both_errors_and_still_unlinks (__main__.TemporaryDescriptorTests.test_failed_descriptor_close_retains_both_errors_and_still_unlinks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audio-recovery/tests/test_preference_file_descriptor.py", line 63, in test_failed_descriptor_close_retains_both_errors_and_still_unlinks
+    self.assertIs(getattr(caught.exception, "cause", None), primary)
+AssertionError: None is not OSError('fdopen')
+
+======================================================================
+FAIL: test_fdopen_close_and_unlink_failures_remain_independent (__main__.TemporaryDescriptorTests.test_fdopen_close_and_unlink_failures_remain_independent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audio-recovery/tests/test_preference_file_descriptor.py", line 77, in test_fdopen_close_and_unlink_failures_remain_independent
+    self.assertIs(getattr(nested, "cause", None), primary)
+AssertionError: None is not OSError('fdopen')
+
+======================================================================
+FAIL: test_fdopen_rejection_closes_unadopted_descriptor_and_preserves_cause (__main__.TemporaryDescriptorTests.test_fdopen_rejection_closes_unadopted_descriptor_and_preserves_cause)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-audio-recovery/tests/test_preference_file_descriptor.py", line 46, in test_fdopen_rejection_closes_unadopted_descriptor_and_preserves_cause
+    self.assert_closed()
+  File "/workspace/shared/clean-audio-recovery/tests/test_preference_file_descriptor.py", line 38, in assert_closed
+    with self.assertRaises(OSError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.003s
+
+FAILED (failures=3)

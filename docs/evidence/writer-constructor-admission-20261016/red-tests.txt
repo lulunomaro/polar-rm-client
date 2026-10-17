@@ -1,0 +1,332 @@
+test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) ... 
+  test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='dt7', mode='raise') ... ERROR
+  test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='dt7', mode='false') ... ERROR
+  test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='dt7', mode='still_open') ... ERROR
+  test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='cc', mode='raise') ... ERROR
+  test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='cc', mode='false') ... ERROR
+  test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='cc', mode='still_open') ... ERROR
+test_finished_late_error_keeps_completion_without_duplicate_cleanup (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_finished_late_error_keeps_completion_without_duplicate_cleanup) ... 
+  test_finished_late_error_keeps_completion_without_duplicate_cleanup (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_finished_late_error_keeps_completion_without_duplicate_cleanup) (kind='dt7') ... ERROR
+  test_finished_late_error_keeps_completion_without_duplicate_cleanup (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_finished_late_error_keeps_completion_without_duplicate_cleanup) (kind='cc') ... ERROR
+test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner) ... 
+  test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner) (kind='dt7') ... ERROR
+  test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner) (kind='cc') ... ERROR
+test_live_late_error_cancels_actual_worker_and_preserves_primary_failure (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_live_late_error_cancels_actual_worker_and_preserves_primary_failure) ... 
+  test_live_late_error_cancels_actual_worker_and_preserves_primary_failure (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_live_late_error_cancels_actual_worker_and_preserves_primary_failure) (kind='dt7', error_type=<class 'RuntimeError'>) ... FAIL
+  test_live_late_error_cancels_actual_worker_and_preserves_primary_failure (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_live_late_error_cancels_actual_worker_and_preserves_primary_failure) (kind='dt7', error_type=<class 'KeyboardInterrupt'>) ... FAIL
+  test_live_late_error_cancels_actual_worker_and_preserves_primary_failure (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_live_late_error_cancels_actual_worker_and_preserves_primary_failure) (kind='cc', error_type=<class 'RuntimeError'>) ... FAIL
+  test_live_late_error_cancels_actual_worker_and_preserves_primary_failure (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_live_late_error_cancels_actual_worker_and_preserves_primary_failure) (kind='cc', error_type=<class 'KeyboardInterrupt'>) ... FAIL
+test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement) ... 
+  test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement) (kind='dt7') ... FAIL
+  test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement) (kind='cc') ... FAIL
+test_never_admitted_worker_has_owner_and_background_close_without_false_join (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_never_admitted_worker_has_owner_and_background_close_without_false_join) ... 
+  test_never_admitted_worker_has_owner_and_background_close_without_false_join (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_never_admitted_worker_has_owner_and_background_close_without_false_join) (kind='dt7') ... ERROR
+  test_never_admitted_worker_has_owner_and_background_close_without_false_join (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_never_admitted_worker_has_owner_and_background_close_without_false_join) (kind='cc') ... ERROR
+test_raising_retention_callback_is_sealed_before_any_worker_admission (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_raising_retention_callback_is_sealed_before_any_worker_admission) ... 
+  test_raising_retention_callback_is_sealed_before_any_worker_admission (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_raising_retention_callback_is_sealed_before_any_worker_admission) (kind='dt7') ... FAIL
+  test_raising_retention_callback_is_sealed_before_any_worker_admission (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_raising_retention_callback_is_sealed_before_any_worker_admission) (kind='cc') ... FAIL
+test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path) ... 
+  test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path) (kind='dt7', reject_at='construction') ... FAIL
+  test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path) (kind='dt7', reject_at='start') ... FAIL
+  test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path) (kind='cc', reject_at='construction') ... FAIL
+  test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path) (kind='cc', reject_at='start') ... FAIL
+test_retention_happens_before_worker_construction_and_annotation_is_optional (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_retention_happens_before_worker_construction_and_annotation_is_optional) ... 
+  test_retention_happens_before_worker_construction_and_annotation_is_optional (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_retention_happens_before_worker_construction_and_annotation_is_optional) (kind='dt7') ... FAIL
+  test_retention_happens_before_worker_construction_and_annotation_is_optional (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_retention_happens_before_worker_construction_and_annotation_is_optional) (kind='cc') ... FAIL
+
+======================================================================
+ERROR: test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='dt7', mode='raise')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 205, in test_failed_close_retains_native_owner_for_explicit_background_retry
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='dt7', mode='false')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 205, in test_failed_close_retains_native_owner_for_explicit_background_retry
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='dt7', mode='still_open')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 205, in test_failed_close_retains_native_owner_for_explicit_background_retry
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='cc', mode='raise')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 205, in test_failed_close_retains_native_owner_for_explicit_background_retry
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='cc', mode='false')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 205, in test_failed_close_retains_native_owner_for_explicit_background_retry
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_failed_close_retains_native_owner_for_explicit_background_retry (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_close_retains_native_owner_for_explicit_background_retry) (kind='cc', mode='still_open')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 205, in test_failed_close_retains_native_owner_for_explicit_background_retry
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_finished_late_error_keeps_completion_without_duplicate_cleanup (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_finished_late_error_keeps_completion_without_duplicate_cleanup) (kind='dt7')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 169, in test_finished_late_error_keeps_completion_without_duplicate_cleanup
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_finished_late_error_keeps_completion_without_duplicate_cleanup (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_finished_late_error_keeps_completion_without_duplicate_cleanup) (kind='cc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 169, in test_finished_late_error_keeps_completion_without_duplicate_cleanup
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner) (kind='dt7')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 184, in test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner) (kind='cc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 184, in test_late_error_does_not_wait_for_slow_native_close_or_duplicate_owner
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_never_admitted_worker_has_owner_and_background_close_without_false_join (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_never_admitted_worker_has_owner_and_background_close_without_false_join) (kind='dt7')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 151, in test_never_admitted_worker_has_owner_and_background_close_without_false_join
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+ERROR: test_never_admitted_worker_has_owner_and_background_close_without_false_join (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_never_admitted_worker_has_owner_and_background_close_without_false_join) (kind='cc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 151, in test_never_admitted_worker_has_owner_and_background_close_without_false_join
+    self.assertIs(failure.failed_writer, owner)
+                  ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RuntimeError' object has no attribute 'failed_writer'
+
+======================================================================
+FAIL: test_live_late_error_cancels_actual_worker_and_preserves_primary_failure (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_live_late_error_cancels_actual_worker_and_preserves_primary_failure) (kind='dt7', error_type=<class 'RuntimeError'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 135, in test_live_late_error_cancels_actual_worker_and_preserves_primary_failure
+    self.assertTrue(owner._closing)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_live_late_error_cancels_actual_worker_and_preserves_primary_failure (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_live_late_error_cancels_actual_worker_and_preserves_primary_failure) (kind='dt7', error_type=<class 'KeyboardInterrupt'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 135, in test_live_late_error_cancels_actual_worker_and_preserves_primary_failure
+    self.assertTrue(owner._closing)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_live_late_error_cancels_actual_worker_and_preserves_primary_failure (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_live_late_error_cancels_actual_worker_and_preserves_primary_failure) (kind='cc', error_type=<class 'RuntimeError'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 135, in test_live_late_error_cancels_actual_worker_and_preserves_primary_failure
+    self.assertTrue(owner._closing)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_live_late_error_cancels_actual_worker_and_preserves_primary_failure (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_live_late_error_cancels_actual_worker_and_preserves_primary_failure) (kind='cc', error_type=<class 'KeyboardInterrupt'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 135, in test_live_late_error_cancels_actual_worker_and_preserves_primary_failure
+    self.assertTrue(owner._closing)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement) (kind='dt7')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 330, in test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement
+    self.assertIsNotNone(owner)
+AssertionError: unexpectedly None
+
+======================================================================
+FAIL: test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement) (kind='cc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 330, in test_manager_retains_failed_owner_after_traceback_gc_and_blocks_replacement
+    self.assertIsNotNone(owner)
+AssertionError: unexpectedly None
+
+======================================================================
+FAIL: test_raising_retention_callback_is_sealed_before_any_worker_admission (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_raising_retention_callback_is_sealed_before_any_worker_admission) (kind='dt7')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 121, in construct_failure
+    FACTORIES[kind](mock_output=True, **kwargs)
+TypeError: AsyncDt7KeyMouseLink.__init__() got an unexpected keyword argument 'retain_owner'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 281, in test_raising_retention_callback_is_sealed_before_any_worker_admission
+    self.construct_failure(kind, failure, retain_owner=retain)
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 123, in construct_failure
+    self.assertIs(caught, failure)
+AssertionError: TypeError("AsyncDt7KeyMouseLink.__init__() got an unexpected keyword argument 'retain_owner'") is not UnannotatableFailure('retention callback failed')
+
+======================================================================
+FAIL: test_raising_retention_callback_is_sealed_before_any_worker_admission (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_raising_retention_callback_is_sealed_before_any_worker_admission) (kind='cc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 121, in construct_failure
+    FACTORIES[kind](mock_output=True, **kwargs)
+TypeError: AsyncCustomControllerLink.__init__() got an unexpected keyword argument 'retain_owner'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 281, in test_raising_retention_callback_is_sealed_before_any_worker_admission
+    self.construct_failure(kind, failure, retain_owner=retain)
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 123, in construct_failure
+    self.assertIs(caught, failure)
+AssertionError: TypeError("AsyncCustomControllerLink.__init__() got an unexpected keyword argument 'retain_owner'") is not UnannotatableFailure('retention callback failed')
+
+======================================================================
+FAIL: test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path) (kind='dt7', reject_at='construction')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 121, in construct_failure
+    FACTORIES[kind](mock_output=True, **kwargs)
+TypeError: AsyncDt7KeyMouseLink.__init__() got an unexpected keyword argument 'retain_owner'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 254, in test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path
+    self.construct_failure(kind, failure, retain_owner=retained.append)
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 123, in construct_failure
+    self.assertIs(caught, failure)
+AssertionError: TypeError("AsyncDt7KeyMouseLink.__init__() got an unexpected keyword argument 'retain_owner'") is not UnannotatableFailure('initial writer rejected')
+
+======================================================================
+FAIL: test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path) (kind='dt7', reject_at='start')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 121, in construct_failure
+    FACTORIES[kind](mock_output=True, **kwargs)
+TypeError: AsyncDt7KeyMouseLink.__init__() got an unexpected keyword argument 'retain_owner'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 254, in test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path
+    self.construct_failure(kind, failure, retain_owner=retained.append)
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 123, in construct_failure
+    self.assertIs(caught, failure)
+AssertionError: TypeError("AsyncDt7KeyMouseLink.__init__() got an unexpected keyword argument 'retain_owner'") is not UnannotatableFailure('initial writer rejected')
+
+======================================================================
+FAIL: test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path) (kind='cc', reject_at='construction')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 121, in construct_failure
+    FACTORIES[kind](mock_output=True, **kwargs)
+TypeError: AsyncCustomControllerLink.__init__() got an unexpected keyword argument 'retain_owner'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 254, in test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path
+    self.construct_failure(kind, failure, retain_owner=retained.append)
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 123, in construct_failure
+    self.assertIs(caught, failure)
+AssertionError: TypeError("AsyncCustomControllerLink.__init__() got an unexpected keyword argument 'retain_owner'") is not UnannotatableFailure('initial writer rejected')
+
+======================================================================
+FAIL: test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path) (kind='cc', reject_at='start')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 121, in construct_failure
+    FACTORIES[kind](mock_output=True, **kwargs)
+TypeError: AsyncCustomControllerLink.__init__() got an unexpected keyword argument 'retain_owner'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 254, in test_rejected_cleanup_construction_or_start_preserves_primary_and_retry_path
+    self.construct_failure(kind, failure, retain_owner=retained.append)
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 123, in construct_failure
+    self.assertIs(caught, failure)
+AssertionError: TypeError("AsyncCustomControllerLink.__init__() got an unexpected keyword argument 'retain_owner'") is not UnannotatableFailure('initial writer rejected')
+
+======================================================================
+FAIL: test_retention_happens_before_worker_construction_and_annotation_is_optional (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_retention_happens_before_worker_construction_and_annotation_is_optional) (kind='dt7')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 121, in construct_failure
+    FACTORIES[kind](mock_output=True, **kwargs)
+TypeError: AsyncDt7KeyMouseLink.__init__() got an unexpected keyword argument 'retain_owner'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 232, in test_retention_happens_before_worker_construction_and_annotation_is_optional
+    self.construct_failure(kind, failure, retain_owner=retained.append)
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 123, in construct_failure
+    self.assertIs(caught, failure)
+AssertionError: TypeError("AsyncDt7KeyMouseLink.__init__() got an unexpected keyword argument 'retain_owner'") is not UnannotatableFailure('worker object construction rejected')
+
+======================================================================
+FAIL: test_retention_happens_before_worker_construction_and_annotation_is_optional (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_retention_happens_before_worker_construction_and_annotation_is_optional) (kind='cc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 121, in construct_failure
+    FACTORIES[kind](mock_output=True, **kwargs)
+TypeError: AsyncCustomControllerLink.__init__() got an unexpected keyword argument 'retain_owner'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 232, in test_retention_happens_before_worker_construction_and_annotation_is_optional
+    self.construct_failure(kind, failure, retain_owner=retained.append)
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 123, in construct_failure
+    self.assertIs(caught, failure)
+AssertionError: TypeError("AsyncCustomControllerLink.__init__() got an unexpected keyword argument 'retain_owner'") is not UnannotatableFailure('worker object construction rejected')
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.037s
+
+FAILED (failures=14, errors=12)

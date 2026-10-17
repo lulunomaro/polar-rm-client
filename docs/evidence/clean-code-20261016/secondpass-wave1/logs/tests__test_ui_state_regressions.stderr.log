@@ -1,0 +1,52 @@
+test_alliance_new_source_wins_and_legacy_migrates (__main__.ConfigRegressionTests.test_alliance_new_source_wins_and_legacy_migrates) ... ok
+test_bad_candidates_rejected_before_any_registry_mutation (__main__.ConfigRegressionTests.test_bad_candidates_rejected_before_any_registry_mutation) ... ok
+test_bundled_profile_schema (__main__.ConfigRegressionTests.test_bundled_profile_schema) ... ok
+test_cross_match_failure_restores_role_options_binds_and_startup (__main__.ConfigRegressionTests.test_cross_match_failure_restores_role_options_binds_and_startup) ... ok
+test_embedded_profile_cannot_redirect_save (__main__.ConfigRegressionTests.test_embedded_profile_cannot_redirect_save) ... ok
+test_failed_atomic_replace_preserves_old_file (__main__.ConfigRegressionTests.test_failed_atomic_replace_preserves_old_file) ... ok
+test_import_preserves_existing_on_bad_json_and_bad_wheel (__main__.ConfigRegressionTests.test_import_preserves_existing_on_bad_json_and_bad_wheel) ... ok
+test_invalid_ui_apply_does_not_revoke_or_partially_apply (__main__.ConfigRegressionTests.test_invalid_ui_apply_does_not_revoke_or_partially_apply) ... ok
+test_legacy_false_prevents_first_migrated_launch (__main__.ConfigRegressionTests.test_legacy_false_prevents_first_migrated_launch) ... ok
+test_runtime_failure_restores_values_without_starting_outputs (__main__.ConfigRegressionTests.test_runtime_failure_restores_values_without_starting_outputs) ... ok
+test_runtime_load_preserves_endpoints_and_mock_choice (__main__.ConfigRegressionTests.test_runtime_load_preserves_endpoints_and_mock_choice) ... ok
+test_save_failure_retains_pending_and_retry_succeeds (__main__.ConfigRegressionTests.test_save_failure_retains_pending_and_retry_succeeds) ... ok
+test_spin_reload_notifies_only_disable_before_lock (__main__.ConfigRegressionTests.test_spin_reload_notifies_only_disable_before_lock) ... ok
+test_startup_false_prevents_profile_application (__main__.ConfigRegressionTests.test_startup_false_prevents_profile_application) ... ok
+test_startup_selected_profile_is_used (__main__.ConfigRegressionTests.test_startup_selected_profile_is_used) ... ok
+test_valid_import_has_recovery_backup_and_normalized_identity (__main__.ConfigRegressionTests.test_valid_import_has_recovery_backup_and_normalized_identity) ... ok
+test_blue_identity_locked_before_network_or_state_change (__main__.IdentityAndDisplayTests.test_blue_identity_locked_before_network_or_state_change) ... ok
+test_gold_uses_unified_economy_not_stale_polar_field (__main__.IdentityAndDisplayTests.test_gold_uses_unified_economy_not_stale_polar_field) ... ok
+test_held_observation_survives_tongji_adapter (__main__.IdentityAndDisplayTests.test_held_observation_survives_tongji_adapter) ... ok
+test_identity_reconnect_failure_leaves_old_state_locked (__main__.IdentityAndDisplayTests.test_identity_reconnect_failure_leaves_old_state_locked) ... ok
+test_lock_hook_discards_last_command_before_releasing_writers (__main__.IdentityAndDisplayTests.test_lock_hook_discards_last_command_before_releasing_writers) ... ok
+test_module_installation_fault_is_not_online (__main__.IdentityAndDisplayTests.test_module_installation_fault_is_not_online) ... ok
+test_reconnect_failure_after_id_change_keeps_all_views_aligned (__main__.IdentityAndDisplayTests.test_reconnect_failure_after_id_change_keeps_all_views_aligned) ... ok
+test_running_identity_change_latches_estop_before_new_identity (__main__.IdentityAndDisplayTests.test_running_identity_change_latches_estop_before_new_identity) ... ok
+test_window_reserved_keys_are_not_offered_as_control_binds (__main__.IdentityAndDisplayTests.test_window_reserved_keys_are_not_offered_as_control_binds) ... ok
+test_cpu_fallback_closes_modal_through_actual_paintgl_path (__main__.WindowPathTests.test_cpu_fallback_closes_modal_through_actual_paintgl_path) ... ok
+test_failed_cpu_paint_retains_modal (__main__.WindowPathTests.test_failed_cpu_paint_retains_modal) ... ok
+test_save_and_gpu_errors_never_skip_remaining_owner_cleanup (__main__.WindowPathTests.test_save_and_gpu_errors_never_skip_remaining_owner_cleanup) ... Window owner action configuration failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/workspace/shared/client-quality-integration/rm_client/ui/polar_app.py", line 3270, in <lambda>
+    OwnerAction("configuration", lambda: self.flush_auto_save(force=True)),
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-quality-integration/tests/test_ui_state_regressions.py", line 587, in invoke
+    raise OSError(name)
+OSError: save
+Window owner action clickgui_gpu failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-quality-integration/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/workspace/shared/client-quality-integration/tests/test_ui_state_regressions.py", line 587, in invoke
+    raise OSError(name)
+OSError: clickgui_gpu
+ok
+test_stale_generation_cannot_close_reopened_modal (__main__.WindowPathTests.test_stale_generation_cannot_close_reopened_modal) ... ok
+test_warning_toast_has_supported_signature (__main__.WindowPathTests.test_warning_toast_has_supported_signature) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.295s
+
+OK

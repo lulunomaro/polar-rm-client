@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source_tree_sha256": "c07e44ae48514fd35aadee7365a52a939ed07b5ee056f61f85258049b6a51fac",
+  "summary": {
+    "decisions": 13040,
+    "files": 204,
+    "functions": 3342,
+    "historical_ui_functions": 50,
+    "historical_ui_modules": 1,
+    "import_edges": 592,
+    "parsed_files": 204,
+    "statements": 37029
+  },
+  "gate": {
+    "baseline_revision": "d64f1528e2e1864ef369537c026b6d3f7127f590",
+    "status": "PASS",
+    "violations": []
+  },
+  "runtime_cycles": [],
+  "syntax_errors": []
+}

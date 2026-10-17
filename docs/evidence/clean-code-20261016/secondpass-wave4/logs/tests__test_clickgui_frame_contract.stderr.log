@@ -1,0 +1,50 @@
+test_jello_commands_and_geometry_match_direct_builder_at_multiple_sizes (__main__.BuilderCompatibilityTests.test_jello_commands_and_geometry_match_direct_builder_at_multiple_sizes) ... ok
+test_jello_frame_preserves_compatibility_pixels_at_dpr_one_and_two (__main__.BuilderCompatibilityTests.test_jello_frame_preserves_compatibility_pixels_at_dpr_one_and_two) ... ok
+test_legacy_modes_preserve_drawlist_api_and_ordered_dispatch (__main__.BuilderCompatibilityTests.test_legacy_modes_preserve_drawlist_api_and_ordered_dispatch) ... ok
+test_failed_cache_build_restores_painter_and_preserves_preference_for_retry (__main__.CachedLayerRecoveryTests.test_failed_cache_build_restores_painter_and_preserves_preference_for_retry) ... ok
+test_clearing_published_lists_does_not_erase_prepared_frame (__main__.FrameOwnershipTests.test_clearing_published_lists_does_not_erase_prepared_frame) ... ok
+test_closing_after_prepare_cannot_republish_stale_targets (__main__.FrameOwnershipTests.test_closing_after_prepare_cannot_republish_stale_targets) ... ok
+test_failed_layout_preserves_previous_geometry_and_clip (__main__.FrameOwnershipTests.test_failed_layout_preserves_previous_geometry_and_clip) ... ok
+test_frame_built_closed_stays_display_only_after_reopen (__main__.FrameOwnershipTests.test_frame_built_closed_stays_display_only_after_reopen) ... ok
+test_missing_clip_attribute_restored_after_success_and_failure (__main__.FrameOwnershipTests.test_missing_clip_attribute_restored_after_success_and_failure) ... ok
+test_prepare_isolated_publish_matches_draw_and_does_not_rebuild (__main__.FrameOwnershipTests.test_prepare_isolated_publish_matches_draw_and_does_not_rebuild) ... ok
+test_settings_payload_keeps_original_identity_and_clip (__main__.FrameOwnershipTests.test_settings_payload_keeps_original_identity_and_clip) ... ok
+test_all_real_legacy_builders_match_compatibility_api (__main__.FullWindowLegacyParityTests.test_all_real_legacy_builders_match_compatibility_api) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_direct_call_builds_prepares_and_publishes_once (__main__.OverlayIntegrationTests.test_direct_call_builds_prepares_and_publishes_once) ... ok
+test_failed_gpu_fallback_has_single_compatibility_geometry_and_same_pixels (__main__.OverlayIntegrationTests.test_failed_gpu_fallback_has_single_compatibility_geometry_and_same_pixels) ... ok
+test_prepared_frame_painted_during_close_remains_display_only (__main__.OverlayIntegrationTests.test_prepared_frame_painted_during_close_remains_display_only) ... ok
+test_prepared_frame_uses_one_layout_and_prepared_atlas (__main__.OverlayIntegrationTests.test_prepared_frame_uses_one_layout_and_prepared_atlas) ... ok
+test_previous_drawlist_and_hotspot_kwargs_remain_supported (__main__.OverlayIntegrationTests.test_previous_drawlist_and_hotspot_kwargs_remain_supported) ... ok
+test_retry_uses_same_commands_and_does_not_rebuild_layout (__main__.OverlayIntegrationTests.test_retry_uses_same_commands_and_does_not_rebuild_layout) ... ok
+test_transient_gpu_failure_recovers_next_frame_without_changing_preference (__main__.OverlayIntegrationTests.test_transient_gpu_failure_recovers_next_frame_without_changing_preference) ... ok
+test_context_failure_then_reinitialization_preserves_saved_renderer_choice (__main__.RendererInitializationContractTests.test_context_failure_then_reinitialization_preserves_saved_renderer_choice) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 1.123s
+
+OK

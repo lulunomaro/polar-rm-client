@@ -1,0 +1,66 @@
+{
+  "previous_tested_source": "c4d3bcf97ef43056bf316bbec593802652120878",
+  "current_tested_source": "6ad0123c64121b49c6e5f6ec654b3a12ac039aa2",
+  "original_added_source_candidates": [
+    "706b136",
+    "633e48d",
+    "528b5b1",
+    "a603171",
+    "9fb0cb6"
+  ],
+  "review_acceptance": "Serial independently accepted; three quality source commits independently accepted before this run. Other commits preserve reports/logs only.",
+  "commits_since_first_tested_source": [
+    {
+      "commit": "cdaace6086554b01598d82fe1abb5669b791cade",
+      "subject": "docs(evidence): preserve first integrated second-pass offline run"
+    },
+    {
+      "commit": "e3de6a3a6efe83a3ac606e4b03997721389d73c9",
+      "subject": "test(discovery): reproduce permanently suppressed refresh admission"
+    },
+    {
+      "commit": "ddaa286aab42793d3d2860a8d2059231d9cadf67",
+      "subject": "fix(discovery): release rejected refresh reservations safely"
+    },
+    {
+      "commit": "454bf1e27185a1438a03db2b3a5524f70fe0db77",
+      "subject": "docs(evidence): record exact independent CRC reference recheck"
+    },
+    {
+      "commit": "317be97911880d0351becb1ed23d6cc6e119da8f",
+      "subject": "docs(review): preserve latest fixed-source whole-client inventory"
+    },
+    {
+      "commit": "84c47e5e826c07d999999d1f5579c6847e695d3c",
+      "subject": "docs(review): preserve fixed-candidate logs and scoped evidence manifest"
+    },
+    {
+      "commit": "198f1ca8baa4b53c80d9a56792a2cc48c3870d7b",
+      "subject": "docs(review): distinguish failing from expected-failure evidence"
+    },
+    {
+      "commit": "8af6353eb533e4819c551e66de7383fb63820b14",
+      "subject": "docs(review): specify static summary detail omissions exactly"
+    },
+    {
+      "commit": "e736560a195f56f591db7394f3bdba599ed54421",
+      "subject": "docs(review): distinguish accepted boundaries and residual qualification"
+    },
+    {
+      "commit": "be80f7f7997d683b72b35aa8978a020508c8ff29",
+      "subject": "test(quality): ratchet reviewed integrated responsibility caps"
+    },
+    {
+      "commit": "d276be9b9b80de17c6ca668ad16aa1130085d2dc",
+      "subject": "test(quality): enforce explicit deferred-inclusive cycle boundary"
+    },
+    {
+      "commit": "ee35dabe3d4489b0cb93109a210117dfb893b07f",
+      "subject": "test(quality): protect pure domain roots from backend and GUI imports"
+    },
+    {
+      "commit": "6ad0123c64121b49c6e5f6ec654b3a12ac039aa2",
+      "subject": "docs(evidence): preserve quality guard negative controls"
+    }
+  ]
+}

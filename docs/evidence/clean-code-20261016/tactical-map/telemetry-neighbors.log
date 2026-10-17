@@ -1,0 +1,294 @@
+
+RUN tests/hud_batch21_radaroverlay_map_test.py
+[PASS] 默认值是 Both（不是从没生效过的 Mini）  -> Both
+[PASS] 值域含 Both/Mini/Full/Hidden 四档  -> ['Both', 'Mini', 'Full', 'Hidden']
+[PASS] Both：缩略态照画，返回值与热区不变  -> [('radar_blip', 0)]
+[PASS] Both：展开态也照画（=接线前两张图都画）  -> Both
+[PASS] Both：经典面板（不传 detail，compact 决定）仍按原样画
+[PASS] Mini：缩略态画  -> [('radar_blip', 0)]
+[PASS] Mini：展开态不画（返回 0、零热区）  -> []
+[PASS] Full：缩略态不画  -> []
+[PASS] Full：展开态画  -> [('radar_blip', 0)]
+[PASS] Hidden：两种形态都不画  -> []
+[PASS] Hidden：数据与 TTL 不受影响（state 仍在，只是不显示）
+[PASS] 未知取值回落 Both（宁可多画不吞情报）且记原因  -> unknown map mode 'Nonsense'
+[PASS] 设置项整个缺失也回落画
+[PASS] 无数据：返回 0 与接线前一致（开关不改变空数据路径）
+[PASS] 过期数据：TTL 依旧先于开关拦下（返回 0）
+[PASS] state.radar_detections 在本文件里只被 draw_radar_overlay 引用  -> outside=0
+[PASS] 两个面板路径共用 draw_radar_overlay（恰好 2 处调用）  -> calls=2
+[PASS] 除 tactical_map 外无第二个读取 radar_detections 的 UI 文件  -> []
+
+合计 0 项失败
+
+RUN tests/hud_batch19_bufftimeline_test.py
+[PASS] 默认有 BuffTimeline 模块且开着
+[PASS] 无数据时无标签  -> []
+[PASS] 无数据时不占带（不拉高任何面板）
+[PASS] mock 行（无 buff_type）不进标签  -> []
+[PASS] 因此 mock 演示下也不占带
+[PASS] 别的机器人的增益被过滤  -> []
+[PASS] 已不生效的本机增益不出现  -> []
+[PASS] 本机生效增益出现  -> [('buff', 'Damage Boost', 9)]
+[PASS] 两类数据同时在场时都出现  -> {'buff', 'mechanism'}
+[PASS] 关掉 Buffs 只剩特殊机制  -> {'mechanism'}
+[PASS] 关掉 Special Mechanism 只剩增益  -> {'buff'}
+[PASS] Timeline 开着时标签带剩余秒数  -> ['攻击增益 12s', '机制3 45s']
+[PASS] 关掉 Timeline 后只剩名字，秒数消失  -> ['攻击增益', '机制3']
+[PASS] 但标签本身仍然在（不变成隐藏信息）  -> ['攻击增益', '机制3']
+[PASS] 模块整体关掉后无任何标签  -> []
+[PASS] 模块关掉后也不占带
+[PASS] 垃圾剩余秒数按 0 处理而不是崩  -> [('buff', 'X', 0)]
+[PASS] 机制 id<=0 与非法条目被跳过  -> [('buff', 'X', 0)]
+[PASS] 标签数量有上限，不会挤满屏幕  -> 4
+[PASS] 带出现在地图下方  -> band=PySide6.QtCore.QRectF(12.000000, 196.000000, 216.000000, 22.000000) map.bottom=190.0
+[PASS] 带与地图面板不相交  -> PySide6.QtCore.QRectF(12.000000, 196.000000, 216.000000, 22.000000)
+[PASS] 带不会跑到屏幕外  -> 218.0
+[PASS] 有带时模块列表落点被推下  -> 232.0 vs 204.0
+[PASS] 无带时落点回到原值（不改现有布局）
+[PASS] 真窗口子进程跑完没崩  -> exit=0 out=[PASS] 默认有 BuffTimeline 模块且开着
+[PASS] 无数据时无标签  -> []
+[PASS] 无数据时不占带（不拉高任何面板）
+[PASS] mock 行（无 buff_type）不进标签  -> []
+[PASS] 因此 mock 演示下也不占带
+[PASS] 别的机器人的增益被过滤  -> []
+[PASS] 已不生效的本机增益不
+[PASS] 带里有真实亮像素（真字体、真圆角底）  -> lit=1529 out=[PASS] 默认有 BuffTimeline 模块且开着
+[PASS] 无数据时无标签  -> []
+[PASS] 无数据时不占带（不拉高任何面板）
+[PASS] mock 行（无 buff_type）不进标签  -> []
+[PASS] 因此 mock 演示下也不占带
+[PASS] 别的机器人的增益被过滤  ->
+[PASS] 真窗口下关掉模块后带消失  -> local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+
+合计 0 项失败
+
+RUN tests/hud_batch9_settings_test.py
+
+--- test_capacitor_percent_prefers_real_fields ---
+[PASS] 有可信 max 时用 current/max 算比例（忽略 mock 值）  -> 20
+[PASS] 真值变化时结果跟着变（不是缓存住的常数）  -> 50
+[PASS] max_buffer_energy=0 时退回 capacitor_percent 且不除零  -> 99
+[PASS] 超过上限钳到 100  -> 100
+[PASS] 负值钳到 0  -> 0
+[PASS] 垃圾值退回 capacitor_percent 而不抛异常  -> 99
+
+--- test_warn_threshold_is_live_on_real_data ---
+[PASS] 真实缓冲 60% 时不告警
+[PASS] 真实缓冲跌到 10% 时告警（不再被 mock 值骗过）  -> effective=10
+
+--- test_show_depth_controls_depth_edges_only ---
+[PASS] 开启时是完整 12 边盒  -> 12
+[PASS] 关掉后只剩前框 4 边  -> 4
+[PASS] 关掉后的 4 条正是开启时的 4 条前框边（对象身份比）  -> off=[(P(0,0), P(10,0)), (P(10,0), P(10,10)), (P(10,10), P(0,10)), (P(0,10), P(0,0))] front_in_on=[(P(0,0), P(10,0)), (P(10,0), P(10,10)), (P(10,10), P(0,10)), (P(0,10), P(0,0))]
+[PASS] 关掉后不再引用任何背面点（只去深度线，不碰前框）  -> [(P(0,0), P(10,0)), (P(10,0), P(10,10)), (P(10,10), P(0,10)), (P(0,10), P(0,0))]
+[PASS] 前框确实是 front[i]->front[i+1]
+[PASS] back 缺失时退化为 4 边而不崩
+[PASS] front 不合法时返回空（不抛）
+
+--- test_show_depth_fails_open_without_setting ---
+[PASS] 默认（未改设置）为显示深度
+[PASS] 设置项缺失时仍显示深度（保持接线前行为）
+[PASS] 模块关闭时谓词仍只看 Show Depth 取值（不额外改口）
+
+--- test_pulse_locked_only_breathes_when_locked ---
+[PASS] 未锁定时一律不脉冲（哪怕开关开着）
+[PASS] 已锁定且开关开时有脉冲且幅度在 0..1  -> max=0.292
+[PASS] 关掉开关后即使已锁定也恒为 0（alpha 回退到原常量）
+[PASS] 模块关闭时不脉冲
+[PASS] 查不到设置项时按开关存在处理（默认开）
+
+--- test_radar_high_light_can_be_disabled_without_hiding_blips ---
+[PASS] 开启时高亮生效
+[PASS] 关闭时高亮取消
+[PASS] 查不到设置项时保持现行为
+[PASS] 模块关闭时仍返回 True：隐藏整个面板由模块开关负责，不由样式开关越权
+
+============================================================
+ALL BATCH-9 SETTINGS TESTS PASSED
+
+RUN tests/hud_batch14_settings_test.py
+
+--- test_default_card_set_and_colors_unchanged ---
+[PASS] 默认四张卡都出现（与改动前无条件建卡一致）  -> ['GIMPOWER', 'POWERLIM', 'SPEEDLIM', 'CAP']
+[PASS] GIMPOWER 默认发光量未变  -> 0.1
+[PASS] POWERLIM 默认发光量未变  -> 0.1
+[PASS] SPEEDLIM 默认发光量未变  -> 0.1
+[PASS] CAP 默认发光量未变  -> 0.1
+[PASS] 默认电压 24V 不告警（改动前该卡从不告警）
+[PASS] 默认电容不告警（电容默认高于阈值）
+[PASS] POWERLIM 保留原有 ratio>0.78 规则
+
+--- test_gimbal_power_three_settings_work ---
+[PASS] 关掉 Show Voltage 后 GIMPOWER 卡消失
+[PASS] 但不影响其他三张卡
+[PASS] 电压 12V 低于阈值 18V 时告警（方向：低为险）
+[PASS] 电压回升到 25V 后不告警
+[PASS] 告警且开 Glow Alert 时发光加强  -> 0.32
+[PASS] 关掉 Glow Alert 后发光回到基线（开关真能关）
+[PASS] 阈值 0 视为关闭告警，而不是永远告警
+[PASS] 垃圾阈值不抛异常且归为不告警
+
+--- test_three_consumers_agree_on_show_switches ---
+[PASS] Capacitor.Show Bar=True 时三处都显示  -> card=True telemetry=True
+[PASS] Capacitor.Show Bar=False 时两处一起消失（不再一处有效一处无效）
+[PASS] PowerLimit.Show Limit=True 时三处都显示  -> card=True telemetry=True
+[PASS] PowerLimit.Show Limit=False 时两处一起消失（不再一处有效一处无效）
+[PASS] SpeedLimit.Show Speed=True 时三处都显示  -> card=True telemetry=True
+[PASS] SpeedLimit.Show Speed=False 时两处一起消失（不再一处有效一处无效）
+
+--- test_missing_config_fails_open ---
+[PASS] 设置项缺失时卡片仍显示
+[PASS] 未登记的卡片标签默认显示（不误伤）
+
+============================================================
+ALL BATCH-14 STATUS-CARD TESTS PASSED
+
+RUN tests/hud_status_settings_test.py
+
+--- test_base_outpost_row_toggles_across_all_three_builders ---
+[PASS] 全开时三个构造器都有基地/前哨行  -> {'groups': ['RED BASE YOU', 'BLUE BASE', 'OUTPOST', 'GOLD', 'AMMO'], 'rings': ['BASE', 'EBASE', 'OUT', 'GOLD'], 'bars': ['OWN BASE', 'ENEMY BASE', 'OUTPOST', 'GOLD']}
+[PASS] 关掉 Own Base：groups 里没有基地行  -> ['BLUE BASE', 'OUTPOST', 'GOLD', 'AMMO']
+[PASS] 关掉 Own Base：rings 里没有 BASE  -> ['EBASE', 'OUT', 'GOLD', 'AMMO']
+[PASS] 关掉 Own Base：bars 里没有 OWN BASE  -> ['ENEMY BASE', 'OUTPOST', 'GOLD', 'AMMO']
+[PASS] 关掉 Enemy Base 后三处都没有敌方基地行  -> {'groups': ['OUTPOST', 'GOLD', 'AMMO'], 'rings': ['OUT', 'GOLD', 'AMMO', 'HEAT'], 'bars': ['OUTPOST', 'GOLD', 'AMMO', 'HEAT/PWR']}
+[PASS] 关掉 Outposts 后三处都没有前哨行  -> {'groups': ['GOLD', 'AMMO'], 'rings': ['GOLD', 'AMMO', 'HEAT'], 'bars': ['GOLD', 'AMMO', 'HEAT/PWR']}
+
+--- test_shield_toggle_changes_base_detail ---
+[PASS] Shield 开时基地提示含护盾  -> Red BASE 5000/5000 SHIELD 880
+[PASS] Shield 关时基地提示不含护盾（内容真的变了）  -> Red BASE 5000/5000
+
+--- test_victory_point_toggles_in_3v3 ---
+[PASS] 全开时两处分VP行 + CTRL行  -> {'groups': ['RED YOU', 'BLUE', 'CTRL', 'GOLD'], 'rings': ['ALLY', 'ENEMY', 'CTRL', 'HEAT'], 'bars': ['ALLY VP', 'ENEMY VP', 'CONTROL', 'GOLD']}
+[PASS] 关掉 Control Zone：三处都无控制行  -> {'groups': ['RED YOU', 'BLUE', 'GOLD'], 'rings': ['ALLY', 'ENEMY', 'HEAT'], 'bars': ['ALLY VP', 'ENEMY VP', 'GOLD', 'AMMO']}
+[PASS] 关掉 Victory Points：三处都无 VP 行  -> {'groups': ['GOLD'], 'rings': ['HEAT'], 'bars': ['GOLD', 'AMMO', 'HEAT/PWR']}
+
+--- test_team_status_toggle_changes_label_suffix ---
+[PASS] 开时有一方标了 YOU  -> ['RED YOU', 'BLUE', 'CTRL', 'GOLD']
+[PASS] 关时没有任何标签带 YOU  -> ['RED', 'BLUE', 'CTRL', 'GOLD']
+[PASS] 但行本身仍在（内容开关不得删行）  -> 4 -> 4
+
+--- test_gold_and_tech_level_toggles ---
+[PASS] Gold 开时三处都有 GOLD  -> {'groups': ['RED BASE YOU', 'BLUE BASE', 'OUTPOST', 'GOLD', 'AMMO'], 'rings': ['BASE', 'EBASE', 'OUT', 'GOLD'], 'bars': ['OWN BASE', 'ENEMY BASE', 'OUTPOST', 'GOLD']}
+[PASS] Tech Level 开时提示含 / T3  -> GOLD 220 / T3
+[PASS] Tech Level 关时提示不含科技等级，但行还在  -> GOLD 220
+[PASS] 关掉 Gold 后三处都没有 GOLD  -> {'groups': ['RED BASE YOU', 'BLUE BASE', 'OUTPOST', 'AMMO'], 'rings': ['BASE', 'EBASE', 'OUT', 'AMMO'], 'bars': ['OWN BASE', 'ENEMY BASE', 'OUTPOST', 'AMMO']}
+
+--- test_ammo_type_and_show_cost ---
+[PASS] 17mm 时主显示是 17mm  -> AMMO 17mm 150 | 42mm 9 | PRICE 50
+[PASS] Show Cost 开时含 PRICE  -> AMMO 17mm 150 | 42mm 9 | PRICE 50
+[PASS] 切到 42mm 后主显示跟着变（设置项真的影响内容）  -> AMMO 42mm 9 | 42mm 9 | PRICE 50
+[PASS] 关掉 Show Cost 后不再显示价格  -> AMMO 42mm 9 | 42mm 9
+
+--- test_speed_and_heat_row_toggles ---
+[PASS] 开关都在时有 SPEED 行  -> ['HEAT', 'POWER', 'SPEED', 'CAP']
+[PASS] 关掉 Show Speed 后无 SPEED 行  -> ['HEAT', 'POWER', 'CAP']
+[PASS] 关 SPEED 不影响 CAP/POWER 判据（各开关互不串扰）
+[PASS] 关掉 Heat 后 rings/bars 都无 HEAT 行  -> {'groups': ['RED BASE YOU', 'BLUE BASE', 'OUTPOST', 'GOLD', 'AMMO'], 'rings': ['BASE', 'EBASE', 'OUT', 'GOLD'], 'bars': ['OWN BASE', 'ENEMY BASE', 'OUTPOST', 'GOLD']}
+
+--- test_match_timer_header_toggles ---
+[PASS] 全开时顶栏含阶段名与倒计时  -> 7v7  PLAYING  02:00  SCORE 3:1
+[PASS] 全开时顶栏含分数  -> 7v7  PLAYING  02:00  SCORE 3:1
+[PASS] 关掉 Show Stage 后阶段与倒计时都消失  -> 7v7  SCORE 3:1
+[PASS] 但分数仍在（开关不得串扰）  -> 7v7  SCORE 3:1
+[PASS] 关掉 Show Scores 后分数消失  -> 7v7  PLAYING  02:00
+[PASS] 但阶段仍在  -> 7v7  PLAYING  02:00
+[PASS] 3v3 下 Show Scores 显示 VP而不是 SCORE  -> 3v3  NOT_STARTED  07:00  VP 80:40
+
+--- test_match_timer_pulse_window_and_direction ---
+[PASS] 倒计时 120s 时不脉冲  -> 0.0
+[PASS] 倒计时 12s 时有脉冲且幅度在 0..1  -> max=0.088
+[PASS] 越接近结束脉冲包络越强  -> 3s=0.132 25s=0.024
+[PASS] 倒计时 0 不脉冲（未开始/超时不得误报为紧急）
+[PASS] 负倒计时不脉冲
+[PASS] 恰在窗口上边界 30s 不脉冲
+[PASS] 关掉开关后即使在窗口内也不脉冲
+[PASS] MatchTimer 模块关闭时不脉冲
+
+--- test_power_pulse_only_when_actually_over_limit ---
+[PASS] 未超限（ratio=0.5）不脉冲
+[PASS] 恰在限额（ratio=1.0）不脉冲
+[PASS] 超限 10% 时有脉冲且幅度在 0..1  -> max=0.060
+[PASS] 超限越多脉冲包络越强
+[PASS] 关掉开关后即使超限也不脉冲
+[PASS] 不影响其他卡（Capacitor 即使 ratio>1 也不脉冲）
+[PASS] 不影响其他卡（SpeedLimit 即使 ratio>1 也不脉冲）
+[PASS] 不影响其他卡（ThermalPowerPanel 即使 ratio>1 也不脉冲）
+[PASS] 不影响其他卡（GOLD 即使 ratio>1 也不脉冲）
+[PASS] ratio 是垃圾值时不抛异常
+
+--- test_capacitor_glow_amount_respects_use_glow ---
+[PASS] 开启时有外发光且为正常量  -> 0.11
+[PASS] 关闭后 CAP 卡外发光归零
+[PASS] 但不得影响其他卡的外发光  -> 0.11
+
+--- test_disabled_module_still_yields_no_rows ---
+[PASS] 相关模块全关时三处都没有状态行  -> {'groups': [], 'rings': [], 'bars': []}
+[PASS] 同时遥测行也空  -> []
+
+============================================================
+ALL HUD-STATUS SETTINGS TESTS PASSED
+
+RUN tests/hud_telemetry_settings_test.py
+
+--- test_show_bar_toggle_hides_the_capacitor_row ---
+[PASS] Show Bar 打开时有 CAP 行  -> ['HEAT', 'POWER', 'SPEED', 'CAP']
+[PASS] Show Bar 关闭后 CAP 行消失（开关真的影响画面）  -> ['HEAT', 'POWER', 'SPEED']
+[PASS] 关掉 CAP 不影响 POWER 行  -> ['HEAT', 'POWER', 'SPEED']
+[PASS] Capacitor 模块关闭时也没有 CAP 行  -> ['HEAT', 'POWER', 'SPEED']
+
+--- test_show_limit_toggle_hides_the_power_row ---
+[PASS] Show Limit 打开时有 POWER 行  -> ['HEAT', 'POWER', 'SPEED', 'CAP']
+[PASS] Show Limit 关闭后 POWER 行消失  -> ['HEAT', 'SPEED', 'CAP']
+[PASS] 关掉 POWER 不影响 CAP 行  -> ['HEAT', 'SPEED', 'CAP']
+
+--- test_capacitor_warn_threshold_forces_danger_color ---
+[PASS] 电容 40% 高于阈值 25% 时不告警  -> state:cap
+[PASS] 电容 20% 低于阈值 25% 时用告警色（阈值真的生效）  -> DANGER
+[PASS] 调高阈值到 50% 后，40% 电容也告警（方向正确）  -> DANGER
+[PASS] 阈值 0 = 关闭告警，不因为等于 0 就永远告警
+[PASS] 垃圾阈值归为不告警且不抛异常  -> False
+
+--- test_both_telemetry_builders_agree ---
+[PASS] 开关组合 (Bar=True, Limit=True) 下行构造器与判据函数一致  -> labels=['CAP', 'HEAT', 'POWER', 'SPEED'] cap_visible=True power_visible=True
+[PASS] (True/True) 告警谓词与 Show Bar 无关（电容 10% 低于 25% 就为 True）  -> True
+[PASS] (True/True) CAP 行可见且为告警色  -> DANGER
+[PASS] 开关组合 (Bar=False, Limit=True) 下行构造器与判据函数一致  -> labels=['HEAT', 'POWER', 'SPEED'] cap_visible=False power_visible=True
+[PASS] (False/True) 告警谓词与 Show Bar 无关（电容 10% 低于 25% 就为 True）  -> True
+[PASS] (False/True) CAP 行隐藏时不产出任何颜色  -> None
+[PASS] 开关组合 (Bar=True, Limit=False) 下行构造器与判据函数一致  -> labels=['CAP', 'HEAT', 'SPEED'] cap_visible=True power_visible=False
+[PASS] (True/False) 告警谓词与 Show Bar 无关（电容 10% 低于 25% 就为 True）  -> True
+[PASS] (True/False) CAP 行可见且为告警色  -> DANGER
+[PASS] 开关组合 (Bar=False, Limit=False) 下行构造器与判据函数一致  -> labels=['HEAT', 'SPEED'] cap_visible=False power_visible=False
+[PASS] (False/False) 告警谓词与 Show Bar 无关（电容 10% 低于 25% 就为 True）  -> True
+[PASS] (False/False) CAP 行隐藏时不产出任何颜色  -> None
+
+--- test_module_with_no_show_setting_stays_visible ---
+[PASS] 查不到 Show * 设置时返回 True（不默认隐藏）  -> True
+[PASS] 模块为 None 时返回 False
+
+============================================================
+ALL HUD-TELEMETRY SETTINGS TESTS PASSED
+
+RUN tests/test_hud_display_locale.py
+..............
+----------------------------------------------------------------------
+Ran 14 tests in 0.818s
+
+OK
+
+RUN tests/test_match_strip_locale.py
+.........
+----------------------------------------------------------------------
+Ran 9 tests in 0.273s
+
+OK
+
+RUN tests/test_window_tick_contract.py
+.................
+----------------------------------------------------------------------
+Ran 17 tests in 0.015s
+
+OK

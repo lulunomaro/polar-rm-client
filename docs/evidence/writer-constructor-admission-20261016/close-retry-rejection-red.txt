@@ -1,0 +1,15 @@
+test_failed_native_close_recovers_after_explicit_retry_admission_rejection (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_native_close_recovers_after_explicit_retry_admission_rejection) ... 
+  test_failed_native_close_recovers_after_explicit_retry_admission_rejection (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_native_close_recovers_after_explicit_retry_admission_rejection) (kind='cc', reject_at='start') ... FAIL
+
+======================================================================
+FAIL: test_failed_native_close_recovers_after_explicit_retry_admission_rejection (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_failed_native_close_recovers_after_explicit_retry_admission_rejection) (kind='cc', reject_at='start')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 256, in test_failed_native_close_recovers_after_explicit_retry_admission_rejection
+    self.assertTrue(owner.wait_closed(1))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+FAILED (failures=1)

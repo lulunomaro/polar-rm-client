@@ -1,0 +1,8 @@
+.Field audit log shutdown incomplete or records lost: {'accepted_records': 5, 'written_records': 1, 'pending_records': 4, 'pending_bytes': 486, 'queue_capacity': 256, 'queue_bytes': 4194304, 'max_record_bytes': 262144, 'dropped_records': 0, 'dropped_full': 0, 'dropped_invalid': 0, 'dropped_closed': 0, 'dropped_write': 0, 'dropped_cancelled': 0, 'write_errors': 0, 'flush_timeouts': 0, 'close_timeouts': 1, 'ignored_video': 0, 'worker_starts': 1, 'worker_active': True, 'closing': True, 'closed': False, 'last_error': ''}
+.....Field audit log shutdown incomplete or records lost: {'accepted_records': 5, 'written_records': 1, 'pending_records': 0, 'pending_bytes': 0, 'queue_capacity': 256, 'queue_bytes': 4194304, 'max_record_bytes': 262144, 'dropped_records': 4, 'dropped_full': 0, 'dropped_invalid': 0, 'dropped_closed': 0, 'dropped_write': 4, 'dropped_cancelled': 0, 'write_errors': 4, 'flush_timeouts': 0, 'close_timeouts': 0, 'ignored_video': 0, 'worker_starts': 1, 'worker_active': False, 'closing': True, 'closed': True, 'last_error': 'OSError'}
+Field audit log shutdown incomplete or records lost: {'accepted_records': 5, 'written_records': 1, 'pending_records': 0, 'pending_bytes': 0, 'queue_capacity': 256, 'queue_bytes': 4194304, 'max_record_bytes': 262144, 'dropped_records': 4, 'dropped_full': 0, 'dropped_invalid': 0, 'dropped_closed': 0, 'dropped_write': 4, 'dropped_cancelled': 0, 'write_errors': 4, 'flush_timeouts': 0, 'close_timeouts': 0, 'ignored_video': 0, 'worker_starts': 1, 'worker_active': False, 'closing': True, 'closed': True, 'last_error': 'OSError'}
+................
+----------------------------------------------------------------------
+Ran 22 tests in 1.164s
+
+OK

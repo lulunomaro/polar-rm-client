@@ -1,0 +1,132 @@
+test_changed_duration_reaches_actual_grid_and_completion (test_economy_hold_duration_alignment.HoldDurationAlignmentTests.test_changed_duration_reaches_actual_grid_and_completion) ...
+  test_changed_duration_reaches_actual_grid_and_completion (test_economy_hold_duration_alignment.HoldDurationAlignmentTests.test_changed_duration_reaches_actual_grid_and_completion) (duration=0.4) ... FAIL
+  test_changed_duration_reaches_actual_grid_and_completion (test_economy_hold_duration_alignment.HoldDurationAlignmentTests.test_changed_duration_reaches_actual_grid_and_completion) (duration=0.8) ... FAIL
+  test_changed_duration_reaches_actual_grid_and_completion (test_economy_hold_duration_alignment.HoldDurationAlignmentTests.test_changed_duration_reaches_actual_grid_and_completion) (duration=1.2) ... FAIL
+
+======================================================================
+FAIL: test_changed_duration_reaches_actual_grid_and_completion (test_economy_hold_duration_alignment.HoldDurationAlignmentTests.test_changed_duration_reaches_actual_grid_and_completion) (duration=0.4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-economy-followup/tests/test_economy_hold_duration_alignment.py", line 47, in test_changed_duration_reaches_actual_grid_and_completion
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Traceback (most recent call last):
+  File "<string>", line 22, in <module>
+AssertionError
+
+
+======================================================================
+FAIL: test_changed_duration_reaches_actual_grid_and_completion (test_economy_hold_duration_alignment.HoldDurationAlignmentTests.test_changed_duration_reaches_actual_grid_and_completion) (duration=0.8)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-economy-followup/tests/test_economy_hold_duration_alignment.py", line 47, in test_changed_duration_reaches_actual_grid_and_completion
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Traceback (most recent call last):
+  File "<string>", line 22, in <module>
+AssertionError
+
+
+======================================================================
+FAIL: test_changed_duration_reaches_actual_grid_and_completion (test_economy_hold_duration_alignment.HoldDurationAlignmentTests.test_changed_duration_reaches_actual_grid_and_completion) (duration=1.2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/clean-economy-followup/tests/test_economy_hold_duration_alignment.py", line 47, in test_changed_duration_reaches_actual_grid_and_completion
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Traceback (most recent call last):
+  File "<string>", line 22, in <module>
+AssertionError
+
+
+----------------------------------------------------------------------
+Ran 1 test in 2.274s
+
+FAILED (failures=3)

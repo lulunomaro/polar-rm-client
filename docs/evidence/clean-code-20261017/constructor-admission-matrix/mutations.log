@@ -1,0 +1,4 @@
+serial reader never acquires rejected: 2 failures, 0 errors
+decoder never owns process rejected: 6 failures, 0 errors
+Paho never attempts admission rejected: 1 failures, 0 errors
+PASS: all three deliberately broken admission candidates are rejected

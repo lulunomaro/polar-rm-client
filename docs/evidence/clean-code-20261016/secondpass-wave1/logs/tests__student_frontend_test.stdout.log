@@ -1,0 +1,92 @@
+[PASS] Chinese font has real glyphs
+[PASS] unique module names
+[PASS] cumulative damage is not summed
+[PASS] respawn snapshot can decrease
+[PASS] unknown damage stays unknown
+[PASS] rune total explicitly estimated
+[PASS] only active local buffs
+[PASS] malformed optional buff data harmless
+[PASS] module does not invent online
+[PASS] official module status two is offline/improper
+[PASS] device setting is consumed
+[PASS] exact 450ms timeline
+[PASS] exact 125ms close
+[PASS] official awards accompany existing kill FX
+[PASS] preview cannot manufacture official awards
+[PASS] custom events and unknown killers don't create official awards
+[PASS] penalty signature prevents per-frame spam
+[PASS] chat punctuation is not mistaken for an unrelated MC bitmap tile
+[PASS] MC Chinese uses original Unihex pixel glyphs
+[PASS] vanilla palette textures correctly tint yellow/green/red
+[PASS] formatting codes never enter layout widths
+[PASS] MC bold advances are preserved without overlapping glyphs
+[PASS] vanilla inventory item resources present
+[PASS] original mod items depict functions, not vanilla loot substitutions
+[PASS] combat mods have seven distinct crafted silhouettes
+[PASS] crafted 32px pixel items are not untouched vanilla textures
+[PASS] inventory/hotbar share item for ArmorAutoAim
+[PASS] inventory/hotbar share item for SpinMode
+[PASS] inventory/hotbar share item for SkillConfiguration
+[PASS] inventory has no Steve, portrait or mascot renderer
+[PASS] removed unused avatar resource steve.png
+[PASS] removed unused avatar resource robot_operator.png
+[PASS] removed unused avatar resource robot_operator_manifest.json
+[PASS] E opens MC inventory
+[PASS] inventory owns modal input
+[PASS] inventory blocks live combat keys
+[PASS] right click doesn't drag
+[PASS] drag binds exact hotbar slot
+[PASS] drag doesn't enable a module
+[PASS] right click clears binding
+[PASS] inventory bounded (1280, 720) x0.5
+[PASS] inventory bounded (1280, 720) x1
+[PASS] inventory bounded (1280, 720) x1.5
+[PASS] inventory bounded (1280, 720) x2
+[PASS] inventory bounded (1600, 900) x0.5
+[PASS] inventory bounded (1600, 900) x1
+[PASS] inventory bounded (1600, 900) x1.5
+[PASS] inventory bounded (1600, 900) x2
+[PASS] inventory bounded (1920, 1080) x0.5
+[PASS] inventory bounded (1920, 1080) x1
+[PASS] inventory bounded (1920, 1080) x1.5
+[PASS] inventory bounded (1920, 1080) x2
+[PASS] inventory bounded (2560, 1440) x0.5
+[PASS] inventory bounded (2560, 1440) x1
+[PASS] inventory bounded (2560, 1440) x1.5
+[PASS] inventory bounded (2560, 1440) x2
+[PASS] DPR 1 hotspots bounded
+[PASS] DPR 1.25 hotspots bounded
+[PASS] DPR 1.5 hotspots bounded
+[PASS] DPR 2 hotspots bounded
+[PASS] skills local draft persisted
+[PASS] skill draft doesn't mutate official performance
+[PASS] new settings survive config migration
+[PASS] damage no underlying controls
+[PASS] settlement no underlying controls
+[PASS] darts no underlying controls
+[PASS] skills no underlying controls
+[PASS] Tab-style held damage list has no Jello card buttons
+[PASS] panel transitions refresh HUD snapshot rather than retaining hidden glass lenses
+[PASS] Tab geometry bounded 1280x720
+[PASS] Tab geometry bounded 1600x900
+[PASS] Tab geometry bounded 1920x1080
+[PASS] Tab geometry bounded 2560x1440
+[PASS] dart fire remains explicitly inert
+[PASS] settlement is a frozen snapshot
+[PASS] stage changes do not unfreeze a displayed settlement
+[PASS] returning killer doesn't show stale damage
+[PASS] hold scoreboard releases modal
+[PASS] autorepeat release doesn't collapse held scoreboard
+[PASS] F opens darts only for the Dart profile
+[PASS] normal combat F is not captured by Dart UI
+[PASS] buff/device text is cached, not rasterized every frame
+[PASS] reload details use existing economy viewport
+[PASS] supply-zone data is unknown, not fake true
+[PASS] revive labels use original offers
+[PASS] F1 selects paid revive even with unknown price
+[PASS] economy keeps ownership until GL restore
+[PASS] economy deferred restore opens student modal
+[PASS] 100 opens do not rebuild static panel/font textures
+[PASS] 100 opens don't leak duplicate hotspots
+
+90 checks PASS

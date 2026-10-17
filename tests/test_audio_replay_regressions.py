@@ -15,6 +15,7 @@ import sys
 import tempfile
 import time
 import unittest
+import weakref
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -110,11 +111,14 @@ def load_pool():
     tree = ast.parse(path.read_text(encoding="utf-8"))
     cls = next(node for node in tree.body
                if isinstance(node, ast.ClassDef) and node.name == "ReliableAudioPool")
+    listeners = [node for node in tree.body if isinstance(node, ast.FunctionDef)
+                 and node.name in {"_effect_status_listener", "_media_error_listener"}]
+    assert len(listeners) == 2
     module = ast.Module(body=[
         ast.ImportFrom(module="__future__", names=[ast.alias(name="annotations")], level=0),
-        cls,
+        *listeners, cls,
     ], type_ignores=[])
-    namespace = dict(QObject=FakeObject, QUrl=FakeUrl, QMediaPlayer=FakePlayer,
+    namespace = dict(weakref=weakref, isValid=lambda value: isinstance(value, FakeObject), QObject=FakeObject, QUrl=FakeUrl, QMediaPlayer=FakePlayer,
                      QAudioOutput=FakeOutput, Path=Path, defaultdict=defaultdict,
                      QMediaDevices=FakeDevices, POOLS=set(), selected_output=lambda: None,
                      QGuiApplication=SimpleNamespace(instance=lambda: None), logging=logging,

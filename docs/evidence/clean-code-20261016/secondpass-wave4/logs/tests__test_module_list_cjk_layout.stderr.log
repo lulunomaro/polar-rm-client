@@ -1,0 +1,18 @@
+test_1080p_2k_dpr_scale_and_fade_never_cross_right_margin (__main__.ModuleListCjkLayoutTests.test_1080p_2k_dpr_scale_and_fade_never_cross_right_margin) ... ok
+test_150ms_animation_and_same_frame_repaint_remain_unchanged (__main__.ModuleListCjkLayoutTests.test_150ms_animation_and_same_frame_repaint_remain_unchanged) ... ok
+test_api_frozen_qualnames_are_preserved (__main__.ModuleListCjkLayoutTests.test_api_frozen_qualnames_are_preserved) ... ok
+test_cache_keys_include_final_label_not_only_registry_identifier (__main__.ModuleListCjkLayoutTests.test_cache_keys_include_final_label_not_only_registry_identifier) ... ok
+test_cpu_gpu_and_paint_device_dpi_switch_do_not_reuse_wrong_widths (__main__.ModuleListCjkLayoutTests.test_cpu_gpu_and_paint_device_dpi_switch_do_not_reuse_wrong_widths) ... ok
+test_cpu_raster_complete_chinese_lines_stay_inside_margin (__main__.ModuleListCjkLayoutTests.test_cpu_raster_complete_chinese_lines_stay_inside_margin) ... ok
+test_dpr_change_on_warm_host_matches_cold_host (__main__.ModuleListCjkLayoutTests.test_dpr_change_on_warm_host_matches_cold_host) ... ok
+test_english_sigma_font_geometry_and_comparator_are_unchanged (__main__.ModuleListCjkLayoutTests.test_english_sigma_font_geometry_and_comparator_are_unchanged) ... ok
+test_mixed_cjk_ascii_uses_actual_atlas_advance_at_fractional_dpr (__main__.ModuleListCjkLayoutTests.test_mixed_cjk_ascii_uses_actual_atlas_advance_at_fractional_dpr) ... ok
+test_switch_language_in_same_host_invalidates_width_and_sort_cache (__main__.ModuleListCjkLayoutTests.test_switch_language_in_same_host_invalidates_width_and_sort_cache) ... ok
+test_translated_rows_share_true_advance_right_edge_at_every_size (__main__.ModuleListCjkLayoutTests.test_translated_rows_share_true_advance_right_edge_at_every_size) ... ok
+test_warm_frames_do_not_resolve_the_immutable_shadow_file_again (__main__.ModuleListCjkLayoutTests.test_warm_frames_do_not_resolve_the_immutable_shadow_file_again) ... ok
+test_warm_gpu_labels_do_not_reshape_every_frame (__main__.ModuleListCjkLayoutTests.test_warm_gpu_labels_do_not_reshape_every_frame) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 3.540s
+
+OK

@@ -1,0 +1,167 @@
+test_clean_fields_follow_live_and_update_normalized_baseline (test_registry_draft_contract.RegistryDraftContract.test_clean_fields_follow_live_and_update_normalized_baseline) ... Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+ok
+test_failed_apply_retains_reset_intent_and_baseline (test_registry_draft_contract.RegistryDraftContract.test_failed_apply_retains_reset_intent_and_baseline) ... ok
+test_forced_edit_skips_widget_read_during_refresh (test_registry_draft_contract.RegistryDraftContract.test_forced_edit_skips_widget_read_during_refresh) ... ok
+test_incomplete_page_does_not_observe_or_mutate_draft (test_registry_draft_contract.RegistryDraftContract.test_incomplete_page_does_not_observe_or_mutate_draft) ... ok
+test_pending_edit_survives_live_changes (test_registry_draft_contract.RegistryDraftContract.test_pending_edit_survives_live_changes) ... ok
+test_reset_equal_to_baseline_remains_explicit_edit (test_registry_draft_contract.RegistryDraftContract.test_reset_equal_to_baseline_remains_explicit_edit) ... ok
+test_return_to_baseline_resumes_following_live (test_registry_draft_contract.RegistryDraftContract.test_return_to_baseline_resumes_following_live) ... ok
+test_successful_apply_accepts_pre_callback_snapshot_then_reconciles (test_registry_draft_contract.RegistryDraftContract.test_successful_apply_accepts_pre_callback_snapshot_then_reconciles) ... ok
+test_accept_clears_forced_intent_but_follow_live_does_not (test_preference_draft.PreferenceDraftTests.test_accept_clears_forced_intent_but_follow_live_does_not) ... ok
+test_accept_copies_snapshot_and_exposes_read_only_baseline (test_preference_draft.PreferenceDraftTests.test_accept_copies_snapshot_and_exposes_read_only_baseline) ... ok
+test_clean_observation_occurs_exactly_once_and_failures_propagate (test_preference_draft.PreferenceDraftTests.test_clean_observation_occurs_exactly_once_and_failures_propagate) ... ok
+test_edit_partitions_retain_input_order_and_all_categories (test_preference_draft.PreferenceDraftTests.test_edit_partitions_retain_input_order_and_all_categories) ... ok
+test_forced_intent_short_circuits_observation (test_preference_draft.PreferenceDraftTests.test_forced_intent_short_circuits_observation) ... ok
+test_import_does_not_require_qt_model_or_backend (test_preference_draft.PreferenceDraftTests.test_import_does_not_require_qt_model_or_backend) ... ok
+test_missing_baseline_still_fails_instead_of_accepting_new_fields (test_preference_draft.PreferenceDraftTests.test_missing_baseline_still_fails_instead_of_accepting_new_fields) ... ok
+test_audio_validated_atomic_volume_and_focus (test_cs2_settings_center.PreferenceTests.test_audio_validated_atomic_volume_and_focus) ... ok
+test_bad_dpi_resolution_checked_before_window_mutation_and_startup_safe (test_cs2_settings_center.PreferenceTests.test_bad_dpi_resolution_checked_before_window_mutation_and_startup_safe) ... Saved resolution incompatible with current DPI; using current window
+ok
+test_video_atomic_save_and_bad_file_fallback (test_cs2_settings_center.PreferenceTests.test_video_atomic_save_and_bad_file_fallback) ... ok
+test_video_numeric_validation_sampling_cap_and_surface (test_cs2_settings_center.PreferenceTests.test_video_numeric_validation_sampling_cap_and_surface) ... ok
+test_bind_swap_atomic_and_valid_change_dispatches_real_hook (test_cs2_settings_center.SettingsTests.test_bind_swap_atomic_and_valid_change_dispatches_real_hook) ... ok
+test_callback_failure_restores_values_and_binds_without_saving_or_arming (test_cs2_settings_center.SettingsTests.test_callback_failure_restores_values_and_binds_without_saving_or_arming) ... ok
+test_invalid_bind_or_numeric_never_partially_applied (test_cs2_settings_center.SettingsTests.test_invalid_bind_or_numeric_never_partially_applied) ... ok
+test_modal_and_child_dialog_f12_without_resume (test_cs2_settings_center.SettingsTests.test_modal_and_child_dialog_f12_without_resume) ... This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+ok
+test_mouse_gain_keeps_fractions_and_reset_clears_them (test_cs2_settings_center.SettingsTests.test_mouse_gain_keeps_fractions_and_reset_clears_them) ... ok
+test_new_module_hotkey_rejects_duplicates_and_driver_collision (test_cs2_settings_center.SettingsTests.test_new_module_hotkey_rejects_duplicates_and_driver_collision) ... ok
+test_open_lifecycle_no_stale_input_or_auto_arm (test_cs2_settings_center.SettingsTests.test_open_lifecycle_no_stale_input_or_auto_arm) ... ok
+test_page_has_genuine_preferences_not_actuation_gates (test_cs2_settings_center.SettingsTests.test_page_has_genuine_preferences_not_actuation_gates) ... ok
+test_settings_center_all_tabs_embedded_search_and_staged_mouse (test_cs2_settings_center.SettingsTests.test_settings_center_all_tabs_embedded_search_and_staged_mouse) ... ok
+test_applied_draft_becomes_clean_for_later_live_change (test_lazy_settings_state.DraftIsolationTests.test_applied_draft_becomes_clean_for_later_live_change) ... ok
+test_apply_only_dirty_settings_toggles_and_module_binds (test_lazy_settings_state.DraftIsolationTests.test_apply_only_dirty_settings_toggles_and_module_binds) ... ok
+test_audio_merges_dirty_fields_with_latest_preferences (test_lazy_settings_state.DraftIsolationTests.test_audio_merges_dirty_fields_with_latest_preferences) ... qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+ok
+test_cancelled_reset_does_not_change_live_values (test_lazy_settings_state.DraftIsolationTests.test_cancelled_reset_does_not_change_live_values) ... ok
+test_clean_control_refresh_does_not_remove_unrelated_draft (test_lazy_settings_state.DraftIsolationTests.test_clean_control_refresh_does_not_remove_unrelated_draft) ... ok
+test_crosshair_reset_includes_display_scale (test_lazy_settings_state.DraftIsolationTests.test_crosshair_reset_includes_display_scale) ... ok
+test_dirty_shared_field_survives_revisit (test_lazy_settings_state.DraftIsolationTests.test_dirty_shared_field_survives_revisit) ... ok
+test_reset_explicitly_overwrites_later_live_change_even_if_default_equals_snapshot (test_lazy_settings_state.DraftIsolationTests.test_reset_explicitly_overwrites_later_live_change_even_if_default_equals_snapshot) ... ok
+test_unedited_hud_duplicate_must_not_overwrite_audio_change (test_lazy_settings_state.DraftIsolationTests.test_unedited_hud_duplicate_must_not_overwrite_audio_change) ... ok
+test_close_cancel_return_each_stop_partial_loading (test_lazy_settings_state.LifecycleAudit.test_close_cancel_return_each_stop_partial_loading) ... ok
+test_crosshair_factory_failure_isolated (test_lazy_settings_state.LifecycleAudit.test_crosshair_factory_failure_isolated) ... ok
+test_crosshair_styling_failure_releases_temporary_editor (test_lazy_settings_state.LifecycleAudit.test_crosshair_styling_failure_releases_temporary_editor) ... ok
+test_current_apply_never_applies_hidden_draft (test_lazy_settings_state.LifecycleAudit.test_current_apply_never_applies_hidden_draft) ... ok
+test_delete_during_loading_removes_timer_and_partial_editor (test_lazy_settings_state.LifecycleAudit.test_delete_during_loading_removes_timer_and_partial_editor) ... ok
+test_dismiss_before_entrance_cancels_all_work_and_reopen_is_fresh (test_lazy_settings_state.LifecycleAudit.test_dismiss_before_entrance_cancels_all_work_and_reopen_is_fresh) ... ok
+test_every_incomplete_page_rejects_programmatic_apply (test_lazy_settings_state.LifecycleAudit.test_every_incomplete_page_rejects_programmatic_apply) ... ok
+test_latest_search_wins_mid_build_and_across_pauses (test_lazy_settings_state.LifecycleAudit.test_latest_search_wins_mid_build_and_across_pauses) ... ok
+test_rapid_tabs_only_current_owns_work_and_buttons (test_lazy_settings_state.LifecycleAudit.test_rapid_tabs_only_current_owns_work_and_buttons) ... ok
+test_registry_preparation_failure_isolated_and_reopen_recovers (test_lazy_settings_state.LifecycleAudit.test_registry_preparation_failure_isolated_and_reopen_recovers) ... ok
+test_repeated_cancel_reopen_has_one_f12_route (test_lazy_settings_state.LifecycleAudit.test_repeated_cancel_reopen_has_one_f12_route) ... ok
+test_reset_draft_preserved_without_live_writes_until_apply (test_lazy_settings_state.LifecycleAudit.test_reset_draft_preserved_without_live_writes_until_apply) ... ok
+test_keyboard_dialog_nested_f12_revokes_before_input_failure (test_settings_dialog_service_wiring.DialogServiceWiringTests.test_keyboard_dialog_nested_f12_revokes_before_input_failure) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+ok
+test_nested_keyboard_and_parent_settings_have_one_f12_route_each (test_settings_dialog_service_wiring.DialogServiceWiringTests.test_nested_keyboard_and_parent_settings_have_one_f12_route_each) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_settings_apply_button_rolls_back_and_preserves_draft_for_retry (test_settings_dialog_service_wiring.DialogServiceWiringTests.test_settings_apply_button_rolls_back_and_preserves_draft_for_retry) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_settings_binding_button_accepts_only_the_owned_draft_until_page_apply (test_settings_dialog_service_wiring.DialogServiceWiringTests.test_settings_binding_button_accepts_only_the_owned_draft_until_page_apply) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_settings_dialog_nested_f12_revokes_before_input_failure (test_settings_dialog_service_wiring.DialogServiceWiringTests.test_settings_dialog_nested_f12_revokes_before_input_failure) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+ok
+test_standalone_keyboard_accept_failure_uses_real_rollback_and_error_prefix (test_settings_dialog_service_wiring.DialogServiceWiringTests.test_standalone_keyboard_accept_failure_uses_real_rollback_and_error_prefix) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+
+----------------------------------------------------------------------
+Ran 55 tests in 36.396s
+
+OK

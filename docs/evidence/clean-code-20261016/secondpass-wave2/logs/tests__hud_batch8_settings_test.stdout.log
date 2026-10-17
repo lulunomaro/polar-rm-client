@@ -1,0 +1,31 @@
+
+--- test_second_step_toggle_changes_startup_flow ---
+[PASS] 开启时场景选完进 match 页  -> match
+[PASS] 开启时机器人页回退到 match 页  -> match
+[PASS] 关闭时场景选完直接进 robot 页  -> robot
+[PASS] 关闭时机器人页回退直接回 scenario（不能退回被跳过的页）  -> scenario
+[PASS] Second Step=True 时目标页名合法  -> {'match'}
+[PASS] Second Step=False 时目标页名合法  -> {'scenario', 'robot'}
+
+--- test_lock_indicator_can_be_hidden_but_fails_open ---
+[PASS] 开启时锁定框可见
+[PASS] 关闭时锁定框隐藏
+[PASS] LockState 模块关闭时保持原行为（显示）
+[PASS] 查不到设置项时返回可见（不因配置缺失弄丢 HUD 元素）
+
+--- test_warn_low_colors_ammo_row_in_both_builders ---
+[PASS] 弹药充足时两个构造器都不告警  -> c:ammo/c:ammo
+[PASS] 弹药见底时 match_status_rows 变告警色  -> DANGER
+[PASS] 弹药见底时 map_status_groups 也变告警色（两处必须一致）  -> DANGER
+[PASS] 关掉 Warn Low 后低弹药也不告警（开关真能关）  -> c:ammo
+[PASS] 告警判据跟着 Ammo Type 走（不是一直盯 17mm）  -> c:ammo
+
+--- test_buffer_text_follows_thermal_panel_toggle ---
+[PASS] 开启时给出缓冲能量文本  ->   BUF 62%
+[PASS] HEAT/PWR 行确实带上了缓冲能量  -> 42/240  58W  BUF 62%
+[PASS] 关闭后文本为空（开关真能关）  -> ''
+[PASS] 关闭后 HEAT/PWR 行不再含缓冲能量，但行本身还在  -> 42/240  58W
+[PASS] 缓冲数值跟随状态变化  ->   BUF 7%
+
+============================================================
+ALL BATCH-8 SETTINGS TESTS PASSED

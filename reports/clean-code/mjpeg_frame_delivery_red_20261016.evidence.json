@@ -1,0 +1,8 @@
+{
+  "raw_file": "mjpeg_frame_delivery_red_20261016.txt.gz",
+  "raw_uncompressed_sha256": "6677118ea238f724c2797fecb3278870db040c3b6cf0274241fea06405aa26d5",
+  "gzip_sha256": "4ba289010bc9ed44f77a395a17601c0d7483cdcfe6bf7bada46b176e3125f7b6",
+  "readable_file": "mjpeg_frame_delivery_red_20261016.txt",
+  "readable_sha256": "b74be487d9ce93915cfdb88eba366ad53e5849f822bb11a7f56202997709ffc4",
+  "normalization": "Readable copy strips trailing ASCII spaces, tabs and carriage returns from each line only. Gzip retains exact original bytes."
+}

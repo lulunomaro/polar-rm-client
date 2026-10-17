@@ -1,0 +1,39 @@
+
+--- test_show_bar_toggle_hides_the_capacitor_row ---
+[PASS] Show Bar 打开时有 CAP 行  -> ['HEAT', 'POWER', 'SPEED', 'CAP']
+[PASS] Show Bar 关闭后 CAP 行消失（开关真的影响画面）  -> ['HEAT', 'POWER', 'SPEED']
+[PASS] 关掉 CAP 不影响 POWER 行  -> ['HEAT', 'POWER', 'SPEED']
+[PASS] Capacitor 模块关闭时也没有 CAP 行  -> ['HEAT', 'POWER', 'SPEED']
+
+--- test_show_limit_toggle_hides_the_power_row ---
+[PASS] Show Limit 打开时有 POWER 行  -> ['HEAT', 'POWER', 'SPEED', 'CAP']
+[PASS] Show Limit 关闭后 POWER 行消失  -> ['HEAT', 'SPEED', 'CAP']
+[PASS] 关掉 POWER 不影响 CAP 行  -> ['HEAT', 'SPEED', 'CAP']
+
+--- test_capacitor_warn_threshold_forces_danger_color ---
+[PASS] 电容 40% 高于阈值 25% 时不告警  -> state:cap
+[PASS] 电容 20% 低于阈值 25% 时用告警色（阈值真的生效）  -> DANGER
+[PASS] 调高阈值到 50% 后，40% 电容也告警（方向正确）  -> DANGER
+[PASS] 阈值 0 = 关闭告警，不因为等于 0 就永远告警
+[PASS] 垃圾阈值归为不告警且不抛异常  -> False
+
+--- test_both_telemetry_builders_agree ---
+[PASS] 开关组合 (Bar=True, Limit=True) 下行构造器与判据函数一致  -> labels=['CAP', 'HEAT', 'POWER', 'SPEED'] cap_visible=True power_visible=True
+[PASS] (True/True) 告警谓词与 Show Bar 无关（电容 10% 低于 25% 就为 True）  -> True
+[PASS] (True/True) CAP 行可见且为告警色  -> DANGER
+[PASS] 开关组合 (Bar=False, Limit=True) 下行构造器与判据函数一致  -> labels=['HEAT', 'POWER', 'SPEED'] cap_visible=False power_visible=True
+[PASS] (False/True) 告警谓词与 Show Bar 无关（电容 10% 低于 25% 就为 True）  -> True
+[PASS] (False/True) CAP 行隐藏时不产出任何颜色  -> None
+[PASS] 开关组合 (Bar=True, Limit=False) 下行构造器与判据函数一致  -> labels=['CAP', 'HEAT', 'SPEED'] cap_visible=True power_visible=False
+[PASS] (True/False) 告警谓词与 Show Bar 无关（电容 10% 低于 25% 就为 True）  -> True
+[PASS] (True/False) CAP 行可见且为告警色  -> DANGER
+[PASS] 开关组合 (Bar=False, Limit=False) 下行构造器与判据函数一致  -> labels=['HEAT', 'SPEED'] cap_visible=False power_visible=False
+[PASS] (False/False) 告警谓词与 Show Bar 无关（电容 10% 低于 25% 就为 True）  -> True
+[PASS] (False/False) CAP 行隐藏时不产出任何颜色  -> None
+
+--- test_module_with_no_show_setting_stays_visible ---
+[PASS] 查不到 Show * 设置时返回 True（不默认隐藏）  -> True
+[PASS] 模块为 None 时返回 False
+
+============================================================
+ALL HUD-TELEMETRY SETTINGS TESTS PASSED

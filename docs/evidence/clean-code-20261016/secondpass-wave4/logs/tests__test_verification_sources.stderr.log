@@ -1,0 +1,15 @@
+test_added_source_after_inventory_is_also_rejected (__main__.RunnerSourceStabilityTests.test_added_source_after_inventory_is_also_rejected) ... ok
+test_real_source_mutation_cannot_produce_a_successful_aggregate (__main__.RunnerSourceStabilityTests.test_real_source_mutation_cannot_produce_a_successful_aggregate) ... ok
+test_unavailable_source_fingerprint_preserves_check_but_marks_incomplete (__main__.RunnerSourceStabilityTests.test_unavailable_source_fingerprint_preserves_check_but_marks_incomplete) ... ok
+test_unchanged_inert_child_passes_without_git_and_reports_exact_scope (__main__.RunnerSourceStabilityTests.test_unchanged_inert_child_passes_without_git_and_reports_exact_scope) ... ok
+test_changes_additions_removals_and_renames_change_the_fingerprint (__main__.SourceFingerprintTests.test_changes_additions_removals_and_renames_change_the_fingerprint) ... ok
+test_dependency_and_configuration_contracts_are_inputs (__main__.SourceFingerprintTests.test_dependency_and_configuration_contracts_are_inputs) ... ok
+test_empty_or_unreadable_tree_is_unavailable_not_empty_success (__main__.SourceFingerprintTests.test_empty_or_unreadable_tree_is_unavailable_not_empty_success) ... ok
+test_generated_outputs_and_out_of_scope_assets_are_explicitly_excluded (__main__.SourceFingerprintTests.test_generated_outputs_and_out_of_scope_assets_are_explicitly_excluded) ... ok
+test_linked_source_is_rejected_without_reading_its_target (__main__.SourceFingerprintTests.test_linked_source_is_rejected_without_reading_its_target) ... ok
+test_same_bytes_are_independent_of_timestamps_and_walk_order (__main__.SourceFingerprintTests.test_same_bytes_are_independent_of_timestamps_and_walk_order) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.302s
+
+OK

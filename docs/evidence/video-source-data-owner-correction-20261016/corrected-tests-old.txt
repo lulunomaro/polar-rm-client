@@ -1,0 +1,38 @@
+test_late_receiver_can_admit_closer_then_reports_its_retained_socket (tests.test_video_source_snapshot_evidence.VideoSourceOwnerEvidenceTests.test_late_receiver_can_admit_closer_then_reports_its_retained_socket) ... FAIL
+test_live_retired_pipe_workers_can_admit_the_closer_needed_to_end_them (tests.test_video_source_snapshot_evidence.VideoSourceOwnerEvidenceTests.test_live_retired_pipe_workers_can_admit_the_closer_needed_to_end_them) ... FAIL
+test_retry_keeps_current_errors_visible_until_native_release_is_confirmed (tests.test_video_source_snapshot_evidence.VideoSourceOwnerEvidenceTests.test_retry_keeps_current_errors_visible_until_native_release_is_confirmed) ... ok
+
+======================================================================
+FAIL: test_late_receiver_can_admit_closer_then_reports_its_retained_socket (tests.test_video_source_snapshot_evidence.VideoSourceOwnerEvidenceTests.test_late_receiver_can_admit_closer_then_reports_its_retained_socket)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<review-checkout>/tests/test_video_source_snapshot_evidence.py", line 145, in test_late_receiver_can_admit_closer_then_reports_its_retained_socket
+    self.assertEqual(pending.inflight_resources, ())
+AssertionError: Tuples differ: ('UDP/HEVC',) != ()
+
+First tuple contains 1 additional elements.
+First extra element 0:
+'UDP/HEVC'
+
+- ('UDP/HEVC',)
++ ()
+
+======================================================================
+FAIL: test_live_retired_pipe_workers_can_admit_the_closer_needed_to_end_them (tests.test_video_source_snapshot_evidence.VideoSourceOwnerEvidenceTests.test_live_retired_pipe_workers_can_admit_the_closer_needed_to_end_them)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<review-checkout>/tests/test_video_source_snapshot_evidence.py", line 99, in test_live_retired_pipe_workers_can_admit_the_closer_needed_to_end_them
+    self.assertEqual(pending.inflight_resources, ())
+AssertionError: Tuples differ: ('UDP/HEVC', 'Native 0x0310') != ()
+
+First tuple contains 2 additional elements.
+First extra element 0:
+'UDP/HEVC'
+
+- ('UDP/HEVC', 'Native 0x0310')
++ ()
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.024s
+
+FAILED (failures=2)

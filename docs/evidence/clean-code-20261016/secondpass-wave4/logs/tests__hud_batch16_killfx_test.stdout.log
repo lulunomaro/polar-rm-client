@@ -1,0 +1,18 @@
+[PASS] 开关注入后键存在于字典  -> ['battlefield1', 'bonus', 'card', 'card_bar', 'combo', 'combo_subtitle', 'hit_info', 'honor', 'kill_feed', 'locked_target_bonus', 'match_progress', 'score', 'scrolling', 'scrolling_bf5', 'scrolling_bf6', 'valorant']
+[PASS] 开着时：持续交战的那一刀带“锁定目标”标签  -> ['killsound_df.ogg', 'killsound_df.ogg', 'addscore_df.ogg']
+[PASS] 开着时：播放的是加分音效 addscore_df.ogg  -> ['killsound_df.ogg', 'killsound_df.ogg', 'addscore_df.ogg']
+[PASS] 关掉后：同一刀不再有“锁定目标”标签  -> ['killsound_df.ogg', 'killsound_df.ogg']
+[PASS] 关掉后：不再播放加分音效  -> ['killsound_df.ogg', 'killsound_df.ogg']
+[PASS] 关掉后：普通击杀音效仍然播  -> ['killsound_df.ogg', 'killsound_df.ogg']
+[PASS] 设置项默认仍为 True（与接线前的硬编行为一致）  -> True
+[PASS] 默认配置下标签照旧出现
+[PASS] 字典缺该键时按开处理（不改历史行为）
+[PASS] 关 Lock Target Bonus 不影响 bonus 元素开关  -> True
+[PASS] 关 Lock Target Bonus 不影响 kill_feed 开关  -> True
+[PASS] 字典键数量等于全部元素开关 + 本项  -> 16
+[PASS] Bonus Tags 仍能独立关掉整行标签  -> False
+[PASS] Bonus Tags 关闭不牵连 locked_target_bonus  -> False
+[PASS] 缺项时 locked_target_bonus 回落 True  -> True
+[PASS] 缺项时加分标签与音效都照旧  -> ['killsound_df.ogg', 'killsound_df.ogg', 'addscore_df.ogg']
+
+合计 0 项失败

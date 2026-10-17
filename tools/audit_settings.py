@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""二级界面设置项审计：372 个可自定义项里，哪些**代码根本没人读**。
+"""二级界面设置项审计：470 个可自定义项里，哪些**代码根本没人读**。
 
 为什么需要它
 ------------
-ClickGUI 里 59 个模块、372 个设置项，每一个都是界面上能拖/能勾的。
+ClickGUI 里 74 个模块、470 个设置项，每一个都是界面上能拖/能勾的。
 但"界面上能调"和"调了有作用"是两件事：
 
     界面上能调 → 代码里有人读 → 读到的值真的影响了行为
@@ -25,7 +25,7 @@ ClickGUI 里 59 个模块、372 个设置项，每一个都是界面上能拖/�
 
     ORPHAN   0 个读取点 —— 界面能调，代码完全没人读，纯装饰
     DYNAMIC  没有字面读取点，但代码里有能拼出这个名字的 f-string /
-             字符串拼接 —— **不能当孤儿**，需人工看拼接处
+             字符串拼接，或精确命令解析与消费端相连 —— 需人工复核
     READ     有字面读取点，列出在哪些文件
 
 为什么必须有 DYNAMIC 这一档
@@ -49,11 +49,11 @@ ORPHAN。实际上它们是被 `f"Bind {slot}"` 这样**动态拼名字**读的
 用法
 ----
     python tools/audit_settings.py                    # 汇总 + 只列 ORPHAN
-    python tools/audit_settings.py --all              # 列全部 372 项
+    python tools/audit_settings.py --all              # 列全部 470 项
     python tools/audit_settings.py --module SpinMode  # 只看一个模块
     python tools/audit_settings.py --json out.json
 
-退出码始终 0：这是取证工具，不是断言。
+默认退出码 0；指定 --max-orphans 时超过上限返回 1。动态证据不是行为资格。
 """
 
 from __future__ import annotations
@@ -74,6 +74,10 @@ if not os.environ.get("POLAR_USER_DATA_ROOT", "").strip():
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+
+from tools.settings_action_evidence import (
+    DISPATCH_SOURCE, dynamic_action_evidence, dynamic_action_routes,
+)
 
 SRC_ROOT = ROOT / "rm_client"
 
@@ -651,6 +655,11 @@ def main(argv: list[str] | None = None) -> int:
     sources = collect_sources()
     templates = collect_dynamic_templates(sources)
     aliases = build_const_aliases()
+    action_routes = {}
+    for path, lines in sources:
+        if path == ROOT / DISPATCH_SOURCE:
+            action_routes = dynamic_action_routes("\n".join(lines))
+            break
     index = {
         str(path.relative_to(ROOT)).replace(os.sep, "/"): lines
         for path, lines in sources
@@ -684,16 +693,22 @@ def main(argv: list[str] | None = None) -> int:
         # 全误报成孤儿。改成查选项有没有被派发。
         if kind in ("action", "action_group") and options:
             dispatched = [o for o in options if find_reads(str(o), sources)]
+            dyn = [evidence for option in options
+                   for evidence in dynamic_action_evidence(str(option), action_routes)]
             if dispatched:
                 tier = "READ"
                 reads = [{"file": "-", "line": "-",
                           "text": f"{len(dispatched)}/{len(options)} 个选项有派发点"}]
+            elif dyn:
+                tier = "DYNAMIC"
+                reads = []
             else:
                 tier = "ORPHAN"
                 reads = []
-            dyn: list[str] = []
         else:
             dyn = [] if reads else match_dynamic(nm, templates)
+            if kind == "action" and not reads:
+                dyn.extend(dynamic_action_evidence(nm, action_routes))
             if reads:
                 tier = "READ"
             elif dyn:
@@ -743,7 +758,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"扫描源文件：{len(sources)}    设置项：{len(rows)}")
     print(f"  READ       有读取点且名字不冲突    ：{len(rows) - len(orphans) - len(dynamic) - len(unclear)}")
     print(f"  AMBIGUOUS  有读取点但同名多模块    ：{len(unclear)}  （不能算已对齐，需人工归属）")
-    print(f"  DYNAMIC    可能被动态拼名读取      ：{len(dynamic)}")
+    print(f"  DYNAMIC    动态拼名/命令消费候选   ：{len(dynamic)}")
     print(f"  ORPHAN     没有任何读取点（真装饰）：{len(orphans)}")
     print()
 
@@ -765,7 +780,7 @@ def main(argv: list[str] | None = None) -> int:
         for h in r["reads"][:3]:
             print(f"            {h['file']}:{h['line']}  {h['text'][:76]}")
         for h in r.get("dynamic", [])[:2]:
-            print(f"            可能拼接处 {h[:88]}")
+            print(f"            动态证据 {h[:160]}")
 
     print(
         f"\n同名共用项归属：共 {len(attributed) + len(unattributed)} 项，"

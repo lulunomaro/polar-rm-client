@@ -1,0 +1,13 @@
+F
+======================================================================
+FAIL: test_late_submit_failure_cannot_certify_close_while_capture_read_is_active (__main__.ThumbnailAdmissionAuditTests.test_late_submit_failure_cannot_certify_close_while_capture_read_is_active)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/next-wallpaper/tests/test_thumbnail_admission_audit.py", line 55, in test_late_submit_failure_cannot_certify_close_while_capture_read_is_active
+    self.assertFalse(closed.wait(.1), 'thumbnail close certified success while untracked native reader was active')
+AssertionError: True is not false : thumbnail close certified success while untracked native reader was active
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (failures=1)

@@ -1,0 +1,5 @@
+{
+  "tests/fixtures/referee_frontend_projection_baseline.py": "a3f81559145b25b3387d6d22217b7538ab2b92faa565264ef81f71074a02311a",
+  "tests/test_referee_frontend_projection_contract.py": "18da43168b6f0b0a671c19dce3c8561c779d792e14609c42ff28382e1a9ef11e",
+  "docs/evidence/clean-code-20261016/referee-frontend-contract/focused.log": "28f63f5b34cec3b6667c986ed22f7f0579268ab4d6e3ff12a4180d7f193bae7b"
+}

@@ -1,0 +1,350 @@
+Pending input clear failed after configuration quiescence failure
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 28, in quiesce_configuration_inputs
+    revoke()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 78, in <lambda>
+    revoke=lambda: self.backend.lock_control("match mode changed"),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: lock failed
+Pending input clear failed: RuntimeError: clear failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 32, in quiesce_configuration_inputs
+    clear_pending()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 80, in <lambda>
+    clear_pending=lambda: self.control.clear_pending(),
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: clear failed
+Pending input clear failed after configuration quiescence failure
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 29, in quiesce_configuration_inputs
+    release()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 79, in <lambda>
+    release=lambda: self.control.release_all(self.state, self.registry),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: release failed
+Pending input clear failed: RuntimeError: clear failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 32, in quiesce_configuration_inputs
+    clear_pending()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 80, in <lambda>
+    clear_pending=lambda: self.control.clear_pending(),
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: clear failed
+Pending input clear failed after configuration quiescence failure
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 28, in quiesce_configuration_inputs
+    revoke()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 122, in <lambda>
+    revoke=lambda: self.backend.lock_control("robot profile/alliance changed"),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: lock failed
+Pending input clear failed: RuntimeError: clear failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 32, in quiesce_configuration_inputs
+    clear_pending()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 124, in <lambda>
+    clear_pending=lambda: self.control.clear_pending(),
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: clear failed
+Pending input clear failed after configuration quiescence failure
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 29, in quiesce_configuration_inputs
+    release()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 119, in release_inputs
+    self.control.release_all(self.state, self.registry)
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: release failed
+Pending input clear failed: RuntimeError: clear failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 32, in quiesce_configuration_inputs
+    clear_pending()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 124, in <lambda>
+    clear_pending=lambda: self.control.clear_pending(),
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: clear failed
+Pending input clear failed after configuration quiescence failure
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 28, in quiesce_configuration_inputs
+    revoke()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 745, in <lambda>
+    revoke=lambda: self.backend.lock_control("control bindings changed"),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: lock failed
+Pending input clear failed: RuntimeError: clear failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 32, in quiesce_configuration_inputs
+    clear_pending()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 747, in <lambda>
+    clear_pending=lambda: self.control.clear_pending(),
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: clear failed
+Pending input clear failed after configuration quiescence failure
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 29, in quiesce_configuration_inputs
+    release()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 746, in <lambda>
+    release=lambda: self.control.release_all(self.state, self.registry),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: release failed
+Pending input clear failed: RuntimeError: clear failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 32, in quiesce_configuration_inputs
+    clear_pending()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 747, in <lambda>
+    clear_pending=lambda: self.control.clear_pending(),
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: clear failed
+Pending input clear failed after configuration quiescence failure
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 28, in quiesce_configuration_inputs
+    revoke()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 623, in <lambda>
+    revoke=lambda: self.backend.lock_control("configuration reload"),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: lock failed
+Pending input clear failed: RuntimeError: clear failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 32, in quiesce_configuration_inputs
+    clear_pending()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 625, in <lambda>
+    clear_pending=lambda: self.control.clear_pending(),
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: clear failed
+Pending input clear failed after configuration quiescence failure
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 29, in quiesce_configuration_inputs
+    release()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 624, in <lambda>
+    release=lambda: self.control.release_all(self.state, self.registry),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: release failed
+Pending input clear failed: RuntimeError: clear failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/configuration/quiescence.py", line 32, in quiesce_configuration_inputs
+    clear_pending()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/mixins/persistence_mixin.py", line 625, in <lambda>
+    clear_pending=lambda: self.control.clear_pending(),
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_configuration_quiescence.py", line 26, in call
+    raise self.errors[name]
+RuntimeError: clear failed
+.......QOpenGLWidget is not supported on this platform.
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+............................Window owner action configuration failed
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar_app.py", line 3291, in <lambda>
+    OwnerAction("configuration", lambda: self.flush_auto_save(force=True)),
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/clean-quiescence/tests/test_ui_state_regressions.py", line 589, in invoke
+    raise OSError(name)
+OSError: save
+Window owner action clickgui_gpu failed
+Traceback (most recent call last):
+  File "/workspace/shared/clean-quiescence/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/workspace/shared/clean-quiescence/tests/test_ui_state_regressions.py", line 589, in invoke
+    raise OSError(name)
+OSError: clickgui_gpu
+...QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+.
+----------------------------------------------------------------------
+Ran 48 tests in 1.774s
+
+OK

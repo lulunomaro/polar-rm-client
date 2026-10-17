@@ -1,0 +1,10 @@
+....................................................................................................................................................Lifecycle event after audit sealed: mqtt_disconnect;
+..Lifecycle event after audit sealed: mqtt_disconnect;
+.....................................
+----------------------------------------------------------------------
+Ran 187 tests in 8.810s
+
+OK
+2000 failed-disconnect UI ticks: scans=4, neutral attempts=3, input-clear callbacks=1
+250 real-time 100Hz ticks / 2.500s: scans=4, retries=3, caller median=0.0456ms max=0.7139ms
+fake 19.3ms scan / blocked write: enqueue median=0.0049ms max=0.0435ms, calls=[('scan', 'dt7-writer'), ('open', 'dt7-writer'), ('write', 'dt7-writer'), ('write', 'dt7-writer'), ('close', 'dt7-writer')]

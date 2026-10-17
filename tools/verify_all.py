@@ -1,219 +1,277 @@
-"""一条命令验证「客户端侧」是否全部就绪，给出 GO / NO-GO。
+"""Run the shared test registry with truthful, scoped evidence.
 
-为什么需要它：这个项目现在有 9 套 Python 测试、2 个 C 编译/行为校验、1 个固件
-准备自检。它们散在不同文件里，而最终要判断的其实只有一句话：
+Examples:
+    python tools/verify_all.py --list --profile all
+    python tools/verify_all.py --test test_test_registry --json report.json
+    python tools/verify_all.py --profile offline --firmware /prepared/worktree
+    python tools/verify_all.py --profile release --desktop --log-dir test-logs
 
-    客户端这边还能不能挑出问题？能不能放心去 Keil 编译？
-
-本脚本把它们串成一次运行，任何一项红就 NO-GO 并列出是哪项。
-
-跑法：
-    python tools/verify_all.py
-    python tools/verify_all.py --firmware <StandardRobotpp 路径>   # 附带固件准备自检
-
-注意：这里全部是**离线**检查。它证明不了"车真的会动" —— 那需要硬件。
-
-并行跑两个 verify_all 会出现"假红"：固件自检共享同一棵工作树，
-旧版校验会临时改写固件。当前统一只读检查指定树，并拒绝自动安装；保留文件锁拒绝第二个实例
-（实测：同一份代码一次报 3/51 红、一次 51 全绿，红的那次不是代码坏）。
-因此这份清单的红色结果只有在"只有一个实例在跑"时才可作为证据。
+PASS requires executed checks. SKIP, partial skips, zero tests, missing
+prerequisites and timeouts cannot produce a successful aggregate exit code.
+An offline PASS is never evidence that a real robot or desktop GPU worked.
 """
-
 from __future__ import annotations
 
 import argparse
+from dataclasses import asdict, dataclass
+import faulthandler
 import hashlib
+import json
+import math
 import os
+from pathlib import Path
 import re
+import runpy
+import signal
 import subprocess
 import sys
 import tempfile
-from pathlib import Path
+import threading
+import time
+import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from tools.test_registry import CATEGORIES, PROFILES, TestEntry, discover, select
+from tools.verification_provenance import collect_provenance
+from tools.verification_sources import SOURCE_SCOPE, capture_sources, compare_sources
 
-PYTHON_SUITES = (
-    "test_controller_angle_integration",  # Issue 10: UI/manager wiring and safety gates
-    "test_controller_angle_safety_review",  # Independent parser/lifecycle regressions
-    "test_build_safety_regressions",  # isolated packaging / path / file-preservation guards
-    "test_transport_safety_regressions",
-    "test_serial_codec_regressions",
-    "test_serial_lifecycle_regressions",
-    "test_controller_frame_regressions",
-    "test_api_freeze_platform_regressions",
-    "test_ui_state_regressions",
-    "test_polar_async_connect",  # nonblocking connect, cancellation and shutdown ownership
-    "test_device_manager_nonblocking",  # frame never waits for driver locks or close
-    "test_dt7_worker_dispatch",  # bounded UI-safe DT7 mailbox and fault lifecycle
-    "test_cc_worker_dispatch",   # bounded UI-safe custom-controller worker
-    "test_gpu_warmup_budget",  # queued warmup and UI-thread timing ownership
-    "test_fullscreen_composition",  # Windows style guard and pre-resize cache invalidation
-    "test_settings_cold_start",  # lazy settings, bounded rows, first-Esc warmup pause
-    "test_lazy_settings_state",  # independent drafts, dirty refresh and reset
-    "test_cs_crosshair_visibility",  # physical pixel floor and preview/HUD scale
-    "test_cs_crosshair_target_bounds",  # CS-only 2x sizing and bounded GPU uploads
-    "test_framebuffer_generation",  # DPR/storage replacement never reuses old pixels
-    "test_jello_atlas_pages",  # bounded text history and atomic atlas coverage
-    "test_jello_description_wrapping",  # full module/help text at original DPR
-    "test_fullscreen_input_extended",  # repeated modal/F11 and gesture ownership
-    "test_audio_replay_regressions",  # repeated preview cues and media voice ownership
-    "test_background_display_locale",  # text-bearing GPU backgrounds/blur invalidate on locale
-    "test_hero_display_locale",  # display-only Hero safety/phase text and invariant controls
-    "test_hud_display_locale",  # HUD/map labels with immutable raw state and commands
-    "test_status_display_locale",  # dynamic island/watermark/DT7 display and cache languages
-    "test_match_strip_locale",  # CS strip aliases, models, layout and portrait cache
-    "test_economy_display_locale",  # economy/inventory display and opaque diagnostic data
-    "test_ui_localization",  # Chinese labels, stable stored IDs and explicit English
-    "test_startup_display_locale",  # production startup geometry, cache and toast display
-    "test_clickgui_background_dismiss",  # issue #8: blank clicks, controls, drag and hotkeys
-    "test_startup_settings_fullscreen",  # issue #12: launcher settings and window-owned F11
-    "test_escape_menu",  # modal input precedence, safe Esc actions and real Qt rendering
-    "test_kill_selector_regressions",  # clipped preset popup wheel/touchpad routing
-    "test_kill_audio_regressions",  # nonblocking PCM cache, Ready gating and errors; no audio output
-    "test_kill_asset_filtering",  # real Qt raster DPR/filter/cache checks
-    "student_frontend_test",  # MC 背包/Jello 学生面板：只读展示、草稿不发、模态与缓存
-    "polar_spec_test",        # 协议规格：加载/校验/改 JSON 真能改行为/新增段零 Python
-    "robot_roles_test",       # 兵种对齐：限幅、禁驾、不一致告警、键位分层
-    "polar_link_test",        # 帧编解码、CRC 三方对拍、时间戳单调、fire 恒 0
-    "polar_bridge_test",      # 段→HUD 映射、驾驶通道门控、改绑、云台出口互斥
-    "polar_integration_test", # 端到端回环：官方场景开车、无 0x1E 的 sim2real、急停竞态
-    "polar_selftest_test",    # 无头自检本身
-    "startup_black_hole_test", # cached wallpaper and one-time default migration
-    "polar_startup_test",     # 真实窗口：链路 tick、HUD 渲染、改绑持久化
-    "gimbal_host_request_test", # 云台直控请求位：电平语义、急停撤回、三条件闸门
-    "autoaim_settings_test",  # 自瞄 Fov/Priority 接线：换算精确、未标定不加门、降级不谎报
-    "hud_telemetry_settings_test",  # HUD 遥测面板 Show Bar/Warn/Show Limit 接线与两处一致
-    "hud_status_settings_test",     # 战况面板 12 个开关：三个构造器行为必须一致
-    "hud_batch16_killfx_test",        # 击杀特效：锁定目标加分开关→标签→提示音贯通
-    "hud_batch17_crosshair_test",     # 准星样式：同名洗白的隐藏孤儿；默认档逐图元不变
-    "hud_batch18_powerguard_test",   # 功率保护两个告警阈值：模块关着逐值不变、开了只能加严
-    "hud_batch19_bufftimeline_test", # 增益时间轴：从“整个模块没消费者”到有面板（含真窗口像素）
-    "hud_batch20_robotoverlay_color_test", # 装甲盒配色 Color：默认档三个消费点逐值不变；Threat 降级不静默
-    "hud_batch21_radaroverlay_map_test", # 雷达叠加 Map：默认 Both=接线前两张图都画；Mini/Full 按展开态分档
-    "settings_doc_consistency_test", # 孤儿数的 7 处出处（文档/闸门/实测）必须一致
-    "hud_batch14_settings_test",       # 状态卡片：三处消费点共用判据 + GimbalPower 三项
-    "hud_batch13_settings_test",       # 地图标记：默认字节不变 + 编解码往返
-    "hud_batch10_settings_test",      # 缓冲上限写入状态（静态分支）+ RM 指示灯开关
-    "hud_batch9_settings_test",       # 电容单一数据源 + 装甲盒深度边开关
-    "hud_batch8_settings_test",       # 第 8 批：启动二级页/锁定框/弹药告警/缓冲能量
-    "hud_overlay_settings_test",    # RobotOverlay Robot ID / Crosshair Heat Color（第 4 批）
-    "backend_protocol_test",  # 官方裁判协议（回归护栏）
-    "referee_integration_test",  # 年度协议隔离 / 只读学生版 / 真 MQTT localhost 回环
-    "api_freeze_test",        # 窗口成员冻结（防误删公开面）
-)
 
-C_CHECKS = (
-    ("tools/firmware/controller_angle/test_controller_angle.py",
-     "Issue 10 angle firmware: exact source, independent timeout and sender bounds"),
-    ("tools/firmware/host_bridge/test_usb_receiver_portable.py",
-     "真实 USB 回调队列与有界外层解析（匹配源码 / CRC / 竞态 / 溢出）"),
-    ("tools/firmware/referee_rx/test_referee_rx.py",
-     "真实裁判分派长度边界（固定载荷 / 可变交互 / 未接收不更新新鲜度）"),
-    ("tools/firmware/km_link/test_serial_parsers_portable.py",
-     "便携串口解析器（编译生成 C / 分片 / 噪声 / 长度 / PRM1 校验）"),
-    ("tools/firmware/test_patch_real_headers.py", "补丁代码用固件真实头文件编译"),
-    ("tools/firmware/test_patch_logic.py", "补丁代码行为断言（含 tick 回绕、竞态）"),
-    # 上位机<->底盘 桥接（上行 0x04 / 下行 0x1F）：把小陀螺从“借 SHIFT
-    # 边沿翻转”改成“显式设定 + 回读闭环”。这一项同时含编译与 9 组行为断言。
-    #
-    # 与上面两项的相互干扰已处理：三个脚本都会先判断“目标改动是不是已经在
-    # 树里”，在就不动 git。否则 prepare_hero_build.py 刚准备好的工作树
-    # 会被后一个脚本的 finally 里 git checkout 静默撤销，造成“报 GO 但改动已没了”。
-    # 2026-09-05 补严：光"已在树里就不动"还不够——那几个脚本收尾用的是
-    # `git checkout -- .`（想把**自己**装的桥撤掉，实际把**整棵树**所有改动一起冲掉，
-    # 包括 prepare 写好的兵种 include 与 MOUSE_SENSITIVITY；本轮真的复现过一次：
-    # 英雄参数被冲回 100000.0f，紧接着新加的体检就 NO-GO）。
-    # 现在统一走 tools/firmware/bridge_fixture.py：装之前按字节快照，收尾原样放回。
-    ("tools/firmware/host_bridge/test_host_bridge.py",
-     "自转桥接（0x04/0x1F）编译 + 行为断言"),
-    ("tools/firmware/motion_feedback/test_motion_feedback.py",
-     "速度回读桥（0x1E）编译 + 运动学往返断言"),
-    ("tools/firmware/gimbal_host/test_gimbal_host.py",
-     "云台直控桥（0x04 param0）结构 + 编译 + 真值表断言"),
-    # 驾驶键位三方写入者（DT7 解码 / 无键盘遥控器置零宏 / usb_task 合并）。
-    # 这一项必须是**可执行**的行为校验：粘键和整帧覆盖都是运行时语义，
-    # 编译器一句都不会报。带 --negative 还能证明这些断言抓得住旧写法。
-    ("tools/firmware/host_bridge/test_rc_key_ledger.py",
-     "驾驶键位账本（DT7 不被抹 / 松键能归零）8 组行为断言"),
-    # DT7/DR16 官方 18 字节帧的位序：把固件里真实的 sbus_to_rc() 编成 exe，
-    # 用 Python 打的帧喂进去逐字段比对。这一项防的是"手册/固件/客户端三方
-    # 位序悄悄错开"——键位错一位就是车上按 Shift 变按 Q 那类现场怪事。
-    ("tools/dt7_link/test_dbus_frame_vs_firmware.py",
-     "DT7 官方 18 字节帧位序 == 固件真实解码（逐字段 + 常量守卫）"),
-    # 图传键鼠链路。两项都要，因为它们查的是不同的东西：
-    # layout 查"客户端打的字节"和"C 结构体"是否还对得上（改了任何一端、
-    # 或 __packed__ 没生效都会红）；行为查五档仲裁与三条底线。
-    ("tools/firmware/km_link/test_km_payload_layout.py",
-     "PRM1 键鼠载荷：C 结构体偏移 == 客户端 struct 打包（逐字段）"),
-    ("tools/firmware/km_link/test_km_link.py",
-     "图传键鼠五档仲裁 + 摇杆底线 + 开火权限（喂客户端真字节）"),
-    # 客户端这一半：默认关、关着不多发、松键能清零。
-    ("tools/dt7_link/test_radio_km_client.py",
-     "无线键鼠出口客户端侧（默认关 / 不粘键 / 载荷 26B / UI 开关三道闸）"),
-    # DT7 旁听（只读）：分帧与键位位序判读的离线断言。现场那条
-    # "Q 到底在 bit4 还是 bit6" 的死结靠它判，所以它必须一直绿。
-    ("tools/dt7_link/test_vcp_listen.py",
-     "DT7 VCP 旁听：空闲线分帧 + 键位 bit 跳变双位序判读"),
-    # 抓包差分：现场只抓一次官方选手端<->DT7，位序与键位字节靠它算，
-    # 所以它的判据必须一直可靠（含"不许硬判位序"与"不许乱认键位"两条）。
-    ("tools/dt7_link/test_frame_diff.py",
-     "DT7 抓包差分：键位字节/位序 判定（合成样本，含两类不许乱判）"),
-    # 自定义控制器出口：帧必须被**固件里那份官方 CRC 代码**验收通过，
-    # 否则选手端整帧丢弃，现象是"发了但没反应"，最难查。
-    ("tools/dt7_link/test_cc_link.py",
-     "自定义控制器 0x0306 出口（帧被固件 CRC 验收 + 三道闸 + 不静默丢键）"),
-    # DT7 直连：帧/位域/CRC/默认关 都可离线证；命令号仍是候选值，
-    # 所以断言名字里写着"未确认"，防止后人当成已定论。
-    ("tools/dt7_link/test_dt7_link.py",
-     "DT7 直连出口（5A/22B 帧对厂商反汇编 + 两族 CRC 互不认 + 真发闸/互斥/松手）"),
-    # 挑口：认错口的代价不是"连不上"，而是产出假结论 ——
-    # 把遥控器帧写进 C 板的 CDC，再拿同一块板的 km_key 判读，永远得到 NO-CHANGE，
-    # 于是我们以为"DT7 不认这一帧"，白换一整轮帧型。
-    ("tools/test_settings_are_read.py",
-     "设置项接线审计（每个 RobotLink 项都被取用 + Port/Baud 优先级规则）"),
-    ("tools/test_port_picking.py",
-     "Auto 挑口（DT7 只认 DJI VCOM / CC 只认 FTDI / 车的口一律判负）"),
-    # C 路闭环自检工具的判据本身也要有证据：说 PASS 必须真是"我们发的位到了车上合并键位"，
-    # 而且三种失败形态（DT7 不理帧 / 载荷错位 / 读不到回读）都不许误判成通。
-    # D 路（车端 USB<->WiFi 桥）两条：桥本身是裸管道（不改字节、断链不再写串口），
-    # 以及接到客户端传输层之后"提交意图 -> 字节原样落到 C 板、上行帧能拼回来"。
-    ("tools/test_car_bridge_loopback.py",
-     "车端桥裸管道（分片到达不改字节 / 上行拼回帧 / 断开后不再写串口）"),
-    ("tools/test_car_bridge_transport.py",
-     "D 路接进传输层（tcp 模式不被 Stub 端口挡住 / 意图落到串口 / 连不上报错清楚）"),
-    # 端到端（离线）：闸门 -> 控制层 -> 运行期 DT7 出口 -> 假 DT7 -> "车上那本键位账"。
-    # 分层各自绿不等于接起来能用，所以这条链要单独钉住。
-    ("tools/dt7_link/test_end_to_end_c_link.py",
-     "C 路端到端离线（按键到车上键位 / 松手 / 急停交还 / 互斥 / 鼠标截断）"),
-    # 扫帧型工具：必须"只认出那一种"。它自己就被两条断言抓出过 bug
-    # （假车攒陈旧帧 => 六种全 PASS；循环里发的是运行期那一种 => 六种其实是同一种）
-    ("tools/dt7_link/test_dt7_sweep.py",
-     "C 路扫帧型（只认得出那一种 / 清零帧 / 无回读不结论 / 未定案不写字节）"),
-    ("tools/firmware/test_prepare_hero_options.py",
-     "prepare_hero_build 新选项（--mouse-sens 改得动且幂等 / 注释吞 define 能被体检抓住）"),
-    # 界面上那个"Run DT7 Link Selftest"按钮的可测部分：判据、两个把手，
-    # 以及"设置项/分派/处理函数"三处必须成对（防按钮变成空壳）。
-    ("tools/dt7_link/test_dt7_ui_selftest.py",
-     "C 路界面自检（X 探针无消费者 / 把手作用到发送 / 按钮不是空壳）"),
-    ("tools/dt7_link/test_wireless_selftest.py",
-     "C 路闭环自检（假车真回环 / NO-CHANGE 与 PARTIAL 不误判 / 假阳性防线）"),
-    # broker 地址：正式赛的键鼠要发到赛事引擎那台 192.168.12.1，
-    # 界面上那个地址以前是摆设（改了没人读），现在必须有断言钉住。
-    # 三个子代理复查抓出来的坑（reserved 落在 ch[4]、限流吃掉鼠标增量、
-    # MOUSE_SENSITIVITY 量级）：钉成断言，防止下一轮又把默认值改回去
-    ("tools/dt7_link/test_dt7_review_fixes.py",
-     "C 路复查三个坑（reserved=通道中值 / 限流不吃鼠标 / 镜头灵敏度量级）"),
-    # 松手帧必须落地：DT7/DR16 没有过期自动清零，被 max_hz 挡下的中立帧就是
-    # "手松了车还在走"。这一坑是假时钟 24 个相位扫出来的（旧代码 24/24 全被挡，
-    # 最好情况 253ms 才补上），所以断言也必须按相位扫，不能只测一个 lucky case。
-    ("tools/dt7_link/test_dt7_release_flush.py",
-     "C 路松手帧（限流不许吃掉零键 / 写失败要补发 / 暂停与关出口不许空转 / 水印说实话）"),
-    ("tools/test_mqtt_link_settings.py",
-     "MQTT broker 地址接线（改设置就换地址 / 已连接会重连 / 非法值回写不骗人）"),
-)
+@dataclass(frozen=True)
+class CheckResult:
+    status: str
+    detail: str
+    tests_run: int | None = None
+    checks_passed: int = 0
+    skipped: int = 0
+    returncode: int | None = None
+    duration_s: float = 0.0
+    expected_failures: int = 0
+
+
+# Anchored status lines only: prose mentioning a mock's "SKIP" or "PASS"
+# does not constitute test evidence. unittest's summary is counted separately.
+SKIP_LINE = re.compile(r"(?im)^\s*(?:\\n)?(?:\[\s*SKIP\s*\]|SKIP(?:\s|:)|\[INCOMPLETE\]|INCOMPLETE(?:\s|:|\())[^\n]*")
+PASS_LINE = re.compile(r"(?im)^\s*(?:\[\s*(?:PASS|OK)\s*\]|PASS:)\s*[^\n]+")
+UNITTEST_RUN = re.compile(r"(?m)^Ran (\d+) tests? in [^\n]+$")
+UNITTEST_OK = re.compile(r"(?m)^OK(?: \([^\n]*\))?$")
+UNITTEST_SKIP = re.compile(r"(?m)^OK \([^\n]*\bskipped=(\d+)[^\n]*\)$")
+UNITTEST_EXPECTED_FAILURE = re.compile(r"(?m)^OK \([^\n]*\bexpected failures=(\d+)[^\n]*\)$")
+
+
+def classify_output(returncode: int, output: str, *, completion_pattern: str | None = None,
+                    check_count_pattern: str | None = None) -> CheckResult:
+    """One classifier for verify, release, and the compatibility run() API."""
+    ran = [int(value) for value in UNITTEST_RUN.findall(output)]
+    tests_run = sum(ran) if ran else None
+    passed = len(PASS_LINE.findall(output))
+    if check_count_pattern:
+        reported_counts = [int(value) for value in re.findall(check_count_pattern, output)]
+        passed = max([passed, *reported_counts])
+    skipped_lines = [line.strip() for line in SKIP_LINE.findall(output)]
+    skipped_tests = sum(int(value) for value in UNITTEST_SKIP.findall(output))
+    skipped = max(len(skipped_lines), skipped_tests)
+    detail = " | ".join(skipped_lines)[:500]
+    failure_lines = re.findall(r"(?m)^\s*(?:\[FAIL\]|FAIL:|ERROR:)[^\n]*", output)
+    if failure_lines or re.search(r"(?m)^FAILED(?:\s|\()", output):
+        return CheckResult("FAIL", " | ".join(line.strip() for line in failure_lines[:3])[:500] or "unittest reported failure",
+                           tests_run, passed, skipped, returncode)
+    if returncode == 5 and tests_run == 0 and "NO TESTS RAN" in output:
+        return CheckResult("INCOMPLETE", "unittest executed zero tests", 0, passed, skipped, returncode)
+    if returncode not in (0, 77):
+        missing = re.findall(r"(?m)^ModuleNotFoundError: No module named .+$", output)
+        if missing:
+            return CheckResult("INCOMPLETE", " | ".join(missing), tests_run, passed, skipped, returncode)
+        errors = [line.strip() for line in output.splitlines()
+                  if line.lstrip().startswith(("[FAIL]", "FAIL:", "ERROR:", "FAILED", "AssertionError"))]
+        return CheckResult("FAIL", " | ".join(errors[:3])[:500] or f"exit={returncode}",
+                           tests_run, passed, skipped, returncode)
+    expected_failures = sum(int(value) for value in UNITTEST_EXPECTED_FAILURE.findall(output))
+    if expected_failures:
+        detail = f"{expected_failures} unittest expected failures remain unresolved" + (f" | {detail}" if detail else "")
+        return CheckResult("INCOMPLETE", detail, tests_run, passed, skipped, returncode,
+                           expected_failures=expected_failures)
+    if returncode == 77 or skipped:
+        any_passed = passed > 0 or (tests_run is not None and tests_run > skipped_tests)
+        declared_incomplete = any(re.match(r"(?:\\n)?(?:\[INCOMPLETE\]|INCOMPLETE(?:\s|:|\())", line, re.I)
+                                  for line in skipped_lines)
+        return CheckResult("INCOMPLETE" if any_passed or declared_incomplete else "SKIP",
+                           detail or (f"{skipped_tests} unittest tests skipped" if skipped_tests else "check not run (exit 77)"),
+                           tests_run, passed, skipped or 1, returncode)
+    if tests_run is not None:
+        if any(count == 0 for count in ran):
+            return CheckResult("INCOMPLETE", "unittest executed zero tests", tests_run, passed, 0, returncode)
+        if len(UNITTEST_OK.findall(output)) < len(ran):
+            return CheckResult("INCOMPLETE", "unittest completion summary missing", tests_run, passed, 0, returncode)
+        return CheckResult("PASS", f"{tests_run} unittest tests passed", tests_run, passed, 0, returncode)
+    if completion_pattern:
+        if re.search(completion_pattern, output, re.M):
+            return CheckResult("PASS", (f"declared script completion verified ({passed} counted assertions)" if passed else
+                                        "declared script completion verified; assertion count unavailable"), None, passed, 0, returncode)
+        return CheckResult("INCOMPLETE", "declared script completion missing", None, passed, 0, returncode)
+    if passed:
+        return CheckResult("PASS", f"{passed} explicit assertions passed", None, passed, 0, returncode)
+    return CheckResult("INCOMPLETE", "exit zero without executed-test evidence", None, 0, 0, returncode)
+
+
+def child_environment(user_data: str, firmware: Path | None, *, desktop: bool = False,
+                      release: bool = False) -> dict[str, str]:
+    env = dict(os.environ)
+    # Child imports must resolve to this exact staged source tree, never an
+    # installed package or another checkout inherited through PYTHONPATH.
+    env["PYTHONPATH"] = str(ROOT)
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["POLAR_USER_DATA_ROOT"] = user_data
+    # This runner verifies the selected source checkout. A portable-app root
+    # would bypass POLAR_USER_DATA_ROOT and redirect writes to another install.
+    env.pop("POLAR_APP_ROOT", None)
+    # Standalone startup debugging may opt into a persistent root or activation.
+    # The canonical runner instead owns fresh storage and inert startup; a test
+    # that exercises activation must explicitly arrange that behavior itself.
+    env.pop("POLAR_STARTUP_USER_DATA_ROOT", None)
+    env["POLAR_AUTOSTART"] = "0"
+    env["XDG_CACHE_HOME"] = str(Path(user_data) / "cache")
+    env["XDG_CONFIG_HOME"] = str(Path(user_data) / "config")
+    env["XDG_DATA_HOME"] = str(Path(user_data) / "data")
+    env["POLAR_FIRMWARE_ROOT"] = str(firmware or ROOT / ".firmware-not-selected")
+    env["POLAR_FIRMWARE_READ_ONLY"] = "1"
+    if firmware:
+        env["POLAR_REFEREE_REFERENCE"] = str(firmware)
+    else:
+        env.pop("POLAR_REFEREE_REFERENCE", None)
+    env["POLAR_DISABLE_LOCAL_CAPTURE"] = "1"
+    env["POLAR_DISABLE_MEDIA_PRELOAD"] = "1"
+    # OpenVINO's official telemetry wrapper uses disable_in_ci=True and its
+    # consent checker recognizes exactly CI=true (case-insensitive). Set this
+    # in every owned test child before optional dependencies can be imported.
+    # This is a local subprocess opt-out, not a request to run hosted/paid CI.
+    env["CI"] = "true"
+    if desktop:
+        env["QT_QPA_PLATFORM"] = "windows" if sys.platform == "win32" else ("xcb" if env.get("DISPLAY") else "wayland")
+    else:
+        env["QT_QPA_PLATFORM"] = "offscreen"
+    if release:
+        env["POLAR_REQUIRE_VIDEO_FIXTURE"] = "1"
+    return env
+
+
+def run(label: str, argv: list[str], *, firmware: Path | None = None,
+        timeout: float = 180.0) -> tuple[bool, str]:
+    """Compatibility API; skipped checks remain false/INCOMPLETE for callers."""
+    with tempfile.TemporaryDirectory(prefix="verify_all_") as user_data:
+        try:
+            proc = subprocess.run(argv, cwd=str(ROOT), capture_output=True, text=True,
+                                  encoding="utf-8", errors="replace",
+                                  env=child_environment(user_data, firmware), timeout=timeout)
+        except subprocess.TimeoutExpired:
+            return False, f"INCOMPLETE: timeout after {timeout:g}s"
+        except OSError as exc:
+            return False, f"INCOMPLETE: {exc}"
+    result = classify_output(proc.returncode, (proc.stdout or "") + "\n" + (proc.stderr or ""))
+    if result.status in ("SKIP", "INCOMPLETE"):
+        return False, "INCOMPLETE: " + result.detail
+    return result.status == "PASS", result.detail
+
+
+def execute_script(path: str, args: list[str]) -> None:
+    """Internal subprocess bootstrap: direct-script semantics plus hang logs."""
+    target = os.path.normcase(os.path.abspath(path))
+    sys.argv = [path, *args]
+    sys.path.insert(0, os.path.dirname(os.path.abspath(path)))
+    faulthandler.enable(all_threads=True)
+    faulthandler.dump_traceback_later(120, repeat=True)
+    done = threading.Event()
+
+    def sample_active_test():
+        previous = None
+        while not done.wait(1.0):
+            names = set()
+            for frame in sys._current_frames().values():
+                while frame is not None:
+                    if (frame.f_code.co_name.startswith("test_") and
+                            os.path.normcase(os.path.abspath(frame.f_code.co_filename)) == target):
+                        names.add(frame.f_code.co_name)
+                    frame = frame.f_back
+            active = ", ".join(sorted(names))
+            if active and active != previous:
+                print("ACTIVE " + active, flush=True)
+            previous = active
+    watcher = threading.Thread(target=sample_active_test, daemon=True)
+    watcher.start()
+    try:
+        runpy.run_path(path, run_name="__main__")
+    finally:
+        done.set()
+        watcher.join(0.2)
+        faulthandler.cancel_dump_traceback_later()
+
+
+def stop_process_tree(proc: subprocess.Popen) -> None:
+    try:
+        if os.name == "nt":
+            # Python 3.x on Windows cannot kill a process group with Popen.kill().
+            stopped = subprocess.run(["taskkill", "/PID", str(proc.pid), "/T", "/F"],
+                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
+            if stopped.returncode != 0 and proc.poll() is None:
+                raise OSError("taskkill did not confirm process-tree termination")
+        else:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+    finally:
+        # Even when tree cleanup fails, never leave the owned direct child
+        # running. The caller reports INCOMPLETE rather than claiming cleanup.
+        if proc.poll() is None:
+            proc.kill()
+
+
+def run_entry(entry: TestEntry, *, firmware: Path | None, timeout: float,
+              desktop: bool, release: bool, log_dir: Path | None) -> CheckResult:
+    if entry.category in ("desktop", "visual"):
+        if not desktop:
+            return CheckResult("SKIP", "native desktop required; rerun with --desktop on a real desktop")
+        if sys.platform != "win32" and not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
+            return CheckResult("SKIP", "no desktop display is available; offscreen GL cannot satisfy this gate")
+    path = ROOT / entry.path
+    if not path.is_file():
+        return CheckResult("INCOMPLETE", f"missing test file: {entry.path}")
+    argv = [sys.executable, "-u", str(Path(__file__).resolve()), "--_execute", str(path), *entry.args]
+    started = time.monotonic()
+    stdout = stderr = ""
+    result = None
+    with tempfile.TemporaryDirectory(prefix="verify_all_") as user_data:
+        try:
+            proc = subprocess.Popen(
+                argv, cwd=str(ROOT), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                text=True, encoding="utf-8", errors="replace",
+                env=child_environment(user_data, firmware, desktop=entry.category in ("desktop", "visual"), release=release),
+                start_new_session=os.name != "nt",
+                creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0,
+            )
+            try:
+                stdout, stderr = proc.communicate(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                stop_process_tree(proc)
+                stdout, stderr = proc.communicate(timeout=10)
+                result = CheckResult("INCOMPLETE", f"timeout after {timeout:g}s; child tree stopped")
+            if result is None:
+                result = classify_output(proc.returncode, stdout + "\n" + stderr,
+                                         completion_pattern=entry.completion_pattern,
+                                         check_count_pattern=entry.check_count_pattern)
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            result = CheckResult("INCOMPLETE", f"could not finish check: {exc}")
+    if log_dir:
+        log_dir.mkdir(parents=True, exist_ok=True)
+        name = entry.id.replace("/", "__")
+        (log_dir / f"{name}.stdout.log").write_text(stdout, encoding="utf-8")
+        (log_dir / f"{name}.stderr.log").write_text(stderr, encoding="utf-8")
+    return CheckResult(**{**asdict(result), "duration_s": round(time.monotonic() - started, 3)})
+
 
 #: 前后端对齐审计（防倒退闸门）。
-#: 孤儿基线当前为 **22**（排除翻译表后的口径），只许减不许增。
+#: 孤儿基线当前为 **21**（排除翻译表后的口径），只许减不许增。
 #: 演进：71（初始真实值）→ 68（瞄准+遥测）→ 56（战况面板 12 项）
 #: → 53（顶栏 3 项）→ 51（覆盖层与准星）→ 50（渲染后端 Renderer）→ 48（超限脉冲与发光）→ 47（审计修正：常量别名不再被误判）
 #: → 43（启动二级页、锁定框、弹药告警、缓冲能量）
@@ -226,6 +284,7 @@ C_CHECKS = (
 #: → 24（增益时间轴三项；模块本来连面板都没有，位置是量出来而不是猜的）
 #: → 23（装甲盒配色 Color；默认值改成等于接线前画面的 White，三个消费点逐值不变）
 #: → 22（雷达叠加 Map；默认值改成等于接线前画面的 Both，两条面板路径共用一个门）。
+#: 2026-10-16：PR17 基线与当前实测均为 21；这是既有统计口径对账，非本轮新增接线。
 #: 其中两项查证后故意不接（MQTTLink/Auto Connect 与 UDPVideo/Reassemble），
 #: 理由见 tools/SETTINGS_GAPS.md。
 #: 早期版本没排除 `jello_locale.py`（中英翻译表），把“有中文名”当成“有人读”，
@@ -233,38 +292,8 @@ C_CHECKS = (
 #: 另有 51 个同名设置项被判 AMBIGUOUS，**不计入也不计减**基线。
 AUDIT_CHECKS = (
     ("tools/audit_settings.py", "二级界面设置项孤儿数不超基线",
-     ["--max-orphans", "22"]),
+     ["--max-orphans", "21"]),
 )
-
-
-def run(label: str, argv: list[str], *, firmware: Path | None = None,
-        timeout: float = 180.0) -> tuple[bool, str]:
-    env = dict(os.environ)
-    env.setdefault("QT_QPA_PLATFORM", "offscreen")
-    env.setdefault("PYTHONIOENCODING", "utf-8")
-    # Never silently select a sibling checkout; every child sees the same target.
-    env["POLAR_FIRMWARE_ROOT"] = str(firmware or ROOT / ".firmware-not-selected")
-    env["POLAR_FIRMWARE_READ_ONLY"] = "1"
-    with tempfile.TemporaryDirectory(prefix="verify_all_") as user_data:
-        env["POLAR_USER_DATA_ROOT"] = user_data
-        try:
-            proc = subprocess.run(argv, cwd=str(ROOT), capture_output=True, text=True,
-                                  encoding="utf-8", errors="replace", env=env, timeout=timeout)
-        except subprocess.TimeoutExpired:
-            return False, f"INCOMPLETE: timeout after {timeout:g}s"
-        except OSError as exc:
-            return False, f"INCOMPLETE: {exc}"
-    out = (proc.stdout or "") + (proc.stderr or "")
-    skipped = re.findall(r"(?im)^\s*(?:\[SKIP\]|SKIP:|\[INCOMPLETE\]).*$", out)
-    if proc.returncode == 77 or (proc.returncode == 0 and skipped):
-        return False, "INCOMPLETE: " + (" | ".join(line.strip() for line in skipped)[:360] or "check not run")
-    if proc.returncode != 0:
-        bad = [line.strip() for line in out.splitlines()
-               if line.strip().startswith("[FAIL]") or "AssertionError" in line
-               or "error:" in line or "FAILED" in line]
-        return False, " | ".join(bad[:3])[:400] or f"exit={proc.returncode}"
-    count = sum(1 for line in out.splitlines() if line.strip().startswith("[PASS]"))
-    return True, f"{count} 项通过" if count else "通过"
 
 
 def firmware_identity(repo: Path) -> str:
@@ -304,6 +333,7 @@ def acquire_lock() -> bool:
     """
     global _LOCK
     path = Path(tempfile.gettempdir()) / "rm_verify_all.lock"
+    handle = None
     try:
         handle = open(path, "a+", encoding="utf-8")
         if os.name == "nt":
@@ -314,6 +344,8 @@ def acquire_lock() -> bool:
             import fcntl
             fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
     except OSError:
+        if handle is not None:
+            handle.close()
         return False
     handle.seek(0)
     handle.truncate()
@@ -323,125 +355,139 @@ def acquire_lock() -> bool:
     return True
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Offline checks; no firmware installation")
-    parser.add_argument("--firmware", type=Path, help="exact prepared firmware worktree to validate")
-    parser.add_argument("--timeout", type=float, default=180.0, help="per-check timeout in seconds")
-    args = parser.parse_args()
-    if args.timeout <= 0:
-        parser.error("--timeout must be positive")
-    py = sys.executable
+def write_json(path: Path, payload: dict) -> None:
+    """Publish one complete report without exposing truncated JSON to readers."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent,
+                                         prefix=path.name + ".", suffix=".tmp", delete=False) as handle:
+            temporary = Path(handle.name)
+            handle.write(json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
+def incomplete_report(payload: dict, path: Path | None, detail: str, *, state: str = "blocked") -> None:
+    """Do not leave an earlier successful attempt as this run's report."""
+    payload.update(run_state=state, passed=False,
+                   counts={"PASS": 0, "SKIP": 0, "INCOMPLETE": 1, "FAIL": 0},
+                   results=[{"id": "verification_run", "category": "evidence",
+                             "status": "INCOMPLETE", "detail": detail}])
+    if path is not None:
+        write_json(path, payload)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--firmware", type=Path, help="exact prepared firmware worktree to validate read-only")
+    parser.add_argument("--profile", choices=tuple(PROFILES), default="offline")
+    parser.add_argument("--category", choices=CATEGORIES, action="append", default=[])
+    parser.add_argument("--test", "--suite", action="append", default=[], help="exact suite stem or relative path; repeatable")
+    parser.add_argument("--list", action="store_true", help="list selected suites without importing or executing them")
+    parser.add_argument("--desktop", action="store_true", help="explicitly enable native desktop GL/visual tests")
+    parser.add_argument("--timeout", type=float, default=300.0, help="positive per-check timeout in seconds")
+    parser.add_argument("--json", type=Path, help="write machine-readable inventory or complete execution report")
+    parser.add_argument("--log-dir", type=Path, help="retain each suite's stdout and stderr")
+    args = parser.parse_args(argv)
+    if not math.isfinite(args.timeout) or args.timeout <= 0:
+        parser.error("--timeout must be finite and positive")
+    entries = discover(ROOT)
+    try:
+        selected = select(entries, profile=args.profile, categories=tuple(args.category), names=tuple(args.test))
+    except ValueError as exc:
+        parser.error(str(exc))
+    payload = {"schema_version": 1, "profile": args.profile, "total_discovered": len(entries),
+               "selected_count": len(selected), "evidence_scope": "Selected checks only. Mock/offline success is not hardware or field qualification.",
+               "selected": [entry.to_dict() for entry in selected],
+               "not_selected": [entry.to_dict() for entry in entries if entry not in selected]}
+    if args.list:
+        for entry in selected:
+            print(f"{entry.category:10} {entry.path}" + (" " + " ".join(entry.args) if entry.args else ""))
+        print(f"Selected {len(selected)} / {len(entries)} suites; nothing executed.")
+        if args.json:
+            write_json(args.json, payload)
+        return 0
+    payload["run_id"] = uuid.uuid4().hex
+    payload["run_started_at_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    incomplete_report(payload, args.json, "Verification has started but has not completed", state="running")
     firmware = args.firmware.expanduser().resolve() if args.firmware else None
     identity = None
     if firmware is not None:
         try:
             identity = firmware_identity(firmware)
         except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
-            print(f"[NO-GO] Invalid firmware target: {exc}")
+            detail = f"Invalid firmware target: {exc}"
+            incomplete_report(payload, args.json, detail)
+            print(f"[INCOMPLETE] {detail}")
             return 2
         print(f"[target] {identity}")
-
-    failures: list[str] = []
-    incomplete: list[str] = []
-    total_checks = 0
-
     if not acquire_lock():
-        print("[NO-GO] 已经有一个 verify_all 在跑：固件自检共享同一棵工作树，\n"
-              "        并行会争用测试资源，结果不可信。等它跑完再来。",
-              file=sys.stderr)
+        detail = "Another verifier is running; shared resources cannot be verified concurrently."
+        incomplete_report(payload, args.json, detail)
+        print(f"[INCOMPLETE] {detail}", file=sys.stderr)
         return 2
-    print("=" * 66)
-    print("客户端侧就绪验证（离线）")
-    print("=" * 66)
-
-    print("\n[Python 测试套件]")
-    for name in PYTHON_SUITES:
-        path = ROOT / "tests" / f"{name}.py"
-        if not path.exists():
-            print(f"  [INCOMPLETE] {name:24} 文件不存在")
-            incomplete.append(f"Missing test: {name}")
-            total_checks += 1
-            continue
-        ok, detail = run(name, [py, "-u", str(path)], firmware=firmware, timeout=args.timeout)
-        total_checks += 1
-        print(f"  [{'OK' if ok else 'XX'}] {name:24} {detail}")
-        if not ok:
-            (incomplete if detail.startswith("INCOMPLETE:") else failures).append(f"Python: {name} -> {detail}")
-
-    print("\n[固件补丁编译与行为校验]")
-    for rel, label in C_CHECKS:
-        path = ROOT / rel
-        if not path.exists():
-            print(f"  [INCOMPLETE] {label} 文件不存在")
-            incomplete.append(f"Missing check: {label}")
-            total_checks += 1
-            continue
-        ok, detail = run(label, [py, "-u", str(path)], firmware=firmware, timeout=args.timeout)
-        total_checks += 1
-        print(f"  [{'OK' if ok else 'XX'}] {label:38} {detail}")
-        if not ok:
-            (incomplete if detail.startswith("INCOMPLETE:") else failures).append(f"C: {label} -> {detail}")
-
-    print("\n[前后端对齐审计]")
-    for rel, label, extra in AUDIT_CHECKS:
-        path = ROOT / rel
-        if not path.exists():
-            print(f"  [INCOMPLETE] {label} 文件不存在")
-            incomplete.append(f"Missing check: {label}")
-            total_checks += 1
-            continue
-        ok, detail = run(label, [py, "-u", str(path), *extra], firmware=firmware, timeout=args.timeout)
-        total_checks += 1
-        print(f"  [{'OK' if ok else 'XX'}] {label:38} {detail}")
-        if not ok:
-            (incomplete if detail.startswith("INCOMPLETE:") else failures).append(f"审计: {label} -> {detail}")
-
-    if firmware:
-        print("\n[固件工程准备自检]")
-        path = ROOT / "tools" / "firmware" / "prepare_hero_build.py"
-        ok, detail = run("prepare", [py, "-u", str(path), str(firmware), "--check-only"],
-                         firmware=firmware, timeout=args.timeout)
-        total_checks += 1
-        print(f"  [{'OK' if ok else 'XX'}] 指定固件工作树只读自检")
-        if not ok:
-            (incomplete if detail.startswith("INCOMPLETE:") else failures).append(f"固件自检 -> {detail}")
-        try:
-            if firmware_identity(firmware) != identity:
-                failures.append("Firmware worktree changed during verification; results are invalid")
-        except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
-            failures.append(f"Cannot verify unchanged firmware target: {exc}")
-
-    print("\n" + "=" * 66)
-    if failures or incomplete:
-        print(f"结论：NO-GO —— {len(failures)} FAIL, {len(incomplete)} INCOMPLETE / {total_checks} checks")
-        for line in failures + incomplete:
-            print(f"  - {line[:180]}")
-        print("\n先解决上面这些，再去 Keil 编译。")
-        return 1
-
-    print(f"结论：GO —— 客户端侧 {total_checks} 组检查全部通过")
-    print("""
-下一步（需要你做，客户端无法代验）：
-  1. 提交这些文件，否则发布包里根本没有队内链路
-  2. python tools/firmware/prepare_hero_build.py <固件路径>   -> 看到 GO
-  3. Keil 编译烧录（工程是"警告即错误"）
-  4. 确认 __RC_TYPE 与车上装的遥控器是同一家（默认 --rc dt7 = DT7 + DR16）。
-     注意别夸大：DT7 的 18 字节帧按帧长分派、跟这个宏无关，键鼠开车本来就能用；
-     配错真正致命的是**车上是 25 字节遥控器而宏选错那一家**（整帧不解析、车不动）。
-     详见 tools/firmware/host_bridge/RC_LINKS.md 第 2 节。
-  5. 上电后把遥控器三位拨杆 s[0] 拨到【中间】
-     停在下方时固件走 CHASSIS_LOCK，不读驾驶键位图，车绝对不会动。
-     上方也能开车，但那是固件**无条件强制常转**（chassis_mecanum.c:102），
-     与 spin_flag 无关——此时客户端的小陀螺开关看上去"没反应"，
-     排查时极易误判成补丁没打上。**要验小陀螺就必须拨中间。**
-  6. 客户端：开 RobotLink 模块 + Allow Drive + Client Chassis Drive
-     并把 Drive Channel 设为 virtual_rc
-
-注意：以上全部是离线验证。它证明不了"车真的会动"。
-""")
-    return 0
+    results = []
+    try:
+        payload["provenance"] = collect_provenance(ROOT)
+        sources_before = capture_sources(ROOT)
+        for entry in selected:
+            print(f"RUN [{entry.category}] {entry.path}", flush=True)
+            result = run_entry(entry, firmware=firmware, timeout=args.timeout, desktop=args.desktop,
+                               release=args.profile == "release", log_dir=args.log_dir)
+            print(f"[{result.status}] {entry.path}: {result.detail}", flush=True)
+            results.append({"id": entry.id, "path": entry.path, "category": entry.category,
+                            "evidence": entry.evidence, **asdict(result)})
+        # Named/category runs are intentionally scoped. Full verification and
+        # release also share the existing settings alignment gate.
+        if not args.test and not args.category:
+            for rel, label, extra in AUDIT_CHECKS:
+                entry = TestEntry(rel, args=tuple(extra))
+                result = run_entry(entry, firmware=firmware, timeout=args.timeout, desktop=False,
+                                   release=args.profile == "release", log_dir=args.log_dir)
+                print(f"[{result.status}] {label}: {result.detail}", flush=True)
+                results.append({"id": entry.id, "path": rel, "category": "audit", **asdict(result)})
+        if firmware:
+            entry = TestEntry("tools/firmware/prepare_hero_build.py", "firmware", (str(firmware), "--check-only"))
+            result = run_entry(entry, firmware=firmware, timeout=args.timeout, desktop=False,
+                               release=False, log_dir=args.log_dir)
+            results.append({"id": entry.id, "path": entry.path, "category": "firmware", **asdict(result)})
+            try:
+                if firmware_identity(firmware) != identity:
+                    results.append({"id": "firmware_unchanged", "status": "FAIL", "detail": "Firmware worktree changed; results invalid"})
+            except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+                results.append({"id": "firmware_unchanged", "status": "FAIL", "detail": str(exc)})
+        sources_after = capture_sources(ROOT)
+        source_status, source_detail = compare_sources(sources_before, sources_after)
+        payload["source_stability"] = {"schema_version": 1, "status": source_status,
+                                       "detail": source_detail, "scope": SOURCE_SCOPE,
+                                       "before": sources_before, "after": sources_after}
+        if source_status != "PASS":
+            results.append({"id": "verification_source_stability", "category": "evidence",
+                            "status": source_status, "detail": source_detail})
+            print(f"[{source_status}] {source_detail}", flush=True)
+        counts = {status: sum(item["status"] == status for item in results)
+                  for status in ("PASS", "SKIP", "INCOMPLETE", "FAIL")}
+        complete = bool(results) and counts["PASS"] == len(results)
+        payload.update(results=results, counts=counts, passed=complete, firmware_identity=identity,
+                       run_state="completed")
+        if args.json:
+            write_json(args.json, payload)
+        print("\n" + ("PASS" if complete else "NO-GO") + " (selected scope): " +
+              ", ".join(f"{count} {status}" for status, count in counts.items()))
+        print(payload["evidence_scope"])
+        return 0 if complete else 1
+    finally:
+        global _LOCK
+        if _LOCK is not None:
+            _LOCK.close()
+            _LOCK = None
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
-
+    if len(sys.argv) >= 3 and sys.argv[1] == "--_execute":
+        execute_script(sys.argv[2], sys.argv[3:])
+    else:
+        raise SystemExit(main())

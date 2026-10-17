@@ -1,0 +1,342 @@
+{
+  "base": "71ebb0f570441c12eb0d15b0a992c9cc3e805aeb",
+  "tested_head": "c4d3bcf97ef43056bf316bbec593802652120878",
+  "tested_tree": "7133ab90ca589f2b9afaf6e141186b42f5b6d6c1",
+  "original_candidate_chains": {
+    "domain": [
+      {
+        "commit": "886ad5e5147b5e8feea3fe47d2fde2eb07142ceb",
+        "subject": "test(referee): freeze domain dispatch and partial side effects"
+      },
+      {
+        "commit": "7dda9f2464566a49b0ad1df1ca31f2a4976d3e90",
+        "subject": "refactor(referee): separate domain metadata and economy values from assembly"
+      },
+      {
+        "commit": "3fa6db77337d975bf600368166e4f70623876825",
+        "subject": "docs(referee): correct frozen offer case count"
+      }
+    ],
+    "window": [
+      {
+        "commit": "ba30b2670004ec4b16f3fc7d8d3976d72afffdca",
+        "subject": "test(startup): freeze Qt launch effects and failure boundaries"
+      },
+      {
+        "commit": "1bf28710647b28755dd0f004125d78214537279d",
+        "subject": "refactor(startup): launch Qt through an explicit window factory"
+      },
+      {
+        "commit": "0f724036d25a53ef1ac8cbb58e925a354e6c600f",
+        "subject": "test(startup): freeze live navigation effects and interruption state"
+      },
+      {
+        "commit": "b29322ecbbc42b08b223f75ed669132814622528",
+        "subject": "test(ui): freeze polar package compatibility export identities"
+      },
+      {
+        "commit": "34f71600df10bd6a2936bcf51321320c1ca2bd66",
+        "subject": "refactor(ui): keep pure controllers behind lazy compatibility exports"
+      },
+      {
+        "commit": "52d23ed6eb861a278f4d9fcc76ab3a34bedc2fe8",
+        "subject": "refactor(startup): give launcher navigation a pure state owner"
+      },
+      {
+        "commit": "2d5ea31b86d9ba3ceef6ce058654eb8738d576ae",
+        "subject": "test(render): freeze live warmup queue and context failure ordering"
+      },
+      {
+        "commit": "483f0dc102bb48e3f0d8413acd43d1336612db46",
+        "subject": "refactor(render): own incremental warmup queue behind explicit ports"
+      },
+      {
+        "commit": "88ab1fd102b74fd991288ffc11fb7ee8d4cabf97",
+        "subject": "test(startup): reproduce post-failure activation in real window"
+      },
+      {
+        "commit": "610180e0ac4a7cbcc335ccb2d7b769fff50ea3be",
+        "subject": "fix(startup): retain failed windows and revoke pending activation"
+      },
+      {
+        "commit": "10a10a0e08e30e4e2d6555ae889c923e639cbcc8",
+        "subject": "test(camera): freeze activation ordering and partial state"
+      },
+      {
+        "commit": "248a89c00a2a0d787700361f86a220e3c00f3284",
+        "subject": "refactor(camera): own capture admission through explicit ports"
+      },
+      {
+        "commit": "b7786a2c4c0d253acbff3ae4cbc99a0f5ff3273a",
+        "subject": "test(vision): freeze staged source and worker admission effects"
+      },
+      {
+        "commit": "de31344f263fefe5f1e7dd07b396b71be46d0872",
+        "subject": "test(vision): preserve worker binding before reentrant setting reads"
+      },
+      {
+        "commit": "661daedbe6ea0a0509d7a2214277965361d941b8",
+        "subject": "refactor(vision): own requested source and worker revocation policy"
+      },
+      {
+        "commit": "1173a2e9c4758e14a138f45b5c5a04ec7d62ac23",
+        "subject": "test(window): expose constructor timer admission escape"
+      },
+      {
+        "commit": "e523c4f74df044d1bd7cdd03c66440e6ea0808e9",
+        "subject": "test(window): hold constructor abort until native cleanup"
+      },
+      {
+        "commit": "cd80ec74955639b1a4b529c979b462cd50cd7887",
+        "subject": "fix(window): retain fully assembled owner when timer admission fails"
+      },
+      {
+        "commit": "77b4c923d1a7e9d65ae8efab4a80804e361a4248",
+        "subject": "test(config): freeze profile save ownership and interrupted effects"
+      },
+      {
+        "commit": "9d3a849ec0fe3328f8fb3d5ae5506d5a28bb6279",
+        "subject": "refactor(config): own accepted profile and delayed-save lifecycle"
+      },
+      {
+        "commit": "15c86085f81a4c749e975ff3cef247598c598ce3",
+        "subject": "style(config): remove trailing blank line from profile save owner"
+      },
+      {
+        "commit": "5700c6cbaadbddd0884fa1b56fbfdd7d70889aa1",
+        "subject": "test(video): freeze actual-window source and timeline contracts"
+      },
+      {
+        "commit": "f542fcc19d7d43a38a89c802a8d343afa4989b83",
+        "subject": "refactor(video): own normal-frame provenance and timeline policy"
+      }
+    ],
+    "frame": [
+      {
+        "commit": "f9c42079458c61e99cca7bdf45131c6e98ccd0cd",
+        "subject": "test(render): freeze cached frame ordering and failure recovery contracts"
+      },
+      {
+        "commit": "a65c98273917db1b264c8574b5b7d4644786ae93",
+        "subject": "refactor(render): isolate cached overlay layers behind immutable frame plans"
+      },
+      {
+        "commit": "494d7105b579fd4ccaae767682c283ee56866053",
+        "subject": "test(render): compare actual cached window scenes and post-present restore"
+      },
+      {
+        "commit": "2a41d53fd3580eb62f74ad2c22095e0744110b67",
+        "subject": "fix(render): validate frame scalar ownership and Qt dimension bounds"
+      },
+      {
+        "commit": "d2387861b49dcc4c323bbbc1a3de0e5393c356b4",
+        "subject": "refactor(render): reject contradictory overlay layer ownership plans"
+      },
+      {
+        "commit": "915a34c32cf569c56a3bdc4b41e7bfffff7ba367",
+        "subject": "test(render): require active scene for prepared ClickGUI layers"
+      },
+      {
+        "commit": "e7b30f626cc9552ac36e5eefbc7c3927c3cdafde",
+        "subject": "test(render): expose falsely accepted HUD and specialized command batches"
+      },
+      {
+        "commit": "e26a808cbc5e03e8fe77f5c9b1de29add3493214",
+        "subject": "fix(render): reject incomplete child command batches before present"
+      },
+      {
+        "commit": "b41125182457129515fa79dd162e92c15dcadaae",
+        "subject": "test(render): preserve child rejection through failed framebuffer unwind"
+      },
+      {
+        "commit": "318ec2e2cc47c65bf8a566c062d2eba4da8480e4",
+        "subject": "fix(render): retain first child rejection through independent cleanup"
+      },
+      {
+        "commit": "e12ec8d0bbd217eb3252749fa2fcaa2adadcfbd0",
+        "subject": "test(render): expose abandoned GPU collections swallowing raster fallback"
+      },
+      {
+        "commit": "df8565d988de22d2a7025de4fd4aaf8a63d68952",
+        "subject": "test(render): supply inert texture handles to specialized retry fixture"
+      },
+      {
+        "commit": "615aed5cce3ecea31b2e2baa41ca0b5d45a2dc0d",
+        "subject": "fix(render): unwind command collection ownership with its layer session"
+      },
+      {
+        "commit": "ba96e42d5ec20c95acb4b9b4404f423912e6da76",
+        "subject": "fix(render): bound immutable frame dimensions and timestamp admission"
+      },
+      {
+        "commit": "97d97c425dcbe029a387503359f6cd656e4abc4f",
+        "subject": "docs(render): record cached frame ownership and fault recovery evidence"
+      },
+      {
+        "commit": "fc9c6a87a61e5d82fd8cc103b0b8a64b9b0d6f1a",
+        "subject": "docs(render): retain complete focused and red regression logs"
+      },
+      {
+        "commit": "0fea3bb6e0bf9a0fdf85efb9a3c98f7a79cae1df",
+        "subject": "docs(render): exclude superseded static checkpoint log"
+      }
+    ],
+    "economy": [
+      {
+        "commit": "e64d6e6d78591b580ae0d2abf23da5c00b376101",
+        "subject": "test(economy): characterize commands and interrupted effects before boundary refactor"
+      },
+      {
+        "commit": "8c4a9d92a51de99274ec8381a8e4ea26e3b6d96d",
+        "subject": "refactor(economy): separate selection queries from reconciliation commands"
+      },
+      {
+        "commit": "b70f71e9d7cbdcee9ae8c8eedb8d19c1a92c6745",
+        "subject": "refactor(economy): isolate value-driven content drawing from window state"
+      },
+      {
+        "commit": "b97b2ce53ce432080615b5cc990205c99b10617a",
+        "subject": "refactor(economy): isolate confirmation intent rules from UI effects"
+      },
+      {
+        "commit": "ba0a4b8ed05be74da01d65f85fe6bf5b0089055b",
+        "subject": "test(economy): guard explicit selection callers and confirmation budgets"
+      },
+      {
+        "commit": "dafe885814c14076355f4684bc1cd75d8066db82",
+        "subject": "refactor(economy): preserve lazy confirmation observation order"
+      },
+      {
+        "commit": "19e4c93c515ea88d1480fc6792242861128b07d4",
+        "subject": "docs(economy): record boundary ownership and fixed-source validation"
+      },
+      {
+        "commit": "d86f34453932a56c787f5e905b47ee54e15c3966",
+        "subject": "test(economy): characterize shared label identity and mutation visibility"
+      },
+      {
+        "commit": "f3e0d04e61e6560f8bc2090c20a0be5378c285f9",
+        "subject": "refactor(economy): align UI value consumers with domain vocabulary owner"
+      }
+    ],
+    "verification": [
+      {
+        "commit": "1b8f22cdbd331c91fc41706adb6435fa16c4bebc",
+        "subject": "fix(verification): isolate source roots and per-suite caches"
+      },
+      {
+        "commit": "4fa79b2b80bec943bd033b9fee8341fb48ec8804",
+        "subject": "fix(verification): reject source drift during evidence runs"
+      },
+      {
+        "commit": "25f0fc6a6195987fbe5e0343969dd0e6f2254814",
+        "subject": "test(verification): pin reproducible Linux dependency wheels"
+      },
+      {
+        "commit": "b2c67dbcd9ffd10de29c5f0720ef448bf3e5bba9",
+        "subject": "fix(verification): prevent inherited startup activation and data reuse"
+      },
+      {
+        "commit": "8080a39d126a15b8ac412212d44fd4dac4410d18",
+        "subject": "fix(verification): keep expected test failures incomplete"
+      },
+      {
+        "commit": "b76829a524ec090ce9257f528efb08c31300d206",
+        "subject": "test(quality): protect extracted profile and economy domains"
+      },
+      {
+        "commit": "1a98b17bf3f0dac1dd5b3ef6dd6f3a4d2ba29be3",
+        "subject": "fix(verification): publish explicit incomplete report checkpoints"
+      },
+      {
+        "commit": "a213378e1059fbbd0656be903dc24d213ea70ce6",
+        "subject": "docs(verification): bound report checkpoints to selected attempts"
+      }
+    ],
+    "admission": [
+      {
+        "commit": "8ff426f27f1200ccefeb2ac8082dba2cb4ebb1b5",
+        "subject": "test(lifecycle): reproduce angle and audit admission ownership failures"
+      },
+      {
+        "commit": "70c410c65aa2fc781bae758b945e62e99bc6d27b",
+        "subject": "fix(lifecycle): preserve truthful angle and audit admission ownership"
+      },
+      {
+        "commit": "8b492a4627e67159d03a009654d50a31e89c7eaf",
+        "subject": "test(lifecycle): independently challenge audit and angle admission races"
+      },
+      {
+        "commit": "86ce798b3daccc8203983c278b3f6ce3e5211ab1",
+        "subject": "docs(review): record independent admission ownership acceptance"
+      }
+    ]
+  },
+  "integration_order_note": "Domain, original window, frame, original economy, verification, admission, then newly reviewed window timeline and economy labels. All cherry-picks applied cleanly. Serial discovery admission was intentionally excluded until this run was captured.",
+  "integrated_commits": [
+    "6322d89de2eecc31da025b59b3dadc4ec2599cde",
+    "ada0ba2973c88973d0177ceef66bfba4eaf90e95",
+    "97c0e650d194e10b656aa1f61153446781c30bc7",
+    "039c96e5f19a06de149db3aa2d0c0d08fe56ce23",
+    "89cb03ad00a19df13a278d04802dc8565663b186",
+    "129e63e457a24fd4ab4693a265187f3c315e7805",
+    "9acc57448e94d706927aee3573a17730fd9a1e6a",
+    "b3d92ba4c15844e96739d3dd56904691c4cc29fd",
+    "7a56f31114589eef7fc2172f38ce71ca56a1cbaa",
+    "b2ba336c12280f8c9ed8c03c60742f7083fd8856",
+    "ab936698ebc11cabf3e3b01c8a4ca84ccef8f493",
+    "2d05e68cf0046dfedac145cc711b6b5ca9cd662e",
+    "9ebd92cfa3bf441a8c6ab04061dcc86f52938519",
+    "d847633db7cac63136387d770a51dba508e776b3",
+    "70729e6140ff493efab238738741c92a174ce892",
+    "05d34c86b31d7c1fe42c4af5afc6bb688a3ded39",
+    "63147a9c2f0c43276b4d54002aeede460b9a369f",
+    "0b5d80ef3f2edf8246ece98f23ec9fb67f048daf",
+    "bc9f47c4b0830da447ab652cae30b75a7d6315dd",
+    "935d0e2c0c3e13f89e1bc1126201c3ce36f51da8",
+    "3f7bf4e1929dec028d5ae8a8573350497f744f79",
+    "9d202cec98f9dc24f9030842b8be9a38f64b1563",
+    "433da7a256b1f825a3fe135b658faa9685fc1a1b",
+    "3da912b8fc1c1bebc2da52b79b2d13c09a838ac8",
+    "e1a175f090e744b9c5263f1386f6d7b15b096b60",
+    "64559021da761f233743dcc0ef52c41c7e3f4196",
+    "3986992b246a8458ae603dd0fe7ee81e3278a36a",
+    "db5f00d1cee4324ab55f7e04079fca7f6d9d900b",
+    "17a97fb36b0d6e659ecad635749fac00b0b50eb2",
+    "077851568554afaa49931c4062a8e46747bf8154",
+    "e2ab8d038d27128dca6cea1caf64843ba92e0ccb",
+    "5ea634bb5b68f9de0452f8f23dc8e702ad4b11ad",
+    "8cbf31ca2adfcf29d0f8e402b0ba882e655812ec",
+    "feebbcb55fe98c93c5db78a1ac3a437a6811c80a",
+    "db2eb9fa6fee3f52ba6bddff65e519f55b6b47fd",
+    "810fac6b9c1d7fbb456ae2d2d2ad2a00422123ef",
+    "bc4506b7e99001210f9ca1f529dc9cf117acb692",
+    "cab6b14535250c3a3ea75da872c27ef6330ca7b1",
+    "8f76150020e1c85ab25fe5d45686a43b1bfcd3fe",
+    "0b41b158731ebdd9eab8f2f4c67d1c2ca2a39251",
+    "077a170fbc754caafb1f61a1c4508e189ad0d79d",
+    "8ebb22190f92f777afbfe2738fd8aaa1fb15a586",
+    "953ccd12e9aa32a6204c6b62533a9f1100e8097d",
+    "ee2cdeb71195b58aef258d3eae02870e49af5a7a",
+    "f2a567ecb9e61c21255b7298defb301ae110aec2",
+    "ca7a57d7c6a1c6a6c6c1b8cf1f07a25842234d31",
+    "9da683dacf35a73387580de36d681f2f7929e0ad",
+    "52f47c23ccadead88699a383d47e43fa9110359c",
+    "9ec4ce6f7395c73d76b8f1d8b883f1c1dfc5590d",
+    "50c27e84d7ff03e1e825952650b82f7ceacb776f",
+    "28e460a9c60b94681f3fe516089b24a71ccf26ac",
+    "f5994b95a4afa5ea0315d23c3a26b7763ea2898d",
+    "b88a772ddf3211eef16943200061c89c10b9ac02",
+    "24aed129c770803bb061514f0644000e335b3671",
+    "202b84c96e1ece2cbb9cd9f8ef1656e978a9eeb5",
+    "d7b783ec9a89fb6eb3a0da980051c6443d11009f",
+    "833e90374d83a0b32e25571407b1949f619ba947",
+    "385c205ba1511cfb00f377b06597fab725f79f91",
+    "7003d899cfbeb35fbc32d5e672cde489160b0895",
+    "dc97434c1af052fa259a36151f434065c1aac540",
+    "d17b41fd036d42462bda25a83b9e91a4c3203866",
+    "bd1bedf0f9e188cbd5b199a4c7ac74799d2c5508",
+    "893b23095cbf3f5dbbc5e223a29a9b11ccfeaa62",
+    "c4d3bcf97ef43056bf316bbec593802652120878"
+  ]
+}

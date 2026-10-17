@@ -1,0 +1,19 @@
+.......................Lifecycle event after audit sealed: mqtt_disconnect;
+..............Lifecycle event after audit sealed: mqtt_disconnect;
+Lifecycle event after audit sealed: backend_lifecycle_failure; RuntimeError: OSError: pipe close failed
+..........................Field audit log shutdown incomplete or records lost: {'pending_records': 0, 'dropped_records': 2, 'write_errors': 0, 'closed': True, 'closing': True, 'worker_active': False}
+.........Lifecycle event after audit sealed: mqtt_disconnect;
+..Lifecycle event after audit sealed: mqtt_disconnect;
+...............................................................Lifecycle event after audit sealed: input_clear_error; TypeError: broken reset
+Lifecycle event after audit sealed: input_clear;
+..Lifecycle event after audit sealed: input_clear_error; TypeError: broken reset
+Lifecycle event after audit sealed: input_clear_error; TypeError: broken reset
+Lifecycle event after audit sealed: input_clear_error; TypeError: broken reset
+Lifecycle event after audit sealed: input_clear_error; TypeError: broken reset
+Lifecycle event after audit sealed: input_clear;
+.Lifecycle event after audit sealed: input_clear;
+....
+----------------------------------------------------------------------
+Ran 144 tests in 3.135s
+
+OK

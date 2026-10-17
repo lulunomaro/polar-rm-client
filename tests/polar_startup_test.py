@@ -42,6 +42,19 @@ if hasattr(sys.stdout, "reconfigure"):
 
 from rm_client.backend import polar_link as pl  # noqa: E402
 from rm_client.protocol import crc8, crc16  # noqa: E402
+from window_lifecycle_helpers import close_window_safely, settle_window_lifecycle
+
+NETWORK_ATTEMPTS: list[str] = []
+_NETWORK_GUARD_ACTIVE = False
+
+
+def _reject_python_network(event, _arguments):
+    if _NETWORK_GUARD_ACTIVE and event in {"socket.connect", "socket.bind", "socket.sendto", "socket.getaddrinfo"}:
+        NETWORK_ATTEMPTS.append(event)
+        raise AssertionError(f"POLAR startup virtual-robot test must remain offline: {event}")
+
+
+sys.addaudithook(_reject_python_network)
 
 FAILED: list[str] = []
 
@@ -143,6 +156,7 @@ def test_window_tick_loop_actually_drives_polar_stage() -> None:
 
     app = QApplication.instance() or QApplication([])
     window = PolarRMWindow()
+    settle_window_lifecycle(window, app)
     audio = window.registry.get("AudioFeedback")
     if audio is not None:
         audio.enabled = False
@@ -158,6 +172,7 @@ def test_window_tick_loop_actually_drives_polar_stage() -> None:
     try:
         link = window.registry.get("RobotLink")
         window.apply_scenario("OfficialEvent", close_home=False)
+        settle_window_lifecycle(window, app)
         # 显式端口，绕开 Auto 的真实串口枚举
         link.get_setting("Port").value = "COM99"
         window.backend.polar.port = "COM99"
@@ -203,6 +218,7 @@ def test_window_tick_loop_actually_drives_polar_stage() -> None:
               str(robot.received_cmds[:2]))
     finally:
         robot.stop()
+        close_window_safely(window, app)
         if saved is not None:
             sys.modules["serial"] = saved
         else:
@@ -219,6 +235,7 @@ def test_rebind_works_through_real_window_and_persists() -> None:
     """
 
     import types
+    from unittest.mock import patch
 
     from PySide6.QtCore import QEvent, Qt
     from PySide6.QtGui import QKeyEvent
@@ -229,6 +246,7 @@ def test_rebind_works_through_real_window_and_persists() -> None:
 
     app = QApplication.instance() or QApplication([])
     window = PolarRMWindow()
+    settle_window_lifecycle(window, app)
     audio = window.registry.get("AudioFeedback")
     if audio is not None:
         audio.enabled = False
@@ -240,9 +258,15 @@ def test_rebind_works_through_real_window_and_persists() -> None:
     fake.Serial = lambda *a, **k: endpoint  # type: ignore[attr-defined]
     saved = sys.modules.get("serial")
     sys.modules["serial"] = fake
+    # This test owns an in-memory robot link, not an MQTT broker. A real
+    # failed broker connection correctly clears held keys asynchronously and
+    # makes a serial binding assertion depend on unrelated network timing.
+    mqtt_start = patch.object(window.backend.mqtt, "start", return_value=None)
+    mqtt_start.start()
 
     try:
         window.apply_scenario("OfficialEvent", close_home=False)
+        settle_window_lifecycle(window, app)
         link = window.registry.get("RobotLink")
         link.get_setting("Port").value = "COM99"
         link.get_setting("Drive Channel").value = "virtual_rc"
@@ -305,6 +329,12 @@ def test_rebind_works_through_real_window_and_persists() -> None:
         check("已授权时 intent 携带 key.v bit0",
               intent is not None and (intent.key_value & 1) == 1,
               str(None if intent is None else hex(intent.key_value)))
+        # Preserve the safety contract separately: a real MQTT disconnect
+        # callback must revoke this same active key sample before any reuse.
+        mqtt_client = types.SimpleNamespace(disconnect=lambda: None, loop_stop=lambda: None)
+        window.backend.mqtt.client = mqtt_client
+        window.backend.mqtt._on_disconnect(mqtt_client, None, _reason_code="test broker loss")
+        check("MQTT 断开通知清除已按住的改绑驾驶键", window.control.key_state["W"] is False)
         # 注意：intent 本身保留完整驾驶意图是正常的；真正要验的是**上线字节**。
         # virtual_rc 通道下，机器人收到的 0x01 帧 speed_vector 必须全零，
         # 否则会与 key.v 通路的两套斜坡叠加。
@@ -324,16 +354,15 @@ def test_rebind_works_through_real_window_and_persists() -> None:
         window.sync_control_binds()
         check("已手动回到默认", window.control.binds.get("W") == "W", str(window.control.binds.get("W")))
         window.apply_config_data(snapshot, announce=False)
+        settle_window_lifecycle(window, app)
         check("load 配置后绑定恢复为 Up", window.control.binds.get("W") == "Up",
               str(window.control.binds.get("W")))
         check("load 后设置项显示也为 Up", str(link.get_setting("Bind W").value) == "Up",
               str(link.get_setting("Bind W").value))
     finally:
+        mqtt_start.stop()
         robot.stop()
-        try:
-            window.backend.shutdown()
-        except Exception:
-            pass
+        close_window_safely(window, app)
         if saved is not None:
             sys.modules["serial"] = saved
         else:
@@ -383,6 +412,7 @@ def test_hud_renders_role_fields_and_survives_their_absence() -> None:
 
     app = QApplication.instance() or QApplication([])
     window = PolarRMWindow()
+    settle_window_lifecycle(window, app)
     audio = window.registry.get("AudioFeedback")
     if audio is not None:
         audio.enabled = False
@@ -460,13 +490,10 @@ def test_hud_renders_role_fields_and_survives_their_absence() -> None:
     except Exception as exc:
         check("HUD 渲染兵种信息不抛异常", False, f"{type(exc).__name__}: {exc}")
     finally:
-        try:
-            window.backend.shutdown()
-        except Exception:
-            pass
+        close_window_safely(window, app)
 
 
-def main() -> int:
+def _run_startup_checks() -> int:
     test_port_auto_selection_safety()
     from PySide6.QtWidgets import QApplication
 
@@ -482,6 +509,7 @@ def main() -> int:
 
     app = QApplication.instance() or QApplication([])
     window = PolarRMWindow()
+    settle_window_lifecycle(window, app)
     check("窗口构造成功", window is not None)
     # 本测试不验证音效；UI 音频会在进程退出时触发 Qt Multimedia 拆退崩溃
     # （Windows 上 0xC0000409），会污染退出码、遮住真实结果。
@@ -504,7 +532,7 @@ def main() -> int:
     # 它会同时同步 scenario_manager / registry / runtime / backend，
     # 只调 backend.apply_scenario 会漏掉 registry 同步。
     window.apply_scenario("OfficialEvent", close_home=False)
-    app.processEvents()
+    settle_window_lifecycle(window, app)
     link = window.registry.get("RobotLink")
     before = (str(link.get_setting("Allow Drive").value), str(link.get_setting("Port").value),
               bool(link.enabled))
@@ -696,6 +724,8 @@ def main() -> int:
     window.backend.tick_polar_link(window.state, window.registry, window.control)
     check("失焦释放按键后驾驶意图归零", transport._intent is None or (transport._intent.vx, transport._intent.vy) == (0.0, 0.0))
 
+    close_window_safely(window, app)
+
     # 最后跑：验证窗口自身的 tick 循环能驱动 polar.link 阶段
     test_window_tick_loop_actually_drives_polar_stage()
 
@@ -703,12 +733,30 @@ def main() -> int:
     test_rebind_works_through_real_window_and_persists()
     test_hud_renders_role_fields_and_survives_their_absence()
 
+    check("虚拟机器人启动验证未尝试 Python 网络访问", not NETWORK_ATTEMPTS, str(NETWORK_ATTEMPTS))
     print("\n" + "=" * 60)
     if FAILED:
         print(f"FAILED {len(FAILED)}: {', '.join(FAILED)}")
         return 1
     print("ALL POLAR_STARTUP TESTS PASSED")
     return 0
+
+
+def main() -> int:
+    from unittest.mock import patch
+    from rm_client.backend.mqtt_backend import RmMqttBackend
+    from rm_client.backend.video_backend import RmVideoBackend
+    global _NETWORK_GUARD_ACTIVE
+    NETWORK_ATTEMPTS.clear()
+    _NETWORK_GUARD_ACTIVE = True
+    try:
+        # These are unrelated native network sources, not control/safety
+        # policies. Real serial framing and in-memory robot delivery stay on.
+        with patch.object(RmMqttBackend, "start", return_value=None), \
+             patch.object(RmVideoBackend, "start", return_value=None):
+            return _run_startup_checks()
+    finally:
+        _NETWORK_GUARD_ACTIVE = False
 
 
 if __name__ == "__main__":

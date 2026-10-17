@@ -1,0 +1,61 @@
+[ OK ] 默认是关的
+[ OK ] 关着时 KMC 照发  [1]
+[ OK ] 关着时一条无线键鼠都不发  []
+[ OK ] 打开后无线键鼠出口跟着发  1
+[ OK ] 转发的键位与鼠标和 KMC 完全同一份值  {'keyboard_value': 3, 'mouse_x': -45, 'mouse_y': 120, 'mouse_z': 0, 'left': False, 'right': False, 'mid': False}
+[ OK ] 计数器在走  1
+[ OK ] 松键后发过全零键位帧（不粘键）  [3, 0]
+[ OK ] 出口缺失时 KMC 仍然发出去了  [1]
+[ OK ] 出口缺失时错误原因写清楚（不静默，也不冒充主通道）  无线键鼠出口不可用：发布器没有 publish_km_control
+[ OK ] 出口缺失不污染主通道 last_error
+[ OK ] 客户端 KEYBOARD_BITS == 官方选手端枚举（dump.cs:136133）  {'W': 0, 'S': 1, 'A': 2, 'D': 3, 'SHIFT': 4, 'CTRL': 5, 'Q': 6, 'E': 7, 'R': 8, 'F': 9, 'G': 10, 'Z': 11, 'X': 12, 'C': 13, 'V': 14, 'B': 15}
+[ OK ] 0x1F 默认掩码 = W/S/A/D + SHIFT（小陀螺），不含 Q/E  0x1f
+[ OK ] 2016 手册那套位序确实与现役不同（否则这条守卫没意义）  ('Q', 'E', 'SHIFT', 'CTRL')
+[ OK ] 载荷 26 字节 = 固件 prm1_km_cmd_t  26
+[ OK ] 不超 CustomControl 的 30 字节上限
+[ OK ] 解回来还是同一份值
+[ OK ] 别的 kind 不会被当键鼠解
+[ OK ] mock 模式下开关打开照样走出口（由 MQTT 层决定上不上网络）  [{'keyboard_value': 1, 'mouse_x': 0, 'mouse_y': 0, 'mouse_z': 0, 'left': False, 'right': False, 'mid': False}]
+[ OK ] mock 模式下计数器也照走，现场才分得清'"没开"和"开了但被 mock"'  1
+[ OK ] KMC 失败不拖累无线键鼠出口  [{'keyboard_value': 4, 'mouse_x': 0, 'mouse_y': 0, 'mouse_z': 0, 'left': False, 'right': False, 'mid': False}]
+[ OK ] KMC 的错误仍记在 last_error（主通道诊断不被污染）  官方 MQTT 未连接
+[ OK ] 出口被门控时原因单独记录  急停激活，禁止发布
+[ OK ] 出口失败不污染主通道 last_error
+[ OK ] 出口失败不涨计数  0
+
+--- RobotLink 开关与三道闸 ---
+[ OK ] RobotLink 有 Radio KM Egress 这个开关
+[ OK ] 开关默认关
+[ OK ] 只勾开关、没 Allow Drive -> 不生效  False
+[ OK ] 不生效时给得出原因（不让现场猜）  无线键鼠出口未生效：未授予 Allow Drive
+[ OK ] 模块未启用 -> 不生效
+[ OK ] 原因是模块未启用  无线键鼠出口未生效：模块 RobotLink 未启用
+[ OK ] 三闸齐开就生效，且不要求插 USB 线  True
+[ OK ] 生效后清掉旧的闸门原因（不留骗人的残留）
+[ OK ] 急停一票否决
+[ OK ] 急停时原因写明  无线键鼠出口未生效：急停激活
+[ OK ] 开关开了但车上计数读不到 -> no-readback（不当成没收到）  no-readback
+[ OK ] 车上回了 0 帧 -> silent，并给出口向排查话  silent
+[ OK ] silent 的话里点明图传发送端那一路串口  车上一个 0x0311 都没收到。注意：官方要求图传发送端串口 921600（规程表 1-1），而本固件只配了 USART1/USART3/USART6，全仓没有 921600 那一路 —— 所以光把线接到 C 板也不会收到。两条可行做法：① 用 C 路（直连 DT7，不依赖图传接线）；② 车载电脑收 0x0311 后经 HostKmFeed 喂进 C 板。
+[ OK ] 提示要说清[本固件没有 921600 那一路]（否则操作员会去接线白等）  车上一个 0x0311 都没收到。注意：官方要求图传发送端串口 921600（规程表 1-1），而本固件只配了 USART1/USART3/
+[ OK ] 提示要给出两条可行做法（C 路 / 车载电脑喂 HostKmFeed）  线接到 C 板也不会收到。两条可行做法：① 用 C 路（直连 DT7，不依赖图传接线）；② 车载电脑收 0x0311 后经 HostKmFeed 喂进 C 板。
+[ OK ] 计数在涨 -> live  live
+[ OK ] live 时把车上的帧数带出来  12
+[ OK ] 车上合并后的键位也回读到了  17
+[ OK ] 车上是 rc 档时把[不参与]写进提示（默认档最容易被误读）  车上已收到 240 帧 0x0311，但档位 rc 不参与
+[ OK ] rc_vt 档时提示里说得出档位  车上已收到 280 帧 0x0311（档位 rc_vt）
+[ OK ] 车上没报档位要明说，不许当成[能用了]  车上没报档位（固件没打 POLAR-KM-LINK，或 debug 槽被占）
+[ OK ] 五档编号都翻对名字  ['none', 'rc', 'vt', 'rc_vt', 'vt_rc']
+[ OK ] 只有 none/rc 两档被标成图传不参与  [False, False, True, True, True]
+[ OK ] 垃圾值归到[没报档位]，不许随便猜一档
+[ OK ] 计数不再涨 -> stalled（跟 silent 区分开）  stalled
+[ OK ] 关开关后不再尝试发送
+[ OK ] 关开关后闸门原因也清空
+[ OK ] 关开关后实况回到 off  off
+[ OK ] 车上计数在涨 -> PASS  车上计数 100->180 帧，客户端同期发出 80 帧
+[ OK ] 读不到回读 -> 不能算通过（要插 USB）  读不到车上计数：先插 C 板 USB(0x5A) 才能做这个自检
+[ OK ] 自检中途回读断了 -> FAIL 而不是崩溃  读不到车上计数：先插 C 板 USB(0x5A) 才能做这个自检
+[ OK ] 一帧都没发出去 -> FAIL 说是客户端侧  客户端一帧都没发出去（看 radio_km_last_error / 闸门原因）
+[ OK ] **发了但车上没涨 -> FAIL**（这正是自证与实证的差别）  发了但车上收到 0 增量：查图传发送端那一路串口是否接到 C 板（官方：图传链路 921600），见 FIELD_WIRELESS_RUNBOOK.md 第 3 步
+
+无线键鼠出口客户端侧全部通过

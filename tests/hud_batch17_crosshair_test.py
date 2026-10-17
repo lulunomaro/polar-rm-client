@@ -35,7 +35,7 @@ sys.path.insert(0, ROOT)
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from PySide6.QtGui import QColor, Qt  # noqa: E402
+from PySide6.QtGui import QColor, QTransform, Qt  # noqa: E402
 
 from rm_client.model import build_default_registry  # noqa: E402
 from rm_client.ui.polar_app import PolarRMWindow  # noqa: E402
@@ -83,8 +83,24 @@ class RecordingPainter:
     def __init__(self) -> None:
         self.events: list[tuple] = []
         self.brush_style = Qt.BrushStyle.SolidPattern
+        self.transform = QTransform()
+        self.pen_width = 0.0
+        self.saved_states: list[tuple] = []
+
+    def save(self) -> None:
+        self.saved_states.append((QTransform(self.transform), self.brush_style, self.pen_width))
+
+    def restore(self) -> None:
+        self.transform, self.brush_style, self.pen_width = self.saved_states.pop()
+
+    def translate(self, x, y) -> None:
+        self.transform.translate(x, y)
+
+    def scale(self, x, y) -> None:
+        self.transform.scale(x, y)
 
     def setPen(self, pen) -> None:
+        self.pen_width = pen.widthF()
         self.events.append(("pen", pen.widthF()))
 
     def setBrush(self, brush) -> None:
@@ -99,10 +115,13 @@ class RecordingPainter:
         self.events.append(("brush", self.brush_style))
 
     def drawEllipse(self, center, rx, ry) -> None:  # noqa: N802
+        center = self.transform.map(center)
+        rx *= abs(self.transform.m11())
         self.events.append(("ellipse", round(center.x(), 3), round(center.y(), 3),
                             round(rx, 3), self.brush_style))
 
     def drawLine(self, a, b) -> None:  # noqa: N802
+        a, b = self.transform.map(a), self.transform.map(b)
         self.events.append(("line", round(a.x(), 3), round(a.y(), 3),
                             round(b.x(), 3), round(b.y(), 3)))
 
@@ -177,6 +196,33 @@ def test_style_switch_does_not_step_on_size_or_color() -> None:
           f"{host.crosshair_style()} vs {module.get_setting('Style').options}")
 
 
+def test_display_scale_preserves_aim_center_and_painter_state() -> None:
+    """Use actual Qt transforms so the recorder cannot silently ignore scale."""
+    host = Host()
+    scale = host.registry.get("Crosshair").get_setting("Crosshair Scale")
+    for multiplier in (0.5, 2.0, 8.0):
+        scale.value = multiplier
+        host.set_style("Cross")
+        painter = RecordingPainter()
+        host.draw_crosshair(painter, 800, 600)
+        lines = [e for e in painter.events if e[0] == "line"]
+        expected = [
+            ("line", 400.0 - 18.0 * multiplier, 300.0, 400.0 + 18.0 * multiplier, 300.0),
+            ("line", 400.0, 300.0 - 18.0 * multiplier, 400.0, 300.0 + 18.0 * multiplier),
+        ]
+        check(f"Cross {multiplier}x 以同一瞄准中心缩放", lines == expected, str(lines))
+        check(f"Cross {multiplier}x 恢复画笔状态",
+              not painter.saved_states and painter.transform.isIdentity()
+              and painter.pen_width == 0.0 and painter.brush_style == Qt.BrushStyle.SolidPattern)
+        host.set_style("Circle")
+        painter = RecordingPainter()
+        host.draw_crosshair(painter, 800, 600)
+        ellipses = [e for e in painter.events if e[0] == "ellipse"]
+        check(f"Circle {multiplier}x 圆环缩放且中心不漂移",
+              ellipses[-1] == ("ellipse", 400.0, 300.0, 18.0 * multiplier, Qt.BrushStyle.NoBrush),
+              str(ellipses))
+
+
 def test_fallbacks_never_break_the_crosshair() -> None:
     """查不到设置项 / 未知样式 / 模块不存在，都回落默认，不许抛。"""
     host = Host()
@@ -210,6 +256,7 @@ def main() -> int:
         test_default_style_is_unchanged,
         test_other_two_styles_reach_the_canvas,
         test_style_switch_does_not_step_on_size_or_color,
+        test_display_scale_preserves_aim_center_and_painter_state,
         test_fallbacks_never_break_the_crosshair,
     ):
         fn()

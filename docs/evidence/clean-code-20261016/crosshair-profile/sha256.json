@@ -1,0 +1,12 @@
+{
+  "docs/evidence/clean-code-20261016/crosshair-profile/api-freeze.log": "b08298035e97427c54ebef5f0156c6b5af2837c6b797f0b43fa3f3346b73973b",
+  "docs/evidence/clean-code-20261016/crosshair-profile/focused-tests.log": "82d86314f36e705eba56f4c27bfc7b1ac99207bc6f87689e61df92103fe971d8",
+  "docs/evidence/clean-code-20261016/crosshair-profile/static.json": "44ccdf1b3a4a6205aea5d50075ea29aabab155f01c480be470959e0076da80bb",
+  "docs/evidence/clean-code-20261016/crosshair-profile/static.log": "e493cd024abdaff5769d1878103d7379d4acc8467744c62caac4c0c43e594c76",
+  "rm_client/crosshair_profile.py": "58991a9dcfb8a68f3938a8dd67e990c74d503b003b84ca70f783a18a7758e7df",
+  "rm_client/cs2_crosshair.py": "534f6de21fb88de8dd60d9866fd08a4543fc88b8d4105f0380bc2b1cf4f6cf01",
+  "rm_client/module_catalog.py": "8061e7feb851de138256e18cdfd2a44b61d54465c963e83a64798481f46e1994",
+  "tests/fixtures/crosshair_profile_baseline.py": "d136728f08dba5c3d0e21f4dd77ca79b296ed83f4f5298031ddfe56c49dac740",
+  "tests/test_crosshair_profile_boundaries.py": "3d7d3d6030f9c1a5f100c7d6c6170a98385f820d139299a0dd4640e1f72442f9",
+  "tests/test_crosshair_profile_contract.py": "9b483e1b2de897a2c59f4120a24dbcef9f900279fe47269bc41765247edea052"
+}

@@ -1,0 +1,15 @@
+.qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+........Ignoring local CS2 UI pack: CS2 asset hash mismatch: kill_1
+....Ignoring local CS2 UI pack: unsafe CS2 asset path
+Ignoring local CS2 UI pack: unsafe CS2 asset path
+Ignoring local CS2 UI pack: unknown CS2 asset id
+..
+----------------------------------------------------------------------
+Ran 15 tests in 0.430s
+
+OK

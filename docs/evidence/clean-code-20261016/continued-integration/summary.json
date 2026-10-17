@@ -1,0 +1,197 @@
+{
+  "baseline": {
+    "source": {
+      "status": "available",
+      "commit": "fa2c2b8397295d27ada5d105854b751b7dd0940d",
+      "tree": "8d80f484bc4b330641505ad930df6ae8cbc292d7",
+      "dirty": false,
+      "dirty_scope": "tracked-and-untracked-nonignored",
+      "reason": null
+    },
+    "counts": {
+      "PASS": 268,
+      "SKIP": 12,
+      "INCOMPLETE": 3,
+      "FAIL": 0
+    },
+    "source_stability": {
+      "schema_version": 1,
+      "status": "PASS",
+      "detail": "Declared verification source inputs have identical start/end fingerprints",
+      "scope": {
+        "directories": [
+          "rm_client",
+          "tests",
+          "tools",
+          "configs"
+        ],
+        "suffixes": [
+          ".bat",
+          ".c",
+          ".cfg",
+          ".cpp",
+          ".h",
+          ".hpp",
+          ".ini",
+          ".json",
+          ".ps1",
+          ".py",
+          ".spec",
+          ".toml",
+          ".yaml",
+          ".yml"
+        ],
+        "root_files": [
+          "main.py",
+          "requirements*.txt"
+        ],
+        "exclusions": [
+          "hidden directories",
+          "__pycache__"
+        ],
+        "limits": "Start/end comparison only; excludes assets, external fixtures, installed packages and transient edits restored between captures."
+      },
+      "before": {
+        "status": "available",
+        "sha256": "056ae788b9590a49c52c69cdbefe233061159d53c942de22fe96647a500bbd0e",
+        "file_count": 597
+      },
+      "after": {
+        "status": "available",
+        "sha256": "056ae788b9590a49c52c69cdbefe233061159d53c942de22fe96647a500bbd0e",
+        "file_count": 597
+      }
+    },
+    "run_state": "completed"
+  },
+  "round1": {
+    "source": {
+      "status": "available",
+      "commit": "01fd5885aada3f3559f002b96bc0099026f41eda",
+      "tree": "443182bb80496c046f015ee5813835ec0f888d4b",
+      "dirty": false,
+      "dirty_scope": "tracked-and-untracked-nonignored",
+      "reason": null
+    },
+    "counts": {
+      "PASS": 277,
+      "SKIP": 12,
+      "INCOMPLETE": 3,
+      "FAIL": 0
+    },
+    "source_stability": {
+      "schema_version": 1,
+      "status": "PASS",
+      "detail": "Declared verification source inputs have identical start/end fingerprints",
+      "scope": {
+        "directories": [
+          "rm_client",
+          "tests",
+          "tools",
+          "configs"
+        ],
+        "suffixes": [
+          ".bat",
+          ".c",
+          ".cfg",
+          ".cpp",
+          ".h",
+          ".hpp",
+          ".ini",
+          ".json",
+          ".ps1",
+          ".py",
+          ".spec",
+          ".toml",
+          ".yaml",
+          ".yml"
+        ],
+        "root_files": [
+          "main.py",
+          "requirements*.txt"
+        ],
+        "exclusions": [
+          "hidden directories",
+          "__pycache__"
+        ],
+        "limits": "Start/end comparison only; excludes assets, external fixtures, installed packages and transient edits restored between captures."
+      },
+      "before": {
+        "status": "available",
+        "sha256": "9f81711197c2fc6a6c604ae5ce2ea99d68d421e926cf98a07f05eebf34f12179",
+        "file_count": 611
+      },
+      "after": {
+        "status": "available",
+        "sha256": "9f81711197c2fc6a6c604ae5ce2ea99d68d421e926cf98a07f05eebf34f12179",
+        "file_count": 611
+      }
+    },
+    "run_state": "completed"
+  },
+  "final": {
+    "source": {
+      "status": "available",
+      "commit": "66deab1d34ea56e0e9ce07812ef6b565491b704f",
+      "tree": "9d591602fad55a0c0a3b7852ef6bbea3828da8ac",
+      "dirty": false,
+      "dirty_scope": "tracked-and-untracked-nonignored",
+      "reason": null
+    },
+    "counts": {
+      "PASS": 282,
+      "SKIP": 12,
+      "INCOMPLETE": 3,
+      "FAIL": 0
+    },
+    "source_stability": {
+      "schema_version": 1,
+      "status": "PASS",
+      "detail": "Declared verification source inputs have identical start/end fingerprints",
+      "scope": {
+        "directories": [
+          "rm_client",
+          "tests",
+          "tools",
+          "configs"
+        ],
+        "suffixes": [
+          ".bat",
+          ".c",
+          ".cfg",
+          ".cpp",
+          ".h",
+          ".hpp",
+          ".ini",
+          ".json",
+          ".ps1",
+          ".py",
+          ".spec",
+          ".toml",
+          ".yaml",
+          ".yml"
+        ],
+        "root_files": [
+          "main.py",
+          "requirements*.txt"
+        ],
+        "exclusions": [
+          "hidden directories",
+          "__pycache__"
+        ],
+        "limits": "Start/end comparison only; excludes assets, external fixtures, installed packages and transient edits restored between captures."
+      },
+      "before": {
+        "status": "available",
+        "sha256": "f8c6a733d13e59aade1323e2acec228478e2691f6627ad98d8f96a903f3c6f94",
+        "file_count": 617
+      },
+      "after": {
+        "status": "available",
+        "sha256": "f8c6a733d13e59aade1323e2acec228478e2691f6627ad98d8f96a903f3c6f94",
+        "file_count": 617
+      }
+    },
+    "run_state": "completed"
+  }
+}

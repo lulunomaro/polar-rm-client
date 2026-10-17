@@ -1,0 +1,47 @@
+
+--- 1) C 路自检判据（纯函数）---
+[ OK ] 探针是 X 键、位序按厂商表在 bit12  4096
+[SKIP] 没有固件树：交叉核对未运行
+[ OK ] 出现目标键位 -> PASS  PASS 4 个回读样本里出现目标键位 0b0001000000000000
+[ OK ] 键位动了但不是我们发的位 -> PARTIAL（载荷错位，不许判通）  PARTIAL
+[ OK ] 什么都没变 -> NO-CHANGE  NO-CHANGE
+[ OK ] 没有回读 -> NO-READBACK（判定不成立，不许算通过）  NO-READBACK
+[ OK ] 基线里本来就有这些位时不许判 PASS（假阳性防线）  NO-CHANGE
+[ OK ] 自己一帧都没发 -> 必须先判 NOT-SENT（不许说成 DT7 没理这一帧）  NOT-SENT 客户端自己一帧都没写 DT7：查出口闸门 / DT7 Real TX / dt7_last_error，别去怀疑遥控器
+[ OK ] 发了 0 帧时哪怕看起来像 PASS 也不算通（防止按钮自己骗自己）  NOT-SENT
+[ OK ] 没给 frames_sent 时保持原判据（不臆造结论）  NO-READBACK
+[ OK ] 按住探针键位期间算活跃：空闲不授权也该持续发（否则自检测的是空气）  0 -> 1
+[ OK ] 暂停把手生效：一帧都不写，也不补松手  0 0
+[ OK ] 0x5A 不在线时说出原因与三条办法  自转要走 0x5A 的 0x04 设定指令，现在 0x5A 链路没在线，所以没发出去。三条办法：① 插 C 板 USB；
+[ OK ] 链路在线时不许弹这个提示
+[ OK ] 没要求自转时不许弹（别把没做的事说成问题）
+[ OK ] 急停时也不弹（那是另一件事，已有急停显示）
+[ OK ] SpinMode 模块关着时不弹
+[ OK ] 车上从没回读过 0x1F 时，要说清楚是 host_bridge 桥没打  ：车上从没回读过 0x1F（固件未打 host_bridge 桥），客户端连它在不在转都无法确认
+[ OK ] 有回读但链路断了时，理由要引用那个回读值（两种情形不许同一句话）  端不替驾驶员翻 SHIFT：最后一次 0x1F 回读是 0，此刻 0x5A 断了，客户端改不动它
+
+--- 2) 粘键判据：超时清零的形态不许被误判成粘键 ---
+[ OK ] 停发后稳态仍停在 X -> STUCK  STUCK
+[ OK ] 前一段仍停着但最后掉回 -> 必须判 EXPIRES（判据看稳态）  EXPIRES
+[ OK ] 没样本 -> NO-READBACK  NO-READBACK
+
+--- 3) 两个把手真的作用在发送路径上 ---
+[ OK ] 平时发的是键盘当前值  [{'pressed_bits': 1, 'mouse_dx': 0, 'mouse_y': 0, 'mouse_z': 0, 'left': False, 'right': False, 'mid': False, 'qualification_token': None}]
+[ OK ] 强制键位时发的是探针位 X（覆盖键盘当前值）  {'pressed_bits': 4096, 'mouse_dx': 0, 'mouse_y': 0, 'mouse_z': 0, 'left': False, 'right': False, 'mid': False, 'qualification_token': None}
+[ OK ] 暂停阶段一帧都不写  2 vs 2
+[ OK ] 暂停阶段也不许补松手帧（否则量的就不是进程被杀）  0
+[ OK ] 把手复位后恢复正常  {'pressed_bits': 5, 'mouse_dx': 0, 'mouse_y': 0, 'mouse_z': 0, 'left': False, 'right': False, 'mid': False, 'qualification_token': None}
+
+--- 4) 按钮不许是空壳：设置项、分派、处理函数三处必须成对存在 ---
+[ OK ] RobotLink 设置项里有这个按钮
+[ OK ] 同名按钮经真实解析与分派恰好调用 DT7 处理函数一次
+[ OK ] 近似名字不误入 DT7 处理函数
+[ OK ] 其他诊断按钮不误入 DT7 处理函数
+[ OK ] 处理函数存在
+[ OK ] 按钮自己不开新串口（同口互抢是最难查的故障）
+[ OK ] 按钮不阻塞渲染线程（用 QTimer，不用 sleep）
+[ OK ] 探针键位走的是 control 的两个把手，不是绕过去直写
+[ OK ] 报告字段齐且 passed/safe 是算出来的  {'tool': 'dt7_link_selftest(ui)', 'link': 'C (PC -> DT7 VCOM -> DR16 -
+
+C 路界面自检全部通过
+跳过项（别当已验）：没有固件树：X 键无消费者的交叉核对未跑

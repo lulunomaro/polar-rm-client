@@ -1,0 +1,2133 @@
+{
+  "source_sha256": {
+    "BackendManager._apply_custom_byte_block": "07d3a732c797385e1517f34340dd8e550fa0268319b5426fca5fd057def8bdc7",
+    "native_viewer_telemetry": "eed1f0f6293d27c40139b82ae9ec1106c3a48c44613870f579a3d05e3eb5724b",
+    "AnnexBRecoveryGate": "8660c1ef86a6de9e62267cd5b01cc9870ac3cedb0671d8eb1e7dda9928ef64cb"
+  },
+  "scope": "Ordered state/effects and partial abort state; real parsers/recovery, fake I/O/clock",
+  "initial_state": {
+    "native_telemetry_at": 8.0,
+    "native_telemetry_unix_ms": 9,
+    "native_telemetry_frame_seq": 10,
+    "native_camera_online": false,
+    "native_gimbal_online": false,
+    "native_gimbal_mode": "OLD",
+    "native_bullet_count": 11,
+    "native_bullet_speed": 12.0,
+    "native_yaw_deg": 13.0,
+    "native_yaw_velocity": 14.0,
+    "native_pitch_deg": 15.0,
+    "native_pitch_velocity": 16.0,
+    "native_quaternion": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "native_status_text": "old status",
+    "hero_lob_relocalization_valid": true,
+    "hero_lob_armed": true,
+    "hero_lob_status": "ARMED",
+    "deploy_mode": 0
+  },
+  "initial_manager": {
+    "_active_video_source": "native",
+    "_native_0310_last_sequence": null,
+    "_native_0310_bytes_since_reset": 17,
+    "_native_0310_blocked_until_sps": true,
+    "_native_0310_dropped_chunks": 2,
+    "_native_0310_out_of_order_chunks": 3,
+    "_native_0310_recovery_dropped_chunks": 4,
+    "_native_0310_decoder_restarts": 5,
+    "_native_0310_decoder_started_once": false,
+    "_native_failure_epoch_handled": true
+  },
+  "cases": {
+    "telemetry_ready": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}, "native_telemetry": {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 11, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 11],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}]
+        ]
+      }
+    },
+    "telemetry_flags_unknown_mode": {
+      "input": {"packets": [{"hex": "50444c31010051000000000015cd5b07000000000b0000000005d002b80b6400b0040000ff002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}, "native_telemetry": {"version": 1, "frame_seq": 11, "camera_online": false, "gimbal_online": false, "gimbal_mode": "UNKNOWN", "bullet_speed": 15.0, "status": "READY"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 11, "native_gimbal_mode": "UNKNOWN", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 11],
+          ["state.native_camera_online", false],
+          ["state.native_gimbal_online", false],
+          ["state.native_gimbal_mode", "UNKNOWN"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 11, "camera_online": false, "gimbal_online": false, "gimbal_mode": "UNKNOWN", "bullet_speed": 15.0, "status": "READY"}]
+        ]
+      }
+    },
+    "telemetry_status_nul_and_lossy_utf8": {
+      "input": {"packets": [{"hex": "50444c3101005d000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f20ff7265616479004d4150205245534554"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 93}, "native_telemetry": {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "�ready"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 11, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "�ready"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 93}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 11],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "�ready"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "�ready"}]
+        ]
+      }
+    },
+    "telemetry_sequence_0_0": {
+      "input": {"state": {"native_telemetry_frame_seq": 0}, "packets": [{"hex": "50444c31010051000300000015cd5b0700000000000000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}, "native_telemetry": {"version": 1, "frame_seq": 0, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 0, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 0],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 0, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}]
+        ]
+      }
+    },
+    "telemetry_sequence_10_10": {
+      "input": {"state": {"native_telemetry_frame_seq": 10}, "packets": [{"hex": "50444c31010051000300000015cd5b07000000000a0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}, "native_telemetry": {"version": 1, "frame_seq": 10, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 10],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 10, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}]
+        ]
+      }
+    },
+    "telemetry_sequence_10_9": {
+      "input": {"state": {"native_telemetry_frame_seq": 10}, "packets": [{"hex": "50444c31010051000300000015cd5b0700000000090000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}, "native_telemetry": {"version": 1, "frame_seq": 9, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 9, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY", "hero_lob_relocalization_valid": false, "hero_lob_armed": false, "hero_lob_status": "BLOCKED: relocalization invalidated by telemetry reset"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 9],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["state.hero_lob_relocalization_valid", false],
+          ["state.hero_lob_armed", false],
+          ["state.hero_lob_status", "BLOCKED: relocalization invalidated by telemetry reset"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 9, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}]
+        ]
+      }
+    },
+    "telemetry_sequence_4294967295_0": {
+      "input": {"state": {"native_telemetry_frame_seq": 4294967295}, "packets": [{"hex": "50444c31010051000300000015cd5b0700000000000000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}, "native_telemetry": {"version": 1, "frame_seq": 0, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 0, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 0],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 0, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}]
+        ]
+      }
+    },
+    "telemetry_sequence_2147483648_0": {
+      "input": {"state": {"native_telemetry_frame_seq": 2147483648}, "packets": [{"hex": "50444c31010051000300000015cd5b0700000000000000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}, "native_telemetry": {"version": 1, "frame_seq": 0, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 0, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 0],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 0, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}]
+        ]
+      }
+    },
+    "telemetry_sequence_2147483647_0": {
+      "input": {"state": {"native_telemetry_frame_seq": 2147483647}, "packets": [{"hex": "50444c31010051000300000015cd5b0700000000000000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}, "native_telemetry": {"version": 1, "frame_seq": 0, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 0, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY", "hero_lob_relocalization_valid": false, "hero_lob_armed": false, "hero_lob_status": "BLOCKED: relocalization invalidated by telemetry reset"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 0],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["state.hero_lob_relocalization_valid", false],
+          ["state.hero_lob_armed", false],
+          ["state.hero_lob_status", "BLOCKED: relocalization invalidated by telemetry reset"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 0, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}]
+        ]
+      }
+    },
+    "telemetry_sequence_1_0": {
+      "input": {"state": {"native_telemetry_frame_seq": 1}, "packets": [{"hex": "50444c31010051000300000015cd5b0700000000000000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}, "native_telemetry": {"version": 1, "frame_seq": 0, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 0, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY", "hero_lob_relocalization_valid": false, "hero_lob_armed": false, "hero_lob_status": "BLOCKED: relocalization invalidated by telemetry reset"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 0],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["state.hero_lob_relocalization_valid", false],
+          ["state.hero_lob_armed", false],
+          ["state.hero_lob_status", "BLOCKED: relocalization invalidated by telemetry reset"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 0, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}]
+        ]
+      }
+    },
+    "telemetry_revokes_localization_lost": {
+      "input": {"packets": [{"hex": "50444c3101006b000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f707265666978206c6f63616c697a6174696f6e206c6f737420737566666978"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 107}, "native_telemetry": {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix localization lost suffix"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 11, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "prefix localization lost suffix", "hero_lob_relocalization_valid": false, "hero_lob_armed": false, "hero_lob_status": "BLOCKED: relocalization invalidated by telemetry reset"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 107}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 11],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "prefix localization lost suffix"],
+          ["state.hero_lob_relocalization_valid", false],
+          ["state.hero_lob_armed", false],
+          ["state.hero_lob_status", "BLOCKED: relocalization invalidated by telemetry reset"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix localization lost suffix"}]
+        ]
+      }
+    },
+    "telemetry_revokes_localisation_lost": {
+      "input": {"packets": [{"hex": "50444c3101006b000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f707265666978206c6f63616c69736174696f6e206c6f737420737566666978"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 107}, "native_telemetry": {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix localisation lost suffix"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 11, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "prefix localisation lost suffix", "hero_lob_relocalization_valid": false, "hero_lob_armed": false, "hero_lob_status": "BLOCKED: relocalization invalidated by telemetry reset"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 107}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 11],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "prefix localisation lost suffix"],
+          ["state.hero_lob_relocalization_valid", false],
+          ["state.hero_lob_armed", false],
+          ["state.hero_lob_status", "BLOCKED: relocalization invalidated by telemetry reset"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix localisation lost suffix"}]
+        ]
+      }
+    },
+    "telemetry_revokes_relocalizing": {
+      "input": {"packets": [{"hex": "50444c31010066000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f7072656669782072656c6f63616c697a696e6720737566666978"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 102}, "native_telemetry": {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix relocalizing suffix"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 11, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "prefix relocalizing suffix", "hero_lob_relocalization_valid": false, "hero_lob_armed": false, "hero_lob_status": "BLOCKED: relocalization invalidated by telemetry reset"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 102}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 11],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "prefix relocalizing suffix"],
+          ["state.hero_lob_relocalization_valid", false],
+          ["state.hero_lob_armed", false],
+          ["state.hero_lob_status", "BLOCKED: relocalization invalidated by telemetry reset"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix relocalizing suffix"}]
+        ]
+      }
+    },
+    "telemetry_revokes_relocalising": {
+      "input": {"packets": [{"hex": "50444c31010066000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f7072656669782072656c6f63616c6973696e6720737566666978"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 102}, "native_telemetry": {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix relocalising suffix"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 11, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "prefix relocalising suffix", "hero_lob_relocalization_valid": false, "hero_lob_armed": false, "hero_lob_status": "BLOCKED: relocalization invalidated by telemetry reset"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 102}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 11],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "prefix relocalising suffix"],
+          ["state.hero_lob_relocalization_valid", false],
+          ["state.hero_lob_armed", false],
+          ["state.hero_lob_status", "BLOCKED: relocalization invalidated by telemetry reset"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix relocalising suffix"}]
+        ]
+      }
+    },
+    "telemetry_revokes_pose_reset": {
+      "input": {"packets": [{"hex": "50444c31010064000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f70726566697820706f736520726573657420737566666978"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 100}, "native_telemetry": {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix pose reset suffix"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 11, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "prefix pose reset suffix", "hero_lob_relocalization_valid": false, "hero_lob_armed": false, "hero_lob_status": "BLOCKED: relocalization invalidated by telemetry reset"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 100}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 11],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "prefix pose reset suffix"],
+          ["state.hero_lob_relocalization_valid", false],
+          ["state.hero_lob_armed", false],
+          ["state.hero_lob_status", "BLOCKED: relocalization invalidated by telemetry reset"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix pose reset suffix"}]
+        ]
+      }
+    },
+    "telemetry_revokes_map_reset": {
+      "input": {"packets": [{"hex": "50444c31010063000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f707265666978206d617020726573657420737566666978"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 99}, "native_telemetry": {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix map reset suffix"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 11, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "prefix map reset suffix", "hero_lob_relocalization_valid": false, "hero_lob_armed": false, "hero_lob_status": "BLOCKED: relocalization invalidated by telemetry reset"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 99}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 11],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "prefix map reset suffix"],
+          ["state.hero_lob_relocalization_valid", false],
+          ["state.hero_lob_armed", false],
+          ["state.hero_lob_status", "BLOCKED: relocalization invalidated by telemetry reset"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "prefix map reset suffix"}]
+        ]
+      }
+    },
+    "telemetry_never_rearms": {
+      "input": {"state": {"hero_lob_relocalization_valid": false, "hero_lob_armed": false}, "packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}, "native_telemetry": {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 11, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY", "hero_lob_relocalization_valid": false, "hero_lob_armed": false},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 11],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["stats.native_telemetry", {"version": 1, "frame_seq": 11, "camera_online": true, "gimbal_online": true, "gimbal_mode": "AUTO_AIM", "bullet_speed": 15.0, "status": "READY"}]
+        ]
+      }
+    },
+    "telemetry_bad_previous_aborts_before_updates": {
+      "input": {"state": {"native_telemetry_frame_seq": "invalid"}, "packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [[0, "ValueError"]],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_frame_seq": "invalid"},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_magic": {
+      "input": {"packets": [{"hex": "42414421010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_version": {
+      "input": {"packets": [{"hex": "50444c31020051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_declared_74": {
+      "input": {"packets": [{"hex": "50444c3101004a000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_declared_75": {
+      "input": {"packets": [{"hex": "50444c3101004b000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_declared_too_long": {
+      "input": {"packets": [{"hex": "50444c3101002c010300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_video_reserved": {
+      "input": {"packets": [{"hex": "040a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}]
+        ]
+      }
+    },
+    "malformed_video_length_298": {
+      "input": {"packets": [{"hex": "02012a000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}]
+        ]
+      }
+    },
+    "malformed_length_0": {
+      "input": {"packets": [{"hex": ""}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 0}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 0}]
+        ]
+      }
+    },
+    "malformed_length_1": {
+      "input": {"packets": [{"hex": "00"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 1}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 1}]
+        ]
+      }
+    },
+    "malformed_length_73": {
+      "input": {"packets": [{"hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 73}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 73}]
+        ]
+      }
+    },
+    "malformed_length_74": {
+      "input": {"packets": [{"hex": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 74}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 74}]
+        ]
+      }
+    },
+    "malformed_length_75": {
+      "input": {"packets": [{"hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 75}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 75}]
+        ]
+      }
+    },
+    "malformed_length_76": {
+      "input": {"packets": [{"hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 76}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 76}]
+        ]
+      }
+    },
+    "malformed_length_299": {
+      "input": {"packets": [{"hex": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 299}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 299}]
+        ]
+      }
+    },
+    "malformed_length_301": {
+      "input": {"packets": [{"hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 301}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 301}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_0_nan": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000c07f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_0_inf": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000807f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_1_nan": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f0000c07f000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_1_inf": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f0000807f000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_2_nan": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f000020400000c07f000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_2_inf": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f000020400000807f000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_3_nan": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c00000c07f000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_3_inf": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c00000807f000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_4_nan": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c00000c07f0000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_4_inf": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c00000807f0000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_5_nan": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000c07f00000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_5_inf": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000807f00000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_6_nan": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c000007041000000000000c07f000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_6_inf": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c000007041000000000000807f000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_7_nan": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c00000704100000000000000000000c07f0000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_7_inf": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c00000704100000000000000000000807f0000803f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_8_nan": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000c07f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "malformed_telemetry_float_8_inf": {
+      "input": {"packets": [{"hex": "50444c31010051000300000015cd5b07000000000b0000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000807f5245414459"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}]
+        ]
+      }
+    },
+    "invalid_data_none": {
+      "input": {"packets": [null]},
+      "observed": {
+        "errors": [[0, "TypeError"]],
+        "stats": {},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "invalid_data_text": {
+      "input": {"packets": ["bad"]},
+      "observed": {
+        "errors": [[0, "TypeError"]],
+        "stats": {},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "invalid_data_bad_list": {
+      "input": {"packets": [[256]]},
+      "observed": {
+        "errors": [[0, "ValueError"]],
+        "stats": {},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "video_source_native": {
+      "input": {"manager": {"_active_video_source": "native"}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_source_native_0x0310": {
+      "input": {"manager": {"_active_video_source": "native 0x0310"}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_active_video_source": "native 0x0310", "_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_source_0x0310": {
+      "input": {"manager": {"_active_video_source": "0x0310"}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_active_video_source": "0x0310", "_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_source_auto": {
+      "input": {"manager": {"_active_video_source": "auto"}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_active_video_source": "auto"},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["recovery.reset"]
+        ]
+      }
+    },
+    "video_source_shark_udp": {
+      "input": {"manager": {"_active_video_source": "shark udp"}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_active_video_source": "shark udp"},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["recovery.reset"]
+        ]
+      }
+    },
+    "video_source_Native": {
+      "input": {"manager": {"_active_video_source": "Native"}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_active_video_source": "Native"},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["recovery.reset"]
+        ]
+      }
+    },
+    "video_source__native_": {
+      "input": {"manager": {"_active_video_source": " native "}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_active_video_source": " native "},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["recovery.reset"]
+        ]
+      }
+    },
+    "video_deploy_0": {
+      "input": {"manager": {"_active_video_source": "udp"}, "state": {"deploy_mode": 0}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_active_video_source": "udp"},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["recovery.reset"]
+        ]
+      }
+    },
+    "video_deploy_1": {
+      "input": {"manager": {"_active_video_source": "udp"}, "state": {"deploy_mode": "1"}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"deploy_mode": "1"},
+        "manager_delta": {"_active_video_source": "udp", "_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_deploy_bad": {
+      "input": {"manager": {"_active_video_source": "udp"}, "state": {"deploy_mode": "bad"}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [[0, "ValueError"]],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"deploy_mode": "bad"},
+        "manager_delta": {"_active_video_source": "udp"},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}]
+        ]
+      }
+    },
+    "video_deploy_None": {
+      "input": {"manager": {"_active_video_source": "udp"}, "state": {"deploy_mode": null}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [[0, "TypeError"]],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"deploy_mode": null},
+        "manager_delta": {"_active_video_source": "udp"},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}]
+        ]
+      }
+    },
+    "video_native_short_circuits_bad_deploy": {
+      "input": {"state": {"deploy_mode": "bad"}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"deploy_mode": "bad"},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_sequence_9_10": {
+      "input": {"manager": {"_native_0310_last_sequence": 9}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_sequence_255_0": {
+      "input": {"manager": {"_native_0310_last_sequence": 255}, "packets": [{"hex": "000016000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 0, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 0, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 0],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 0, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_sequence_10_10": {
+      "input": {"manager": {"_native_0310_last_sequence": 10}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 17, "dropped_chunks": 2, "out_of_order_chunks": 4, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 22, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_out_of_order_chunks": 4},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_out_of_order_chunks", 4],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 17, "dropped_chunks": 2, "out_of_order_chunks": 4, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 22, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_sequence_10_9": {
+      "input": {"manager": {"_native_0310_last_sequence": 10}, "packets": [{"hex": "000916000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 9, "reset": false, "payload_len": 22, "bytes_since_reset": 17, "dropped_chunks": 2, "out_of_order_chunks": 4, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 22, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_out_of_order_chunks": 4},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_out_of_order_chunks", 4],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 9, "reset": false, "payload_len": 22, "bytes_since_reset": 17, "dropped_chunks": 2, "out_of_order_chunks": 4, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 22, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_sequence_10_12": {
+      "input": {"manager": {"_native_0310_last_sequence": 10}, "packets": [{"hex": "000c16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 12, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 3, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 12, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_dropped_chunks": 3, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_dropped_chunks", 3],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 12],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 12, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 3, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_sequence_10_138": {
+      "input": {"manager": {"_native_0310_last_sequence": 10}, "packets": [{"hex": "008a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 138, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 129, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 138, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_dropped_chunks": 129, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_dropped_chunks", 129],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 138],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 138, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 129, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_sequence_10_139": {
+      "input": {"manager": {"_native_0310_last_sequence": 10}, "packets": [{"hex": "008b16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 139, "reset": false, "payload_len": 22, "bytes_since_reset": 17, "dropped_chunks": 2, "out_of_order_chunks": 4, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 22, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_out_of_order_chunks": 4},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_out_of_order_chunks", 4],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 139, "reset": false, "payload_len": 22, "bytes_since_reset": 17, "dropped_chunks": 2, "out_of_order_chunks": 4, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 22, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_sequence_254_1": {
+      "input": {"manager": {"_native_0310_last_sequence": 254}, "packets": [{"hex": "000116000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 1, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 4, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 1, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_dropped_chunks": 4, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_dropped_chunks", 4],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 1],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 1, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 4, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_reset_clears_epoch": {
+      "input": {"manager": {"_native_0310_last_sequence": 100}, "packets": [{"hex": "010216000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 2, "reset": true, "payload_len": 22, "bytes_since_reset": 22, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 2, "_native_0310_bytes_since_reset": 22, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 0],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 22],
+          ["manager._native_0310_last_sequence", 2],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 2, "reset": true, "payload_len": 22, "bytes_since_reset": 22, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_empty_payload": {
+      "input": {"packets": [{"hex": "000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 0, "bytes_since_reset": 17, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 0, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_recovery_dropped_chunks": 5},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 17],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": ""}],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_0310_recovery_dropped_chunks", 5],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 0, "bytes_since_reset": 17, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 0, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_max_payload": {
+      "input": {"packets": [{"hex": "020a29000000016773707300000168707073000001656964727878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 297, "bytes_since_reset": 314, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 297, "payload_decoder_len": 297, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 314, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 314],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "000000016773707300000168707073000001656964727878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "000000016773707300000168707073000001656964727878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 297, "bytes_since_reset": 314, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 297, "payload_decoder_len": 297, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_recovery_spans_chunks": {
+      "input": {"packets": [{"hex": "010007000000016773700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}, {"hex": "00010f730000016870707300000165696472000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}, {"hex": "000208000001416e65787400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 2, "reset": false, "payload_len": 8, "bytes_since_reset": 30, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 8, "payload_decoder_len": 8, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 2, "_native_0310_bytes_since_reset": 30, "_native_0310_blocked_until_sps": false, "_native_0310_recovery_dropped_chunks": 5, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 0],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 7],
+          ["manager._native_0310_last_sequence", 0],
+          ["recovery.feed", {"hex": "00000001677370"}],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_0310_recovery_dropped_chunks", 5],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 0, "reset": true, "payload_len": 7, "bytes_since_reset": 7, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 7, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}],
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 22],
+          ["manager._native_0310_last_sequence", 1],
+          ["recovery.feed", {"hex": "730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 1, "reset": false, "payload_len": 15, "bytes_since_reset": 22, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 15, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}],
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 30],
+          ["manager._native_0310_last_sequence", 2],
+          ["decoder.available", true],
+          ["recovery.feed", {"hex": "000001416e657874"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", true],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "000001416e657874"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 2, "reset": false, "payload_len": 8, "bytes_since_reset": 30, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 8, "payload_decoder_len": 8, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_gap_waits_for_fresh_keyframe": {
+      "input": {"packets": [{"hex": "010016000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}, {"hex": "000208000001416e65787400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}, {"hex": "000316000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 3, "reset": false, "payload_len": 22, "bytes_since_reset": 52, "dropped_chunks": 3, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 3, "_native_0310_bytes_since_reset": 52, "_native_0310_blocked_until_sps": false, "_native_0310_dropped_chunks": 3, "_native_0310_recovery_dropped_chunks": 5, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 0],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 22],
+          ["manager._native_0310_last_sequence", 0],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 0, "reset": true, "payload_len": 22, "bytes_since_reset": 22, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}],
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_dropped_chunks", 3],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 30],
+          ["manager._native_0310_last_sequence", 2],
+          ["decoder.available", true],
+          ["recovery.feed", {"hex": "000001416e657874"}],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_0310_recovery_dropped_chunks", 5],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 2, "reset": false, "payload_len": 8, "bytes_since_reset": 30, "dropped_chunks": 3, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 8, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}],
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 52],
+          ["manager._native_0310_last_sequence", 3],
+          ["decoder.available", true],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", true],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 3, "reset": false, "payload_len": 22, "bytes_since_reset": 52, "dropped_chunks": 3, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_duplicate_leaves_recovery_intact": {
+      "input": {"packets": [{"hex": "000007000000016773700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}, {"hex": "000003626164000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}, {"hex": "00010f730000016870707300000165696472000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 1, "reset": false, "payload_len": 15, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 4, "recovery_dropped_chunks": 5, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 15, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 1, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_out_of_order_chunks": 4, "_native_0310_recovery_dropped_chunks": 5, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 24],
+          ["manager._native_0310_last_sequence", 0],
+          ["recovery.feed", {"hex": "00000001677370"}],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_0310_recovery_dropped_chunks", 5],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 0, "reset": false, "payload_len": 7, "bytes_since_reset": 24, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 7, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}],
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_out_of_order_chunks", 4],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 0, "reset": false, "payload_len": 3, "bytes_since_reset": 24, "dropped_chunks": 2, "out_of_order_chunks": 4, "recovery_dropped_chunks": 5, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 3, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}],
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 1],
+          ["recovery.feed", {"hex": "730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 1, "reset": false, "payload_len": 15, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 4, "recovery_dropped_chunks": 5, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 15, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_decoder_already_available": {
+      "input": {"decoder": {"available": true}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", true],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_decoder_start_fails": {
+      "input": {"decoder": {"start": false}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", false],
+          ["manager._native_0310_decoder_started_once", false],
+          ["decoder.available", false],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_decoder_crash_unhandled": {
+      "input": {"manager": {"_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 6, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_restarts": 6, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["decoder.available", false],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["recovery.reset"],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_restarts", 6],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 6, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_decoder_crash_handled": {
+      "input": {"manager": {"_native_0310_decoder_started_once": true}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 6, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_restarts": 6, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["decoder.available", false],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_restarts", 6],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 6, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_restart_pending": {
+      "input": {"restart_pending": true, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 22, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_recovery_dropped_chunks": 5},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["recovery.reset"],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_0310_recovery_dropped_chunks", 5],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 22, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_write_retry_succeeds": {
+      "input": {"decoder": {"writes": [false, false, true]}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, false],
+          ["clock.perf_counter", 100.0],
+          ["clock.perf_counter", 100.002],
+          ["clock.sleep", 0.0005],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, false],
+          ["clock.perf_counter", 100.004],
+          ["clock.sleep", 0.0005],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": false, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": true, "payload_queued": true, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_write_retry_expires": {
+      "input": {"decoder": {"writes": [false]}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, false],
+          ["clock.perf_counter", 100.0],
+          ["clock.perf_counter", 100.002],
+          ["clock.sleep", 0.0005],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, false],
+          ["clock.perf_counter", 100.004],
+          ["clock.sleep", 0.0005],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, false],
+          ["clock.perf_counter", 100.006],
+          ["clock.sleep", 0.0005],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, false],
+          ["clock.perf_counter", 100.008],
+          ["clock.sleep", 0.0005],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, false],
+          ["clock.perf_counter", 100.01],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", true],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": true, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_availability_changes_before_write": {
+      "input": {"decoder": {"availability": [true, false, false]}, "packets": [{"hex": "000a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 39, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 39],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", true],
+          ["decoder.available", false],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 10, "reset": false, "payload_len": 22, "bytes_since_reset": 39, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 4, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": true, "payload_input_len": 22, "payload_decoder_len": 22, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}]
+        ]
+      }
+    },
+    "video_unselected_clears_partial_recovery": {
+      "input": {"packets": [{"hex": "000007000000016773700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}, {"hex": "00010f730000016870707300000165696472000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}], "before_second": {"_active_video_source": "udp"}},
+      "observed": {
+        "errors": [],
+        "stats": {"last_custom_block": {"len": 300}, "native_video_0310": {"sequence": 0, "reset": false, "payload_len": 7, "bytes_since_reset": 24, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 7, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_active_video_source": "udp", "_native_0310_bytes_since_reset": 24, "_native_0310_recovery_dropped_chunks": 5},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 24],
+          ["manager._native_0310_last_sequence", 0],
+          ["recovery.feed", {"hex": "00000001677370"}],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_0310_recovery_dropped_chunks", 5],
+          ["decoder.input_queue_depth"],
+          ["decoder.available", false],
+          ["stats.native_video_0310", {"sequence": 0, "reset": false, "payload_len": 7, "bytes_since_reset": 24, "dropped_chunks": 2, "out_of_order_chunks": 3, "recovery_dropped_chunks": 5, "blocked_until_sps": true, "decoder_restarts": 5, "payload_accepted": false, "payload_input_len": 7, "payload_decoder_len": 0, "payload_written": false, "payload_queued": false, "decoder_input_queue": 6, "decoder_input_dropped": 7, "decoder_ready": false, "decoded_frames": 8}],
+          ["manager._active_video_source", "udp"],
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["recovery.reset"]
+        ]
+      }
+    },
+    "failure_recovery_reset": {
+      "input": {"fault": "recovery.reset", "packets": [{"hex": "010a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [[0, "RuntimeError"]],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_bytes_since_reset": 0, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 0],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"]
+        ]
+      }
+    },
+    "failure_recovery_feed": {
+      "input": {"fault": "recovery.feed", "packets": [{"hex": "010a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [[0, "RuntimeError"]],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 22, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 0],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 22],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}]
+        ]
+      }
+    },
+    "failure_decoder_available": {
+      "input": {"fault": "decoder.available", "packets": [{"hex": "010a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [[0, "RuntimeError"]],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 22, "_native_0310_blocked_until_sps": false, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 0],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 22],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false]
+        ]
+      }
+    },
+    "failure_decoder_start": {
+      "input": {"fault": "decoder.start", "packets": [{"hex": "010a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [[0, "RuntimeError"]],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 22, "_native_0310_blocked_until_sps": false, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 0],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 22],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true]
+        ]
+      }
+    },
+    "failure_decoder_write": {
+      "input": {"fault": "decoder.write", "packets": [{"hex": "010a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [[0, "RuntimeError"]],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 22, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 0],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 22],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true]
+        ]
+      }
+    },
+    "failure_decoder_input_queue_depth": {
+      "input": {"fault": "decoder.input_queue_depth", "packets": [{"hex": "010a16000000016773707300000168707073000001656964720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}]},
+      "observed": {
+        "errors": [[0, "RuntimeError"]],
+        "stats": {"last_custom_block": {"len": 300}},
+        "recovery": {"blocked": false, "parameters": {"7": {"hex": "0000000167737073"}, "8": {"hex": "00000168707073"}}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {},
+        "manager_delta": {"_native_0310_last_sequence": 10, "_native_0310_bytes_since_reset": 22, "_native_0310_blocked_until_sps": false, "_native_0310_decoder_started_once": true, "_native_failure_epoch_handled": false},
+        "events": [
+          ["stats.last_custom_block", {"len": 300}],
+          ["manager._native_0310_bytes_since_reset", 0],
+          ["manager._native_0310_last_sequence", null],
+          ["manager._native_0310_blocked_until_sps", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["recovery.reset"],
+          ["manager._native_0310_bytes_since_reset", 22],
+          ["manager._native_0310_last_sequence", 10],
+          ["recovery.feed", {"hex": "00000001677370730000016870707300000165696472"}],
+          ["manager._native_0310_blocked_until_sps", false],
+          ["decoder.available", false],
+          ["decoder.start", true],
+          ["manager._native_0310_decoder_started_once", true],
+          ["manager._native_failure_epoch_handled", false],
+          ["decoder.available", true],
+          ["decoder.write", {"hex": "00000001677370730000016870707300000165696472"}, true],
+          ["decoder.input_queue_depth"]
+        ]
+      }
+    },
+    "failure_revocation_retains_prior_invalidated_flag": {
+      "input": {"fault": "state.hero_lob_armed", "packets": [{"hex": "50444c31010051000300000015cd5b0700000000010000000005d002b80b6400b004000001002a000000a03f00002040000050c0000090c0000070410000000000000000000000000000803f5245414459"}]},
+      "observed": {
+        "errors": [[0, "RuntimeError"]],
+        "stats": {"last_custom_block": {"len": 81}},
+        "recovery": {"blocked": true, "parameters": {}, "tail": {"hex": ""}, "pending_type": null, "pending": {"hex": ""}},
+        "state_delta": {"native_telemetry_at": 100.0, "native_telemetry_unix_ms": 123456789, "native_telemetry_frame_seq": 1, "native_camera_online": true, "native_gimbal_online": true, "native_gimbal_mode": "AUTO_AIM", "native_bullet_count": 42, "native_bullet_speed": 15.0, "native_yaw_deg": 1.25, "native_yaw_velocity": 2.5, "native_pitch_deg": -3.25, "native_pitch_velocity": -4.5, "native_status_text": "READY", "hero_lob_relocalization_valid": false},
+        "manager_delta": {},
+        "events": [
+          ["stats.last_custom_block", {"len": 81}],
+          ["clock.perf_counter", 100.0],
+          ["state.native_telemetry_at", 100.0],
+          ["state.native_telemetry_unix_ms", 123456789],
+          ["state.native_telemetry_frame_seq", 1],
+          ["state.native_camera_online", true],
+          ["state.native_gimbal_online", true],
+          ["state.native_gimbal_mode", "AUTO_AIM"],
+          ["state.native_bullet_count", 42],
+          ["state.native_bullet_speed", 15.0],
+          ["state.native_yaw_deg", 1.25],
+          ["state.native_yaw_velocity", 2.5],
+          ["state.native_pitch_deg", -3.25],
+          ["state.native_pitch_velocity", -4.5],
+          ["state.native_quaternion", [0.0, 0.0, 0.0, 1.0]],
+          ["state.native_status_text", "READY"],
+          ["state.hero_lob_relocalization_valid", false],
+          ["state.hero_lob_armed", false]
+        ]
+      }
+    }
+  }
+}

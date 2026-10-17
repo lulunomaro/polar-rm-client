@@ -1,0 +1,1398 @@
+test_backend_admission_advances_display_before_publishing_frame_source (test_normal_video_timeline.NormalVideoTimelineTests.test_backend_admission_advances_display_before_publishing_frame_source) ... ok
+test_backend_freshness_requires_mode_source_positive_time_and_age (test_normal_video_timeline.NormalVideoTimelineTests.test_backend_freshness_requires_mode_source_positive_time_and_age) ... ok
+test_backend_newness_retains_same_older_future_and_nan_comparisons (test_normal_video_timeline.NormalVideoTimelineTests.test_backend_newness_retains_same_older_future_and_nan_comparisons) ... ok
+test_capture_admission_rejects_same_older_and_initial_zero (test_normal_video_timeline.NormalVideoTimelineTests.test_capture_admission_rejects_same_older_and_initial_zero) ... ok
+test_capture_publication_is_separate_from_consumption (test_normal_video_timeline.NormalVideoTimelineTests.test_capture_publication_is_separate_from_consumption) ... ok
+test_clear_can_retire_webcam_without_a_backend_timestamp (test_normal_video_timeline.NormalVideoTimelineTests.test_clear_can_retire_webcam_without_a_backend_timestamp) ... ok
+test_clear_preserves_noop_negative_timestamp_and_retires_nan (test_normal_video_timeline.NormalVideoTimelineTests.test_clear_preserves_noop_negative_timestamp_and_retires_nan) ... ok
+test_clear_retires_frame_provenance_without_resetting_source_counters (test_normal_video_timeline.NormalVideoTimelineTests.test_clear_retires_frame_provenance_without_resetting_source_counters) ... ok
+test_compatibility_aliases_are_fixed_and_bidirectional (test_normal_video_timeline.NormalVideoTimelineTests.test_compatibility_aliases_are_fixed_and_bidirectional) ... ok
+test_counter_failure_keeps_the_preceding_backend_timestamp_publication (test_normal_video_timeline.NormalVideoTimelineTests.test_counter_failure_keeps_the_preceding_backend_timestamp_publication) ... ok
+test_counter_failure_keeps_the_preceding_capture_source_publication (test_normal_video_timeline.NormalVideoTimelineTests.test_counter_failure_keeps_the_preceding_capture_source_publication) ... ok
+test_empty_and_webcam_readiness_use_published_provenance (test_normal_video_timeline.NormalVideoTimelineTests.test_empty_and_webcam_readiness_use_published_provenance) ... ok
+test_future_timestamp_stays_fresh_and_nan_clock_stays_not_fresh (test_normal_video_timeline.NormalVideoTimelineTests.test_future_timestamp_stays_fresh_and_nan_clock_stays_not_fresh) ... ok
+test_import_needs_no_qt_window_or_native_transport (test_normal_video_timeline.NormalVideoTimelineTests.test_import_needs_no_qt_window_or_native_transport) ... ok
+test_mode_policy_does_not_silently_normalize_supplied_values (test_normal_video_timeline.NormalVideoTimelineTests.test_mode_policy_does_not_silently_normalize_supplied_values) ... ok
+test_requested_mode_remains_old_until_adapter_publishes_selection (test_normal_video_timeline.NormalVideoTimelineTests.test_requested_mode_remains_old_until_adapter_publishes_selection) ... ok
+test_source_switches_never_mix_capture_and_display_sequence_spaces (test_normal_video_timeline.NormalVideoTimelineTests.test_source_switches_never_mix_capture_and_display_sequence_spaces) ... ok
+test_synthetic_readiness_is_false_and_backend_readiness_is_deferred (test_normal_video_timeline.NormalVideoTimelineTests.test_synthetic_readiness_is_false_and_backend_readiness_is_deferred) ... ok
+test_authoritative_deploy_state_is_rechecked_after_native_callback (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_authoritative_deploy_state_is_rechecked_after_native_callback) ... QOpenGLWidget is not supported on this platform.
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1 LGPL version 2.1 or later
+qt.multimedia.ffmpeg: Available HW decoding frameworks:
+qt.multimedia.ffmpeg: Available HW encoding frameworks:
+Failed to create secure directory (/home/agent/.local/run/pulse): Read-only file system
+socket(): Operation not permitted
+PulseAudioService: pa_context_connect() failed
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_copy_failure_does_not_consume_timestamp_retry_can_succeed (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_copy_failure_does_not_consume_timestamp_retry_can_succeed) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_luminance_failure_still_publishes_image_and_glass (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_luminance_failure_still_publishes_image_and_glass) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_nan_publishes_but_is_not_fresh_and_does_not_block_next_frame (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_nan_publishes_but_is_not_fresh_and_does_not_block_next_frame) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_pixmap_and_glass_failures_preserve_exact_partial_publication (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_pixmap_and_glass_failures_preserve_exact_partial_publication) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_qimage_or_mirror_failure_does_not_consume_timestamp (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_qimage_or_mirror_failure_does_not_consume_timestamp) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_reentrant_submit_can_clear_then_adapter_still_publishes_image (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_reentrant_submit_can_clear_then_adapter_still_publishes_image) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_same_older_and_malformed_frames_do_not_advance_timeline (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_same_older_and_malformed_frames_do_not_advance_timeline) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_stale_discards_udp_before_glass_and_preserves_counters (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_stale_discards_udp_before_glass_and_preserves_counters) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_submit_uses_worker_and_source_observed_after_decode_callbacks (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_submit_uses_worker_and_source_observed_after_decode_callbacks) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_timestamp_and_display_precede_submit_but_image_and_luminance_follow (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_timestamp_and_display_precede_submit_but_image_and_luminance_follow) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_vision_gate_is_observed_after_decode_and_accepts_only_exact_modes (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_backend_vision_gate_is_observed_after_decode_and_accepts_only_exact_modes) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_capture_luminance_failure_is_ignored_and_real_image_is_mirrored (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_capture_luminance_failure_is_ignored_and_real_image_is_mirrored) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_capture_none_same_and_older_sequence_leave_all_fields_unchanged (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_capture_none_same_and_older_sequence_leave_all_fields_unchanged) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_capture_pixmap_failure_keeps_published_image_source_and_counter (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_capture_pixmap_failure_keeps_published_image_source_and_counter) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_capture_retains_initial_camera_module_but_backend_rereads_after_producer (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_capture_retains_initial_camera_module_but_backend_rereads_after_producer) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_capture_sequence_and_luminance_precede_image_and_mirror_failure (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_capture_sequence_and_luminance_precede_image_and_mirror_failure) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_capture_uses_worker_replaced_during_clear_but_not_source_reread (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_capture_uses_worker_replaced_during_clear_but_not_source_reread) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_clear_noop_still_discards_glass_but_leaves_images_and_cache_untouched (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_clear_noop_still_discards_glass_but_leaves_images_and_cache_untouched) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_clear_rechecks_timeline_after_discard_reentrancy (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_clear_rechecks_timeline_after_discard_reentrancy) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_freshness_boundary_future_nan_and_owner_guards (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_freshness_boundary_future_nan_and_owner_guards) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_freshness_keeps_two_independent_source_observations (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_freshness_keeps_two_independent_source_observations) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_live_frame_adapters_and_legacy_fields_share_one_timeline (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_live_frame_adapters_and_legacy_fields_share_one_timeline) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_malformed_backend_timestamp_and_shape_errors_propagate_before_publication (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_malformed_backend_timestamp_and_shape_errors_propagate_before_publication) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_normalized_modes_keep_original_backend_argument_and_empty_quirk (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_normalized_modes_keep_original_backend_argument_and_empty_quirk) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_ready_backend_path_rereads_source_twice_but_webcam_and_synthetic_once (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_ready_backend_path_rereads_source_twice_but_webcam_and_synthetic_once) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_reentrant_clear_changes_second_source_read_and_worker_before_query (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_reentrant_clear_changes_second_source_read_and_worker_before_query) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_stale_udp_and_glass_failures_are_separate_short_circuit_boundaries (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_stale_udp_and_glass_failures_are_separate_short_circuit_boundaries) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_switch_away_back_keeps_capture_display_and_backend_vision_counters_independent (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_switch_away_back_keeps_capture_display_and_backend_vision_counters_independent) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_switch_clear_failure_does_not_publish_mode_or_query_producer (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_switch_clear_failure_does_not_publish_mode_or_query_producer) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_switch_clear_observes_old_mode_then_backend_observes_new_mode (test_normal_video_timeline_contract.NormalVideoTimelineContractTests.test_switch_clear_observes_old_mode_then_backend_observes_new_mode) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_normal_frames_pause_during_pending_transition_and_resume_after_settlement (test_window_normal_frame.NormalWindowFrameTests.test_normal_frames_pause_during_pending_transition_and_resume_after_settlement) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_normal_paint_entry_renders_launcher_hud_and_clickgui_to_real_images (test_window_normal_frame.NormalWindowFrameTests.test_normal_paint_entry_renders_launcher_hud_and_clickgui_to_real_images) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_settled_normal_ticks_execute_real_runtime_and_presentation_stages (test_window_normal_frame.NormalWindowFrameTests.test_settled_normal_ticks_execute_real_runtime_and_presentation_stages) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_autostart_does_not_supersede_the_profile_generation (test_window_construction.WindowConstructionTests.test_autostart_does_not_supersede_the_profile_generation) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_autostart_without_profile_captures_the_ordinary_request_projection (test_window_construction.WindowConstructionTests.test_autostart_without_profile_captures_the_ordinary_request_projection) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_live_tick_and_legacy_diagnostic_fields_share_the_constructor_owner (test_window_construction.WindowConstructionTests.test_live_tick_and_legacy_diagnostic_fields_share_the_constructor_owner) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_real_cpu_paint_records_and_acknowledges_the_constructor_owner (test_window_construction.WindowConstructionTests.test_real_cpu_paint_records_and_acknowledges_the_constructor_owner) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_retired_frame_telemetry_aliases_still_roundtrip (test_window_construction.WindowConstructionTests.test_retired_frame_telemetry_aliases_still_roundtrip) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_sources_start_only_after_services_hooks_and_profile_are_ready (test_window_construction.WindowConstructionTests.test_sources_start_only_after_services_hooks_and_profile_are_ready) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_backend_order_preserves_polar_overlay_as_final_stage (test_window_tick_contract.WindowClockContractTests.test_backend_order_preserves_polar_overlay_as_final_stage) ... ok
+test_control_and_logic_have_independent_rates_and_no_catchup_burst (test_window_tick_contract.WindowClockContractTests.test_control_and_logic_have_independent_rates_and_no_catchup_burst) ... ok
+test_invalid_refresh_setting_falls_back_without_lowering_logic_clock (test_window_tick_contract.WindowClockContractTests.test_invalid_refresh_setting_falls_back_without_lowering_logic_clock) ... ok
+test_pending_lifecycle_skips_every_runtime_and_economy_stage (test_window_tick_contract.WindowClockContractTests.test_pending_lifecycle_skips_every_runtime_and_economy_stage) ... ok
+test_refresh_change_updates_timer_and_invalidates_scheduler_once (test_window_tick_contract.WindowClockContractTests.test_refresh_change_updates_timer_and_invalidates_scheduler_once) ... ok
+test_ui_elapsed_and_simulation_elapsed_preserve_different_caps (test_window_tick_contract.WindowClockContractTests.test_ui_elapsed_and_simulation_elapsed_preserve_different_caps) ... ok
+test_ui_modal_releases_control_before_next_control_tick (test_window_tick_contract.WindowClockContractTests.test_ui_modal_releases_control_before_next_control_tick) ... ok
+test_dynamic_island_duration_distinguishes_payload_and_hidden_state (test_window_tick_contract.WindowPresentationContractTests.test_dynamic_island_duration_distinguishes_payload_and_hidden_state) ... ok
+test_economy_open_and_matching_close_generation_keep_original_thresholds (test_window_tick_contract.WindowPresentationContractTests.test_economy_open_and_matching_close_generation_keep_original_thresholds) ... ok
+test_gui_mode_is_resolved_after_the_jello_timeline_advance (test_window_tick_contract.WindowPresentationContractTests.test_gui_mode_is_resolved_after_the_jello_timeline_advance) ... ok
+test_jello_reset_waits_for_closed_presentation (test_window_tick_contract.WindowPresentationContractTests.test_jello_reset_waits_for_closed_presentation) ... ok
+test_broken_diagnostic_sink_cannot_abort_remaining_safety_stages (test_window_tick_contract.WindowTickFaultContractTests.test_broken_diagnostic_sink_cannot_abort_remaining_safety_stages) ... ok
+test_failed_performance_sink_still_consumes_one_reporting_window (test_window_tick_contract.WindowTickFaultContractTests.test_failed_performance_sink_still_consumes_one_reporting_window) ... ok
+test_fault_logs_are_throttled_per_stage_but_counters_are_not (test_window_tick_contract.WindowTickFaultContractTests.test_fault_logs_are_throttled_per_stage_but_counters_are_not) ... ok
+test_performance_publication_copies_stage_stats_before_reset (test_window_tick_contract.WindowTickFaultContractTests.test_performance_publication_copies_stage_stats_before_reset) ... ok
+test_performance_window_is_five_seconds_and_never_resets_lifetime_errors (test_window_tick_contract.WindowTickFaultContractTests.test_performance_window_is_five_seconds_and_never_resets_lifetime_errors) ... ok
+test_stage_failure_isolated_but_later_overlay_stage_still_runs (test_window_tick_contract.WindowTickFaultContractTests.test_stage_failure_isolated_but_later_overlay_stage_still_runs) ... ok
+test_camera_admission_failure_is_typed_and_does_not_skip_safety_or_repaint (test_window_vision_runtime.WindowCameraRuntimeTests.test_camera_admission_failure_is_typed_and_does_not_skip_safety_or_repaint) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+hwloc/linux: failed to find sysfs cpu topology directory, aborting linux discovery.
+ok
+test_closing_window_rejects_late_camera_refresh_and_waits_for_old_owner (test_window_vision_runtime.WindowCameraRuntimeTests.test_closing_window_rejects_late_camera_refresh_and_waits_for_old_owner) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_deploy_acknowledgement_revokes_camera_without_waiting (test_window_vision_runtime.WindowCameraRuntimeTests.test_deploy_acknowledgement_revokes_camera_without_waiting) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_disabled_capture_revokes_camera_without_waiting (test_window_vision_runtime.WindowCameraRuntimeTests.test_disabled_capture_revokes_camera_without_waiting) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+No audio device detected
+ok
+test_first_paint_camera_admission_failure_keeps_cpu_fallback_drawable (test_window_vision_runtime.WindowCameraRuntimeTests.test_first_paint_camera_admission_failure_keeps_cpu_fallback_drawable) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_non_webcam_source_revokes_camera_without_waiting (test_window_vision_runtime.WindowCameraRuntimeTests.test_non_webcam_source_revokes_camera_without_waiting) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_reconfigure_retains_old_owner_then_starts_only_latest_camera_settings (test_window_vision_runtime.WindowCameraRuntimeTests.test_reconfigure_retains_old_owner_then_starts_only_latest_camera_settings) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_disabled_capture_refresh_is_prompt_retains_workers_and_serves_qt_events (test_window_vision_runtime.WindowVisionRuntimeTests.test_disabled_capture_refresh_is_prompt_retains_workers_and_serves_qt_events) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_final_close_keeps_window_alive_until_all_previously_stopped_workers_exit (test_window_vision_runtime.WindowVisionRuntimeTests.test_final_close_keeps_window_alive_until_all_previously_stopped_workers_exit) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_one_stop_defect_does_not_skip_other_requested_revocations (test_window_vision_runtime.WindowVisionRuntimeTests.test_one_stop_defect_does_not_skip_other_requested_revocations) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_repeated_enable_disable_and_configure_cannot_replace_a_held_owner (test_window_vision_runtime.WindowVisionRuntimeTests.test_repeated_enable_disable_and_configure_cannot_replace_a_held_owner) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_runtime_socket_close_failure_blocks_replacement_and_final_close_until_explicit_retry (test_window_vision_runtime.WindowVisionRuntimeTests.test_runtime_socket_close_failure_blocks_replacement_and_final_close_until_explicit_retry) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_source_error_survives_a_secondary_stop_defect_without_starting_any_owner (test_window_vision_runtime.WindowVisionRuntimeTests.test_source_error_survives_a_secondary_stop_defect_without_starting_any_owner) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_source_failure_still_revokes_disabled_workers_and_retains_the_original_error (test_window_vision_runtime.WindowVisionRuntimeTests.test_source_failure_still_revokes_disabled_workers_and_retains_the_original_error) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_closing_window_does_not_touch_camera_or_read_configuration (test_camera_activation_contract.CameraActivationContractTests.test_closing_window_does_not_touch_camera_or_read_configuration) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_configure_callback_replacement_is_observed_before_binding (test_camera_activation_contract.CameraActivationContractTests.test_configure_callback_replacement_is_observed_before_binding) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_dead_worker_retries_without_redundant_stop_or_frame_clear (test_camera_activation_contract.CameraActivationContractTests.test_dead_worker_retries_without_redundant_stop_or_frame_clear) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_disabled_capture_stops_before_clearing_flag_and_setting_reason (test_camera_activation_contract.CameraActivationContractTests.test_disabled_capture_stops_before_clearing_flag_and_setting_reason) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_failed_clear_configure_bind_or_start_keeps_flag_revoked_and_old_config (test_camera_activation_contract.CameraActivationContractTests.test_failed_clear_configure_bind_or_start_keeps_flag_revoked_and_old_config) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_failed_disable_stop_does_not_claim_revocation_or_replace_diagnostic (test_camera_activation_contract.CameraActivationContractTests.test_failed_disable_stop_does_not_claim_revocation_or_replace_diagnostic) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_non_webcam_source_does_not_read_configuration_or_change_diagnostics (test_camera_activation_contract.CameraActivationContractTests.test_non_webcam_source_does_not_read_configuration_or_change_diagnostics) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_parameter_and_stop_failures_preserve_previous_admission (test_camera_activation_contract.CameraActivationContractTests.test_parameter_and_stop_failures_preserve_previous_admission) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_real_window_exposes_the_same_capture_and_admission_owner (test_camera_activation_contract.CameraActivationContractTests.test_real_window_exposes_the_same_capture_and_admission_owner) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_reconfiguration_stops_then_clears_configures_binds_and_admits (test_camera_activation_contract.CameraActivationContractTests.test_reconfiguration_stops_then_clears_configures_binds_and_admits) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_rejected_start_preserves_last_accepted_configuration (test_camera_activation_contract.CameraActivationContractTests.test_rejected_start_preserves_last_accepted_configuration) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_unchanged_running_camera_reads_settings_but_does_not_restart (test_camera_activation_contract.CameraActivationContractTests.test_unchanged_running_camera_reads_settings_but_does_not_restart) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_whitespace_does_not_expand_capture_disable_spellings (test_camera_activation_contract.CameraActivationContractTests.test_whitespace_does_not_expand_capture_disable_spellings) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_auto_reads_and_activates_receiver_before_local_configuration (test_vision_activation_contract.VisionActivationContractTests.test_auto_reads_and_activates_receiver_before_local_configuration) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_closing_gate_reads_no_settings_and_does_not_mutate_selection (test_vision_activation_contract.VisionActivationContractTests.test_closing_gate_reads_no_settings_and_does_not_mutate_selection) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_constructor_and_legacy_aliases_share_one_selection_owner (test_vision_activation_contract.VisionActivationContractTests.test_constructor_and_legacy_aliases_share_one_selection_owner) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_default_setting_failure_remains_visible_even_when_environment_overrides_it (test_vision_activation_contract.VisionActivationContractTests.test_default_setting_failure_remains_visible_even_when_environment_overrides_it) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_disabled_capture_selects_mock_before_revoking_all_workers (test_vision_activation_contract.VisionActivationContractTests.test_disabled_capture_selects_mock_before_revoking_all_workers) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_disabled_stop_failure_reports_after_independent_revocations (test_vision_activation_contract.VisionActivationContractTests.test_disabled_stop_failure_reports_after_independent_revocations) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_environment_override_still_observes_default_setting_before_selection (test_vision_activation_contract.VisionActivationContractTests.test_environment_override_still_observes_default_setting_before_selection) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_local_configuration_and_prediction_faults_preserve_receiver_activation (test_vision_activation_contract.VisionActivationContractTests.test_local_configuration_and_prediction_faults_preserve_receiver_activation) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_local_prediction_is_bound_before_reentrant_overlay_reads (test_vision_activation_contract.VisionActivationContractTests.test_local_prediction_is_bound_before_reentrant_overlay_reads) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_receiver_configuration_is_bound_before_reentrant_port_read (test_vision_activation_contract.VisionActivationContractTests.test_receiver_configuration_is_bound_before_reentrant_port_read) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_receiver_fault_prevents_all_local_setting_reads (test_vision_activation_contract.VisionActivationContractTests.test_receiver_fault_prevents_all_local_setting_reads) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_selection_matrix_stops_every_unrequested_owner_before_any_start (test_vision_activation_contract.VisionActivationContractTests.test_selection_matrix_stops_every_unrequested_owner_before_any_start) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_selection_stays_published_when_listen_or_model_lookup_fails (test_vision_activation_contract.VisionActivationContractTests.test_selection_stays_published_when_listen_or_model_lookup_fails) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_source_read_and_backend_failure_revoke_all_without_publishing_selection (test_vision_activation_contract.VisionActivationContractTests.test_source_read_and_backend_failure_revoke_all_without_publishing_selection) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_unknown_source_normalizes_to_local_before_listen_or_path_reads (test_vision_activation_contract.VisionActivationContractTests.test_unknown_source_normalizes_to_local_before_listen_or_path_reads) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_unrequested_stop_failure_prevents_any_replacement_start (test_vision_activation_contract.VisionActivationContractTests.test_unrequested_stop_failure_prevents_any_replacement_start) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_admission_failure_has_a_visible_action_and_periodic_ticks_do_not_retry_it (test_window_video_recovery.WindowVideoRecoveryTests.test_admission_failure_has_a_visible_action_and_periodic_ticks_do_not_retry_it) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+UI tick stage failed: vision.runtime
+Traceback (most recent call last):
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar/tick_controller.py", line 166, in run
+    callback()
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar/mixins/video_backend_mixin.py", line 522, in refresh_vision_runtime
+    self.backend.set_active_video_source(
+  File "/workspace/shared/client-review-window-warmup/rm_client/backend/manager.py", line 1524, in set_active_video_source
+    raise VideoSourceAdmissionError(self._video_source_failures)
+rm_client.backend.video_source.VideoSourceAdmissionError: Native stop: RuntimeError: test closer not admitted
+ok
+test_failed_retry_is_typed_visible_and_not_reported_as_ready (test_window_video_recovery.WindowVideoRecoveryTests.test_failed_retry_is_typed_visible_and_not_reported_as_ready) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_live_data_readers_expose_retry_then_busy_button_owns_the_next_click (test_window_video_recovery.WindowVideoRecoveryTests.test_live_data_readers_expose_retry_then_busy_button_owns_the_next_click) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_native_close_failure_is_visible_and_one_real_click_retries_without_control_output (test_window_video_recovery.WindowVideoRecoveryTests.test_native_close_failure_is_visible_and_one_real_click_retries_without_control_output) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_old_click_is_rejected_after_source_a_b_a_round_trip (test_window_video_recovery.WindowVideoRecoveryTests.test_old_click_is_rejected_after_source_a_b_a_round_trip) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_retained_source_error_does_not_skip_later_runtime_safety_or_repaint (test_window_video_recovery.WindowVideoRecoveryTests.test_retained_source_error_does_not_skip_later_runtime_safety_or_repaint) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_right_click_on_retry_does_not_take_left_action_or_change_combat_anchor (test_window_video_recovery.WindowVideoRecoveryTests.test_right_click_on_retry_does_not_take_left_action_or_change_combat_anchor) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_running_native_close_shows_waiting_and_keeps_qt_heartbeat_alive (test_window_video_recovery.WindowVideoRecoveryTests.test_running_native_close_shows_waiting_and_keeps_qt_heartbeat_alive) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_whole_runtime_transition_and_final_close_reject_stale_recovery_intent (test_window_video_recovery.WindowVideoRecoveryTests.test_whole_runtime_transition_and_final_close_reject_stale_recovery_intent) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected (test_video_source_retry_admission.VideoSourceRetryAdmissionTests.test_live_decoder_reader_needs_retry_after_closer_admission_was_rejected) ... ok
+test_live_udp_reader_needs_retry_after_closer_admission_was_rejected (test_video_source_retry_admission.VideoSourceRetryAdmissionTests.test_live_udp_reader_needs_retry_after_closer_admission_was_rejected) ... ok
+test_actual_release_false_rejects_frame_without_committing_cache_or_restore (test_framebuffer_generation.FramebufferGenerationTests.test_actual_release_false_rejects_frame_without_committing_cache_or_restore) ... ok
+test_changed_dpr_rebuilds_even_when_physical_storage_size_is_equal (test_framebuffer_generation.FramebufferGenerationTests.test_changed_dpr_rebuilds_even_when_physical_storage_size_is_equal) ... ok
+test_control_bind_failure_rejects_frame_and_retries_cleanly (test_framebuffer_generation.FramebufferGenerationTests.test_control_bind_failure_rejects_frame_and_retries_cleanly) ... ok
+test_control_release_false_rejects_before_any_overlay_or_cache_commit (test_framebuffer_generation.FramebufferGenerationTests.test_control_release_false_rejects_before_any_overlay_or_cache_commit) ... ok
+test_dpr_change_while_chat_open_ignores_old_refresh_deadline (test_framebuffer_generation.FramebufferGenerationTests.test_dpr_change_while_chat_open_ignores_old_refresh_deadline) ... ok
+test_dpr_change_while_escape_open_ignores_old_refresh_deadline (test_framebuffer_generation.FramebufferGenerationTests.test_dpr_change_while_escape_open_ignores_old_refresh_deadline) ... ok
+test_dpr_change_while_radial_open_rebuilds_before_present (test_framebuffer_generation.FramebufferGenerationTests.test_dpr_change_while_radial_open_rebuilds_before_present) ... ok
+test_dpr_change_while_student_open_rebuilds_before_present (test_framebuffer_generation.FramebufferGenerationTests.test_dpr_change_while_student_open_rebuilds_before_present) ... ok
+test_failed_first_release_keeps_other_cleanup_and_restore_pending (test_framebuffer_generation.FramebufferGenerationTests.test_failed_first_release_keeps_other_cleanup_and_restore_pending) ... ok
+test_false_dynamic_release_prevents_motion_cache_commit_and_final_composition (test_framebuffer_generation.FramebufferGenerationTests.test_false_dynamic_release_prevents_motion_cache_commit_and_final_composition) ... ok
+test_first_priority_frame_populates_new_dynamic_storage (test_framebuffer_generation.FramebufferGenerationTests.test_first_priority_frame_populates_new_dynamic_storage) ... ok
+test_generation_changes_only_for_successful_allocations (test_framebuffer_generation.FramebufferGenerationTests.test_generation_changes_only_for_successful_allocations) ... Render stage resize failed: RuntimeError: GPU compositor FBO creation failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/gpu_frame_compositor.py", line 382, in _run_pass
+    accepted = bool(render())
+                    ^^^^^^^^
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/gpu_frame_compositor.py", line 432, in <lambda>
+    "resize", lambda: self._allocate_size(width, height, device_pixel_ratio),
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/gpu_frame_compositor.py", line 508, in _allocate_size
+    raise RuntimeError("GPU compositor FBO creation failed")
+RuntimeError: GPU compositor FBO creation failed
+ok
+test_multiple_cleanup_defects_are_retained_without_skipping_later_layers (test_framebuffer_generation.FramebufferGenerationTests.test_multiple_cleanup_defects_are_retained_without_skipping_later_layers) ... ok
+test_new_logical_size_rebuilds_even_without_resize_event (test_framebuffer_generation.FramebufferGenerationTests.test_new_logical_size_rebuilds_even_without_resize_event) ... ok
+test_paint_pass_attempts_painter_state_and_framebuffer_cleanup_independently (test_framebuffer_generation.FramebufferGenerationTests.test_paint_pass_attempts_painter_state_and_framebuffer_cleanup_independently) ... ok
+test_painter_end_false_rejects_pass_without_fake_exception_or_native_flush (test_framebuffer_generation.FramebufferGenerationTests.test_painter_end_false_rejects_pass_without_fake_exception_or_native_flush) ... ok
+test_post_present_commit_failure_invalidates_metadata_and_keeps_restore_pending (test_framebuffer_generation.FramebufferGenerationTests.test_post_present_commit_failure_invalidates_metadata_and_keeps_restore_pending) ... ok
+test_priority_interaction_finally_propagates_real_target_release_rejection (test_framebuffer_generation.FramebufferGenerationTests.test_priority_interaction_finally_propagates_real_target_release_rejection) ... ok
+test_priority_painter_ends_before_fbo_release_on_actual_draw_failure (test_framebuffer_generation.FramebufferGenerationTests.test_priority_painter_ends_before_fbo_release_on_actual_draw_failure) ... ok
+test_real_background_and_control_painters_end_before_rejected_pass_returns (test_framebuffer_generation.FramebufferGenerationTests.test_real_background_and_control_painters_end_before_rejected_pass_returns) ... ok
+test_renderer_false_unwinds_layers_and_invalidates_partial_metadata_without_an_exception (test_framebuffer_generation.FramebufferGenerationTests.test_renderer_false_unwinds_layers_and_invalidates_partial_metadata_without_an_exception) ... ok
+test_same_size_reallocation_cannot_keep_old_scene_keys (test_framebuffer_generation.FramebufferGenerationTests.test_same_size_reallocation_cannot_keep_old_scene_keys) ... ok
+test_startup_interaction_finally_propagates_real_dynamic_release_rejection (test_framebuffer_generation.FramebufferGenerationTests.test_startup_interaction_finally_propagates_real_dynamic_release_rejection) ... ok
+test_startup_render_root_is_not_replaced_by_release_failure (test_framebuffer_generation.FramebufferGenerationTests.test_startup_render_root_is_not_replaced_by_release_failure) ... ok
+test_static_and_dynamic_painters_end_on_draw_failure_before_frame_recovery (test_framebuffer_generation.FramebufferGenerationTests.test_static_and_dynamic_painters_end_on_draw_failure_before_frame_recovery) ... ok
+test_unchanged_control_backdrop_remains_a_successful_cached_frame (test_framebuffer_generation.FramebufferGenerationTests.test_unchanged_control_backdrop_remains_a_successful_cached_frame) ... ok
+test_unchanged_storage_retains_motion_cache (test_framebuffer_generation.FramebufferGenerationTests.test_unchanged_storage_retains_motion_cache) ... ok
+test_cancelled_copy_close_can_be_edited_saved_and_then_closed_explicitly (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_cancelled_copy_close_can_be_edited_saved_and_then_closed_explicitly) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_clean_shutdown_never_opens_a_warning_dialog (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_clean_shutdown_never_opens_a_warning_dialog) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_close_retries_transient_failed_copy_before_starting_native_shutdown (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_close_retries_transient_failed_copy_before_starting_native_shutdown) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_dirty_document_close_failure_preserves_input_lock_and_pauses_timer_retries (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_dirty_document_close_failure_preserves_input_lock_and_pauses_timer_retries) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_dirty_document_is_saved_before_native_shutdown_and_not_again_on_final_close (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_dirty_document_is_saved_before_native_shutdown_and_not_again_on_final_close) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_draft_admission_failure_never_seals_shutdown_even_if_input_reset_is_broken (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_draft_admission_failure_never_seals_shutdown_even_if_input_reset_is_broken) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+Close configuration admission failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar_app.py", line 3318, in _admit_window_close
+    accepted = self.prepare_configuration_for_close()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+ValueError: admission defect
+ok
+test_drained_audit_loss_warns_once_before_accepting_safe_exit (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_drained_audit_loss_warns_once_before_accepting_safe_exit) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+Field audit log shutdown incomplete or records lost: {'accepted_records': 18, 'written_records': 18, 'pending_records': 0, 'pending_bytes': 0, 'queue_capacity': 256, 'queue_bytes': 4194304, 'max_record_bytes': 262144, 'dropped_records': 1, 'dropped_full': 0, 'dropped_invalid': 1, 'dropped_closed': 0, 'dropped_write': 0, 'dropped_cancelled': 0, 'write_errors': 0, 'flush_timeouts': 0, 'close_timeouts': 0, 'ignored_video': 0, 'worker_starts': 1, 'worker_active': False, 'closing': True, 'closed': True, 'last_error': 'record rejected: unsupported value or snapshot limit'}
+ok
+test_failed_capture_owner_keeps_window_alive_until_explicit_retry (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_failed_capture_owner_keeps_window_alive_until_explicit_retry) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_failed_copy_close_keeps_window_and_draft_alive_but_revokes_held_control (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_failed_copy_close_keeps_window_and_draft_alive_but_revokes_held_control) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_first_close_is_nonblocking_and_waits_for_real_worker_completion (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_first_close_is_nonblocking_and_waits_for_real_worker_completion) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_main_window_f12_attempts_real_fallback_lock_when_backend_stop_raises (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_main_window_f12_attempts_real_fallback_lock_when_backend_stop_raises) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_main_window_f12_revokes_real_authority_before_a_failed_input_reset (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_main_window_f12_revokes_real_authority_before_a_failed_input_reset) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_mqtt_epoch_error_cannot_finish_close_while_cleanup_owner_is_live (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_mqtt_epoch_error_cannot_finish_close_while_cleanup_owner_is_live) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_owner_prepare_save_and_context_errors_are_visible_after_native_cleanup (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_owner_prepare_save_and_context_errors_are_visible_after_native_cleanup) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+Window owner action pending configuration failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: restore failed
+Window owner action configuration failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar_app.py", line 3381, in <lambda>
+    OwnerAction("configuration", lambda: self.flush_auto_save(force=True)),
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+OSError: save failed
+Window GL context cleanup failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar_app.py", line 3391, in _finish_window_shutdown
+    self.makeCurrent()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: context failed
+ok
+test_pending_scenario_rejects_real_setting_drag_and_key_edits_before_mutation (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_pending_scenario_rejects_real_setting_drag_and_key_edits_before_mutation) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_pending_transition_allows_estop_but_never_estop_release (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_pending_transition_allows_estop_but_never_estop_release) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_persistent_input_reset_failure_does_not_strand_confirmed_native_cleanup (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_persistent_input_reset_failure_does_not_strand_confirmed_native_cleanup) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+Window owner action local input failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar_app.py", line 3351, in <lambda>
+    OwnerAction("local input", lambda: self._clear_control_inputs_for_lock("window closing")),
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar/mixins/input_dispatch_mixin.py", line 580, in _clear_control_inputs_for_lock
+    self.control.reset_inputs()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+TypeError: persistent reset failure
+Lifecycle event after audit sealed: input_clear_error; TypeError: persistent reset failure
+ok
+test_queued_gpu_warmup_cannot_resume_after_close_requested (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_queued_gpu_warmup_cannot_resume_after_close_requested) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_real_paho_detached_socket_keeps_window_until_explicit_retry (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_real_paho_detached_socket_keeps_window_until_explicit_retry) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+Lifecycle event after audit sealed: mqtt_disconnect; 
+ok
+test_scenario_requests_coalesce_and_runtime_stays_stopped_until_poll (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_scenario_requests_coalesce_and_runtime_stays_stopped_until_poll) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_window_scenario_entries_restore_direct_callbacks_without_reopening_retired_angles (test_window_async_lifecycle.WindowAsyncLifecycleTests.test_window_scenario_entries_restore_direct_callbacks_without_reopening_retired_angles) ... QOpenGLWidget is not supported on this platform.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+qt.multimedia.soundeffect: Failed to update audio output. No audio devices available.
+ok
+test_cleanup_and_diagnostic_failures_preserve_original_exception (test_window_constructor_failure.WindowConstructorFailureTests.test_cleanup_and_diagnostic_failures_preserve_original_exception) ... ok
+test_failed_timer_admission_seals_and_retains_before_events (test_window_constructor_failure.WindowConstructorFailureTests.test_failed_timer_admission_seals_and_retains_before_events) ... ok
+test_rejected_timer_admission_uses_cleanup_timer_without_runtime (test_window_constructor_failure.WindowConstructorFailureTests.test_rejected_timer_admission_uses_cleanup_timer_without_runtime) ... ok
+test_unavailable_cleanup_timer_remains_retained_and_explicitly_incomplete (test_window_constructor_failure.WindowConstructorFailureTests.test_unavailable_cleanup_timer_remains_retained_and_explicitly_incomplete) ... ok
+test_failed_timer_start_waits_for_native_close_without_runtime_activation (test_window_constructor_delayed_cleanup.ConstructorDelayedCleanupTests.test_failed_timer_start_waits_for_native_close_without_runtime_activation) ... ok
+test_alliance_new_source_wins_and_legacy_migrates (test_ui_state_regressions.ConfigRegressionTests.test_alliance_new_source_wins_and_legacy_migrates) ... ok
+test_bad_candidates_rejected_before_any_registry_mutation (test_ui_state_regressions.ConfigRegressionTests.test_bad_candidates_rejected_before_any_registry_mutation) ... ok
+test_bundled_profile_schema (test_ui_state_regressions.ConfigRegressionTests.test_bundled_profile_schema) ... ok
+test_cross_match_failure_restores_role_options_binds_and_startup (test_ui_state_regressions.ConfigRegressionTests.test_cross_match_failure_restores_role_options_binds_and_startup) ... ok
+test_embedded_profile_cannot_redirect_save (test_ui_state_regressions.ConfigRegressionTests.test_embedded_profile_cannot_redirect_save) ... ok
+test_failed_atomic_replace_preserves_old_file (test_ui_state_regressions.ConfigRegressionTests.test_failed_atomic_replace_preserves_old_file) ... ok
+test_import_preserves_existing_on_bad_json_and_bad_wheel (test_ui_state_regressions.ConfigRegressionTests.test_import_preserves_existing_on_bad_json_and_bad_wheel) ... ok
+test_invalid_ui_apply_does_not_revoke_or_partially_apply (test_ui_state_regressions.ConfigRegressionTests.test_invalid_ui_apply_does_not_revoke_or_partially_apply) ... ok
+test_legacy_false_prevents_first_migrated_launch (test_ui_state_regressions.ConfigRegressionTests.test_legacy_false_prevents_first_migrated_launch) ... ok
+test_runtime_failure_restores_values_without_starting_outputs (test_ui_state_regressions.ConfigRegressionTests.test_runtime_failure_restores_values_without_starting_outputs) ... ok
+test_runtime_load_preserves_endpoints_and_mock_choice (test_ui_state_regressions.ConfigRegressionTests.test_runtime_load_preserves_endpoints_and_mock_choice) ... ok
+test_save_failure_retains_pending_and_retry_succeeds (test_ui_state_regressions.ConfigRegressionTests.test_save_failure_retains_pending_and_retry_succeeds) ... ok
+test_spin_reload_notifies_only_disable_before_lock (test_ui_state_regressions.ConfigRegressionTests.test_spin_reload_notifies_only_disable_before_lock) ... ok
+test_startup_false_prevents_profile_application (test_ui_state_regressions.ConfigRegressionTests.test_startup_false_prevents_profile_application) ... ok
+test_startup_selected_profile_is_used (test_ui_state_regressions.ConfigRegressionTests.test_startup_selected_profile_is_used) ... ok
+test_valid_import_has_recovery_backup_and_normalized_identity (test_ui_state_regressions.ConfigRegressionTests.test_valid_import_has_recovery_backup_and_normalized_identity) ... ok
+test_blue_identity_locked_before_network_or_state_change (test_ui_state_regressions.IdentityAndDisplayTests.test_blue_identity_locked_before_network_or_state_change) ... ok
+test_gold_uses_unified_economy_not_stale_polar_field (test_ui_state_regressions.IdentityAndDisplayTests.test_gold_uses_unified_economy_not_stale_polar_field) ... ok
+test_held_observation_survives_tongji_adapter (test_ui_state_regressions.IdentityAndDisplayTests.test_held_observation_survives_tongji_adapter) ... ok
+test_identity_reconnect_failure_leaves_old_state_locked (test_ui_state_regressions.IdentityAndDisplayTests.test_identity_reconnect_failure_leaves_old_state_locked) ... ok
+test_lock_hook_discards_last_command_before_releasing_writers (test_ui_state_regressions.IdentityAndDisplayTests.test_lock_hook_discards_last_command_before_releasing_writers) ... ok
+test_module_installation_fault_is_not_online (test_ui_state_regressions.IdentityAndDisplayTests.test_module_installation_fault_is_not_online) ... ok
+test_reconnect_failure_after_id_change_keeps_all_views_aligned (test_ui_state_regressions.IdentityAndDisplayTests.test_reconnect_failure_after_id_change_keeps_all_views_aligned) ... ok
+test_running_identity_change_latches_estop_before_new_identity (test_ui_state_regressions.IdentityAndDisplayTests.test_running_identity_change_latches_estop_before_new_identity) ... ok
+test_window_reserved_keys_are_not_offered_as_control_binds (test_ui_state_regressions.IdentityAndDisplayTests.test_window_reserved_keys_are_not_offered_as_control_binds) ... ok
+test_cpu_fallback_closes_modal_through_actual_paintgl_path (test_ui_state_regressions.WindowPathTests.test_cpu_fallback_closes_modal_through_actual_paintgl_path) ... ok
+test_failed_cpu_paint_retains_modal (test_ui_state_regressions.WindowPathTests.test_failed_cpu_paint_retains_modal) ... ok
+test_save_and_gpu_errors_never_skip_remaining_owner_cleanup (test_ui_state_regressions.WindowPathTests.test_save_and_gpu_errors_never_skip_remaining_owner_cleanup) ... Window owner action configuration failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar_app.py", line 3381, in <lambda>
+    OwnerAction("configuration", lambda: self.flush_auto_save(force=True)),
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/client-review-window-warmup/tests/test_ui_state_regressions.py", line 587, in invoke
+    raise OSError(name)
+OSError: save
+Window owner action clickgui_gpu failed
+Traceback (most recent call last):
+  File "/workspace/shared/client-review-window-warmup/rm_client/ui/polar/window_lifecycle.py", line 48, in run_owner_actions
+    action.run()
+  File "/workspace/shared/client-review-window-warmup/tests/test_ui_state_regressions.py", line 587, in invoke
+    raise OSError(name)
+OSError: clickgui_gpu
+ok
+test_stale_generation_cannot_close_reopened_modal (test_ui_state_regressions.WindowPathTests.test_stale_generation_cannot_close_reopened_modal) ... ok
+test_warning_toast_has_supported_signature (test_ui_state_regressions.WindowPathTests.test_warning_toast_has_supported_signature) ... ok
+
+----------------------------------------------------------------------
+Ran 212 tests in 18.583s
+
+OK

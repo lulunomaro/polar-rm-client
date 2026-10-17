@@ -1,44 +1,18 @@
-"""阶段 3a 大域 mixin 化：配置 / 档案 / 壁纸持久化族（D17）→ PersistenceMixin。
+"""Window adapters for profile persistence and conservative runtime restoration.
 
-（REFACTOR_BLUEPRINT §5 阶段 3 表 3a 行 / §2 D17 节 / §5.6 冻结面）
-
-迁移范围（以 grep 重定位后的实际行号为准，蓝图原行号已漂移；三段不连续区块）：
-- ``current_robot_profile_key`` / ``current_robot_performance``
-- ``apply_match_mode`` / ``apply_robot_profile`` / ``seed_match_state`` /
-  ``refresh_config_profiles`` / ``refresh_wallpaper_profiles`` /
-  ``refresh_custom_ui_sound_options`` / ``custom_ui_sound_selection`` /
-  ``import_custom_ui_sound`` / ``import_wallpaper_from_dialog`` /
-  ``apply_wallpaper_profile`` / ``remove_wallpaper_profile`` /
-  ``reset_wallpaper_profile`` / ``current_profile`` / ``current_config_data`` /
-  ``load_startup_config`` / ``apply_config_data`` / ``sync_runtime_from_registry`` /
-  ``save_current_config`` / ``reload_current_config`` / ``import_config_from_dialog`` /
-  ``auto_save_config`` / ``flush_auto_save_if_due`` / ``flush_auto_save`` /
-  ``sync_mode_setting``
-- ``panel_modules`` / ``get_setting_number`` / ``get_auto_ui_scale`` /
-  ``get_hud_scale`` / ``high_res_optimize`` / ``video_sample_size`` /
-  ``get_gui_scale``
-
-纪律与偏差决策（保守边界，中文注明）：
-- 方法体**零修改**（含注释与空行），纯移动进本 Mixin；
-- auto-save 合并写纪律（蓝图 3a 特别注意项）：状态字段 ``_auto_save_pending`` /
-  ``_auto_save_due_at`` / ``config_loading`` 仍在 ``PolarRMWindow.__init__`` 原位
-  初始化；``auto_save_config`` 的 0.25s 防抖合并写、``flush_auto_save_if_due`` 到期
-  门控、``flush_auto_save(force=True)`` 关窗冲刷（closeEvent 调用点不变）语义逐字
-  保留，未做任何"顺手简化"；
-- ``load_startup_config`` 在 ``PolarRMWindow.__init__`` 中被调用——mixin 方法在构造
-  期的可用性由 MRO 保证（PersistenceMixin 位于继承列表、QOpenGLWidget 之前，且其前
-  的既有 Mixin 均无同名成员）；tests/smoke_test.py 实际构造 PolarRMWindow 冒烟验证
-  该路径；
-- D13 的 ``sync_quick_action_wheel_settings`` / ``apply_quick_action_wheel_to_settings``
-  （quick action wheel 设置同步族）按蓝图归属 D13，不在本阶段范围；本 Mixin 经
-  ``self`` 继续调用它们（``apply_config_data`` 内部），调用面不变。
+Validation, migration, registry snapshots, delayed-save ownership and transaction
+failure handling live in rm_client.configuration. This mixin owns the window-specific effects and
+keeps saved preferences separate from permission to actuate a robot.
 """
 
 from __future__ import annotations
 
+import logging
 import math
+import os
 import time
 from copy import deepcopy
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -47,9 +21,20 @@ from PySide6.QtWidgets import QFileDialog
 from ...jello_locale import chinese_enabled, ui_text
 
 # 相对导入层级：rm_client/ui/polar/mixins/ → .... = rm_client、... = rm_client.ui
-from ....config_store import apply_registry_config, export_client_config, validate_client_config
+from ....config_store import ProfileSaveError, apply_registry_config, export_client_config, validate_client_config
+from ....configuration.wheel import restore_wheel_profile
+from ....configuration.registry import RegistrySnapshot
+from ....configuration.quiescence import quiesce_configuration_inputs
+from ....configuration.pending import (
+    ConfigurationPhase, CompletionAction, PendingConfigurationChange, PendingScenarioConfiguration, ProfileIdentity,
+)
+from ....configuration.transactions import (
+    ConfigurationApplyError, ConfigurationRestorePoint, RuntimeRestorePending,
+    apply_configuration_transaction, rollback_configuration_transaction,
+)
+from ....control import validate_control_binds
 from ....match_modes import MatchModeConfig
-from ....model import CONTROL_RESERVED_KEYS, CONTROL_SLOT_ORDER, PRIMARY_GUI_MODE, Module, normalize_gui_mode
+from ....model import CONTROL_SLOT_ORDER, PRIMARY_GUI_MODE, Module, normalize_gui_mode
 from ....robot_profiles import (
     apply_profile_to_state,
     profile_by_key,
@@ -87,9 +72,13 @@ class PersistenceMixin:
         )
 
     def apply_match_mode(self, key: str, close_home: bool, announce: bool = True) -> None:
-        self.backend.lock_control("match mode changed")
-        self.control.release_all(self.state, self.registry)
-        self.control.clear_pending()
+        if self.reject_pending_configuration_edit():
+            return
+        quiesce_configuration_inputs(
+            revoke=lambda: self.backend.lock_control("match mode changed"),
+            release=lambda: self.control.release_all(self.state, self.registry),
+            clear_pending=lambda: self.control.clear_pending(),
+        )
         config = self.match_mode_manager.set_mode(key)
         self.match_mode_manager.apply_to_registry(self.registry)
         self.seed_match_state(config)
@@ -108,6 +97,8 @@ class PersistenceMixin:
             self.toast(f"Match mode: {config.title}")
 
     def apply_robot_profile(self, key: str, close_home: bool, announce: bool = True) -> None:
+        if self.reject_pending_configuration_edit():
+            return
         module = self.registry.get("RobotProfile")
         profiles = profiles_for_match(self.match_mode_manager.current.key)
         valid_keys = [profile.key for profile in profiles]
@@ -123,10 +114,15 @@ class PersistenceMixin:
         if int(self.state.robot_id) != robot_id or str(self.backend.mqtt.client_id) != str(robot_id):
             # Revoke the old epoch before changing either identity. Never
             # inherit armed outputs merely because the operator chose Blue.
-            self.backend.lock_control("robot profile/alliance changed")
-            self.control.mock_output = bool(self.backend.mqtt.mock_output)
-            self.control.release_all(self.state, self.registry)
-            self.control.clear_pending()
+            def release_inputs() -> None:
+                self.control.mock_output = bool(self.backend.mqtt.mock_output)
+                self.control.release_all(self.state, self.registry)
+
+            quiesce_configuration_inputs(
+                revoke=lambda: self.backend.lock_control("robot profile/alliance changed"),
+                release=release_inputs,
+                clear_pending=lambda: self.control.clear_pending(),
+            )
             if any(
                 bool(getattr(transport, flag, False))
                 for transport in (self.backend.mqtt, getattr(self.backend, "polar", None), getattr(self.backend, "serial", None))
@@ -330,6 +326,25 @@ class PersistenceMixin:
         setting = module.get_setting("Profile") if module else None
         return self.config_store.clean_profile_name(str(setting.value if setting else "default"))
 
+    def _accepted_profile_identity(self) -> ProfileIdentity:
+        return self._profile_saves.identity(lambda: self.current_profile())
+
+    def _set_profile_selection(self, profile: str) -> None:
+        module = self.registry.get("ConfigManager")
+        setting = module.get_setting("Profile") if module else None
+        if setting is not None:
+            setting.value = profile
+
+    def _restorable_profile_name(self) -> str:
+        return getattr(self, "_unsaved_profile_name", None) or self._accepted_profile_identity().name
+
+    def _accept_profile_selection(self, profile: str) -> None:
+        previous = self._accepted_profile_identity()
+        self._profile_saves.accept_profile(profile, previous)
+        self._set_profile_selection(profile)
+        # Selection must succeed before retiring the previous delayed save.
+        self._profile_saves.cancel_pending()
+
     def current_config_data(self) -> dict[str, Any]:
         return export_client_config(
             self.registry,
@@ -345,6 +360,7 @@ class PersistenceMixin:
         )
 
     def load_startup_config(self) -> None:
+        self._accepted_profile_identity()
         module = self.registry.get("ConfigManager")
         preferences = self.config_store.load_startup_preferences()
         profile_setting = module.get_setting("Profile") if module else None
@@ -355,6 +371,7 @@ class PersistenceMixin:
             if load_setting is not None:
                 load_setting.value = preferences["load_on_start"]
             if not preferences["load_on_start"]:
+                self._accept_profile_selection(self.current_profile())
                 return
         data = self.config_store.load(self.current_profile())
         if preferences is None and data is not None:
@@ -370,24 +387,229 @@ class PersistenceMixin:
         if data:
             self.apply_config_data(data, announce=False)
 
+    @property
+    def configuration_change_pending(self) -> bool:
+        return getattr(self, "_pending_configuration", None) is not None
+
+    @property
+    def configuration_close_requires_save(self) -> bool:
+        return self._profile_saves.close_requires_save
+
+    def prepare_configuration_for_close(self) -> bool:
+        """Try an owned dirty save once before the window enters shutdown.
+
+        A refusal leaves the window and runtime untouched. Never cancel a
+        staged load here: it must still be able to complete if close is refused.
+        This is separate from the ordinary debounce/autosave path.
+        """
+        if not self.configuration_close_requires_save:
+            return True
+        if self.configuration_change_pending or self.backend.lifecycle_pending:
+            self.toast("配置切换尚未完成，未保存更改仍保留，请稍后重试关闭", kind="warning")
+            return False
+        draft = getattr(self, "_unsaved_profile_name", None)
+        accepted = self._accepted_profile_identity()
+        intent = self._profile_saves.close_intent(draft, accepted)
+        if intent is None:
+            return True  # A superseded timer owns no part of the live model.
+        self._save_profile(intent.profile, announce=True, explicit=intent.explicit)
+        return not self.configuration_close_requires_save
+
+    def cancel_pending_configuration_for_close(self) -> None:
+        """Discard an uncommitted profile before final save; never restart runtime."""
+        pending = getattr(self, "_pending_configuration", None)
+        if pending is None:
+            return
+        try:
+            pending.original.restore()
+            self._restore_configuration_view(pending.previous)
+        finally:
+            pending.original.restore()
+            self.control.binds = dict(pending.previous.control_binds)
+            self.home_visible = pending.previous.home_visible
+            self.startup_step = pending.previous.startup_step
+            self._pending_configuration = None
+
+    def ensure_configuration_idle(self) -> None:
+        if self.configuration_change_pending or self.backend.lifecycle_pending:
+            raise ValueError("配置切换尚未完成，请稍后重试")
+
+    def capture_pending_scenario_configuration(self, generation: int) -> None:
+        """Capture after intended scenario edits, before returning to UI input.
+
+        Ordinary scenario requests do not own a profile rollback transaction.
+        They still need an accepted registry projection so post-mutation direct
+        callbacks cannot reopen retired resources or leave rejected UI values.
+        """
+        self._pending_scenario_configuration = PendingScenarioConfiguration(
+            generation, RegistrySnapshot.capture(self.registry))
+
+    def reject_pending_configuration_edit(self) -> bool:
+        """Reject runtime effects and restore the accepted pending projection."""
+        if self.config_loading:
+            return False
+        pending = getattr(self, "_pending_configuration", None)
+        if pending is not None:
+            pending.staged.restore()
+        elif self.backend.lifecycle_pending:
+            ordinary = getattr(self, "_pending_scenario_configuration", None)
+            if ordinary is not None and ordinary.generation == self.backend.lifecycle_snapshot.generation:
+                ordinary.staged.restore()
+            # Even a programmatic backend request without the window capture
+            # hook must not reopen resources through a late direct callback.
+        else:
+            return False
+        self.invalidate_gui_cache()
+        self.toast("配置切换尚未完成，当前编辑未应用", kind="warning")
+        return True
+
     def apply_config_data(self, data: dict[str, Any], announce: bool = True) -> None:
+        if self.reject_pending_configuration_edit():
+            return
+        target_profile = self.current_profile()
+        accepted = self._accepted_profile_identity()
+        # The GUI mutates its selection before calling us. Restore the accepted
+        # identity before capturing rollback state or flushing its pending edits.
+        self._set_profile_selection(self._restorable_profile_name())
         try:
             validate_client_config(data, self.registry)
         except ValueError as exc:
             self.toast(f"配置加载失败，原配置未更改：{exc}", kind="warning")
             return
-        previous = deepcopy(self.current_config_data())
-        # Mode options and keyboard bindings can change while loading. Save
-        # their exact prior values so a rollback cannot silently coerce an old
-        # RMUC-only role into a new RMUL role or retain half-applied key swaps.
-        registry_snapshot = [
-            (module, module.enabled, module.keybind,
-             [(setting, deepcopy(setting.value), list(setting.options)) for setting in module.settings])
-            for module in self.registry.modules
-        ]
-        previous_binds = dict(self.control.binds)
-        previous_home = self.home_visible
-        previous_step = self.startup_step
+        if target_profile != accepted.name:
+            self.flush_auto_save(force=True)
+            if self._auto_save_pending:
+                self.toast("旧配置尚未保存，未切换配置", kind="warning")
+                return
+        previous = self.capture_configuration_restore_point()
+        original = previous.registry_snapshot or RegistrySnapshot.capture(self.registry)
+        generation = None
+
+        def update():
+            nonlocal generation
+            was_loading = self.config_loading
+            self.config_loading = True
+            try:
+                self._set_profile_selection(target_profile)
+                self._apply_config_data(data, sync_runtime=False)
+                generation = self.sync_runtime_from_registry()
+            finally:
+                self.config_loading = was_loading
+
+        try:
+            apply_configuration_transaction(
+                self.registry,
+                quiesce=lambda: self._quiesce_config_reload(data), update=update,
+                restore_runtime=lambda: self.restore_configuration_runtime(previous),
+                fail_closed=lambda: self.fail_closed_configuration(previous, "configuration reload failed"),
+            )
+        except ConfigurationApplyError as exc:
+            self._announce_configuration_failure(exc)
+            return
+        self._pending_configuration = PendingConfigurationChange(
+            generation, ConfigurationPhase.APPLYING, previous, original,
+            RegistrySnapshot.capture(self.registry), announce, target_profile=target_profile,
+        )
+
+    def record_configuration_failure(self, error: ConfigurationApplyError) -> None:
+        """Retain local rollback failures until pending runtime recovery ends."""
+        pending = getattr(self, "_pending_configuration", None)
+        if pending is not None and pending.phase is ConfigurationPhase.RESTORING:
+            self._pending_configuration = replace(pending,
+                restore_errors=tuple(str(item) for item in error.restore_errors),
+                safety_error=str(error.safety_error) if error.safety_error is not None else None)
+
+    def _announce_configuration_failure(self, error: ConfigurationApplyError) -> None:
+        self.record_configuration_failure(error)
+        if error.safety_error is not None:
+            self.toast(f"配置加载失败，安全清理未完成，请使用物理急停：{error}", kind="warning")
+        elif error.restore_pending:
+            self.toast(f"配置加载失败，正在恢复停用运行时；输出保持锁定：{error.cause}", kind="warning")
+        elif error.restored:
+            self.toast(f"配置加载失败，已恢复设置并锁定输出；需操作员解除急停：{error.cause}", kind="warning")
+        else:
+            self.toast(f"配置加载失败，输出已锁定；恢复未完成：{error}", kind="warning")
+
+    def on_backend_lifecycle_completion(self, completion) -> bool:
+        """Called only by the window's single lifecycle poller, on its thread."""
+        ordinary = getattr(self, "_pending_scenario_configuration", None)
+        if ordinary is not None and completion.generation >= ordinary.generation:
+            self._pending_scenario_configuration = None
+        pending = getattr(self, "_pending_configuration", None)
+        if pending is None:
+            return False
+        action = pending.completion_action(completion.generation,
+            succeeded=completion.succeeded, final=completion.final)
+        if action is CompletionAction.IGNORE:
+            return False
+        if action is CompletionAction.CANCEL:
+            try:
+                self.cancel_pending_configuration_for_close()
+            except Exception as error:
+                self.toast(f"关闭前配置恢复未完成：{error}", kind="warning")
+            return False
+        if action is CompletionAction.COMMIT:
+            try:
+                self._complete_registry_runtime()
+            except Exception as error:
+                self._rollback_pending_configuration(pending, error)
+            else:
+                self._accept_profile_selection(pending.target_profile or self.current_profile())
+                self._pending_configuration = None
+                if pending.announce:
+                    self.toast(f"配置已加载：{self.current_profile()}")
+            return True
+        if action is CompletionAction.ROLLBACK:
+            detail = "; ".join(failure.error for failure in completion.failures)
+            error = RuntimeError(detail or "configuration lifecycle generation was superseded")
+            self._rollback_pending_configuration(pending, error)
+            return True
+        self._finish_configuration_restore(pending, completion)
+        return True
+
+    def _rollback_pending_configuration(self, pending: PendingConfigurationChange, cause: Exception) -> None:
+        self._pending_configuration = None
+        failure = rollback_configuration_transaction(
+            pending.original, cause=cause,
+            restore_runtime=lambda: self.restore_configuration_runtime(pending.previous),
+            fail_closed=lambda: self.fail_closed_configuration(pending.previous, "configuration activation failed"),
+        )
+        self._announce_configuration_failure(failure)
+
+    def _finish_configuration_restore(self, pending: PendingConfigurationChange, completion) -> None:
+        errors = [*pending.restore_errors, *(failure.error for failure in completion.failures)]
+        if completion.succeeded:
+            try:
+                self._complete_registry_runtime()
+            except Exception as error:
+                errors.append(str(error))
+        try:
+            pending.original.restore()
+        except Exception as error:
+            errors.append(str(error))
+        safety_error = pending.safety_error
+        try:
+            self.fail_closed_configuration(pending.previous, "configuration restored locked")
+        except Exception as error:
+            safety_error = error
+        self._pending_configuration = None
+        if safety_error is not None:
+            self.toast(f"配置恢复时安全清理未完成，请使用物理急停：{safety_error}", kind="warning")
+        elif errors:
+            self.toast("输出保持锁定；配置恢复未完成：" + "; ".join(errors), kind="warning")
+        else:
+            self.toast("已恢复设置并锁定输出；需操作员解除急停", kind="warning")
+
+    def capture_configuration_restore_point(self) -> ConfigurationRestorePoint:
+        return ConfigurationRestorePoint(
+            document=deepcopy(self.current_config_data()),
+            control_binds=dict(self.control.binds),
+            home_visible=self.home_visible,
+            startup_step=self.startup_step,
+            registry_snapshot=RegistrySnapshot.capture(self.registry),
+        )
+
+    def _quiesce_config_reload(self, data: dict[str, Any]) -> None:
         spin = self.registry.get("SpinMode")
         candidate_spin = data.get("modules", {}).get("SpinMode", {})
         spin_stops = candidate_spin.get("enabled") is False or (
@@ -395,58 +617,67 @@ class PersistenceMixin:
             and not self.setting_bool(spin, "Mock Output", True)
         )
         if spin is not None and spin.enabled and spin_stops:
-            # Publish only the falling edge on the old transport/identity.
-            # This notification never publishes a new live enable command.
+            # Only the falling edge is published on the old transport/identity.
             self.publish_spin_control_state(False, source="config_reload")
-        self.backend.lock_control("configuration reload")
-        self.control.release_all(self.state, self.registry)
-        self.control.clear_pending()
+        quiesce_configuration_inputs(
+            revoke=lambda: self.backend.lock_control("configuration reload"),
+            release=lambda: self.control.release_all(self.state, self.registry),
+            clear_pending=lambda: self.control.clear_pending(),
+        )
+
+    def _restore_configuration_view(self, previous: ConfigurationRestorePoint) -> None:
+        # RegistrySnapshot already restored exact values without enable hooks.
+        # Restore only view projections here; replaying module data could invoke
+        # hooks if a partially failing model restore left a different value.
+        view = {key: value for key, value in previous.document.items() if key != "modules"}
+        self._apply_config_data(view, sync_runtime=False)
+
+    def restore_configuration_runtime(self, previous: ConfigurationRestorePoint) -> RuntimeRestorePending:
+        """Request prior runtime with outputs stopped; completion owns success."""
+        original = previous.registry_snapshot or RegistrySnapshot.capture(self.registry)
+        was_loading = self.config_loading
+        self.config_loading = True
         try:
-            self._apply_config_data(data)
-        except Exception as exc:
-            # Disk/driver errors can still occur after preflight. Restore the
-            # operator's values while keeping transport stopped and locked.
-            restore_error = None
-            try:
-                for module, enabled, keybind, settings in registry_snapshot:
-                    module.set_enabled(enabled)
-                    module.keybind = keybind
-                    for setting, value, options in settings:
-                        setting.value = value
-                        setting.options = options
-                self._apply_config_data(previous, sync_runtime=False)
-                scenario = self.registry.get("Scenario")
-                old_key = self.setting_mode(scenario, "Mode", "LabDebug")
-                self.scenario_manager.set_scenario(old_key)
-                match = self.registry.get("MatchMode")
-                old_match = self.match_mode_manager.set_mode(self.setting_mode(match, "Mode", "RMUC7v7"))
-                old_profile = profile_by_key(old_match.key, self.current_robot_profile_key())
-                old_id = robot_id_for_alliance(old_profile, self.alliance_side())
-                self.backend.apply_scenario(old_key, start=False, registry=self.registry, robot_id=old_id)
-                self.seed_match_state(old_match)
-                self.apply_robot_profile(self.current_robot_profile_key(), close_home=False, announce=False)
-            except Exception as rollback_exc:
-                restore_error = rollback_exc
-            finally:
-                self.control.binds = previous_binds
-                self.control.mock_output = bool(self.backend.mqtt.mock_output)
-                self.home_visible = previous_home
-                self.startup_step = previous_step
-                self.backend.trigger_estop()
-                self.backend.lock_control("configuration reload failed")
-            if restore_error is None:
-                self.toast(f"配置加载失败，已恢复设置并锁定输出；需操作员解除急停：{exc}", kind="warning")
-            else:
-                self.toast(f"配置加载失败，输出已锁定；恢复未完成：{exc}; {restore_error}", kind="warning")
-            return
-        if announce:
-            self.toast(f"配置已加载：{self.current_profile()}")
+            original.restore()
+            self._restore_configuration_view(previous)
+            generation = self._request_registry_runtime(start=False)
+            self._pending_configuration = PendingConfigurationChange(
+                generation, ConfigurationPhase.RESTORING, previous, original, original,
+            )
+            return RuntimeRestorePending(generation)
+        finally:
+            self.config_loading = was_loading
+
+    def fail_closed_configuration(self, previous: ConfigurationRestorePoint, reason: str) -> None:
+        # These local restoration steps must run even if a driver failed while
+        # rebuilding stopped runtime state. Held inputs intentionally stay clear.
+        self.control.binds = dict(previous.control_binds)
+        self.control.mock_output = bool(self.backend.mqtt.mock_output)
+        self.home_visible = previous.home_visible
+        self.startup_step = previous.startup_step
+        try:
+            self.backend.trigger_estop()
+        finally:
+            self.backend.lock_control(reason)
 
     def _apply_config_data(self, data: dict[str, Any], *, sync_runtime: bool = True) -> None:
+        was_loading = self.config_loading
         self.config_loading = True
         try:
             self.refresh_wallpaper_profiles()
             self.refresh_custom_ui_sound_options()
+            # Normalize legacy key casing before generic mode-option loading
+            # can discard it. Validate the complete saved permutation, so an
+            # invalid key cannot silently leave a different partial mapping.
+            modules = data.get("modules", {})
+            link_data = modules.get("RobotLink", {})
+            saved_settings = link_data.get("settings", {})
+            saved_binds = {slot: saved_settings[f"Bind {slot}"] for slot in CONTROL_SLOT_ORDER
+                           if f"Bind {slot}" in saved_settings}
+            if saved_binds:
+                binds = validate_control_binds({**self.control.binds, **saved_binds})
+                settings = {**saved_settings, **{f"Bind {slot}": binds[slot] for slot in saved_binds}}
+                data = {**data, "modules": {**modules, "RobotLink": {**link_data, "settings": settings}}}
             apply_registry_config(self.registry, data)
             # Runtime profile reload can change HUD tone between two display
             # ticks; discard the frame-local palette immediately.
@@ -472,89 +703,141 @@ class PersistenceMixin:
                 for name, panel_data in polar_data.items():
                     if name in self.polar_windows and isinstance(panel_data, dict):
                         self.polar_windows[name].update(panel_data)
-            wheel_data = data.get("quick_action_wheel")
-            if isinstance(wheel_data, dict) and wheel_data:
-                self.quick_action_wheel.load_config(wheel_data)
-                self.apply_quick_action_wheel_to_settings()
-            else:
-                self.sync_quick_action_wheel_settings()
+            restore_wheel_profile(
+                self.registry.get("QuickActionWheel"), self.quick_action_wheel,
+                data.get("quick_action_wheel", {}),
+            )
             if sync_runtime:
                 self.sync_runtime_from_registry()
             self.sync_mode_setting()
             self.refresh_config_profiles()
             self.refresh_wallpaper_profiles()
         finally:
-            self.config_loading = False
+            self.config_loading = was_loading
 
     def sync_control_binds(self) -> None:
         """把 ClickGUI 里的“Bind <槽位>”同步到键盘控制桥。
 
         前端可自定义驾驶键，而后端发的永远是协议槽位；这里就是两者的唯一汇合点。
-        两个槽绑到同一物理键时 `set_bind` 会拒绝，不会默默丢动作。
+        先校验完整映射，再原子替换，支持交换或轮换绑定；非法映射整体回滚。
         """
 
         link = self.registry.get("RobotLink")
         if link is None or self.control is None:
             return
-        for slot in CONTROL_SLOT_ORDER:
-            setting = link.get_setting(f"Bind {slot}")
-            if setting is None:
-                continue
-            wanted = str(setting.value or slot)
-            if wanted.lower() in CONTROL_RESERVED_KEYS:
-                setting.value = self.control.binds.get(slot, slot)
-                self.toast(f"{wanted} 是界面保留键，未更改控制绑定", kind="warning")
-                continue
-            if str(self.control.binds.get(slot, "")).lower() == wanted.lower():
-                continue
-            if not self.control.set_bind(slot, wanted):
-                # 被别的槽占用或非法值：回滚显示，不静默失配
-                setting.value = self.control.binds.get(slot, slot)
-
-    def sync_runtime_from_registry(self) -> None:
-        self.sync_control_binds()
-        match_mode = self.registry.get("MatchMode")
-        match_setting = match_mode.get_setting("Mode") if match_mode else None
-        if match_setting:
-            self.match_mode_manager.set_mode(str(match_setting.value))
-        profile = profile_by_key(self.match_mode_manager.current.key, self.current_robot_profile_key())
-        robot_id = robot_id_for_alliance(profile, self.alliance_side())
-        scenario = self.registry.get("Scenario")
-        scenario_setting = scenario.get_setting("Mode") if scenario else None
-        if scenario_setting:
-            start_backend = not self.setting_bool(scenario, "Show Startup", True)
-            self.scenario_manager.set_scenario(str(scenario_setting.value))
-            # Defaults belong to an explicit scenario switch. A profile load
-            # preserves its saved endpoints and conservative mock choices.
-            # Loading a profile must configure the selected backend but must
-            # not bypass the startup screen and open network links early.
-            self.backend.apply_scenario(
-                self.scenario_manager.current.key,
-                start=start_backend,
-                registry=self.registry,
-                robot_id=robot_id,
+        settings = {slot: link.get_setting(f"Bind {slot}") for slot in CONTROL_SLOT_ORDER}
+        candidate = dict(self.control.binds)
+        candidate.update({slot: setting.value for slot, setting in settings.items() if setting is not None})
+        try:
+            candidate = validate_control_binds(candidate)
+        except ValueError as exc:
+            for slot, setting in settings.items():
+                if setting is not None:
+                    setting.value = self.control.binds.get(slot, slot)
+            if self.config_loading:
+                # Let apply_config_data restore its full snapshot and keep
+                # output locked rather than report a partially loaded profile.
+                raise
+            self.toast(f"控制绑定未更改：{exc}", kind="warning")
+            return
+        if candidate != self.control.binds:
+            quiesce_configuration_inputs(
+                revoke=lambda: self.backend.lock_control("control bindings changed"),
+                release=lambda: self.control.release_all(self.state, self.registry),
+                clear_pending=lambda: self.control.clear_pending(),
             )
-            self.control.mock_output = bool(self.backend.mqtt.mock_output)
-        if match_setting:
-            self.seed_match_state(self.match_mode_manager.current)
-        self.apply_robot_profile(self.current_robot_profile_key(), close_home=False, announce=False)
-        self.home_visible = not start_backend if scenario_setting else self.home_visible
-        self.startup_step = "scenario" if self.home_visible else "done"
+            self.control.set_binds(candidate)
+        for slot, setting in settings.items():
+            if setting is not None:
+                setting.value = candidate[slot]
+
+    def sync_runtime_from_registry(self) -> int:
+        """Request saved runtime without waiting for resource teardown on Qt."""
+        return self._request_registry_runtime()
+
+    def _request_registry_runtime(self, *, start: bool | None = None) -> int:
+        self.sync_control_binds()
+        match = self.registry.get("MatchMode")
+        self.match_mode_manager.set_mode(self.setting_mode(match, "Mode", "RMUC7v7"))
+        scenario = self.registry.get("Scenario")
+        self.scenario_manager.set_scenario(self.setting_mode(scenario, "Mode", "LabDebug"))
+        profile = profile_by_key(self.match_mode_manager.current.key, self.current_robot_profile_key())
+        module = self.registry.get("RobotProfile")
+        role = module.get_setting("Role") if module else None
+        if role is not None:
+            role.options = [item.key for item in profiles_for_match(self.match_mode_manager.current.key)]
+            role.value = profile.key
+        robot_id = robot_id_for_alliance(profile, self.alliance_side())
+        if start is None:
+            autostart = os.environ.get("POLAR_AUTOSTART", "").lower() in ("1", "true", "yes")
+            start = autostart or not self.setting_bool(scenario, "Show Startup", True)
+            self.home_visible = not start
+            self.startup_step = "scenario" if self.home_visible else "done"
+        # Defaults belong to explicit scenario switches. Capture saved endpoint,
+        # mock, referee and identity values together before asynchronous teardown.
+        return self.backend.request_scenario(
+            self.scenario_manager.current.key, start=start,
+            registry=self.registry, robot_id=robot_id,
+        )
+
+    def _complete_registry_runtime(self) -> None:
+        """Commit display identity after backend activation; never arm or start."""
+        self.control.mock_output = bool(self.backend.mqtt.mock_output)
+        self.seed_match_state(self.match_mode_manager.current)
+        profile = profile_by_key(self.match_mode_manager.current.key, self.current_robot_profile_key())
+        module = self.registry.get("RobotProfile")
+        level = int(self.get_setting_number(module, "Level", 1))
+        side = self.alliance_side()
+        self.state.alliance_color = side
+        match = self.registry.get("MatchMode")
+        legacy_side = match.get_setting("Alliance") if match else None
+        if legacy_side is not None:
+            legacy_side.value = side
+        apply_profile_to_state(self.state, profile, self.current_robot_performance(profile.key), level)
 
     def save_current_config(self, announce: bool = True) -> None:
+        """Explicit save accepts the selected name, including save-as callers."""
+        if self.configuration_change_pending:
+            if announce:
+                self.toast("配置切换尚未完成，未保存", kind="warning")
+            return
+        self._save_profile(self.current_profile(), announce=announce, explicit=True)
+
+    def _save_profile(self, profile: str, *, announce: bool, explicit: bool = False) -> None:
+        accepted = self._accepted_profile_identity()
         try:
-            path = self.config_store.save(self.current_profile(), self.current_config_data())
             module = self.registry.get("ConfigManager")
-            self.config_store.save_startup_preferences(self.current_profile(), self.setting_bool(module, "Load On Start", True))
+            path = self.config_store.save_with_startup(
+                profile, self.current_config_data(),
+                load_on_start=self.setting_bool(module, "Load On Start", True),
+            )
         except (OSError, ValueError) as exc:
-            self._auto_save_pending = True
-            self._auto_save_due_at = time.perf_counter() + 5.0
-            if announce or not getattr(self, "_config_save_error", False):
-                self.toast(f"配置保存失败，将重试：{exc}", kind="warning")
+            recovery_failed = isinstance(exc, ProfileSaveError) and not exc.restored
+            if recovery_failed:
+                self._last_profile_recovery_error = f"{profile}: {exc}"
+                logging.getLogger(__name__).error("Profile file recovery incomplete: %s",
+                                                 self._last_profile_recovery_error, exc_info=True)
+            if profile != accepted.name or getattr(self, "_unsaved_profile_name", None) is not None:
+                # A failed explicit save-as must not become an automatic write
+                # to its source. Keep the chosen name and draft for manual retry.
+                self._profile_saves.begin_draft(profile)
+                self._set_profile_selection(profile)
+                self._profile_saves.cancel_pending()
+                operation = "另存" if profile != accepted.name else "草稿保存"
+                self.toast(f"{operation}失败，当前更改尚未保存，请重试保存：{exc}", kind="warning")
+                return
+            self._set_profile_selection(accepted.name)
+            self._profile_saves.defer_save(lambda: accepted, lambda: time.perf_counter(), 5.0)
+            retry = "请手动保存或重试关闭" if getattr(self, "_close_save_retry_required", False) else "将重试"
+            if recovery_failed:
+                self.toast(f"配置保存失败，文件恢复未完成，{retry}：{exc}", kind="warning")
+            elif announce or not getattr(self, "_config_save_error", False):
+                self.toast(f"配置保存失败，{retry}：{exc}", kind="warning")
             self._config_save_error = True
             return
-        self._auto_save_pending = False
-        self._config_save_error = False
+        if explicit or profile != accepted.name:
+            self._accept_profile_selection(profile)
+        self._profile_saves.complete_save()
         self.refresh_config_profiles()
         if announce:
             self.toast(f"配置已保存：{path.name}")
@@ -562,13 +845,24 @@ class PersistenceMixin:
     def reload_current_config(self) -> None:
         data = self.config_store.load(self.current_profile())
         if data is None:
+            self._set_profile_selection(self._restorable_profile_name())
             self.toast("配置重新加载失败")
             return
         self.apply_config_data(data)
 
     def import_config_from_dialog(self) -> None:
+        if self.reject_pending_configuration_edit():
+            return
         path, _ = QFileDialog.getOpenFileName(self, "导入 POLAR-RM 配置", str(self.config_store.config_dir), "JSON 配置 (*.json)")
         if not path:
+            return
+        # Import may replace the accepted file itself. Save its pending edits
+        # first so the import backup contains them and no old timer rewrites
+        # the imported bytes if activation subsequently fails.
+        self._set_profile_selection(self._restorable_profile_name())
+        self.flush_auto_save(force=True)
+        if self._auto_save_pending:
+            self.toast("旧配置尚未保存，未导入配置", kind="warning")
             return
         try:
             profile = self.config_store.import_file(Path(path), registry=self.registry)
@@ -584,18 +878,29 @@ class PersistenceMixin:
 
     def auto_save_config(self) -> None:
         module = self.registry.get("ConfigManager")
-        if self.config_loading or not self.setting_bool(module, "Auto Save", True):
+        if self.config_loading or self.configuration_change_pending or not self.setting_bool(module, "Auto Save", True):
             return
-        self._auto_save_pending = True
-        self._auto_save_due_at = time.perf_counter() + 0.25
+        if getattr(self, "_unsaved_profile_name", None) is not None:
+            return  # Failed save-as drafts require explicit retry or another load.
+        if self.current_profile() != self._accepted_profile_identity().name:
+            return
+        self._profile_saves.defer_save(
+            lambda: self._accepted_profile_identity(), lambda: time.perf_counter(), 0.25,
+        )
 
     def flush_auto_save_if_due(self, now: float | None = None) -> None:
-        if not self._auto_save_pending:
+        if not self._auto_save_pending or self.configuration_change_pending:
+            return
+        if self._profile_saves.automatic_save_blocked:
             return
         now = time.perf_counter() if now is None else float(now)
-        if now < self._auto_save_due_at:
+        if not self._profile_saves.is_due(now):
             return
-        self.save_current_config(announce=False)
+        accepted = self._accepted_profile_identity()
+        owner = self._profile_saves.save_identity(accepted)
+        if owner is None:
+            return  # A superseded callback cannot save the current registry.
+        self._save_profile(owner.name, announce=False)
 
     def flush_auto_save(self, *, force: bool = False) -> None:
         if not self._auto_save_pending:

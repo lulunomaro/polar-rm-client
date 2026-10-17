@@ -1,0 +1,3553 @@
+{
+  "source_sha256": {
+    "Rm2026StateAdapter": "5250235cae147faca4b6f5464620319cb902c510adc186b63475841b01fed794",
+    "rm2026.codec": "7edd296d3768c90017ee69b946661f51690d10ecefdb7657181ccbcd542bf5de",
+    "rm2026.contract": "514c517137c7c17e2658d4768d7244d3c55d9ac73f1f88dd7e06cc8545fbc15c"
+  },
+  "scope": "Post independent projectile baseline fix; codec, ordered projection/effects, partial abort state; fake host ports",
+  "initial_state": {
+    "active_penalty": {},
+    "air_support_active": false,
+    "air_support_cost_coins": 20,
+    "air_support_free_time_sec": 15,
+    "alliance_color": "Red",
+    "backend_frontend_synced": false,
+    "backend_stats": {
+      "unrelated": "keep",
+      "respawn_status": {
+        "total_respawn_progress": 100
+      }
+    },
+    "base_health": 4500,
+    "base_shield": 100,
+    "base_status": "old",
+    "blue_score": 7,
+    "buff_rows": [],
+    "buffs": [
+      {
+        "robot_id": 3,
+        "buff_type": 2,
+        "buff_left_time": 9
+      }
+    ],
+    "can_remote_ammo": true,
+    "can_remote_heal": true,
+    "current_buffer_energy": 50,
+    "current_chassis_energy": 70,
+    "current_health": 500,
+    "current_heat": 12.5,
+    "current_round": 2,
+    "current_stage": "MATCH",
+    "dart_status": {},
+    "deploy_mode": 0,
+    "deploy_status_at": 11.0,
+    "deploy_status_revision": 3,
+    "economy_command_status": "WAITING",
+    "economy_status_revision": 7,
+    "encryption_level": 4,
+    "enemy_base_health": 3500,
+    "enemy_base_shield": 100,
+    "enemy_base_status": "SHIELDED",
+    "enemy_outpost_health": 900,
+    "enemy_outpost_status": "ONLINE",
+    "energy_rune_phase": "ACTIVE",
+    "energy_rune_progress": 80,
+    "heat_cooldown_rate": 18.0,
+    "injury_stats": {},
+    "injury_stats_initialized": false,
+    "last_projectile_damage_delta": 0,
+    "last_projectile_hit_at": 0.0,
+    "last_projectile_killer_id": 0,
+    "last_projectile_kind": "",
+    "level": 2,
+    "map_markers": [
+      {
+        "label": "OLD",
+        "x": 1.0,
+        "y": 2.0
+      }
+    ],
+    "map_robots": [],
+    "max_buffer_energy": 100,
+    "max_health": 600,
+    "max_heat": 240.0,
+    "official_robot_bullets": [
+      10,
+      20,
+      30,
+      40,
+      50
+    ],
+    "official_robot_health": [
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110
+    ],
+    "out_of_combat": true,
+    "outpost_health": 1000,
+    "outpost_status": "ONLINE",
+    "path_plan": {},
+    "penalties": [
+      {
+        "penalty_type": 1,
+        "total_penalty_num": 2
+      }
+    ],
+    "performance_sync": {
+      "shooter": 1,
+      "chassis": 2
+    },
+    "power_limit": 80,
+    "projectile_allowance_17mm": 180,
+    "projectile_allowance_42mm": 12,
+    "projectile_damage_large_initialized": false,
+    "projectile_damage_large_total": 30,
+    "projectile_damage_small_initialized": false,
+    "projectile_damage_small_total": 50,
+    "projectile_hit_revision": 9,
+    "radar_detections": [
+      {
+        "target_pos_x": 1,
+        "target_pos_y": 2
+      }
+    ],
+    "radar_detections_at": 12.0,
+    "red_score": 6,
+    "remaining_ammo": 88,
+    "remaining_economy": 321,
+    "respawn_can_free": true,
+    "respawn_can_pay": true,
+    "respawn_gold_cost": 12,
+    "respawn_pending": false,
+    "respawn_progress": 0.25,
+    "robot_dynamics": {
+      "3": {
+        "current_health": 500,
+        "current_heat": 12.5
+      }
+    },
+    "robot_id": 3,
+    "robot_module_status": {
+      "armor": 1
+    },
+    "robot_modules": {
+      "3": {
+        "armor": 1
+      }
+    },
+    "robot_positions": [
+      {
+        "robot_id": 3,
+        "x": 2.0,
+        "y": 3.0,
+        "yaw": 4.0
+      }
+    ],
+    "robot_rows": [],
+    "robot_statics": {
+      "3": {
+        "level": 2,
+        "max_health": 600
+      }
+    },
+    "rune_status": {
+      "rune_status": 3,
+      "average_rings": 0.8
+    },
+    "sentry_ctrl_result": {},
+    "sentry_status": {},
+    "special_mechanisms": [],
+    "stage_countdown_sec": 123,
+    "stage_elapsed_sec": 45,
+    "tech_core": {},
+    "tech_level": 3,
+    "total_economy_obtained": 987,
+    "total_projectiles_fired": 12,
+    "total_rounds": 3
+  },
+  "initial_host": {
+    "_last_logged_stage": "NOT_STARTED",
+    "_hero_native_override": false,
+    "_normal_video_source": "udp hevc",
+    "_active_video_source": "udp hevc"
+  },
+  "cases": {
+    "AirSupportStatusSync_full_wire": {
+      "input": {"messages": [{"name": "AirSupportStatusSync", "wire": {"hex": "080b100c180d200e280f"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"air_support_cost_coins": 13, "air_support_free_time_sec": 12},
+        "host_delta": {},
+        "events": [
+          ["decode", "AirSupportStatusSync", {"airsupport_status": 11, "left_time": 12, "cost_coins": 13, "is_being_targeted": 14, "shooter_status": 15, "__present__": [1, 2, 3, 4, 5]}],
+          ["state.air_support_active", false],
+          ["state.air_support_free_time_sec", 12],
+          ["state.air_support_cost_coins", 13]
+        ]
+      }
+    },
+    "AirSupportStatusSync_raw_empty": {
+      "input": {"messages": [{"name": "AirSupportStatusSync", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.air_support_free_time_sec", 15],
+          ["state.air_support_cost_coins", 20]
+        ]
+      }
+    },
+    "AirSupportStatusSync_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "AirSupportStatusSync", "data": {"airsupport_status": 11, "left_time": 12, "cost_coins": 13, "is_being_targeted": 14, "shooter_status": 15, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.air_support_free_time_sec", 15],
+          ["state.air_support_cost_coins", 20]
+        ]
+      }
+    },
+    "AirSupportStatusSync_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "AirSupportStatusSync", "wire": {"hex": "08001000180020002800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"air_support_cost_coins": 0, "air_support_free_time_sec": 0},
+        "host_delta": {},
+        "events": [
+          ["decode", "AirSupportStatusSync", {"airsupport_status": 0, "left_time": 0, "cost_coins": 0, "is_being_targeted": 0, "shooter_status": 0, "__present__": [1, 2, 3, 4, 5]}],
+          ["state.air_support_active", false],
+          ["state.air_support_free_time_sec", 0],
+          ["state.air_support_cost_coins", 0]
+        ]
+      }
+    },
+    "Buff_full_wire": {
+      "input": {"messages": [{"name": "Buff", "wire": {"hex": "080b100c18fdffffffffffffffff01200e280f"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"buffs": [{"robot_id": 3, "buff_type": 2, "buff_left_time": 9}, {"robot_id": 11, "buff_type": 12, "buff_level": -3, "buff_max_time": 14, "buff_left_time": 15}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "Buff", {"robot_id": 11, "buff_type": 12, "buff_level": -3, "buff_max_time": 14, "buff_left_time": 15, "__present__": [1, 2, 3, 4, 5]}],
+          ["state.buffs", [{"robot_id": 3, "buff_type": 2, "buff_left_time": 9}, {"robot_id": 11, "buff_type": 12, "buff_level": -3, "buff_max_time": 14, "buff_left_time": 15}]]
+        ]
+      }
+    },
+    "Buff_raw_empty": {
+      "input": {"messages": [{"name": "Buff", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"buffs": [{"robot_id": 3, "buff_type": 2, "buff_left_time": 9}, {}]},
+        "host_delta": {},
+        "events": [
+          ["state.buffs", [{"robot_id": 3, "buff_type": 2, "buff_left_time": 9}, {}]]
+        ]
+      }
+    },
+    "Buff_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "Buff", "data": {"robot_id": 11, "buff_type": 12, "buff_level": -3, "buff_max_time": 14, "buff_left_time": 15, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"buffs": [{"robot_id": 3, "buff_type": 2, "buff_left_time": 9}, {}]},
+        "host_delta": {},
+        "events": [
+          ["state.buffs", [{"robot_id": 3, "buff_type": 2, "buff_left_time": 9}, {}]]
+        ]
+      }
+    },
+    "Buff_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "Buff", "wire": {"hex": "08001000180020002800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"buffs": [{"robot_id": 3, "buff_type": 2, "buff_left_time": 9}, {"robot_id": 0, "buff_type": 0, "buff_level": 0, "buff_max_time": 0, "buff_left_time": 0}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "Buff", {"robot_id": 0, "buff_type": 0, "buff_level": 0, "buff_max_time": 0, "buff_left_time": 0, "__present__": [1, 2, 3, 4, 5]}],
+          ["state.buffs", [{"robot_id": 3, "buff_type": 2, "buff_left_time": 9}, {"robot_id": 0, "buff_type": 0, "buff_level": 0, "buff_max_time": 0, "buff_left_time": 0}]]
+        ]
+      }
+    },
+    "CustomByteBlock_full_wire": {
+      "input": {"messages": [{"name": "CustomByteBlock", "wire": {"hex": "0a03616263"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "CustomByteBlock", {"data": {"hex": "616263"}, "__present__": [1]}],
+          ["custom.bytes", {"data": {"hex": "616263"}, "__present__": [1]}]
+        ]
+      }
+    },
+    "CustomByteBlock_raw_empty": {
+      "input": {"messages": [{"name": "CustomByteBlock", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["custom.bytes", {}]
+        ]
+      }
+    },
+    "CustomByteBlock_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "CustomByteBlock", "data": {"data": {"hex": "616263"}, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["custom.bytes", {"__present__": []}]
+        ]
+      }
+    },
+    "CustomByteBlock_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "CustomByteBlock", "wire": {"hex": "0a00"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "CustomByteBlock", {"data": {"hex": ""}, "__present__": [1]}],
+          ["custom.bytes", {"data": {"hex": ""}, "__present__": [1]}]
+        ]
+      }
+    },
+    "DartSelectTargetStatusSync_full_wire": {
+      "input": {"messages": [{"name": "DartSelectTargetStatusSync", "wire": {"hex": "080b100c"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"dart_status": {"target_id": 11, "open": 12}},
+        "host_delta": {},
+        "events": [
+          ["decode", "DartSelectTargetStatusSync", {"target_id": 11, "open": 12, "__present__": [1, 2]}],
+          ["state.dart_status.update", {"target_id": 11, "open": 12}]
+        ]
+      }
+    },
+    "DartSelectTargetStatusSync_raw_empty": {
+      "input": {"messages": [{"name": "DartSelectTargetStatusSync", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.dart_status.update", {}]
+        ]
+      }
+    },
+    "DartSelectTargetStatusSync_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "DartSelectTargetStatusSync", "data": {"target_id": 11, "open": 12, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.dart_status.update", {}]
+        ]
+      }
+    },
+    "DartSelectTargetStatusSync_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "DartSelectTargetStatusSync", "wire": {"hex": "08001000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"dart_status": {"target_id": 0, "open": 0}},
+        "host_delta": {},
+        "events": [
+          ["decode", "DartSelectTargetStatusSync", {"target_id": 0, "open": 0, "__present__": [1, 2]}],
+          ["state.dart_status.update", {"target_id": 0, "open": 0}]
+        ]
+      }
+    },
+    "DeployModeStatusSync_full_wire": {
+      "input": {"messages": [{"name": "DeployModeStatusSync", "wire": {"hex": "0801"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"deploy_mode": 1, "deploy_status_at": 101.0, "deploy_status_revision": 4},
+        "host_delta": {"_hero_native_override": true, "_active_video_source": "native 0x0310"},
+        "events": [
+          ["decode", "DeployModeStatusSync", {"status": 1, "__present__": [1]}],
+          ["state.deploy_status_revision", 4],
+          ["state.deploy_mode", 1],
+          ["clock", 101.0],
+          ["state.deploy_status_at", 101.0],
+          ["host._hero_native_override", true],
+          ["video.source", "Native 0x0310", {"_hero_transition": true}],
+          ["host._active_video_source", "native 0x0310"],
+          ["log.hero_video_source", {"deployed": true, "active_source": "native 0x0310"}]
+        ]
+      }
+    },
+    "DeployModeStatusSync_raw_empty": {
+      "input": {"messages": [{"name": "DeployModeStatusSync", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "DeployModeStatusSync_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "DeployModeStatusSync", "data": {"status": 1, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "DeployModeStatusSync_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "DeployModeStatusSync", "wire": {"hex": "0800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"deploy_status_at": 101.0},
+        "host_delta": {},
+        "events": [
+          ["decode", "DeployModeStatusSync", {"status": 0, "__present__": [1]}],
+          ["state.deploy_mode", 0],
+          ["clock", 101.0],
+          ["state.deploy_status_at", 101.0]
+        ]
+      }
+    },
+    "Event_full_wire": {
+      "input": {"messages": [{"name": "Event", "wire": {"hex": "08ffffffffffffffffff01120b6576656e742076616c7565"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100}, "last_event": {"event_id": -1, "param": "event value"}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "Event", {"event_id": -1, "param": "event value", "__present__": [1, 2]}],
+          ["state.backend_stats.set", "last_event", {"event_id": -1, "param": "event value"}]
+        ]
+      }
+    },
+    "Event_raw_empty": {
+      "input": {"messages": [{"name": "Event", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100}, "last_event": {"event_id": 0, "param": ""}}},
+        "host_delta": {},
+        "events": [
+          ["state.backend_stats.set", "last_event", {"event_id": 0, "param": ""}]
+        ]
+      }
+    },
+    "Event_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "Event", "data": {"event_id": -1, "param": "event value", "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100}, "last_event": {"event_id": 0, "param": ""}}},
+        "host_delta": {},
+        "events": [
+          ["state.backend_stats.set", "last_event", {"event_id": 0, "param": ""}]
+        ]
+      }
+    },
+    "Event_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "Event", "wire": {"hex": "08001200"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100}, "last_event": {"event_id": 0, "param": ""}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "Event", {"event_id": 0, "param": "", "__present__": [1, 2]}],
+          ["state.backend_stats.set", "last_event", {"event_id": 0, "param": ""}]
+        ]
+      }
+    },
+    "GameStatus_full_wire": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "080b100c180d200e280430faffffffffffffffff0138f9ffffffffffffffff014001"}}]},
+      "observed": {
+        "safety": {"current_stage": "4", "stage_seen": true},
+        "errors": [],
+        "state_delta": {"blue_score": 14, "current_round": 11, "red_score": 13, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "total_rounds": 12},
+        "host_delta": {"_last_logged_stage": "MATCH"},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 11, "total_rounds": 12, "red_score": 13, "blue_score": 14, "current_stage": 4, "stage_countdown_sec": -6, "stage_elapsed_sec": -7, "is_paused": true, "__present__": [1, 2, 3, 4, 5, 6, 7, 8]}],
+          ["state.current_round", 11],
+          ["state.total_rounds", 12],
+          ["state.red_score", 13],
+          ["state.blue_score", 14],
+          ["state.current_stage", "MATCH"],
+          ["safety.stage", 4],
+          ["host._last_logged_stage", "MATCH"],
+          ["log.match_stage", {"raw_stage": 4, "stage": "MATCH", "round": 11}],
+          ["state.stage_countdown_sec", 0],
+          ["state.stage_elapsed_sec", 0]
+        ]
+      }
+    },
+    "GameStatus_raw_empty": {
+      "input": {"messages": [{"name": "GameStatus", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "GameStatus_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "GameStatus", "data": {"current_round": 11, "total_rounds": 12, "red_score": 13, "blue_score": 14, "current_stage": 4, "stage_countdown_sec": -6, "stage_elapsed_sec": -7, "is_paused": true, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "GameStatus_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "08001000180020002800300038004000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": true},
+        "errors": [],
+        "state_delta": {"blue_score": 0, "current_round": 0, "current_stage": "NOT_STARTED", "red_score": 0, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "total_rounds": 0},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 0, "blue_score": 0, "current_stage": 0, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [1, 2, 3, 4, 5, 6, 7, 8]}],
+          ["state.current_round", 0],
+          ["state.total_rounds", 0],
+          ["state.red_score", 0],
+          ["state.blue_score", 0],
+          ["state.current_stage", "NOT_STARTED"],
+          ["safety.stage", 0],
+          ["state.stage_countdown_sec", 0],
+          ["state.stage_elapsed_sec", 0]
+        ]
+      }
+    },
+    "GlobalLogisticsStatus_full_wire": {
+      "input": {"messages": [{"name": "GlobalLogisticsStatus", "wire": {"hex": "080b10808080808020180d200e"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"economy_command_status": "", "economy_status_revision": 8, "encryption_level": 14, "remaining_economy": 11, "tech_level": 13, "total_economy_obtained": 1099511627776},
+        "host_delta": {},
+        "events": [
+          ["decode", "GlobalLogisticsStatus", {"remaining_economy": 11, "total_economy_obtained": 1099511627776, "tech_level": 13, "encryption_level": 14, "__present__": [1, 2, 3, 4]}],
+          ["state.remaining_economy", 11],
+          ["state.total_economy_obtained", 1099511627776],
+          ["state.tech_level", 13],
+          ["state.encryption_level", 14],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "GlobalLogisticsStatus_raw_empty": {
+      "input": {"messages": [{"name": "GlobalLogisticsStatus", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.remaining_economy", 321],
+          ["state.total_economy_obtained", 987],
+          ["state.tech_level", 3],
+          ["state.encryption_level", 4]
+        ]
+      }
+    },
+    "GlobalLogisticsStatus_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "GlobalLogisticsStatus", "data": {"remaining_economy": 11, "total_economy_obtained": 1099511627776, "tech_level": 13, "encryption_level": 14, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.remaining_economy", 321],
+          ["state.total_economy_obtained", 987],
+          ["state.tech_level", 3],
+          ["state.encryption_level", 4]
+        ]
+      }
+    },
+    "GlobalLogisticsStatus_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "GlobalLogisticsStatus", "wire": {"hex": "0800100018002000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"economy_command_status": "", "economy_status_revision": 8, "encryption_level": 0, "remaining_economy": 0, "tech_level": 0, "total_economy_obtained": 0},
+        "host_delta": {},
+        "events": [
+          ["decode", "GlobalLogisticsStatus", {"remaining_economy": 0, "total_economy_obtained": 0, "tech_level": 0, "encryption_level": 0, "__present__": [1, 2, 3, 4]}],
+          ["state.remaining_economy", 0],
+          ["state.total_economy_obtained", 0],
+          ["state.tech_level", 0],
+          ["state.encryption_level", 0],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "GlobalSpecialMechanism_full_wire": {
+      "input": {"messages": [{"name": "GlobalSpecialMechanism", "wire": {"hex": "0a020b0c1214feffffffffffffffff01ffffffffffffffffff01"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"special_mechanisms": [{"mechanism_id": 11, "time_sec": -2}, {"mechanism_id": 12, "time_sec": -1}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "GlobalSpecialMechanism", {"mechanism_id": [11, 12], "mechanism_time_sec": [-2, -1], "__present__": [1, 2]}],
+          ["state.special_mechanisms", [{"mechanism_id": 11, "time_sec": -2}, {"mechanism_id": 12, "time_sec": -1}]]
+        ]
+      }
+    },
+    "GlobalSpecialMechanism_raw_empty": {
+      "input": {"messages": [{"name": "GlobalSpecialMechanism", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.special_mechanisms", []]
+        ]
+      }
+    },
+    "GlobalSpecialMechanism_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "GlobalSpecialMechanism", "data": {"mechanism_id": [11, 12], "mechanism_time_sec": [-2, -1], "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.special_mechanisms", []]
+        ]
+      }
+    },
+    "GlobalSpecialMechanism_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "GlobalSpecialMechanism", "wire": {"hex": "0a001200"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "GlobalSpecialMechanism", {"mechanism_id": [], "mechanism_time_sec": [], "__present__": [1, 2]}],
+          ["state.special_mechanisms", []]
+        ]
+      }
+    },
+    "GlobalUnitStatus_full_wire": {
+      "input": {"messages": [{"name": "GlobalUnitStatus", "wire": {"hex": "080b100c180d200e280f301038114012481350145a0215166214f4ffffffffffffffff01f5ffffffffffffffff0168177018"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100}, "robot_bullets": [-12, -11]}, "base_health": 11, "base_shield": 13, "base_status": "12", "enemy_base_health": 16, "enemy_base_shield": 18, "enemy_base_status": "17", "enemy_outpost_health": 19, "enemy_outpost_status": "20", "official_robot_bullets": [-12, -11], "official_robot_health": [21, 22], "outpost_health": 14, "outpost_status": "15", "projectile_allowance_17mm": 0, "projectile_allowance_42mm": 0},
+        "host_delta": {},
+        "events": [
+          ["decode", "GlobalUnitStatus", {"base_health": 11, "base_status": 12, "base_shield": 13, "outpost_health": 14, "outpost_status": 15, "enemy_base_health": 16, "enemy_base_status": 17, "enemy_base_shield": 18, "enemy_outpost_health": 19, "enemy_outpost_status": 20, "robot_health": [21, 22], "robot_bullets": [-12, -11], "total_damage_ally": 23, "total_damage_enemy": 24, "__present__": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]}],
+          ["state.base_health", 11],
+          ["state.base_status", "12"],
+          ["state.base_shield", 13],
+          ["state.outpost_health", 14],
+          ["state.outpost_status", "15"],
+          ["state.enemy_base_health", 16],
+          ["state.enemy_base_status", "17"],
+          ["state.enemy_base_shield", 18],
+          ["state.enemy_outpost_health", 19],
+          ["state.enemy_outpost_status", "20"],
+          ["state.official_robot_health", [21, 22]],
+          ["state.official_robot_bullets", [-12, -11]],
+          ["state.backend_stats.set", "robot_bullets", [-12, -11]],
+          ["state.projectile_allowance_17mm", 0],
+          ["state.projectile_allowance_42mm", 0]
+        ]
+      }
+    },
+    "GlobalUnitStatus_raw_empty": {
+      "input": {"messages": [{"name": "GlobalUnitStatus", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.base_health", 4500],
+          ["state.base_status", "old"],
+          ["state.base_shield", 100],
+          ["state.outpost_health", 1000],
+          ["state.outpost_status", "ONLINE"],
+          ["state.enemy_base_health", 3500],
+          ["state.enemy_base_status", "SHIELDED"],
+          ["state.enemy_base_shield", 100],
+          ["state.enemy_outpost_health", 900],
+          ["state.enemy_outpost_status", "ONLINE"]
+        ]
+      }
+    },
+    "GlobalUnitStatus_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "GlobalUnitStatus", "data": {"base_health": 11, "base_status": 12, "base_shield": 13, "outpost_health": 14, "outpost_status": 15, "enemy_base_health": 16, "enemy_base_status": 17, "enemy_base_shield": 18, "enemy_outpost_health": 19, "enemy_outpost_status": 20, "robot_health": [21, 22], "robot_bullets": [-12, -11], "total_damage_ally": 23, "total_damage_enemy": 24, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.base_health", 4500],
+          ["state.base_status", "old"],
+          ["state.base_shield", 100],
+          ["state.outpost_health", 1000],
+          ["state.outpost_status", "ONLINE"],
+          ["state.enemy_base_health", 3500],
+          ["state.enemy_base_status", "SHIELDED"],
+          ["state.enemy_base_shield", 100],
+          ["state.enemy_outpost_health", 900],
+          ["state.enemy_outpost_status", "ONLINE"]
+        ]
+      }
+    },
+    "GlobalUnitStatus_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "GlobalUnitStatus", "wire": {"hex": "08001000180020002800300038004000480050005a00620068007000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100}, "robot_bullets": []}, "base_health": 0, "base_shield": 0, "base_status": "0", "enemy_base_health": 0, "enemy_base_shield": 0, "enemy_base_status": "0", "enemy_outpost_health": 0, "enemy_outpost_status": "0", "official_robot_bullets": [], "outpost_health": 0, "outpost_status": "0", "projectile_allowance_17mm": 0, "projectile_allowance_42mm": 0},
+        "host_delta": {},
+        "events": [
+          ["decode", "GlobalUnitStatus", {"base_health": 0, "base_status": 0, "base_shield": 0, "outpost_health": 0, "outpost_status": 0, "enemy_base_health": 0, "enemy_base_status": 0, "enemy_base_shield": 0, "enemy_outpost_health": 0, "enemy_outpost_status": 0, "robot_health": [], "robot_bullets": [], "total_damage_ally": 0, "total_damage_enemy": 0, "__present__": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]}],
+          ["state.base_health", 0],
+          ["state.base_status", "0"],
+          ["state.base_shield", 0],
+          ["state.outpost_health", 0],
+          ["state.outpost_status", "0"],
+          ["state.enemy_base_health", 0],
+          ["state.enemy_base_status", "0"],
+          ["state.enemy_base_shield", 0],
+          ["state.enemy_outpost_health", 0],
+          ["state.enemy_outpost_status", "0"],
+          ["state.official_robot_bullets", []],
+          ["state.backend_stats.set", "robot_bullets", []],
+          ["state.projectile_allowance_17mm", 0],
+          ["state.projectile_allowance_42mm", 0]
+        ]
+      }
+    },
+    "MapClickInfo_full_wire": {
+      "input": {"messages": [{"name": "MapClickInfo", "wire": {"hex": "080b1203616263180d200e280f30103d0000e8404500000441"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"map_markers": [{"label": "OLD", "x": 1.0, "y": 2.0}, {"label": "MARK", "x": 7.25, "y": 8.25, "kind": "marker", "pulse": true, "is_send_all": 11, "robot_id": {"hex": "616263"}, "mode": 13, "enemy_id": 14, "ascii": 15, "type": 16, "map_x": 7.25, "map_y": 8.25}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "MapClickInfo", {"is_send_all": 11, "robot_id": {"hex": "616263"}, "mode": 13, "enemy_id": 14, "ascii": 15, "type": 16, "map_x": 7.25, "map_y": 8.25, "__present__": [1, 2, 3, 4, 5, 6, 7, 8]}],
+          ["state.map_markers", [{"label": "OLD", "x": 1.0, "y": 2.0}, {"label": "MARK", "x": 7.25, "y": 8.25, "kind": "marker", "pulse": true, "is_send_all": 11, "robot_id": {"hex": "616263"}, "mode": 13, "enemy_id": 14, "ascii": 15, "type": 16, "map_x": 7.25, "map_y": 8.25}]]
+        ]
+      }
+    },
+    "MapClickInfo_raw_empty": {
+      "input": {"messages": [{"name": "MapClickInfo", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"map_markers": [{"label": "OLD", "x": 1.0, "y": 2.0}, {"label": "MARK", "x": 0.0, "y": 0.0, "kind": "marker", "pulse": true}]},
+        "host_delta": {},
+        "events": [
+          ["state.map_markers", [{"label": "OLD", "x": 1.0, "y": 2.0}, {"label": "MARK", "x": 0.0, "y": 0.0, "kind": "marker", "pulse": true}]]
+        ]
+      }
+    },
+    "MapClickInfo_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "MapClickInfo", "data": {"is_send_all": 11, "robot_id": {"hex": "616263"}, "mode": 13, "enemy_id": 14, "ascii": 15, "type": 16, "map_x": 7.25, "map_y": 8.25, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"map_markers": [{"label": "OLD", "x": 1.0, "y": 2.0}, {"label": "MARK", "x": 0.0, "y": 0.0, "kind": "marker", "pulse": true}]},
+        "host_delta": {},
+        "events": [
+          ["state.map_markers", [{"label": "OLD", "x": 1.0, "y": 2.0}, {"label": "MARK", "x": 0.0, "y": 0.0, "kind": "marker", "pulse": true}]]
+        ]
+      }
+    },
+    "MapClickInfo_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "MapClickInfo", "wire": {"hex": "0800120018002000280030003d000000004500000000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"map_markers": [{"label": "OLD", "x": 1.0, "y": 2.0}, {"label": "MARK", "x": 0.0, "y": 0.0, "kind": "marker", "pulse": true, "is_send_all": 0, "robot_id": {"hex": ""}, "mode": 0, "enemy_id": 0, "ascii": 0, "type": 0, "map_x": 0.0, "map_y": 0.0}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "MapClickInfo", {"is_send_all": 0, "robot_id": {"hex": ""}, "mode": 0, "enemy_id": 0, "ascii": 0, "type": 0, "map_x": 0.0, "map_y": 0.0, "__present__": [1, 2, 3, 4, 5, 6, 7, 8]}],
+          ["state.map_markers", [{"label": "OLD", "x": 1.0, "y": 2.0}, {"label": "MARK", "x": 0.0, "y": 0.0, "kind": "marker", "pulse": true, "is_send_all": 0, "robot_id": {"hex": ""}, "mode": 0, "enemy_id": 0, "ascii": 0, "type": 0, "map_x": 0.0, "map_y": 0.0}]]
+        ]
+      }
+    },
+    "PenaltyInfo_full_wire": {
+      "input": {"messages": [{"name": "PenaltyInfo", "wire": {"hex": "080b100c180d"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"active_penalty": {"penalty_type": 11, "penalty_effect_sec": 12, "total_penalty_num": 13}, "penalties": [{"penalty_type": 1, "total_penalty_num": 2}, {"penalty_type": 11, "penalty_effect_sec": 12, "total_penalty_num": 13}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "PenaltyInfo", {"penalty_type": 11, "penalty_effect_sec": 12, "total_penalty_num": 13, "__present__": [1, 2, 3]}],
+          ["state.penalties", [{"penalty_type": 1, "total_penalty_num": 2}, {"penalty_type": 11, "penalty_effect_sec": 12, "total_penalty_num": 13}]],
+          ["state.active_penalty", {"penalty_type": 11, "penalty_effect_sec": 12, "total_penalty_num": 13}]
+        ]
+      }
+    },
+    "PenaltyInfo_raw_empty": {
+      "input": {"messages": [{"name": "PenaltyInfo", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"penalties": [{"penalty_type": 1, "total_penalty_num": 2}, {}]},
+        "host_delta": {},
+        "events": [
+          ["state.penalties", [{"penalty_type": 1, "total_penalty_num": 2}, {}]],
+          ["state.active_penalty", {}]
+        ]
+      }
+    },
+    "PenaltyInfo_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "PenaltyInfo", "data": {"penalty_type": 11, "penalty_effect_sec": 12, "total_penalty_num": 13, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"penalties": [{"penalty_type": 1, "total_penalty_num": 2}, {}]},
+        "host_delta": {},
+        "events": [
+          ["state.penalties", [{"penalty_type": 1, "total_penalty_num": 2}, {}]],
+          ["state.active_penalty", {}]
+        ]
+      }
+    },
+    "PenaltyInfo_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "PenaltyInfo", "wire": {"hex": "080010001800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"active_penalty": {"penalty_type": 0, "penalty_effect_sec": 0, "total_penalty_num": 0}, "penalties": [{"penalty_type": 1, "total_penalty_num": 2}, {"penalty_type": 0, "penalty_effect_sec": 0, "total_penalty_num": 0}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "PenaltyInfo", {"penalty_type": 0, "penalty_effect_sec": 0, "total_penalty_num": 0, "__present__": [1, 2, 3]}],
+          ["state.penalties", [{"penalty_type": 1, "total_penalty_num": 2}, {"penalty_type": 0, "penalty_effect_sec": 0, "total_penalty_num": 0}]],
+          ["state.active_penalty", {"penalty_type": 0, "penalty_effect_sec": 0, "total_penalty_num": 0}]
+        ]
+      }
+    },
+    "RadarInfoToClient_full_wire": {
+      "input": {"messages": [{"name": "RadarInfoToClient", "wire": {"hex": "0a06081110121801"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"radar_detections": [{"target_pos_x": 17, "target_pos_y": 18, "is_high_light": 1}], "radar_detections_at": 101.0},
+        "host_delta": {},
+        "events": [
+          ["decode", "RadarInfoToClient", {"robots": [{"target_pos_x": 17, "target_pos_y": 18, "is_high_light": 1}], "__present__": [1]}],
+          ["state.radar_detections", [{"target_pos_x": 17, "target_pos_y": 18, "is_high_light": 1}]],
+          ["clock", 101.0],
+          ["state.radar_detections_at", 101.0]
+        ]
+      }
+    },
+    "RadarInfoToClient_raw_empty": {
+      "input": {"messages": [{"name": "RadarInfoToClient", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"radar_detections": [], "radar_detections_at": 101.0},
+        "host_delta": {},
+        "events": [
+          ["state.radar_detections", []],
+          ["clock", 101.0],
+          ["state.radar_detections_at", 101.0]
+        ]
+      }
+    },
+    "RadarInfoToClient_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "RadarInfoToClient", "data": {"robots": [{"target_pos_x": 17, "target_pos_y": 18, "is_high_light": 1}], "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"radar_detections": [], "radar_detections_at": 101.0},
+        "host_delta": {},
+        "events": [
+          ["state.radar_detections", []],
+          ["clock", 101.0],
+          ["state.radar_detections_at", 101.0]
+        ]
+      }
+    },
+    "RadarInfoToClient_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "RadarInfoToClient", "wire": {"hex": ""}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "RadarInfoToClient", {}]
+        ]
+      }
+    },
+    "RobotDynamicStatus_full_wire": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "080b15000010401d00005040200e280f30103811401248135001581560016801"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"current_buffer_energy": 15, "current_chassis_energy": 14, "current_health": 11, "current_heat": 2.25, "economy_command_status": "", "economy_status_revision": 8, "remaining_ammo": 19, "robot_dynamics": {"3": {"current_health": 11, "current_heat": 2.25, "last_projectile_fire_rate": 3.25, "current_chassis_energy": 14, "current_buffer_energy": 15, "current_experience": 16, "experience_for_upgrade": 17, "total_projectiles_fired": 18, "remaining_ammo": 19, "is_out_of_combat": true, "out_of_combat_countdown": 21, "can_remote_heal": true, "can_remote_ammo": true}}, "total_projectiles_fired": 18},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 11, "current_heat": 2.25, "last_projectile_fire_rate": 3.25, "current_chassis_energy": 14, "current_buffer_energy": 15, "current_experience": 16, "experience_for_upgrade": 17, "total_projectiles_fired": 18, "remaining_ammo": 19, "is_out_of_combat": true, "out_of_combat_countdown": 21, "can_remote_heal": true, "can_remote_ammo": true, "__present__": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}],
+          ["state.robot_dynamics.3.update", {"current_health": 11, "current_heat": 2.25, "last_projectile_fire_rate": 3.25, "current_chassis_energy": 14, "current_buffer_energy": 15, "current_experience": 16, "experience_for_upgrade": 17, "total_projectiles_fired": 18, "remaining_ammo": 19, "is_out_of_combat": true, "out_of_combat_countdown": 21, "can_remote_heal": true, "can_remote_ammo": true}],
+          ["state.current_health", 11],
+          ["state.current_heat", 2.25],
+          ["state.current_chassis_energy", 14],
+          ["state.current_buffer_energy", 15],
+          ["state.total_projectiles_fired", 18],
+          ["state.remaining_ammo", 19],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "RobotDynamicStatus_raw_empty": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.robot_dynamics.3.update", {}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "data": {"current_health": 11, "current_heat": 2.25, "last_projectile_fire_rate": 3.25, "current_chassis_energy": 14, "current_buffer_energy": 15, "current_experience": 16, "experience_for_upgrade": 17, "total_projectiles_fired": 18, "remaining_ammo": 19, "is_out_of_combat": true, "out_of_combat_countdown": 21, "can_remote_heal": true, "can_remote_ammo": true, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.robot_dynamics.3.update", {}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "080015000000001d000000002000280030003800400048005000580060006800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"can_remote_ammo": false, "can_remote_heal": false, "current_buffer_energy": 0, "current_chassis_energy": 0, "current_health": 0, "current_heat": 0.0, "economy_command_status": "", "economy_status_revision": 8, "out_of_combat": false, "remaining_ammo": 0, "robot_dynamics": {"3": {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false}}, "total_projectiles_fired": 0},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}],
+          ["state.robot_dynamics.3.update", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false}],
+          ["state.current_health", 0],
+          ["state.current_heat", 0.0],
+          ["state.current_chassis_energy", 0],
+          ["state.current_buffer_energy", 0],
+          ["state.total_projectiles_fired", 0],
+          ["state.remaining_ammo", 0],
+          ["state.out_of_combat", false],
+          ["state.can_remote_heal", false],
+          ["state.can_remote_ammo", false],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "RobotInjuryStat_full_wire": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "080b100c180d200e280f30103811401248135014"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"20": {"total_damage": 11, "collision_damage": 12, "small_projectile_damage": 13, "large_projectile_damage": 14, "dart_splash_damage": 15, "module_offline_damage": 16, "offline_damage": 17, "penalty_damage": 18, "server_kill_damage": 19, "killer_id": 20}}, "injury_stats_initialized": true, "projectile_damage_large_initialized": true, "projectile_damage_large_total": 14, "projectile_damage_small_initialized": true, "projectile_damage_small_total": 13},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 11, "collision_damage": 12, "small_projectile_damage": 13, "large_projectile_damage": 14, "dart_splash_damage": 15, "module_offline_damage": 16, "offline_damage": 17, "penalty_damage": 18, "server_kill_damage": 19, "killer_id": 20, "__present__": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}],
+          ["state.injury_stats.setdefault", 20, {}],
+          ["state.injury_stats.20.update", {"total_damage": 11, "collision_damage": 12, "small_projectile_damage": 13, "large_projectile_damage": 14, "dart_splash_damage": 15, "module_offline_damage": 16, "offline_damage": 17, "penalty_damage": 18, "server_kill_damage": 19, "killer_id": 20}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", true],
+          ["state.projectile_damage_small_total", 13],
+          ["state.projectile_damage_large_total", 14]
+        ]
+      }
+    },
+    "RobotInjuryStat_raw_empty": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {}}},
+        "host_delta": {},
+        "events": [
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {}]
+        ]
+      }
+    },
+    "RobotInjuryStat_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "data": {"total_damage": 11, "collision_damage": 12, "small_projectile_damage": 13, "large_projectile_damage": 14, "dart_splash_damage": 15, "module_offline_damage": 16, "offline_damage": 17, "penalty_damage": 18, "server_kill_damage": 19, "killer_id": 20, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {}}},
+        "host_delta": {},
+        "events": [
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {}]
+        ]
+      }
+    },
+    "RobotInjuryStat_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "0800100018002000280030003800400048005000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0}}, "injury_stats_initialized": true, "projectile_damage_large_initialized": true, "projectile_damage_large_total": 0, "projectile_damage_small_initialized": true, "projectile_damage_small_total": 0},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", true],
+          ["state.projectile_damage_small_total", 0],
+          ["state.projectile_damage_large_total", 0]
+        ]
+      }
+    },
+    "RobotModuleStatus_full_wire": {
+      "input": {"messages": [{"name": "RobotModuleStatus", "wire": {"hex": "080b100c180d200e280f301038114012481350145815"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_module_status": {"armor": 17, "power_manager": 11, "rfid": 12, "light_strip": 13, "small_shooter": 14, "big_shooter": 15, "uwb": 16, "video_transmission": 18, "capacitor": 19, "main_controller": 20, "laser_detection_module": 21}, "robot_modules": {"3": {"armor": 17, "power_manager": 11, "rfid": 12, "light_strip": 13, "small_shooter": 14, "big_shooter": 15, "uwb": 16, "video_transmission": 18, "capacitor": 19, "main_controller": 20, "laser_detection_module": 21}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotModuleStatus", {"power_manager": 11, "rfid": 12, "light_strip": 13, "small_shooter": 14, "big_shooter": 15, "uwb": 16, "armor": 17, "video_transmission": 18, "capacitor": 19, "main_controller": 20, "laser_detection_module": 21, "__present__": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}],
+          ["state.robot_module_status.update", {"power_manager": 11, "rfid": 12, "light_strip": 13, "small_shooter": 14, "big_shooter": 15, "uwb": 16, "armor": 17, "video_transmission": 18, "capacitor": 19, "main_controller": 20, "laser_detection_module": 21}],
+          ["state.robot_modules.3.update", {"power_manager": 11, "rfid": 12, "light_strip": 13, "small_shooter": 14, "big_shooter": 15, "uwb": 16, "armor": 17, "video_transmission": 18, "capacitor": 19, "main_controller": 20, "laser_detection_module": 21}]
+        ]
+      }
+    },
+    "RobotModuleStatus_raw_empty": {
+      "input": {"messages": [{"name": "RobotModuleStatus", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.robot_module_status.update", {}],
+          ["state.robot_modules.3.update", {}]
+        ]
+      }
+    },
+    "RobotModuleStatus_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "RobotModuleStatus", "data": {"power_manager": 11, "rfid": 12, "light_strip": 13, "small_shooter": 14, "big_shooter": 15, "uwb": 16, "armor": 17, "video_transmission": 18, "capacitor": 19, "main_controller": 20, "laser_detection_module": 21, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.robot_module_status.update", {}],
+          ["state.robot_modules.3.update", {}]
+        ]
+      }
+    },
+    "RobotModuleStatus_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "RobotModuleStatus", "wire": {"hex": "08001000180020002800300038004000480050005800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_module_status": {"armor": 0, "power_manager": 0, "rfid": 0, "light_strip": 0, "small_shooter": 0, "big_shooter": 0, "uwb": 0, "video_transmission": 0, "capacitor": 0, "main_controller": 0, "laser_detection_module": 0}, "robot_modules": {"3": {"armor": 0, "power_manager": 0, "rfid": 0, "light_strip": 0, "small_shooter": 0, "big_shooter": 0, "uwb": 0, "video_transmission": 0, "capacitor": 0, "main_controller": 0, "laser_detection_module": 0}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotModuleStatus", {"power_manager": 0, "rfid": 0, "light_strip": 0, "small_shooter": 0, "big_shooter": 0, "uwb": 0, "armor": 0, "video_transmission": 0, "capacitor": 0, "main_controller": 0, "laser_detection_module": 0, "__present__": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}],
+          ["state.robot_module_status.update", {"power_manager": 0, "rfid": 0, "light_strip": 0, "small_shooter": 0, "big_shooter": 0, "uwb": 0, "armor": 0, "video_transmission": 0, "capacitor": 0, "main_controller": 0, "laser_detection_module": 0}],
+          ["state.robot_modules.3.update", {"power_manager": 0, "rfid": 0, "light_strip": 0, "small_shooter": 0, "big_shooter": 0, "uwb": 0, "armor": 0, "video_transmission": 0, "capacitor": 0, "main_controller": 0, "laser_detection_module": 0}]
+        ]
+      }
+    },
+    "RobotPathPlanInfo_full_wire": {
+      "input": {"messages": [{"name": "RobotPathPlanInfo", "wire": {"hex": "080b100c180d2214fcffffffffffffffff01fdffffffffffffffff012a14fbffffffffffffffff01fcffffffffffffffff013010"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"path_plan": {"intention": 11, "start_pos_x": 12, "start_pos_y": 13, "offset_x": [-4, -3], "offset_y": [-5, -4], "sender_id": 16}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotPathPlanInfo", {"intention": 11, "start_pos_x": 12, "start_pos_y": 13, "offset_x": [-4, -3], "offset_y": [-5, -4], "sender_id": 16, "__present__": [1, 2, 3, 4, 5, 6]}],
+          ["state.path_plan", {"intention": 11, "start_pos_x": 12, "start_pos_y": 13, "offset_x": [-4, -3], "offset_y": [-5, -4], "sender_id": 16}]
+        ]
+      }
+    },
+    "RobotPathPlanInfo_raw_empty": {
+      "input": {"messages": [{"name": "RobotPathPlanInfo", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.path_plan", {}]
+        ]
+      }
+    },
+    "RobotPathPlanInfo_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "RobotPathPlanInfo", "data": {"intention": 11, "start_pos_x": 12, "start_pos_y": 13, "offset_x": [-4, -3], "offset_y": [-5, -4], "sender_id": 16, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.path_plan", {}]
+        ]
+      }
+    },
+    "RobotPathPlanInfo_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "RobotPathPlanInfo", "wire": {"hex": "08001000180022002a003000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"path_plan": {"intention": 0, "start_pos_x": 0, "start_pos_y": 0, "offset_x": [], "offset_y": [], "sender_id": 0}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotPathPlanInfo", {"intention": 0, "start_pos_x": 0, "start_pos_y": 0, "offset_x": [], "offset_y": [], "sender_id": 0, "__present__": [1, 2, 3, 4, 5, 6]}],
+          ["state.path_plan", {"intention": 0, "start_pos_x": 0, "start_pos_y": 0, "offset_x": [], "offset_y": [], "sender_id": 0}]
+        ]
+      }
+    },
+    "RobotPerformanceSelectionSync_full_wire": {
+      "input": {"messages": [{"name": "RobotPerformanceSelectionSync", "wire": {"hex": "080b100c180d"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"performance_sync": {"shooter": 11, "chassis": 12, "sentry_control": 13}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotPerformanceSelectionSync", {"shooter": 11, "chassis": 12, "sentry_control": 13, "__present__": [1, 2, 3]}],
+          ["state.performance_sync.update", {"shooter": 11, "chassis": 12, "sentry_control": 13}]
+        ]
+      }
+    },
+    "RobotPerformanceSelectionSync_raw_empty": {
+      "input": {"messages": [{"name": "RobotPerformanceSelectionSync", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.performance_sync.update", {}]
+        ]
+      }
+    },
+    "RobotPerformanceSelectionSync_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "RobotPerformanceSelectionSync", "data": {"shooter": 11, "chassis": 12, "sentry_control": 13, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.performance_sync.update", {}]
+        ]
+      }
+    },
+    "RobotPerformanceSelectionSync_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "RobotPerformanceSelectionSync", "wire": {"hex": "080010001800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"performance_sync": {"shooter": 0, "chassis": 0, "sentry_control": 0}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotPerformanceSelectionSync", {"shooter": 0, "chassis": 0, "sentry_control": 0, "__present__": [1, 2, 3]}],
+          ["state.performance_sync.update", {"shooter": 0, "chassis": 0, "sentry_control": 0}]
+        ]
+      }
+    },
+    "RobotPosition_full_wire": {
+      "input": {"messages": [{"name": "RobotPosition", "wire": {"hex": "0d0000a03f15000010401d000050402500008840280f"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_positions": [{"robot_id": 3, "x": 2.0, "y": 3.0, "yaw": 4.0}, {"x": 1.25, "y": 2.25, "z": 3.25, "yaw": 4.25, "robot_id": 15}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotPosition", {"x": 1.25, "y": 2.25, "z": 3.25, "yaw": 4.25, "robot_id": 15, "__present__": [1, 2, 3, 4, 5]}],
+          ["state.robot_positions", [{"robot_id": 3, "x": 2.0, "y": 3.0, "yaw": 4.0}, {"x": 1.25, "y": 2.25, "z": 3.25, "yaw": 4.25, "robot_id": 15}]]
+        ]
+      }
+    },
+    "RobotPosition_raw_empty": {
+      "input": {"messages": [{"name": "RobotPosition", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.robot_positions", [{"robot_id": 3, "x": 2.0, "y": 3.0, "yaw": 4.0}]]
+        ]
+      }
+    },
+    "RobotPosition_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "RobotPosition", "data": {"x": 1.25, "y": 2.25, "z": 3.25, "yaw": 4.25, "robot_id": 15, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.robot_positions", [{"robot_id": 3, "x": 2.0, "y": 3.0, "yaw": 4.0}]]
+        ]
+      }
+    },
+    "RobotPosition_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "RobotPosition", "wire": {"hex": "0d0000000015000000001d0000000025000000002800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_positions": [{"robot_id": 3, "x": 0.0, "y": 0.0, "yaw": 0.0, "z": 0.0}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotPosition", {"x": 0.0, "y": 0.0, "z": 0.0, "yaw": 0.0, "robot_id": 0, "__present__": [1, 2, 3, 4, 5]}],
+          ["state.robot_positions", [{"robot_id": 3, "x": 0.0, "y": 0.0, "yaw": 0.0, "z": 0.0}]]
+        ]
+      }
+    },
+    "RobotRespawnStatus_full_wire": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "wire": {"hex": "0801100c180d2001280f3001"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 12, "is_pending_respawn": true, "current_respawn_progress": 13, "can_free_respawn": true, "gold_cost_for_respawn": 15, "can_pay_for_respawn": true}}, "economy_command_status": "", "economy_status_revision": 8, "respawn_gold_cost": 15, "respawn_pending": true, "respawn_progress": 1.0},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotRespawnStatus", {"is_pending_respawn": true, "total_respawn_progress": 12, "current_respawn_progress": 13, "can_free_respawn": true, "gold_cost_for_respawn": 15, "can_pay_for_respawn": true, "__present__": [1, 2, 3, 4, 5, 6]}],
+          ["state.respawn_pending", true],
+          ["state.backend_stats.respawn_status.update", {"is_pending_respawn": true, "total_respawn_progress": 12, "current_respawn_progress": 13, "can_free_respawn": true, "gold_cost_for_respawn": 15, "can_pay_for_respawn": true}],
+          ["state.respawn_progress", 1.0],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 15],
+          ["state.respawn_can_pay", true],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "RobotRespawnStatus_raw_empty": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.respawn_pending", false],
+          ["state.backend_stats.respawn_status.update", {}],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 12],
+          ["state.respawn_can_pay", true]
+        ]
+      }
+    },
+    "RobotRespawnStatus_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "data": {"is_pending_respawn": true, "total_respawn_progress": 12, "current_respawn_progress": 13, "can_free_respawn": true, "gold_cost_for_respawn": 15, "can_pay_for_respawn": true, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.respawn_pending", false],
+          ["state.backend_stats.respawn_status.update", {}],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 12],
+          ["state.respawn_can_pay", true]
+        ]
+      }
+    },
+    "RobotRespawnStatus_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "wire": {"hex": "080010001800200028003000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 0, "is_pending_respawn": false, "current_respawn_progress": 0, "can_free_respawn": false, "gold_cost_for_respawn": 0, "can_pay_for_respawn": false}}, "respawn_can_free": false, "respawn_can_pay": false, "respawn_gold_cost": 0, "respawn_progress": 0.0},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotRespawnStatus", {"is_pending_respawn": false, "total_respawn_progress": 0, "current_respawn_progress": 0, "can_free_respawn": false, "gold_cost_for_respawn": 0, "can_pay_for_respawn": false, "__present__": [1, 2, 3, 4, 5, 6]}],
+          ["state.respawn_pending", false],
+          ["state.backend_stats.respawn_status.update", {"is_pending_respawn": false, "total_respawn_progress": 0, "current_respawn_progress": 0, "can_free_respawn": false, "gold_cost_for_respawn": 0, "can_pay_for_respawn": false}],
+          ["state.respawn_progress", 0.0],
+          ["state.respawn_can_free", false],
+          ["state.respawn_gold_cost", 0],
+          ["state.respawn_can_pay", false]
+        ]
+      }
+    },
+    "RobotStaticStatus_full_wire": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "080b100c180d2067280f301038114012481350145d00003441601668177018"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"current_health": 19, "economy_command_status": "", "economy_status_revision": 8, "heat_cooldown_rate": 11.25, "level": 18, "max_buffer_energy": 23, "max_health": 19, "max_heat": 20.0, "performance_sync": {"shooter": 16, "chassis": 17}, "power_limit": 22, "projectile_allowance_17mm": 30, "projectile_allowance_42mm": 0, "robot_id": 103, "robot_statics": {"3": {"level": 2, "max_health": 600}, "103": {"connection_state": 11, "field_state": 12, "alive_state": 13, "robot_id": 103, "robot_type": 15, "performance_system_shooter": 16, "performance_system_chassis": 17, "level": 18, "max_health": 19, "max_heat": 20, "heat_cooldown_rate": 11.25, "max_power": 22, "max_buffer_energy": 23, "max_chassis_energy": 24}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 11, "field_state": 12, "alive_state": 13, "robot_id": 103, "robot_type": 15, "performance_system_shooter": 16, "performance_system_chassis": 17, "level": 18, "max_health": 19, "max_heat": 20, "heat_cooldown_rate": 11.25, "max_power": 22, "max_buffer_energy": 23, "max_chassis_energy": 24, "__present__": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]}],
+          ["state.robot_id", 103],
+          ["state.projectile_allowance_17mm", 30],
+          ["state.projectile_allowance_42mm", 0],
+          ["state.robot_statics.setdefault", 103, {}],
+          ["state.robot_statics.103.update", {"connection_state": 11, "field_state": 12, "alive_state": 13, "robot_id": 103, "robot_type": 15, "performance_system_shooter": 16, "performance_system_chassis": 17, "level": 18, "max_health": 19, "max_heat": 20, "heat_cooldown_rate": 11.25, "max_power": 22, "max_buffer_energy": 23, "max_chassis_energy": 24}],
+          ["state.level", 18],
+          ["state.max_health", 19],
+          ["state.current_health", 19],
+          ["state.max_heat", 20.0],
+          ["state.heat_cooldown_rate", 11.25],
+          ["state.power_limit", 22],
+          ["state.max_buffer_energy", 23],
+          ["state.performance_sync.set", "shooter", 16],
+          ["state.performance_sync.set", "chassis", 17],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "RobotStaticStatus_raw_empty": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.robot_statics.3.update", {}]
+        ]
+      }
+    },
+    "RobotStaticStatus_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "data": {"connection_state": 11, "field_state": 12, "alive_state": 13, "robot_id": 103, "robot_type": 15, "performance_system_shooter": 16, "performance_system_chassis": 17, "level": 18, "max_health": 19, "max_heat": 20, "heat_cooldown_rate": 11.25, "max_power": 22, "max_buffer_energy": 23, "max_chassis_energy": 24, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.robot_statics.3.update", {}]
+        ]
+      }
+    },
+    "RobotStaticStatus_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "08001000180020002800300038004000480050005d00000000600068007000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"performance_sync": {"shooter": 0, "chassis": 0}, "robot_statics": {"3": {"level": 0, "max_health": 0, "connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]}],
+          ["state.robot_statics.3.update", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0}],
+          ["state.performance_sync.set", "shooter", 0],
+          ["state.performance_sync.set", "chassis", 0]
+        ]
+      }
+    },
+    "RuneStatusSync_full_wire": {
+      "input": {"messages": [{"name": "RuneStatusSync", "wire": {"hex": "080b100c1d00005040"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"energy_rune_phase": "INACTIVE", "energy_rune_progress": 325, "rune_status": {"rune_status": 11, "average_rings": 3.25, "activated_arms": 12}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RuneStatusSync", {"rune_status": 11, "activated_arms": 12, "average_rings": 3.25, "__present__": [1, 2, 3]}],
+          ["state.rune_status.update", {"rune_status": 11, "activated_arms": 12, "average_rings": 3.25}],
+          ["state.energy_rune_phase", "INACTIVE"],
+          ["state.energy_rune_progress", 325]
+        ]
+      }
+    },
+    "RuneStatusSync_raw_empty": {
+      "input": {"messages": [{"name": "RuneStatusSync", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.rune_status.update", {}]
+        ]
+      }
+    },
+    "RuneStatusSync_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "RuneStatusSync", "data": {"rune_status": 11, "activated_arms": 12, "average_rings": 3.25, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.rune_status.update", {}]
+        ]
+      }
+    },
+    "RuneStatusSync_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "RuneStatusSync", "wire": {"hex": "080010001d00000000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"energy_rune_phase": "INACTIVE", "energy_rune_progress": 0, "rune_status": {"rune_status": 0, "average_rings": 0.0, "activated_arms": 0}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RuneStatusSync", {"rune_status": 0, "activated_arms": 0, "average_rings": 0.0, "__present__": [1, 2, 3]}],
+          ["state.rune_status.update", {"rune_status": 0, "activated_arms": 0, "average_rings": 0.0}],
+          ["state.energy_rune_phase", "INACTIVE"],
+          ["state.energy_rune_progress", 0]
+        ]
+      }
+    },
+    "SentryCtrlResult_full_wire": {
+      "input": {"messages": [{"name": "SentryCtrlResult", "wire": {"hex": "080b100c"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"sentry_ctrl_result": {"command_id": 11, "result_code": 12}},
+        "host_delta": {},
+        "events": [
+          ["decode", "SentryCtrlResult", {"command_id": 11, "result_code": 12, "__present__": [1, 2]}],
+          ["state.sentry_ctrl_result", {"command_id": 11, "result_code": 12}]
+        ]
+      }
+    },
+    "SentryCtrlResult_raw_empty": {
+      "input": {"messages": [{"name": "SentryCtrlResult", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.sentry_ctrl_result", {}]
+        ]
+      }
+    },
+    "SentryCtrlResult_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "SentryCtrlResult", "data": {"command_id": 11, "result_code": 12, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.sentry_ctrl_result", {}]
+        ]
+      }
+    },
+    "SentryCtrlResult_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "SentryCtrlResult", "wire": {"hex": "08001000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"sentry_ctrl_result": {"command_id": 0, "result_code": 0}},
+        "host_delta": {},
+        "events": [
+          ["decode", "SentryCtrlResult", {"command_id": 0, "result_code": 0, "__present__": [1, 2]}],
+          ["state.sentry_ctrl_result", {"command_id": 0, "result_code": 0}]
+        ]
+      }
+    },
+    "SentryStatusSync_full_wire": {
+      "input": {"messages": [{"name": "SentryStatusSync", "wire": {"hex": "080b1001"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"sentry_status": {"posture_id": 11, "is_weakened": true}},
+        "host_delta": {},
+        "events": [
+          ["decode", "SentryStatusSync", {"posture_id": 11, "is_weakened": true, "__present__": [1, 2]}],
+          ["state.sentry_status.update", {"posture_id": 11, "is_weakened": true}]
+        ]
+      }
+    },
+    "SentryStatusSync_raw_empty": {
+      "input": {"messages": [{"name": "SentryStatusSync", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.sentry_status.update", {}]
+        ]
+      }
+    },
+    "SentryStatusSync_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "SentryStatusSync", "data": {"posture_id": 11, "is_weakened": true, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.sentry_status.update", {}]
+        ]
+      }
+    },
+    "SentryStatusSync_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "SentryStatusSync", "wire": {"hex": "08001000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"sentry_status": {"posture_id": 0, "is_weakened": false}},
+        "host_delta": {},
+        "events": [
+          ["decode", "SentryStatusSync", {"posture_id": 0, "is_weakened": false, "__present__": [1, 2]}],
+          ["state.sentry_status.update", {"posture_id": 0, "is_weakened": false}]
+        ]
+      }
+    },
+    "TechCoreMotionStateSync_full_wire": {
+      "input": {"messages": [{"name": "TechCoreMotionStateSync", "wire": {"hex": "080b100c180d200e280f301038114012"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"tech_core": {"maximum_difficulty_level": 11, "basic_state": 12, "putin_state": 13, "move_state": 14, "rotate_state": 15, "enemy_core_status": 16, "remain_time_all": 17, "remain_time_step": 18}},
+        "host_delta": {},
+        "events": [
+          ["decode", "TechCoreMotionStateSync", {"maximum_difficulty_level": 11, "basic_state": 12, "putin_state": 13, "move_state": 14, "rotate_state": 15, "enemy_core_status": 16, "remain_time_all": 17, "remain_time_step": 18, "__present__": [1, 2, 3, 4, 5, 6, 7, 8]}],
+          ["state.tech_core.update", {"maximum_difficulty_level": 11, "basic_state": 12, "putin_state": 13, "move_state": 14, "rotate_state": 15, "enemy_core_status": 16, "remain_time_all": 17, "remain_time_step": 18}]
+        ]
+      }
+    },
+    "TechCoreMotionStateSync_raw_empty": {
+      "input": {"messages": [{"name": "TechCoreMotionStateSync", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.tech_core.update", {}]
+        ]
+      }
+    },
+    "TechCoreMotionStateSync_absent_fields_ignore_decoder_defaults": {
+      "input": {"messages": [{"name": "TechCoreMotionStateSync", "data": {"maximum_difficulty_level": 11, "basic_state": 12, "putin_state": 13, "move_state": 14, "rotate_state": 15, "enemy_core_status": 16, "remain_time_all": 17, "remain_time_step": 18, "__present__": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["state.tech_core.update", {}]
+        ]
+      }
+    },
+    "TechCoreMotionStateSync_explicit_zeros_wire": {
+      "input": {"messages": [{"name": "TechCoreMotionStateSync", "wire": {"hex": "08001000180020002800300038004000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"tech_core": {"maximum_difficulty_level": 0, "basic_state": 0, "putin_state": 0, "move_state": 0, "rotate_state": 0, "enemy_core_status": 0, "remain_time_all": 0, "remain_time_step": 0}},
+        "host_delta": {},
+        "events": [
+          ["decode", "TechCoreMotionStateSync", {"maximum_difficulty_level": 0, "basic_state": 0, "putin_state": 0, "move_state": 0, "rotate_state": 0, "enemy_core_status": 0, "remain_time_all": 0, "remain_time_step": 0, "__present__": [1, 2, 3, 4, 5, 6, 7, 8]}],
+          ["state.tech_core.update", {"maximum_difficulty_level": 0, "basic_state": 0, "putin_state": 0, "move_state": 0, "rotate_state": 0, "enemy_core_status": 0, "remain_time_all": 0, "remain_time_step": 0}]
+        ]
+      }
+    },
+    "GameStatus_only_current_round": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "080b"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"current_round": 11},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 11, "total_rounds": 0, "red_score": 0, "blue_score": 0, "current_stage": 0, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [1]}],
+          ["state.current_round", 11],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "GameStatus_only_total_rounds": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "100c"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"total_rounds": 12},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 12, "red_score": 0, "blue_score": 0, "current_stage": 0, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [2]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 12],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "GameStatus_only_red_score": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "180d"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"red_score": 13},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 13, "blue_score": 0, "current_stage": 0, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [3]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 13],
+          ["state.blue_score", 7],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "GameStatus_only_blue_score": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "200e"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"blue_score": 14},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 0, "blue_score": 14, "current_stage": 0, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [4]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 14],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "GameStatus_only_current_stage": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "2804"}}]},
+      "observed": {
+        "safety": {"current_stage": "4", "stage_seen": true},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {"_last_logged_stage": "MATCH"},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 0, "blue_score": 0, "current_stage": 4, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [5]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.current_stage", "MATCH"],
+          ["safety.stage", 4],
+          ["host._last_logged_stage", "MATCH"],
+          ["log.match_stage", {"raw_stage": 4, "stage": "MATCH", "round": 2}],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "GameStatus_only_stage_countdown_sec": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "30faffffffffffffffff01"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"stage_countdown_sec": 0},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 0, "blue_score": 0, "current_stage": 0, "stage_countdown_sec": -6, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [6]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.stage_countdown_sec", 0],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "GameStatus_only_stage_elapsed_sec": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "38f9ffffffffffffffff01"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"stage_elapsed_sec": 0},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 0, "blue_score": 0, "current_stage": 0, "stage_countdown_sec": 0, "stage_elapsed_sec": -7, "is_paused": false, "__present__": [7]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 0]
+        ]
+      }
+    },
+    "GameStatus_only_is_paused": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "4001"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 0, "blue_score": 0, "current_stage": 0, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "is_paused": true, "__present__": [8]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_connection_state": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "080b"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_statics": {"3": {"level": 2, "max_health": 600, "connection_state": 11}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 11, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [1]}],
+          ["state.robot_statics.3.update", {"connection_state": 11}]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_field_state": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "100c"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_statics": {"3": {"level": 2, "max_health": 600, "field_state": 12}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 12, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [2]}],
+          ["state.robot_statics.3.update", {"field_state": 12}]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_alive_state": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "180d"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_statics": {"3": {"level": 2, "max_health": 600, "alive_state": 13}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 13, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [3]}],
+          ["state.robot_statics.3.update", {"alive_state": 13}]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_robot_id": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "2067"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"projectile_allowance_17mm": 30, "projectile_allowance_42mm": 0, "robot_id": 103, "robot_statics": {"3": {"level": 2, "max_health": 600}, "103": {"robot_id": 103}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 103, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [4]}],
+          ["state.robot_id", 103],
+          ["state.projectile_allowance_17mm", 30],
+          ["state.projectile_allowance_42mm", 0],
+          ["state.robot_statics.setdefault", 103, {}],
+          ["state.robot_statics.103.update", {"robot_id": 103}]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_robot_type": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "280f"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_statics": {"3": {"level": 2, "max_health": 600, "robot_type": 15}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 15, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [5]}],
+          ["state.robot_statics.3.update", {"robot_type": 15}]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_performance_system_shooter": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "3010"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"performance_sync": {"shooter": 16, "chassis": 2}, "robot_statics": {"3": {"level": 2, "max_health": 600, "performance_system_shooter": 16}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 16, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [6]}],
+          ["state.robot_statics.3.update", {"performance_system_shooter": 16}],
+          ["state.performance_sync.set", "shooter", 16]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_performance_system_chassis": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "3811"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"performance_sync": {"shooter": 1, "chassis": 17}, "robot_statics": {"3": {"level": 2, "max_health": 600, "performance_system_chassis": 17}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 17, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [7]}],
+          ["state.robot_statics.3.update", {"performance_system_chassis": 17}],
+          ["state.performance_sync.set", "chassis", 17]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_level": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "4012"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"level": 18, "robot_statics": {"3": {"level": 18, "max_health": 600}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 18, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [8]}],
+          ["state.robot_statics.3.update", {"level": 18}],
+          ["state.level", 18]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_max_health": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "4813"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"current_health": 19, "economy_command_status": "", "economy_status_revision": 8, "max_health": 19, "robot_statics": {"3": {"level": 2, "max_health": 19}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 19, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [9]}],
+          ["state.robot_statics.3.update", {"max_health": 19}],
+          ["state.max_health", 19],
+          ["state.current_health", 19],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_max_heat": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "5014"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"max_heat": 20.0, "robot_statics": {"3": {"level": 2, "max_health": 600, "max_heat": 20}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 20, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [10]}],
+          ["state.robot_statics.3.update", {"max_heat": 20}],
+          ["state.max_heat", 20.0]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_heat_cooldown_rate": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "5d00003441"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"heat_cooldown_rate": 11.25, "robot_statics": {"3": {"level": 2, "max_health": 600, "heat_cooldown_rate": 11.25}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 11.25, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [11]}],
+          ["state.robot_statics.3.update", {"heat_cooldown_rate": 11.25}],
+          ["state.heat_cooldown_rate", 11.25]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_max_power": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "6016"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"power_limit": 22, "robot_statics": {"3": {"level": 2, "max_health": 600, "max_power": 22}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 22, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [12]}],
+          ["state.robot_statics.3.update", {"max_power": 22}],
+          ["state.power_limit", 22]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_max_buffer_energy": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "6817"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"max_buffer_energy": 23, "robot_statics": {"3": {"level": 2, "max_health": 600, "max_buffer_energy": 23}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 23, "max_chassis_energy": 0, "__present__": [13]}],
+          ["state.robot_statics.3.update", {"max_buffer_energy": 23}],
+          ["state.max_buffer_energy", 23]
+        ]
+      }
+    },
+    "RobotStaticStatus_only_max_chassis_energy": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "7018"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_statics": {"3": {"level": 2, "max_health": 600, "max_chassis_energy": 24}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 24, "__present__": [14]}],
+          ["state.robot_statics.3.update", {"max_chassis_energy": 24}]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_current_health": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "080b"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"current_health": 11, "economy_command_status": "", "economy_status_revision": 8, "robot_dynamics": {"3": {"current_health": 11, "current_heat": 12.5}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 11, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [1]}],
+          ["state.robot_dynamics.3.update", {"current_health": 11}],
+          ["state.current_health", 11],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_current_heat": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "1500001040"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"current_heat": 2.25, "robot_dynamics": {"3": {"current_health": 500, "current_heat": 2.25}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 2.25, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [2]}],
+          ["state.robot_dynamics.3.update", {"current_heat": 2.25}],
+          ["state.current_health", 500],
+          ["state.current_heat", 2.25],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_last_projectile_fire_rate": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "1d00005040"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "last_projectile_fire_rate": 3.25}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 3.25, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [3]}],
+          ["state.robot_dynamics.3.update", {"last_projectile_fire_rate": 3.25}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_current_chassis_energy": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "200e"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"current_chassis_energy": 14, "robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "current_chassis_energy": 14}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 14, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [4]}],
+          ["state.robot_dynamics.3.update", {"current_chassis_energy": 14}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 14],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_current_buffer_energy": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "280f"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"current_buffer_energy": 15, "robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "current_buffer_energy": 15}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 15, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [5]}],
+          ["state.robot_dynamics.3.update", {"current_buffer_energy": 15}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 15],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_current_experience": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "3010"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "current_experience": 16}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 16, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [6]}],
+          ["state.robot_dynamics.3.update", {"current_experience": 16}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_experience_for_upgrade": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "3811"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "experience_for_upgrade": 17}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 17, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [7]}],
+          ["state.robot_dynamics.3.update", {"experience_for_upgrade": 17}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_total_projectiles_fired": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "4012"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "total_projectiles_fired": 18}}, "total_projectiles_fired": 18},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 18, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [8]}],
+          ["state.robot_dynamics.3.update", {"total_projectiles_fired": 18}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 18],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_remaining_ammo": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "4813"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"economy_command_status": "", "economy_status_revision": 8, "remaining_ammo": 19, "robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "remaining_ammo": 19}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 19, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [9]}],
+          ["state.robot_dynamics.3.update", {"remaining_ammo": 19}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 19],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_is_out_of_combat": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "5001"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "is_out_of_combat": true}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": true, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [10]}],
+          ["state.robot_dynamics.3.update", {"is_out_of_combat": true}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_out_of_combat_countdown": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "5815"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "out_of_combat_countdown": 21}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 21, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [11]}],
+          ["state.robot_dynamics.3.update", {"out_of_combat_countdown": 21}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_can_remote_heal": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "6001"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "can_remote_heal": true}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": true, "can_remote_ammo": false, "__present__": [12]}],
+          ["state.robot_dynamics.3.update", {"can_remote_heal": true}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotDynamicStatus_only_can_remote_ammo": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "6801"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_dynamics": {"3": {"current_health": 500, "current_heat": 12.5, "can_remote_ammo": true}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": true, "__present__": [13]}],
+          ["state.robot_dynamics.3.update", {"can_remote_ammo": true}],
+          ["state.current_health", 500],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "RobotInjuryStat_only_total_damage": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "080b"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"total_damage": 11}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 11, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [1]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"total_damage": 11}]
+        ]
+      }
+    },
+    "RobotInjuryStat_only_collision_damage": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "100c"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"collision_damage": 12}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 12, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [2]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"collision_damage": 12}]
+        ]
+      }
+    },
+    "RobotInjuryStat_only_small_projectile_damage": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "180d"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"small_projectile_damage": 13}}, "injury_stats_initialized": true, "projectile_damage_small_initialized": true, "projectile_damage_small_total": 13},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 13, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [3]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"small_projectile_damage": 13}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", false],
+          ["state.projectile_damage_small_total", 13],
+          ["state.projectile_damage_large_total", 30]
+        ]
+      }
+    },
+    "RobotInjuryStat_only_large_projectile_damage": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "200e"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"large_projectile_damage": 14}}, "injury_stats_initialized": true, "projectile_damage_large_initialized": true, "projectile_damage_large_total": 14},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 14, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [4]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"large_projectile_damage": 14}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", false],
+          ["state.projectile_damage_large_initialized", true],
+          ["state.projectile_damage_small_total", 50],
+          ["state.projectile_damage_large_total", 14]
+        ]
+      }
+    },
+    "RobotInjuryStat_only_dart_splash_damage": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "280f"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"dart_splash_damage": 15}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 15, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [5]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"dart_splash_damage": 15}]
+        ]
+      }
+    },
+    "RobotInjuryStat_only_module_offline_damage": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "3010"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"module_offline_damage": 16}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 16, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [6]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"module_offline_damage": 16}]
+        ]
+      }
+    },
+    "RobotInjuryStat_only_offline_damage": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "3811"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"offline_damage": 17}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 17, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [7]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"offline_damage": 17}]
+        ]
+      }
+    },
+    "RobotInjuryStat_only_penalty_damage": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "4012"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"penalty_damage": 18}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 18, "server_kill_damage": 0, "killer_id": 0, "__present__": [8]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"penalty_damage": 18}]
+        ]
+      }
+    },
+    "RobotInjuryStat_only_server_kill_damage": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "4813"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"server_kill_damage": 19}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 19, "killer_id": 0, "__present__": [9]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"server_kill_damage": 19}]
+        ]
+      }
+    },
+    "RobotInjuryStat_only_killer_id": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "5014"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"20": {"killer_id": 20}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 20, "__present__": [10]}],
+          ["state.injury_stats.setdefault", 20, {}],
+          ["state.injury_stats.20.update", {"killer_id": 20}]
+        ]
+      }
+    },
+    "RobotRespawnStatus_only_is_pending_respawn": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "wire": {"hex": "0801"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100, "is_pending_respawn": true}}, "economy_command_status": "", "economy_status_revision": 8, "respawn_pending": true},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotRespawnStatus", {"is_pending_respawn": true, "total_respawn_progress": 0, "current_respawn_progress": 0, "can_free_respawn": false, "gold_cost_for_respawn": 0, "can_pay_for_respawn": false, "__present__": [1]}],
+          ["state.respawn_pending", true],
+          ["state.backend_stats.respawn_status.update", {"is_pending_respawn": true}],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 12],
+          ["state.respawn_can_pay", true],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "RobotRespawnStatus_only_total_respawn_progress": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "wire": {"hex": "100c"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 12}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotRespawnStatus", {"is_pending_respawn": false, "total_respawn_progress": 12, "current_respawn_progress": 0, "can_free_respawn": false, "gold_cost_for_respawn": 0, "can_pay_for_respawn": false, "__present__": [2]}],
+          ["state.respawn_pending", false],
+          ["state.backend_stats.respawn_status.update", {"total_respawn_progress": 12}],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 12],
+          ["state.respawn_can_pay", true]
+        ]
+      }
+    },
+    "RobotRespawnStatus_only_current_respawn_progress": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "wire": {"hex": "180d"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100, "current_respawn_progress": 13}}, "respawn_progress": 0.13},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotRespawnStatus", {"is_pending_respawn": false, "total_respawn_progress": 0, "current_respawn_progress": 13, "can_free_respawn": false, "gold_cost_for_respawn": 0, "can_pay_for_respawn": false, "__present__": [3]}],
+          ["state.respawn_pending", false],
+          ["state.backend_stats.respawn_status.update", {"current_respawn_progress": 13}],
+          ["state.respawn_progress", 0.13],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 12],
+          ["state.respawn_can_pay", true]
+        ]
+      }
+    },
+    "RobotRespawnStatus_only_can_free_respawn": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "wire": {"hex": "2001"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100, "can_free_respawn": true}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotRespawnStatus", {"is_pending_respawn": false, "total_respawn_progress": 0, "current_respawn_progress": 0, "can_free_respawn": true, "gold_cost_for_respawn": 0, "can_pay_for_respawn": false, "__present__": [4]}],
+          ["state.respawn_pending", false],
+          ["state.backend_stats.respawn_status.update", {"can_free_respawn": true}],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 12],
+          ["state.respawn_can_pay", true]
+        ]
+      }
+    },
+    "RobotRespawnStatus_only_gold_cost_for_respawn": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "wire": {"hex": "280f"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100, "gold_cost_for_respawn": 15}}, "respawn_gold_cost": 15},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotRespawnStatus", {"is_pending_respawn": false, "total_respawn_progress": 0, "current_respawn_progress": 0, "can_free_respawn": false, "gold_cost_for_respawn": 15, "can_pay_for_respawn": false, "__present__": [5]}],
+          ["state.respawn_pending", false],
+          ["state.backend_stats.respawn_status.update", {"gold_cost_for_respawn": 15}],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 15],
+          ["state.respawn_can_pay", true]
+        ]
+      }
+    },
+    "RobotRespawnStatus_only_can_pay_for_respawn": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "wire": {"hex": "3001"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100, "can_pay_for_respawn": true}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotRespawnStatus", {"is_pending_respawn": false, "total_respawn_progress": 0, "current_respawn_progress": 0, "can_free_respawn": false, "gold_cost_for_respawn": 0, "can_pay_for_respawn": true, "__present__": [6]}],
+          ["state.respawn_pending", false],
+          ["state.backend_stats.respawn_status.update", {"can_pay_for_respawn": true}],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 12],
+          ["state.respawn_can_pay", true]
+        ]
+      }
+    },
+    "RuneStatusSync_only_rune_status": {
+      "input": {"messages": [{"name": "RuneStatusSync", "wire": {"hex": "080b"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"energy_rune_phase": "INACTIVE", "rune_status": {"rune_status": 11, "average_rings": 0.8}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RuneStatusSync", {"rune_status": 11, "activated_arms": 0, "average_rings": 0.0, "__present__": [1]}],
+          ["state.rune_status.update", {"rune_status": 11}],
+          ["state.energy_rune_phase", "INACTIVE"]
+        ]
+      }
+    },
+    "RuneStatusSync_only_activated_arms": {
+      "input": {"messages": [{"name": "RuneStatusSync", "wire": {"hex": "100c"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"rune_status": {"rune_status": 3, "average_rings": 0.8, "activated_arms": 12}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RuneStatusSync", {"rune_status": 0, "activated_arms": 12, "average_rings": 0.0, "__present__": [2]}],
+          ["state.rune_status.update", {"activated_arms": 12}]
+        ]
+      }
+    },
+    "RuneStatusSync_only_average_rings": {
+      "input": {"messages": [{"name": "RuneStatusSync", "wire": {"hex": "1d00005040"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"energy_rune_progress": 325, "rune_status": {"rune_status": 3, "average_rings": 3.25}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RuneStatusSync", {"rune_status": 0, "activated_arms": 0, "average_rings": 3.25, "__present__": [3]}],
+          ["state.rune_status.update", {"average_rings": 3.25}],
+          ["state.energy_rune_progress", 325]
+        ]
+      }
+    },
+    "unknown_name_no_effect": {
+      "input": {"messages": [{"name": "FutureMessage", "data": {"current_stage": 4}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "unknown_name_present_no_effect": {
+      "input": {"messages": [{"name": "FutureMessage", "data": {"__present__": [1], "status": 1}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "unknown_name_still_reads_existing_economy_signature": {
+      "input": {"state": {"remaining_economy": "bad"}, "messages": [{"name": "FutureMessage", "data": {}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "ValueError"]],
+        "state_delta": {"remaining_economy": "bad"},
+        "host_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "malformed_presence_none_aborts_before_any_state_write": {
+      "input": {"messages": [{"name": "GameStatus", "data": {"__present__": null, "current_stage": 4}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "TypeError"]],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "malformed_presence_unhashable_aborts_before_any_state_write": {
+      "input": {"messages": [{"name": "GameStatus", "data": {"__present__": [[]], "current_stage": 4}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "TypeError"]],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "stage_same_value_logs_once": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "2804"}}, {"name": "GameStatus", "wire": {"hex": "2804"}}]},
+      "observed": {
+        "safety": {"current_stage": "4", "stage_seen": true},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {"_last_logged_stage": "MATCH"},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 0, "blue_score": 0, "current_stage": 4, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [5]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.current_stage", "MATCH"],
+          ["safety.stage", 4],
+          ["host._last_logged_stage", "MATCH"],
+          ["log.match_stage", {"raw_stage": 4, "stage": "MATCH", "round": 2}],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45],
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 0, "blue_score": 0, "current_stage": 4, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [5]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.current_stage", "MATCH"],
+          ["safety.stage", 4],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "stage_unknown_direct_value_keeps_legacy_semantics": {
+      "input": {"messages": [{"name": "GameStatus", "data": {"current_stage": 99}}]},
+      "observed": {
+        "safety": {"current_stage": "99", "stage_seen": true},
+        "errors": [],
+        "state_delta": {"current_stage": "99"},
+        "host_delta": {"_last_logged_stage": "99"},
+        "events": [
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.current_stage", "99"],
+          ["safety.stage", 99],
+          ["host._last_logged_stage", "99"],
+          ["log.match_stage", {"raw_stage": 99, "stage": "99", "round": 2}],
+          ["state.stage_countdown_sec", 123],
+          ["state.stage_elapsed_sec", 45]
+        ]
+      }
+    },
+    "stage_bad_countdown_keeps_preceding_stage_effects": {
+      "input": {"messages": [{"name": "GameStatus", "data": {"current_stage": 1, "stage_countdown_sec": "bad"}}]},
+      "observed": {
+        "safety": {"current_stage": "1", "stage_seen": true},
+        "errors": [[0, "ValueError"]],
+        "state_delta": {"current_stage": "PREPARE"},
+        "host_delta": {"_last_logged_stage": "PREPARE"},
+        "events": [
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.current_stage", "PREPARE"],
+          ["safety.stage", 1],
+          ["host._last_logged_stage", "PREPARE"],
+          ["log.match_stage", {"raw_stage": 1, "stage": "PREPARE", "round": 2}]
+        ]
+      }
+    },
+    "stage_safety_callback_failure_keeps_stage_assignment": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "2801"}}], "fail": "safety.stage"},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "RuntimeError"]],
+        "state_delta": {"current_stage": "PREPARE"},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 0, "blue_score": 0, "current_stage": 1, "stage_countdown_sec": 0, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [5]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.current_stage", "PREPARE"],
+          ["safety.stage", 1]
+        ]
+      }
+    },
+    "stage_log_failure_keeps_logged_stage_before_countdown": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "28013063"}}], "fail": "log.match_stage"},
+      "observed": {
+        "safety": {"current_stage": "1", "stage_seen": true},
+        "errors": [[0, "RuntimeError"]],
+        "state_delta": {"current_stage": "PREPARE"},
+        "host_delta": {"_last_logged_stage": "PREPARE"},
+        "events": [
+          ["decode", "GameStatus", {"current_round": 0, "total_rounds": 0, "red_score": 0, "blue_score": 0, "current_stage": 1, "stage_countdown_sec": 99, "stage_elapsed_sec": 0, "is_paused": false, "__present__": [5, 6]}],
+          ["state.current_round", 2],
+          ["state.total_rounds", 3],
+          ["state.red_score", 6],
+          ["state.blue_score", 7],
+          ["state.current_stage", "PREPARE"],
+          ["safety.stage", 1],
+          ["host._last_logged_stage", "PREPARE"],
+          ["log.match_stage", {"raw_stage": 1, "stage": "PREPARE", "round": 2}]
+        ]
+      }
+    },
+    "global_empty_health_preserves_old_health_but_clears_bullets": {
+      "input": {"messages": [{"name": "GlobalUnitStatus", "data": {"robot_health": [], "robot_bullets": []}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100}, "robot_bullets": []}, "official_robot_bullets": [], "projectile_allowance_17mm": 0, "projectile_allowance_42mm": 0},
+        "host_delta": {},
+        "events": [
+          ["state.base_health", 4500],
+          ["state.base_status", "old"],
+          ["state.base_shield", 100],
+          ["state.outpost_health", 1000],
+          ["state.outpost_status", "ONLINE"],
+          ["state.enemy_base_health", 3500],
+          ["state.enemy_base_status", "SHIELDED"],
+          ["state.enemy_base_shield", 100],
+          ["state.enemy_outpost_health", 900],
+          ["state.enemy_outpost_status", "ONLINE"],
+          ["state.official_robot_bullets", []],
+          ["state.backend_stats.set", "robot_bullets", []],
+          ["state.projectile_allowance_17mm", 0],
+          ["state.projectile_allowance_42mm", 0]
+        ]
+      }
+    },
+    "global_mixed_health_filters_non_int_values": {
+      "input": {"messages": [{"name": "GlobalUnitStatus", "data": {"robot_health": [10, "11", false, 12.5, 0], "robot_bullets": [10, -2, 30]}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100}, "robot_bullets": [10, -2, 30]}, "official_robot_bullets": [10, -2, 30], "official_robot_health": [10, 0, 0], "projectile_allowance_17mm": 30, "projectile_allowance_42mm": 0},
+        "host_delta": {},
+        "events": [
+          ["state.base_health", 4500],
+          ["state.base_status", "old"],
+          ["state.base_shield", 100],
+          ["state.outpost_health", 1000],
+          ["state.outpost_status", "ONLINE"],
+          ["state.enemy_base_health", 3500],
+          ["state.enemy_base_status", "SHIELDED"],
+          ["state.enemy_base_shield", 100],
+          ["state.enemy_outpost_health", 900],
+          ["state.enemy_outpost_status", "ONLINE"],
+          ["state.official_robot_health", [10, 0, 0]],
+          ["state.official_robot_bullets", [10, -2, 30]],
+          ["state.backend_stats.set", "robot_bullets", [10, -2, 30]],
+          ["state.projectile_allowance_17mm", 30],
+          ["state.projectile_allowance_42mm", 0]
+        ]
+      }
+    },
+    "hero_bullet_projection": {
+      "input": {"state": {"robot_id": 101}, "messages": [{"name": "GlobalUnitStatus", "wire": {"hex": "62050c141e2832"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100}, "robot_bullets": [12, 20, 30, 40, 50]}, "official_robot_bullets": [12, 20, 30, 40, 50], "projectile_allowance_17mm": 0, "robot_id": 101},
+        "host_delta": {},
+        "events": [
+          ["decode", "GlobalUnitStatus", {"base_health": 0, "base_status": 0, "base_shield": 0, "outpost_health": 0, "outpost_status": 0, "enemy_base_health": 0, "enemy_base_status": 0, "enemy_base_shield": 0, "enemy_outpost_health": 0, "enemy_outpost_status": 0, "robot_health": [], "robot_bullets": [12, 20, 30, 40, 50], "total_damage_ally": 0, "total_damage_enemy": 0, "__present__": [12]}],
+          ["state.base_health", 4500],
+          ["state.base_status", "old"],
+          ["state.base_shield", 100],
+          ["state.outpost_health", 1000],
+          ["state.outpost_status", "ONLINE"],
+          ["state.enemy_base_health", 3500],
+          ["state.enemy_base_status", "SHIELDED"],
+          ["state.enemy_base_shield", 100],
+          ["state.enemy_outpost_health", 900],
+          ["state.enemy_outpost_status", "ONLINE"],
+          ["state.official_robot_bullets", [12, 20, 30, 40, 50]],
+          ["state.backend_stats.set", "robot_bullets", [12, 20, 30, 40, 50]],
+          ["state.projectile_allowance_17mm", 0],
+          ["state.projectile_allowance_42mm", 12]
+        ]
+      }
+    },
+    "unknown_role_bullet_projection": {
+      "input": {"state": {"robot_id": 109}, "messages": [{"name": "GlobalUnitStatus", "wire": {"hex": "62050c141e2832"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100}, "robot_bullets": [12, 20, 30, 40, 50]}, "official_robot_bullets": [12, 20, 30, 40, 50], "projectile_allowance_17mm": 0, "projectile_allowance_42mm": 0, "robot_id": 109},
+        "host_delta": {},
+        "events": [
+          ["decode", "GlobalUnitStatus", {"base_health": 0, "base_status": 0, "base_shield": 0, "outpost_health": 0, "outpost_status": 0, "enemy_base_health": 0, "enemy_base_status": 0, "enemy_base_shield": 0, "enemy_outpost_health": 0, "enemy_outpost_status": 0, "robot_health": [], "robot_bullets": [12, 20, 30, 40, 50], "total_damage_ally": 0, "total_damage_enemy": 0, "__present__": [12]}],
+          ["state.base_health", 4500],
+          ["state.base_status", "old"],
+          ["state.base_shield", 100],
+          ["state.outpost_health", 1000],
+          ["state.outpost_status", "ONLINE"],
+          ["state.enemy_base_health", 3500],
+          ["state.enemy_base_status", "SHIELDED"],
+          ["state.enemy_base_shield", 100],
+          ["state.enemy_outpost_health", 900],
+          ["state.enemy_outpost_status", "ONLINE"],
+          ["state.official_robot_bullets", [12, 20, 30, 40, 50]],
+          ["state.backend_stats.set", "robot_bullets", [12, 20, 30, 40, 50]],
+          ["state.projectile_allowance_17mm", 0],
+          ["state.projectile_allowance_42mm", 0]
+        ]
+      }
+    },
+    "static_claimed_presence_without_value_aborts": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "data": {"__present__": [4]}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "KeyError"]],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "static_no_presence_metadata_keeps_legacy_scalar_behavior": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "data": {"robot_id": 103, "level": 9, "max_health": 800}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_statics": {"3": {"level": 9, "max_health": 800, "robot_id": 103}}},
+        "host_delta": {},
+        "events": [
+          ["state.robot_statics.3.update", {"robot_id": 103, "level": 9, "max_health": 800}]
+        ]
+      }
+    },
+    "static_zero_limits_do_not_overwrite_existing_limits": {
+      "input": {"messages": [{"name": "RobotStaticStatus", "wire": {"hex": "480050005d00000000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_statics": {"3": {"level": 2, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotStaticStatus", {"connection_state": 0, "field_state": 0, "alive_state": 0, "robot_id": 0, "robot_type": 0, "performance_system_shooter": 0, "performance_system_chassis": 0, "level": 0, "max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0, "max_power": 0, "max_buffer_energy": 0, "max_chassis_energy": 0, "__present__": [9, 10, 11]}],
+          ["state.robot_statics.3.update", {"max_health": 0, "max_heat": 0, "heat_cooldown_rate": 0.0}]
+        ]
+      }
+    },
+    "dynamic_bad_heat_keeps_prior_dictionary_and_health_writes": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "data": {"current_health": 12, "current_heat": "bad"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "ValueError"]],
+        "state_delta": {"current_health": 12, "robot_dynamics": {"3": {"current_health": 12, "current_heat": "bad"}}},
+        "host_delta": {},
+        "events": [
+          ["state.robot_dynamics.3.update", {"current_health": 12, "current_heat": "bad"}],
+          ["state.current_health", 12]
+        ]
+      }
+    },
+    "dynamic_zero_health_changes_economy_revision_once": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "0800"}}, {"name": "RobotDynamicStatus", "wire": {"hex": "0800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"current_health": 0, "economy_command_status": "", "economy_status_revision": 8, "robot_dynamics": {"3": {"current_health": 0, "current_heat": 12.5}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [1]}],
+          ["state.robot_dynamics.3.update", {"current_health": 0}],
+          ["state.current_health", 0],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""],
+          ["decode", "RobotDynamicStatus", {"current_health": 0, "current_heat": 0.0, "last_projectile_fire_rate": 0.0, "current_chassis_energy": 0, "current_buffer_energy": 0, "current_experience": 0, "experience_for_upgrade": 0, "total_projectiles_fired": 0, "remaining_ammo": 0, "is_out_of_combat": false, "out_of_combat_countdown": 0, "can_remote_heal": false, "can_remote_ammo": false, "__present__": [1]}],
+          ["state.robot_dynamics.3.update", {"current_health": 0}],
+          ["state.current_health", 0],
+          ["state.current_heat", 12.5],
+          ["state.current_chassis_energy", 70],
+          ["state.current_buffer_energy", 50],
+          ["state.total_projectiles_fired", 12],
+          ["state.remaining_ammo", 88],
+          ["state.out_of_combat", true],
+          ["state.can_remote_heal", true],
+          ["state.can_remote_ammo", true]
+        ]
+      }
+    },
+    "module_bad_conversion_never_updates_either_dictionary": {
+      "input": {"messages": [{"name": "RobotModuleStatus", "data": {"armor": "bad", "power_manager": 1}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "ValueError"]],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+        ]
+      }
+    },
+    "position_partial_merges_existing_coordinates": {
+      "input": {"messages": [{"name": "RobotPosition", "wire": {"hex": "2500004841"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_positions": [{"robot_id": 3, "x": 2.0, "y": 3.0, "yaw": 12.5}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotPosition", {"x": 0.0, "y": 0.0, "z": 0.0, "yaw": 12.5, "robot_id": 0, "__present__": [4]}],
+          ["state.robot_positions", [{"robot_id": 3, "x": 2.0, "y": 3.0, "yaw": 12.5}]]
+        ]
+      }
+    },
+    "position_capacity_keeps_last_sixteen": {
+      "input": {"state": {"robot_positions": [{"robot_id": 1, "x": 1}, {"robot_id": 2, "x": 2}, {"robot_id": 3, "x": 3}, {"robot_id": 4, "x": 4}, {"robot_id": 5, "x": 5}, {"robot_id": 6, "x": 6}, {"robot_id": 7, "x": 7}, {"robot_id": 8, "x": 8}, {"robot_id": 9, "x": 9}, {"robot_id": 10, "x": 10}, {"robot_id": 11, "x": 11}, {"robot_id": 12, "x": 12}, {"robot_id": 13, "x": 13}, {"robot_id": 14, "x": 14}, {"robot_id": 15, "x": 15}, {"robot_id": 16, "x": 16}, {"robot_id": 17, "x": 17}]}, "messages": [{"name": "RobotPosition", "wire": {"hex": "0d000000402865"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"robot_positions": [{"robot_id": 3, "x": 3}, {"robot_id": 4, "x": 4}, {"robot_id": 5, "x": 5}, {"robot_id": 6, "x": 6}, {"robot_id": 7, "x": 7}, {"robot_id": 8, "x": 8}, {"robot_id": 9, "x": 9}, {"robot_id": 10, "x": 10}, {"robot_id": 11, "x": 11}, {"robot_id": 12, "x": 12}, {"robot_id": 13, "x": 13}, {"robot_id": 14, "x": 14}, {"robot_id": 15, "x": 15}, {"robot_id": 16, "x": 16}, {"robot_id": 17, "x": 17}, {"x": 2.0, "robot_id": 101}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotPosition", {"x": 2.0, "y": 0.0, "z": 0.0, "yaw": 0.0, "robot_id": 101, "__present__": [1, 5]}],
+          ["state.robot_positions", [{"robot_id": 3, "x": 3}, {"robot_id": 4, "x": 4}, {"robot_id": 5, "x": 5}, {"robot_id": 6, "x": 6}, {"robot_id": 7, "x": 7}, {"robot_id": 8, "x": 8}, {"robot_id": 9, "x": 9}, {"robot_id": 10, "x": 10}, {"robot_id": 11, "x": 11}, {"robot_id": 12, "x": 12}, {"robot_id": 13, "x": 13}, {"robot_id": 14, "x": 14}, {"robot_id": 15, "x": 15}, {"robot_id": 16, "x": 16}, {"robot_id": 17, "x": 17}, {"x": 2.0, "robot_id": 101}]]
+        ]
+      }
+    },
+    "buff_replacement_discards_omitted_old_fields": {
+      "input": {"messages": [{"name": "Buff", "wire": {"hex": "0803100218feffffffffffffffff01"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"buffs": [{"robot_id": 3, "buff_type": 2, "buff_level": -2}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "Buff", {"robot_id": 3, "buff_type": 2, "buff_level": -2, "buff_max_time": 0, "buff_left_time": 0, "__present__": [1, 2, 3]}],
+          ["state.buffs", [{"robot_id": 3, "buff_type": 2, "buff_level": -2}]]
+        ]
+      }
+    },
+    "buff_capacity_keeps_last_twenty_four": {
+      "input": {"state": {"buffs": [{"robot_id": 0, "buff_type": 1}, {"robot_id": 1, "buff_type": 1}, {"robot_id": 2, "buff_type": 1}, {"robot_id": 3, "buff_type": 1}, {"robot_id": 4, "buff_type": 1}, {"robot_id": 5, "buff_type": 1}, {"robot_id": 6, "buff_type": 1}, {"robot_id": 7, "buff_type": 1}, {"robot_id": 8, "buff_type": 1}, {"robot_id": 9, "buff_type": 1}, {"robot_id": 10, "buff_type": 1}, {"robot_id": 11, "buff_type": 1}, {"robot_id": 12, "buff_type": 1}, {"robot_id": 13, "buff_type": 1}, {"robot_id": 14, "buff_type": 1}, {"robot_id": 15, "buff_type": 1}, {"robot_id": 16, "buff_type": 1}, {"robot_id": 17, "buff_type": 1}, {"robot_id": 18, "buff_type": 1}, {"robot_id": 19, "buff_type": 1}, {"robot_id": 20, "buff_type": 1}, {"robot_id": 21, "buff_type": 1}, {"robot_id": 22, "buff_type": 1}, {"robot_id": 23, "buff_type": 1}, {"robot_id": 24, "buff_type": 1}]}, "messages": [{"name": "Buff", "wire": {"hex": "08671002"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"buffs": [{"robot_id": 2, "buff_type": 1}, {"robot_id": 3, "buff_type": 1}, {"robot_id": 4, "buff_type": 1}, {"robot_id": 5, "buff_type": 1}, {"robot_id": 6, "buff_type": 1}, {"robot_id": 7, "buff_type": 1}, {"robot_id": 8, "buff_type": 1}, {"robot_id": 9, "buff_type": 1}, {"robot_id": 10, "buff_type": 1}, {"robot_id": 11, "buff_type": 1}, {"robot_id": 12, "buff_type": 1}, {"robot_id": 13, "buff_type": 1}, {"robot_id": 14, "buff_type": 1}, {"robot_id": 15, "buff_type": 1}, {"robot_id": 16, "buff_type": 1}, {"robot_id": 17, "buff_type": 1}, {"robot_id": 18, "buff_type": 1}, {"robot_id": 19, "buff_type": 1}, {"robot_id": 20, "buff_type": 1}, {"robot_id": 21, "buff_type": 1}, {"robot_id": 22, "buff_type": 1}, {"robot_id": 23, "buff_type": 1}, {"robot_id": 24, "buff_type": 1}, {"robot_id": 103, "buff_type": 2}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "Buff", {"robot_id": 103, "buff_type": 2, "buff_level": 0, "buff_max_time": 0, "buff_left_time": 0, "__present__": [1, 2]}],
+          ["state.buffs", [{"robot_id": 2, "buff_type": 1}, {"robot_id": 3, "buff_type": 1}, {"robot_id": 4, "buff_type": 1}, {"robot_id": 5, "buff_type": 1}, {"robot_id": 6, "buff_type": 1}, {"robot_id": 7, "buff_type": 1}, {"robot_id": 8, "buff_type": 1}, {"robot_id": 9, "buff_type": 1}, {"robot_id": 10, "buff_type": 1}, {"robot_id": 11, "buff_type": 1}, {"robot_id": 12, "buff_type": 1}, {"robot_id": 13, "buff_type": 1}, {"robot_id": 14, "buff_type": 1}, {"robot_id": 15, "buff_type": 1}, {"robot_id": 16, "buff_type": 1}, {"robot_id": 17, "buff_type": 1}, {"robot_id": 18, "buff_type": 1}, {"robot_id": 19, "buff_type": 1}, {"robot_id": 20, "buff_type": 1}, {"robot_id": 21, "buff_type": 1}, {"robot_id": 22, "buff_type": 1}, {"robot_id": 23, "buff_type": 1}, {"robot_id": 24, "buff_type": 1}, {"robot_id": 103, "buff_type": 2}]]
+        ]
+      }
+    },
+    "penalty_replacement_and_active_snapshot": {
+      "input": {"messages": [{"name": "PenaltyInfo", "wire": {"hex": "08011008"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"active_penalty": {"penalty_type": 1, "penalty_effect_sec": 8}, "penalties": [{"penalty_type": 1, "penalty_effect_sec": 8}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "PenaltyInfo", {"penalty_type": 1, "penalty_effect_sec": 8, "total_penalty_num": 0, "__present__": [1, 2]}],
+          ["state.penalties", [{"penalty_type": 1, "penalty_effect_sec": 8}]],
+          ["state.active_penalty", {"penalty_type": 1, "penalty_effect_sec": 8}]
+        ]
+      }
+    },
+    "penalty_capacity_keeps_last_eight": {
+      "input": {"state": {"penalties": [{"penalty_type": 0}, {"penalty_type": 1}, {"penalty_type": 2}, {"penalty_type": 3}, {"penalty_type": 4}, {"penalty_type": 5}, {"penalty_type": 6}, {"penalty_type": 7}, {"penalty_type": 8}]}, "messages": [{"name": "PenaltyInfo", "wire": {"hex": "082a"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"active_penalty": {"penalty_type": 42}, "penalties": [{"penalty_type": 2}, {"penalty_type": 3}, {"penalty_type": 4}, {"penalty_type": 5}, {"penalty_type": 6}, {"penalty_type": 7}, {"penalty_type": 8}, {"penalty_type": 42}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "PenaltyInfo", {"penalty_type": 42, "penalty_effect_sec": 0, "total_penalty_num": 0, "__present__": [1]}],
+          ["state.penalties", [{"penalty_type": 2}, {"penalty_type": 3}, {"penalty_type": 4}, {"penalty_type": 5}, {"penalty_type": 6}, {"penalty_type": 7}, {"penalty_type": 8}, {"penalty_type": 42}]],
+          ["state.active_penalty", {"penalty_type": 42}]
+        ]
+      }
+    },
+    "map_printable_ascii_and_bounded_history": {
+      "input": {"state": {"map_markers": [{"label": "0"}, {"label": "1"}, {"label": "2"}, {"label": "3"}, {"label": "4"}, {"label": "5"}, {"label": "6"}, {"label": "7"}, {"label": "8"}, {"label": "9"}, {"label": "10"}, {"label": "11"}, {"label": "12"}, {"label": "13"}, {"label": "14"}, {"label": "15"}, {"label": "16"}]}, "messages": [{"name": "MapClickInfo", "wire": {"hex": "180228413d0000c03f4500002040"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"map_markers": [{"label": "2"}, {"label": "3"}, {"label": "4"}, {"label": "5"}, {"label": "6"}, {"label": "7"}, {"label": "8"}, {"label": "9"}, {"label": "10"}, {"label": "11"}, {"label": "12"}, {"label": "13"}, {"label": "14"}, {"label": "15"}, {"label": "16"}, {"label": "A", "x": 1.5, "y": 2.5, "kind": "defense", "pulse": true, "mode": 2, "ascii": 65, "map_x": 1.5, "map_y": 2.5}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "MapClickInfo", {"is_send_all": 0, "robot_id": {"hex": ""}, "mode": 2, "enemy_id": 0, "ascii": 65, "type": 0, "map_x": 1.5, "map_y": 2.5, "__present__": [3, 5, 7, 8]}],
+          ["state.map_markers", [{"label": "2"}, {"label": "3"}, {"label": "4"}, {"label": "5"}, {"label": "6"}, {"label": "7"}, {"label": "8"}, {"label": "9"}, {"label": "10"}, {"label": "11"}, {"label": "12"}, {"label": "13"}, {"label": "14"}, {"label": "15"}, {"label": "16"}, {"label": "A", "x": 1.5, "y": 2.5, "kind": "defense", "pulse": true, "mode": 2, "ascii": 65, "map_x": 1.5, "map_y": 2.5}]]
+        ]
+      }
+    },
+    "map_nonprintable_ascii": {
+      "input": {"messages": [{"name": "MapClickInfo", "wire": {"hex": "1809287f"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"map_markers": [{"label": "OLD", "x": 1.0, "y": 2.0}, {"label": "MARK", "x": 0.0, "y": 0.0, "kind": "marker", "pulse": true, "mode": 9, "ascii": 127}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "MapClickInfo", {"is_send_all": 0, "robot_id": {"hex": ""}, "mode": 9, "enemy_id": 0, "ascii": 127, "type": 0, "map_x": 0.0, "map_y": 0.0, "__present__": [3, 5]}],
+          ["state.map_markers", [{"label": "OLD", "x": 1.0, "y": 2.0}, {"label": "MARK", "x": 0.0, "y": 0.0, "kind": "marker", "pulse": true, "mode": 9, "ascii": 127}]]
+        ]
+      }
+    },
+    "radar_partial_child_and_timestamp": {
+      "input": {"messages": [{"name": "RadarInfoToClient", "wire": {"hex": "0a020805"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"radar_detections": [{"target_pos_x": 5, "target_pos_y": 0, "is_high_light": 0}], "radar_detections_at": 101.0},
+        "host_delta": {},
+        "events": [
+          ["decode", "RadarInfoToClient", {"robots": [{"target_pos_x": 5, "target_pos_y": 0, "is_high_light": 0}], "__present__": [1]}],
+          ["state.radar_detections", [{"target_pos_x": 5, "target_pos_y": 0, "is_high_light": 0}]],
+          ["clock", 101.0],
+          ["state.radar_detections_at", 101.0]
+        ]
+      }
+    },
+    "radar_clock_failure_keeps_replaced_detections": {
+      "input": {"messages": [{"name": "RadarInfoToClient", "wire": {"hex": "0a020805"}}], "fail": "clock"},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "RuntimeError"]],
+        "state_delta": {"radar_detections": [{"target_pos_x": 5, "target_pos_y": 0, "is_high_light": 0}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "RadarInfoToClient", {"robots": [{"target_pos_x": 5, "target_pos_y": 0, "is_high_light": 0}], "__present__": [1]}],
+          ["state.radar_detections", [{"target_pos_x": 5, "target_pos_y": 0, "is_high_light": 0}]],
+          ["clock", 101.0]
+        ]
+      }
+    },
+    "deploy_repeated_status_refreshes_timestamp_not_revision": {
+      "input": {"messages": [{"name": "DeployModeStatusSync", "wire": {"hex": "0801"}}, {"name": "DeployModeStatusSync", "wire": {"hex": "0801"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"deploy_mode": 1, "deploy_status_at": 102.0, "deploy_status_revision": 4},
+        "host_delta": {"_hero_native_override": true, "_active_video_source": "native 0x0310"},
+        "events": [
+          ["decode", "DeployModeStatusSync", {"status": 1, "__present__": [1]}],
+          ["state.deploy_status_revision", 4],
+          ["state.deploy_mode", 1],
+          ["clock", 101.0],
+          ["state.deploy_status_at", 101.0],
+          ["host._hero_native_override", true],
+          ["video.source", "Native 0x0310", {"_hero_transition": true}],
+          ["host._active_video_source", "native 0x0310"],
+          ["log.hero_video_source", {"deployed": true, "active_source": "native 0x0310"}],
+          ["decode", "DeployModeStatusSync", {"status": 1, "__present__": [1]}],
+          ["state.deploy_mode", 1],
+          ["clock", 102.0],
+          ["state.deploy_status_at", 102.0]
+        ]
+      }
+    },
+    "deploy_return_restores_normal_source": {
+      "input": {"messages": [{"name": "DeployModeStatusSync", "wire": {"hex": "0801"}}, {"name": "DeployModeStatusSync", "wire": {"hex": "0800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"deploy_status_at": 102.0, "deploy_status_revision": 5},
+        "host_delta": {},
+        "events": [
+          ["decode", "DeployModeStatusSync", {"status": 1, "__present__": [1]}],
+          ["state.deploy_status_revision", 4],
+          ["state.deploy_mode", 1],
+          ["clock", 101.0],
+          ["state.deploy_status_at", 101.0],
+          ["host._hero_native_override", true],
+          ["video.source", "Native 0x0310", {"_hero_transition": true}],
+          ["host._active_video_source", "native 0x0310"],
+          ["log.hero_video_source", {"deployed": true, "active_source": "native 0x0310"}],
+          ["decode", "DeployModeStatusSync", {"status": 0, "__present__": [1]}],
+          ["state.deploy_status_revision", 5],
+          ["state.deploy_mode", 0],
+          ["clock", 102.0],
+          ["state.deploy_status_at", 102.0],
+          ["host._hero_native_override", false],
+          ["video.source", "udp hevc", {"_hero_transition": true}],
+          ["host._active_video_source", "udp hevc"],
+          ["log.hero_video_source", {"deployed": false, "active_source": "udp hevc"}]
+        ]
+      }
+    },
+    "deploy_return_uses_config_fallback": {
+      "input": {"host": {"_hero_native_override": true, "_normal_video_source": ""}, "state": {"deploy_mode": 1}, "messages": [{"name": "DeployModeStatusSync", "wire": {"hex": "0800"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"deploy_status_at": 101.0, "deploy_status_revision": 4},
+        "host_delta": {"_normal_video_source": "", "_active_video_source": "webcam"},
+        "events": [
+          ["decode", "DeployModeStatusSync", {"status": 0, "__present__": [1]}],
+          ["state.deploy_status_revision", 4],
+          ["state.deploy_mode", 0],
+          ["clock", 101.0],
+          ["state.deploy_status_at", 101.0],
+          ["host._hero_native_override", false],
+          ["video.source", "Webcam", {"_hero_transition": true}],
+          ["host._active_video_source", "webcam"],
+          ["log.hero_video_source", {"deployed": false, "active_source": "webcam"}]
+        ]
+      }
+    },
+    "deploy_video_failure_keeps_override_and_state": {
+      "input": {"messages": [{"name": "DeployModeStatusSync", "wire": {"hex": "0801"}}], "fail": "video.source"},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "RuntimeError"]],
+        "state_delta": {"deploy_mode": 1, "deploy_status_at": 101.0, "deploy_status_revision": 4},
+        "host_delta": {"_hero_native_override": true},
+        "events": [
+          ["decode", "DeployModeStatusSync", {"status": 1, "__present__": [1]}],
+          ["state.deploy_status_revision", 4],
+          ["state.deploy_mode", 1],
+          ["clock", 101.0],
+          ["state.deploy_status_at", 101.0],
+          ["host._hero_native_override", true],
+          ["video.source", "Native 0x0310", {"_hero_transition": true}]
+        ]
+      }
+    },
+    "deploy_log_failure_keeps_video_transition": {
+      "input": {"messages": [{"name": "DeployModeStatusSync", "wire": {"hex": "0801"}}], "fail": "log.hero_video_source"},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "RuntimeError"]],
+        "state_delta": {"deploy_mode": 1, "deploy_status_at": 101.0, "deploy_status_revision": 4},
+        "host_delta": {"_hero_native_override": true, "_active_video_source": "native 0x0310"},
+        "events": [
+          ["decode", "DeployModeStatusSync", {"status": 1, "__present__": [1]}],
+          ["state.deploy_status_revision", 4],
+          ["state.deploy_mode", 1],
+          ["clock", 101.0],
+          ["state.deploy_status_at", 101.0],
+          ["host._hero_native_override", true],
+          ["video.source", "Native 0x0310", {"_hero_transition": true}],
+          ["host._active_video_source", "native 0x0310"],
+          ["log.hero_video_source", {"deployed": true, "active_source": "native 0x0310"}]
+        ]
+      }
+    },
+    "rune_bad_progress_keeps_raw_and_phase_writes": {
+      "input": {"messages": [{"name": "RuneStatusSync", "data": {"rune_status": 2, "average_rings": "bad"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "ValueError"]],
+        "state_delta": {"energy_rune_phase": "ACTIVATING", "rune_status": {"rune_status": 2, "average_rings": "bad"}},
+        "host_delta": {},
+        "events": [
+          ["state.rune_status.update", {"rune_status": 2, "average_rings": "bad"}],
+          ["state.energy_rune_phase", "ACTIVATING"]
+        ]
+      }
+    },
+    "rune_direct_nonfinite_progress_aborts_after_raw_write": {
+      "input": {"messages": [{"name": "RuneStatusSync", "data": {"average_rings": {"float": "nan"}}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "ValueError"]],
+        "state_delta": {"rune_status": {"rune_status": 3, "average_rings": {"float": "nan"}}},
+        "host_delta": {},
+        "events": [
+          ["state.rune_status.update", {"average_rings": {"float": "nan"}}]
+        ]
+      }
+    },
+    "mechanism_arrays_zip_to_shorter_length": {
+      "input": {"messages": [{"name": "GlobalSpecialMechanism", "wire": {"hex": "0a03010203120bffffffffffffffffff010a"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"special_mechanisms": [{"mechanism_id": 1, "time_sec": -1}, {"mechanism_id": 2, "time_sec": 10}]},
+        "host_delta": {},
+        "events": [
+          ["decode", "GlobalSpecialMechanism", {"mechanism_id": [1, 2, 3], "mechanism_time_sec": [-1, 10], "__present__": [1, 2]}],
+          ["state.special_mechanisms", [{"mechanism_id": 1, "time_sec": -1}, {"mechanism_id": 2, "time_sec": 10}]]
+        ]
+      }
+    },
+    "custom_delivery_failure_is_observable": {
+      "input": {"messages": [{"name": "CustomByteBlock", "wire": {"hex": "0a03616263"}}], "fail": "custom.bytes"},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "RuntimeError"]],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "CustomByteBlock", {"data": {"hex": "616263"}, "__present__": [1]}],
+          ["custom.bytes", {"data": {"hex": "616263"}, "__present__": [1]}]
+        ]
+      }
+    },
+    "injury_partial_first_counters_never_become_hits": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "1814"}}, {"name": "RobotInjuryStat", "wire": {"hex": "200a"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"small_projectile_damage": 20, "large_projectile_damage": 10}}, "injury_stats_initialized": true, "projectile_damage_large_initialized": true, "projectile_damage_large_total": 10, "projectile_damage_small_initialized": true, "projectile_damage_small_total": 20},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 20, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [3]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"small_projectile_damage": 20}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", false],
+          ["state.projectile_damage_small_total", 20],
+          ["state.projectile_damage_large_total", 30],
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 10, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [4]}],
+          ["state.injury_stats.0.update", {"large_projectile_damage": 10}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", true],
+          ["state.projectile_damage_small_total", 20],
+          ["state.projectile_damage_large_total", 10]
+        ]
+      }
+    },
+    "injury_known_delta_ignores_first_other_counter": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "1814"}}, {"name": "RobotInjuryStat", "wire": {"hex": "18192064"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"small_projectile_damage": 25, "large_projectile_damage": 100}}, "injury_stats_initialized": true, "last_projectile_damage_delta": 5, "last_projectile_hit_at": 101.0, "last_projectile_kind": "17mm", "projectile_damage_large_initialized": true, "projectile_damage_large_total": 100, "projectile_damage_small_initialized": true, "projectile_damage_small_total": 25, "projectile_hit_revision": 10},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 20, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [3]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"small_projectile_damage": 20}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", false],
+          ["state.projectile_damage_small_total", 20],
+          ["state.projectile_damage_large_total", 30],
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 25, "large_projectile_damage": 100, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [3, 4]}],
+          ["state.injury_stats.0.update", {"small_projectile_damage": 25, "large_projectile_damage": 100}],
+          ["state.projectile_hit_revision", 10],
+          ["clock", 101.0],
+          ["state.last_projectile_hit_at", 101.0],
+          ["state.last_projectile_damage_delta", 5],
+          ["state.last_projectile_kind", "17mm"],
+          ["state.last_projectile_killer_id", 0],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", true],
+          ["state.projectile_damage_small_total", 25],
+          ["state.projectile_damage_large_total", 100]
+        ]
+      }
+    },
+    "injury_both_deltas_duplicate_and_reset": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "1814200a"}}, {"name": "RobotInjuryStat", "wire": {"hex": "18192011"}}, {"name": "RobotInjuryStat", "wire": {"hex": "18192011"}}, {"name": "RobotInjuryStat", "wire": {"hex": "1800"}}, {"name": "RobotInjuryStat", "wire": {"hex": "2064"}}, {"name": "RobotInjuryStat", "wire": {"hex": "2068"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"injury_stats": {"0": {"small_projectile_damage": 0, "large_projectile_damage": 104}}, "injury_stats_initialized": true, "last_projectile_damage_delta": 4, "last_projectile_hit_at": 102.0, "last_projectile_kind": "42mm", "projectile_damage_large_initialized": true, "projectile_damage_large_total": 104, "projectile_damage_small_initialized": true, "projectile_damage_small_total": 0, "projectile_hit_revision": 11},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 20, "large_projectile_damage": 10, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [3, 4]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"small_projectile_damage": 20, "large_projectile_damage": 10}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", true],
+          ["state.projectile_damage_small_total", 20],
+          ["state.projectile_damage_large_total", 10],
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 25, "large_projectile_damage": 17, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [3, 4]}],
+          ["state.injury_stats.0.update", {"small_projectile_damage": 25, "large_projectile_damage": 17}],
+          ["state.projectile_hit_revision", 10],
+          ["clock", 101.0],
+          ["state.last_projectile_hit_at", 101.0],
+          ["state.last_projectile_damage_delta", 12],
+          ["state.last_projectile_kind", "17mm+42mm"],
+          ["state.last_projectile_killer_id", 0],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", true],
+          ["state.projectile_damage_small_total", 25],
+          ["state.projectile_damage_large_total", 17],
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 25, "large_projectile_damage": 17, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [3, 4]}],
+          ["state.injury_stats.0.update", {"small_projectile_damage": 25, "large_projectile_damage": 17}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", true],
+          ["state.projectile_damage_small_total", 25],
+          ["state.projectile_damage_large_total", 17],
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [3]}],
+          ["state.injury_stats.0.update", {"small_projectile_damage": 0}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", false],
+          ["state.projectile_damage_small_total", 0],
+          ["state.projectile_damage_large_total", 17],
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 100, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [4]}],
+          ["state.injury_stats.0.update", {"large_projectile_damage": 100}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", true],
+          ["state.projectile_damage_small_total", 0],
+          ["state.projectile_damage_large_total", 100],
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 0, "large_projectile_damage": 104, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [4]}],
+          ["state.injury_stats.0.update", {"large_projectile_damage": 104}],
+          ["state.projectile_hit_revision", 11],
+          ["clock", 102.0],
+          ["state.last_projectile_hit_at", 102.0],
+          ["state.last_projectile_damage_delta", 4],
+          ["state.last_projectile_kind", "42mm"],
+          ["state.last_projectile_killer_id", 0],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", true],
+          ["state.projectile_damage_small_total", 0],
+          ["state.projectile_damage_large_total", 104]
+        ]
+      }
+    },
+    "injury_clock_failure_keeps_revision_before_delta_publication": {
+      "input": {"messages": [{"name": "RobotInjuryStat", "wire": {"hex": "1814"}}, {"name": "RobotInjuryStat", "wire": {"hex": "1819"}}], "fail": "clock"},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[1, "RuntimeError"]],
+        "state_delta": {"injury_stats": {"0": {"small_projectile_damage": 25}}, "injury_stats_initialized": true, "projectile_damage_small_initialized": true, "projectile_damage_small_total": 20, "projectile_hit_revision": 10},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 20, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [3]}],
+          ["state.injury_stats.setdefault", 0, {}],
+          ["state.injury_stats.0.update", {"small_projectile_damage": 20}],
+          ["state.injury_stats_initialized", true],
+          ["state.projectile_damage_small_initialized", true],
+          ["state.projectile_damage_large_initialized", false],
+          ["state.projectile_damage_small_total", 20],
+          ["state.projectile_damage_large_total", 30],
+          ["decode", "RobotInjuryStat", {"total_damage": 0, "collision_damage": 0, "small_projectile_damage": 25, "large_projectile_damage": 0, "dart_splash_damage": 0, "module_offline_damage": 0, "offline_damage": 0, "penalty_damage": 0, "server_kill_damage": 0, "killer_id": 0, "__present__": [3]}],
+          ["state.injury_stats.0.update", {"small_projectile_damage": 25}],
+          ["state.projectile_hit_revision", 10],
+          ["clock", 101.0]
+        ]
+      }
+    },
+    "respawn_partial_progress_reuses_previous_total": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "wire": {"hex": "1819"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 100, "current_respawn_progress": 25}}},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotRespawnStatus", {"is_pending_respawn": false, "total_respawn_progress": 0, "current_respawn_progress": 25, "can_free_respawn": false, "gold_cost_for_respawn": 0, "can_pay_for_respawn": false, "__present__": [3]}],
+          ["state.respawn_pending", false],
+          ["state.backend_stats.respawn_status.update", {"current_respawn_progress": 25}],
+          ["state.respawn_progress", 0.25],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 12],
+          ["state.respawn_can_pay", true]
+        ]
+      }
+    },
+    "respawn_total_zero_uses_one_and_caps_progress": {
+      "input": {"messages": [{"name": "RobotRespawnStatus", "wire": {"hex": "10001802"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {"backend_stats": {"unrelated": "keep", "respawn_status": {"total_respawn_progress": 0, "current_respawn_progress": 2}}, "respawn_progress": 1.0},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotRespawnStatus", {"is_pending_respawn": false, "total_respawn_progress": 0, "current_respawn_progress": 2, "can_free_respawn": false, "gold_cost_for_respawn": 0, "can_pay_for_respawn": false, "__present__": [2, 3]}],
+          ["state.respawn_pending", false],
+          ["state.backend_stats.respawn_status.update", {"total_respawn_progress": 0, "current_respawn_progress": 2}],
+          ["state.respawn_progress", 1.0],
+          ["state.respawn_can_free", true],
+          ["state.respawn_gold_cost", 12],
+          ["state.respawn_can_pay", true]
+        ]
+      }
+    },
+    "malformed_message_does_not_hide_following_valid_update": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "data": {"current_health": "bad"}}, {"name": "GlobalLogisticsStatus", "wire": {"hex": "087b"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [[0, "ValueError"]],
+        "state_delta": {"economy_command_status": "", "economy_status_revision": 8, "remaining_economy": 123, "robot_dynamics": {"3": {"current_health": "bad", "current_heat": 12.5}}},
+        "host_delta": {},
+        "events": [
+          ["state.robot_dynamics.3.update", {"current_health": "bad"}],
+          ["decode", "GlobalLogisticsStatus", {"remaining_economy": 123, "total_economy_obtained": 0, "tech_level": 0, "encryption_level": 0, "__present__": [1]}],
+          ["state.remaining_economy", 123],
+          ["state.total_economy_obtained", 987],
+          ["state.tech_level", 3],
+          ["state.encryption_level", 4],
+          ["state.economy_status_revision", 8],
+          ["state.economy_command_status", ""]
+        ]
+      }
+    },
+    "rejected_wire_truncated_stage": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "280480"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {}]
+        ]
+      }
+    },
+    "rejected_wire_unknown_stage": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "2863"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {}]
+        ]
+      }
+    },
+    "rejected_wire_unknown_deploy": {
+      "input": {"messages": [{"name": "DeployModeStatusSync", "wire": {"hex": "0802"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "DeployModeStatusSync", {}]
+        ]
+      }
+    },
+    "rejected_wire_wrong_wire_type": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "2d00008040"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {}]
+        ]
+      }
+    },
+    "rejected_wire_unknown_field_only": {
+      "input": {"messages": [{"name": "GameStatus", "wire": {"hex": "980604"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "GameStatus", {}]
+        ]
+      }
+    },
+    "rejected_wire_nan_heat": {
+      "input": {"messages": [{"name": "RobotDynamicStatus", "wire": {"hex": "150000c07f"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "RobotDynamicStatus", {}]
+        ]
+      }
+    },
+    "rejected_wire_inf_rune": {
+      "input": {"messages": [{"name": "RuneStatusSync", "wire": {"hex": "1d0000807f"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "RuneStatusSync", {}]
+        ]
+      }
+    },
+    "rejected_wire_bad_utf8": {
+      "input": {"messages": [{"name": "Event", "wire": {"hex": "1201ff"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "Event", {}]
+        ]
+      }
+    },
+    "rejected_wire_bad_packed_health": {
+      "input": {"messages": [{"name": "GlobalUnitStatus", "wire": {"hex": "5a0180"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "GlobalUnitStatus", {}]
+        ]
+      }
+    },
+    "rejected_wire_oversize_custom": {
+      "input": {"messages": [{"name": "CustomByteBlock", "wire": {"hex": "0aad0200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}]},
+      "observed": {
+        "safety": {"current_stage": "0", "stage_seen": false},
+        "errors": [],
+        "state_delta": {},
+        "host_delta": {},
+        "events": [
+          ["decode", "CustomByteBlock", {}]
+        ]
+      }
+    }
+  }
+}

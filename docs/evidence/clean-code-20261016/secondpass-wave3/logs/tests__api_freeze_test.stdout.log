@@ -1,0 +1,4 @@
+API 冻结面一致：无差异。
+Compatibility scope: 1114 established members; 540 Python call signatures; 78 explicit private caller seams. Behavior still requires focused regression tests.
+成员总数=1111（bound-method=531, callable=331, method=9, plain-attribute=239, property=1）；volatile 排除=16，实际比对=1095
+PASS: 与基线 api_freeze_baseline.json 一致

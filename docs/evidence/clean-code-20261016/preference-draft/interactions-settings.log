@@ -1,0 +1,51 @@
+test_audio_validated_atomic_volume_and_focus (test_cs2_settings_center.PreferenceTests.test_audio_validated_atomic_volume_and_focus) ... ok
+test_bad_dpi_resolution_checked_before_window_mutation_and_startup_safe (test_cs2_settings_center.PreferenceTests.test_bad_dpi_resolution_checked_before_window_mutation_and_startup_safe) ... Saved resolution incompatible with current DPI; using current window
+ok
+test_video_atomic_save_and_bad_file_fallback (test_cs2_settings_center.PreferenceTests.test_video_atomic_save_and_bad_file_fallback) ... ok
+test_video_numeric_validation_sampling_cap_and_surface (test_cs2_settings_center.PreferenceTests.test_video_numeric_validation_sampling_cap_and_surface) ... ok
+test_bind_swap_atomic_and_valid_change_dispatches_real_hook (test_cs2_settings_center.SettingsTests.test_bind_swap_atomic_and_valid_change_dispatches_real_hook) ... ok
+test_callback_failure_restores_values_and_binds_without_saving_or_arming (test_cs2_settings_center.SettingsTests.test_callback_failure_restores_values_and_binds_without_saving_or_arming) ... ok
+test_invalid_bind_or_numeric_never_partially_applied (test_cs2_settings_center.SettingsTests.test_invalid_bind_or_numeric_never_partially_applied) ... ok
+test_modal_and_child_dialog_f12_without_resume (test_cs2_settings_center.SettingsTests.test_modal_and_child_dialog_f12_without_resume) ... Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+ok
+test_mouse_gain_keeps_fractions_and_reset_clears_them (test_cs2_settings_center.SettingsTests.test_mouse_gain_keeps_fractions_and_reset_clears_them) ... ok
+test_new_module_hotkey_rejects_duplicates_and_driver_collision (test_cs2_settings_center.SettingsTests.test_new_module_hotkey_rejects_duplicates_and_driver_collision) ... ok
+test_open_lifecycle_no_stale_input_or_auto_arm (test_cs2_settings_center.SettingsTests.test_open_lifecycle_no_stale_input_or_auto_arm) ... ok
+test_page_has_genuine_preferences_not_actuation_gates (test_cs2_settings_center.SettingsTests.test_page_has_genuine_preferences_not_actuation_gates) ... ok
+test_settings_center_all_tabs_embedded_search_and_staged_mouse (test_cs2_settings_center.SettingsTests.test_settings_center_all_tabs_embedded_search_and_staged_mouse) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.563s
+
+OK

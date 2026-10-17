@@ -1,54 +1,10 @@
-"""阶段 2f 渲染器提取：启动场景渲染族（D4）→ StartupSceneMixin。
+"""Startup launcher rendering and its explicit window-side effects.
 
-（REFACTOR_BLUEPRINT §5 阶段 2 表 2f 行 / §2 D4 节 / §5.6 冻结面 / §6 性能红线）
-
-迁移范围（以 grep 重定位后的实际行号为准，蓝图原行号已因多轮修复漂移；
-行号对应阶段 2e 完成时的 polar_app.py 快照）：
-- ``paint_gpu_startup`` / ``begin_startup_page_transition`` /
-  ``finish_startup_page_transition`` / ``build_gpu_startup_transition``（原 ~1275–1418）
-- ``draw_startup_page_content`` / ``draw_startup_page_transition``（原 ~2391–2457）
-- ``startup_needs_high_rate``（原 ~4544–4552）
-- startup 绘制主体与 liquid 控件族 / 壁纸选择器 / meta 与页面动画复位
-  （原 ~5414–6519 连续块）：``draw_startup_background`` / ``draw_particle_grid_background`` /
-  ``draw_startup_screen`` / ``draw_robot_profile_screen`` / ``draw_match_mode_screen`` /
-  ``draw_startup_scene_launcher`` / ``draw_startup_match_launcher`` /
-  ``draw_startup_vignette`` / ``draw_liquid_startup_scene_launcher`` /
-  ``draw_liquid_startup_match_launcher`` / ``liquid_menu_layout`` /
-  ``startup_stagger_value`` / ``startup_menu_accent``(static) /
-  ``startup_glass_settings`` / ``draw_liquid_glass_panel`` / ``draw_legacy_glass_panel`` /
-  ``draw_liquid_icon`` / ``draw_liquid_menu_header`` / ``draw_liquid_main_button`` /
-  ``draw_liquid_bottom_bar`` / ``set_wallpaper_picker_visible`` / ``draw_wallpaper_picker`` /
-  ``draw_wallpaper_card`` / ``draw_image_cover``(static) /
-  ``draw_liquid_small_action_button`` / ``draw_liquid_status_panel`` /
-  ``draw_startup_icon_card`` / ``draw_startup_card_shadow`` /
-  ``startup_scenario_meta`` / ``startup_match_meta`` / ``reset_startup_page_animation``
-- ``handle_startup_key`` / ``apply_scenario``（原 ~11143–11203）
-
-边界决策（保守，以调用面分析为准）：
-- ``draw_synthetic_video_scene`` **不随 D4 迁移**：虽是启动场景背景绘制，但调用面为
-  VisionViewport.paintGL（D0 顶层类）、paint_gpu_background（D2 GPU 帧编排回退）与
-  draw_synthetic_video(+cached)（D7 视频管线），蓝图 §2 将其归入 D7——留在 polar_app.py；
-- ``liquid_press_amount`` 不随迁：被 D7 draw_hud_liquid_glass、D6 build_gpu_economy_workspace、
-  D5 build_gpu_toggle 跨域复用，属共享按压量辅助——留在 polar_app.py；
-- ``draw_startup_vignette`` 随 D4 迁移：仅被四个 startup launcher 调用，纯 D4 域内成员；
-- ``draw_startup_gpu_background`` / ``paint_gpu_startup_interaction_layer`` 留在 polar_app.py
-  （蓝图 §2 归入 D2 GPU 帧编排）；``build_gpu_startup_launcher/_button/_session/
-  _bottom_bar/_hover_layer`` / ``build_gpu_robot_profile_launcher`` 留在 polar_app.py
-  （蓝图 §2 归入 D5 ClickGUI builders）。
-
-纪律：
-- 方法体**零修改**（含注释、空行与装饰器），纯移动进本 Mixin；三组历史重复定义
-  （startup_scenario_meta / startup_match_meta / reset_startup_page_animation）已在
-  阶段 0 去重，本次移动的即去重后的唯一版本；
-- 状态字段（startup_cache / startup_wallpaper / startup_transition_* 等）仍由
-  PolarRMWindow.__init__ 初始化，Mixin 只承载方法；
-- dispatch（D15）/ keyPressEvent（D15）/ on_tick（D1）对 handle_startup_key /
-  apply_scenario / startup_needs_high_rate 的调用面经继承保持不变。
-
-冻结面纪律：与前序阶段（combat_target_hud.py 等）一致——api_freeze_test 对方法类
-成员比对 ``__qualname__``（基线值形如 "PolarRMWindow.<name>"），故在本模块底部把
-全部迁入方法的 ``__qualname__`` 钉回 ``PolarRMWindow.<name>``，使 ``window.<name>``
-签名与迁移前 bit 级一致。
+StartupNavigation owns page selection and transition state. These adapters
+retain GL/cache/scheduler ordering and keep the established window methods;
+CPU/GPU page drawing, wallpaper controls and scenario UI adaptation still live
+here. This is not an independent renderer: drawing continues to use the window
+facade while navigation can be tested without Qt or a window.
 """
 
 from __future__ import annotations
@@ -82,6 +38,7 @@ from ...startup_gl import TextureOrigin
 from ...paint import accent_color, glow_rect, glow_text, rounded_rect, text_width, with_alpha
 from ...theme import THEME, color
 from ...jello_locale import chinese_enabled, ui_text
+from ..startup_navigation import StartupNavigation
 
 __all__ = [
     "StartupSceneMixin",
@@ -166,7 +123,7 @@ class StartupSceneMixin:
 
     def startup_page_after_scenario(self) -> str:
         """场景选完后的下一页。"""
-        return "match" if self.startup_second_step_enabled() else "robot"
+        return StartupNavigation.page_after_scenario(self.startup_second_step_enabled())
 
     def startup_page_before_robot(self) -> str:
         """机器人页回退（Backspace）应该回到的上一页。
@@ -174,34 +131,30 @@ class StartupSceneMixin:
         必须跟着 `Second Step` 变：否则关掉二级页后，从机器人页
         按退格会跳到一个本来被跳过的页面，流程看起来像坏了。
         """
-        return "match" if self.startup_second_step_enabled() else "scenario"
+        return StartupNavigation.page_before_robot(self.startup_second_step_enabled())
 
     def begin_startup_page_transition(self, page: str) -> None:
         """Switch launcher pages through one reversible GPU-only timeline."""
-        if page not in ("scenario", "match", "robot") or page == self.startup_step:
+        navigation = self._startup_navigation
+        if not navigation.allows_destination(page):
             return
         self.startup_gpu.discard_interpolation_history()
-        self.startup_transition_from = self.startup_step
-        self.startup_transition_to = page
-        self.startup_transition_started = time.perf_counter()
+        navigation.announce_destination(page)
+        navigation.transition_started = time.perf_counter()
         self.startup_page_morph.reset(0.0)
         self.startup_page_morph.set_target(
             1.0,
             self.anim_duration(0.42),
             now=self.startup_transition_started,
         )
-        self.startup_step = page
-        self._startup_page_epoch += 1
+        navigation.activate_destination(page)
         self._startup_static_page_key = None
-        self._startup_static_ready_at = self.startup_transition_started + self.anim_duration(0.42)
+        navigation.defer_static(self.anim_duration(0.42))
         self.frame_scheduler.force()
 
     def finish_startup_page_transition(self) -> None:
         """原子提交新启动页，禁止旧页面纹理继续参与后续合成。"""
-        if self.startup_transition_from is not None or self.startup_transition_to is not None:
-            self.startup_transition_from = None
-            self.startup_transition_to = None
-            self._startup_page_epoch += 1
+        if self._startup_navigation.finish_transition():
             self._gpu_static_ui_key = None
             self._startup_static_page_key = None
             self.gpu_compositor.clear_static_glass()
@@ -1509,15 +1462,18 @@ class StartupSceneMixin:
         return True
 
     def apply_scenario(self, key: str, close_home: bool) -> None:
+        if self.configuration_change_pending and self.reject_pending_configuration_edit():
+            return
         config = self.scenario_manager.set_scenario(key)
         self.scenario_manager.apply_to_registry(self.registry)
         # 后端按三种模式启动/停止 MQTT、UDP、串口（仅连接层，不动 UI）
-        self.backend.apply_scenario(key, registry=self.registry)
+        generation = self.backend.request_scenario(key, registry=self.registry)
+        self.capture_pending_scenario_configuration(generation)
         self.control.mock_output = bool(self.backend.mqtt.mock_output)
         if close_home:
             self.home_visible = False
             self.gui_visible = False
-        self.toast(f"Scenario: {config.title}")
+        self.toast(f"Scenario switching: {config.title}")
 
 
 # ---------------------------------------------------------------------------

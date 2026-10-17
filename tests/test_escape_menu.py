@@ -28,7 +28,7 @@ class Host(InputDispatchMixin, EscapeMenuMixin, QWidget):
         self.quick_action_wheel = NS(active=False)
         self.overlay_coordinator = NS(radial_active=False, blocks_combat_input=False)
         self.registry = NS(get=lambda name: None, modules=[])
-        self.backend = Mock(mqtt=NS(mock_output=True))
+        self.backend = Mock(mqtt=NS(mock_output=True), lifecycle_pending=False)
         self.backend.trigger_estop.return_value = (True, "")
         self.control = Mock()
         self.state = NS()
@@ -83,7 +83,8 @@ class EscapeMenuTests(unittest.TestCase):
             self.key(Qt.Key.Key_Escape)
             self.assertFalse(self.w.escape_menu_visible)
         self.assertGreater(len(ticks), 0)
-        self.assertEqual(self.w.control.release_all.call_count, 10)
+        for action in ("reset_inputs", "send_from_state", "release_direct_dt7", "release_custom_controller"):
+            self.assertEqual(getattr(self.w.control, action).call_count, 10)
         self.assertFalse(self.w.tactical_map_hold)
         self.w.backend.shutdown.assert_not_called()
     def test_input_isolation_and_autorepeat(self):

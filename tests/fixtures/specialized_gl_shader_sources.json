@@ -1,0 +1,19 @@
+{
+  "baseline_commit": "37d5048eddfe41d1b5ff03a53f45c9800bd71092",
+  "StartupGpuCompositor": [
+    "4fd5ce7dfed87f31686126e82c5e08b460d89bb84967db558e165bd0f7a0ddd8",
+    "6dfb036ddc1e85a8e80bbcb968df5506d150d31b77b15e0f85ab662abe0760cc"
+  ],
+  "QuickActionWheelGpuRenderer": [
+    "27be3cb0ab7dfcf1314d4ebd31b1da140fe9766b65d8b268cb62f44de31378dc",
+    "ffac0b0c3ef04f2c38732076ff6271336eae87e85df071a5224adffb70949dc5"
+  ],
+  "IslandIconGpuRenderer": [
+    "ccb1a31b22a3bdcc6dec9b4acfc4c5121ab2e8ccea8a1cf511da487ed717370b",
+    "f5ec18e480b1f2fe60e8992fad65e4743da622585e8233fd4184933aaa62401c"
+  ],
+  "VisionWireGpuRenderer": [
+    "7d82c7b9101f90f58b0901e7df8abf387686344de354e7f0bb934e3c805295aa",
+    "7934d096f80ff36e38bfc7c9881b7e3ccb0a6cdc30ee77c65c7537782565c56c"
+  ]
+}

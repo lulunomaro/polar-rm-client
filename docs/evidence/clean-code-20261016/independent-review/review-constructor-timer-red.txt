@@ -1,0 +1,7 @@
+Actual pre-fix state: {'active_timers': 1, 'closing': False, 'finalized': False, 'pending_after_events': False, 'pending_before_events': True, 'retained': False, 'starts_after_events': 1, 'starts_before_events': 0, 'timer_published': False}
+test_failed_timer_admission_seals_and_retains_before_events (test_window_constructor_failure.WindowConstructorFailureTests.test_failed_timer_admission_seals_and_retains_before_events) ... expected failure
+
+----------------------------------------------------------------------
+Ran 1 test in 1.132s
+
+OK (expected failures=1)

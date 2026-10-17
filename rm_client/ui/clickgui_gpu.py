@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import lru_cache
 import math
+import logging
 import os
 from pathlib import Path
 import struct
@@ -28,6 +29,11 @@ from PySide6.QtOpenGL import (
     QOpenGLVertexArrayObject,
 )
 
+
+from .render_diagnostics import RenderFaultDiagnostics
+
+
+_LOG = logging.getLogger(__name__)
 
 _GL_FLOAT = 0x1406
 _GL_TRIANGLE_STRIP = 0x0005
@@ -353,6 +359,7 @@ class ClickGuiGpuRenderer:
     def __init__(self) -> None:
         self.available = False
         self.last_error = ""
+        self.diagnostics = RenderFaultDiagnostics()
         self.rect_program: QOpenGLShaderProgram | None = None
         self.text_program: QOpenGLShaderProgram | None = None
         self.image_program: QOpenGLShaderProgram | None = None
@@ -415,7 +422,7 @@ class ClickGuiGpuRenderer:
             self.last_error = ""
             return True
         except Exception as exc:
-            self.last_error = str(exc)
+            self._record_failure("initialize", exc)
             self.available = False
             return False
 
@@ -672,7 +679,7 @@ class ClickGuiGpuRenderer:
             else:
                 self.prepare_frame(commands, self._pixel_ratio)
         except Exception as exc:
-            self.last_error = str(exc)
+            self._record_failure("resources.prepare", exc)
             return False
         try:
             started = time.perf_counter()
@@ -701,7 +708,7 @@ class ClickGuiGpuRenderer:
             self.last_submit_ms = (time.perf_counter() - started) * 1000.0
             return True
         except Exception as exc:
-            self.last_error = str(exc)
+            self._record_failure("commands.render", exc)
             self.available = False
             try:
                 functions.glDisable(_GL_SCISSOR_TEST)
@@ -715,6 +722,10 @@ class ClickGuiGpuRenderer:
             return False
         finally:
             self._atlas_locked = False
+
+    def _record_failure(self, phase: str, exc: Exception) -> None:
+        fault = self.diagnostics.record(phase, exc, logger=_LOG, now=time.perf_counter())
+        self.last_error = fault.summary
 
     def prepare_frame(
         self,

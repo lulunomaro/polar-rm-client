@@ -1,0 +1,43 @@
+{
+  "base": "a119062",
+  "tip": "60bbc0007e3929d078032d65aa7364d2e7140a44",
+  "changed_files": 1316,
+  "bytes": 11781717,
+  "extension_counts": {
+    ".md": 19,
+    ".log": 1130,
+    ".json": 31,
+    "": 4,
+    ".txt": 36,
+    ".py": 94,
+    ".sha256": 2
+  },
+  "non_utf8_or_nul": [],
+  "sensitive_pattern_matches": [],
+  "largest_files": [
+    [
+      3205137,
+      "docs/evidence/clean-code-20261016/secondpass-wave2/architecture.json"
+    ],
+    [
+      3204979,
+      "docs/evidence/clean-code-20261016/secondpass-wave1/architecture.json"
+    ],
+    [
+      237641,
+      "tests/fixtures/referee_domain_baseline.json"
+    ],
+    [
+      236815,
+      "docs/evidence/clean-code-20261016/secondpass-wave2/results.json"
+    ],
+    [
+      235173,
+      "docs/evidence/clean-code-20261016/secondpass-wave1/results.json"
+    ],
+    [
+      232491,
+      "rm_client/ui/polar_app.py"
+    ]
+  ]
+}

@@ -1,0 +1,1 @@
+PASS: 128 independent cleanup-failure combinations; four fallback attribute-resolution failures; Qt delegation and accurate lock-status reporting

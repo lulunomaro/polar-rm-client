@@ -1,0 +1,76 @@
+[PASS] param0 上线在 0x04 帧第 10 字节  -> 0/1
+[PASS] 请求位不改帧长  -> (14, 14)
+[PASS] spin_cmd 字节不受影响
+[PASS] 默认不请求：param0 恒 0（与打桥前逐位相同）  -> [0]
+[PASS] 请求开：0x04 每 tick 带 param0 bit0  -> [1]
+[PASS] 急停立刻撤回请求位
+[PASS] 急停后 0x04：spin OFF 且 param0=0  -> [(2, 0), (2, 0)]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=False, estop=False, module=False, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=False, estop=False, module=False, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=False, estop=False, module=False, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=False, estop=False, module=False, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=False, estop=False, module=True, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=False, estop=False, module=True, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=False, estop=False, module=True, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=False, estop=False, module=True, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=False, estop=True, module=False, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=False, estop=True, module=False, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=False, estop=True, module=False, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=False, estop=True, module=False, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=False, estop=True, module=True, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=False, estop=True, module=True, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=False, estop=True, module=True, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=False, estop=True, module=True, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=True, estop=False, module=False, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=True, estop=False, module=False, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=True, estop=False, module=False, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=True, estop=False, module=False, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=True, estop=False, module=True, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=True, estop=False, module=True, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=True, estop=False, module=True, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=True, estop=False, module=True, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=True, estop=True, module=False, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=True, estop=True, module=False, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=True, estop=True, module=False, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=True, estop=True, module=False, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=True, estop=True, module=True, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=True, estop=True, module=True, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=False, live=True, estop=True, module=True, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=False, live=True, estop=True, module=True, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=False, estop=False, module=False, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=False, estop=False, module=False, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=False, estop=False, module=False, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=False, estop=False, module=False, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=False, estop=False, module=True, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=False, estop=False, module=True, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=False, estop=False, module=True, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=False, estop=False, module=True, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=False, estop=True, module=False, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=False, estop=True, module=False, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=False, estop=True, module=False, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=False, estop=True, module=False, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=False, estop=True, module=True, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=False, estop=True, module=True, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=False, estop=True, module=True, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=False, estop=True, module=True, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=True, estop=False, module=False, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=True, estop=False, module=False, drive=False  -> [1]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=True, estop=False, module=False, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=True, estop=False, module=False, drive=True  -> [1]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=True, estop=False, module=True, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=True, estop=False, module=True, drive=False  -> [1]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=True, estop=False, module=True, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=True, estop=False, module=True, drive=True  -> [1]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=True, estop=True, module=False, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=True, estop=True, module=False, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=True, estop=True, module=False, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=True, estop=True, module=False, drive=True  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=True, estop=True, module=True, drive=False
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=True, estop=True, module=True, drive=False  -> [0]
+[PASS] manager 三条件闸门且独立于底盘授权: requested=True, live=True, estop=True, module=True, drive=True
+[PASS] manager 决策写入真实 0x04 param0: requested=True, live=True, estop=True, module=True, drive=True  -> [0]
+[PASS] 新鲜链路即使禁用底盘也发出云台请求
+[PASS] 早先 gate 在线，但决策时 bridge 已过期
+[PASS] 迟到过期撤回上帧请求并写出 param0=0
+
+合计 0 项失败

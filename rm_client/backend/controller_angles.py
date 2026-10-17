@@ -12,7 +12,9 @@ import os
 import struct
 import threading
 import time
-from typing import Callable
+from typing import Any, Callable
+
+from .resource_close import close_resource
 
 from ..protocol import RefereeFrameCodec, crc8, crc16
 
@@ -185,8 +187,11 @@ class ControllerAngleRelay:
         self.config = AngleRelayConfig()
         self.decoder = AngleStreamDecoder()
         self._lock = threading.RLock()
+        self._close_lock = threading.Lock()
         self._thread = None
         self._owned_config: AngleRelayConfig | None = None
+        self._retained_streams: tuple[Any, ...] = ()
+        self._close_error = ""
         self._stop = threading.Event()
         self._epoch = 0
         self._authorized = False
@@ -231,13 +236,28 @@ class ControllerAngleRelay:
                     or port_key(config.rx_port) == port_key(config.tx_port)):
                 self.disarm("select distinct explicit RX and player-end TX ports")
                 return
-            if self.start_workers and not self._failed and (
+            if self.start_workers and not self._failed and not self._retained_streams and (
                     self._thread is None or not self._thread.is_alive()):
-                self._stop = threading.Event()
+                stop = threading.Event()
+                worker = threading.Thread(target=self._run,
+                    args=(config, self._epoch, stop), name="controller-angle-relay", daemon=True)
+                self._stop = stop
                 self._owned_config = config
-                self._thread = threading.Thread(target=self._run,
-                    args=(config, self._epoch, self._stop), name="controller-angle-relay", daemon=True)
-                self._thread.start()
+                self._thread = worker
+                try:
+                    worker.start()
+                except Exception:
+                    # An unstarted Thread cannot be joined by strict teardown.
+                    # A real admission, even a finished worker, keeps its ident
+                    # and remains owned until wait_closed confirms cleanup.
+                    if worker.ident is None:
+                        # A reentrant start wrapper may already have admitted
+                        # a successor; this rejection owns only its old slot.
+                        if self._thread is worker:
+                            self._thread = None
+                            self._owned_config = None
+                        stop.set()
+                    raise
 
     @property
     def owned_ports(self) -> tuple[str, ...]:
@@ -416,13 +436,55 @@ class ControllerAngleRelay:
                     self.decoder.reset()
                     self.disarm(f"serial failure; toggle receiver off/on then re-arm: {exc}")
         finally:
+            retained = []
+            errors = []
             for stream in (tx, rx):
                 if stream is not None:
                     try:
-                        stream.close()
-                    except Exception:
-                        pass
+                        close_resource(stream)
+                    except Exception as exc:
+                        retained.append(stream)
+                        errors.append(f"{type(exc).__name__}: {exc}")
             with self._lock:
-                self._owned_config = None
-                if epoch == self._epoch:
-                    self.connected = False
+                self._retained_streams = tuple(retained)
+                self._close_error = "; ".join(errors)
+                if retained:
+                    self._failed = True
+                    self.disarm("Controller angle close unconfirmed: " + self._close_error)
+                else:
+                    self._owned_config = None
+                self.connected = False
+
+    def wait_closed(self, timeout: float | None = None) -> bool:
+        """Worker/CLI only: finish the existing owner and retry retained handles."""
+        with self._close_lock:
+            worker = self._thread
+            if worker is not None and worker is not threading.current_thread():
+                worker.join(timeout)
+            if worker is not None and worker.is_alive():
+                return False
+            with self._lock:
+                # A standalone caller may reconfigure concurrently. Never
+                # release the new worker's reservation on behalf of the old.
+                if self._thread is not worker:
+                    return False
+                retained = self._retained_streams
+            still_owned = []
+            errors = []
+            for stream in retained:
+                try:
+                    close_resource(stream)
+                except Exception as exc:
+                    still_owned.append(stream)
+                    errors.append(f"{type(exc).__name__}: {exc}")
+            with self._lock:
+                if self._thread is not worker:
+                    return False
+                self._retained_streams = tuple(still_owned)
+                self._close_error = "; ".join(errors)
+                if still_owned:
+                    self._failed = True
+                    self.last_error = "Controller angle close unconfirmed: " + self._close_error
+                else:
+                    self._owned_config = None
+                return not still_owned

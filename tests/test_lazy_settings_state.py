@@ -243,17 +243,36 @@ class DraftIsolationTests(Base):
         self.assertEqual(self.host.registry.get('ClickGui').get_setting('Scale').value,1)
 
     def test_audio_merges_dirty_fields_with_latest_preferences(self):
-        from rm_client.audio_preferences import AudioPreferences
+        from rm_client import audio_preferences as audio_preferences
         from dataclasses import replace
-        prefs=AudioPreferences(master_volume=70)
-        with patch('rm_client.audio_preferences.current_audio',return_value=prefs) as current:
-            d=self.dialog();audio=self.wait_ready(d,'音频')
-            audio.audio_controls['master_volume'].spin.setValue(40)
-            current.return_value=replace(prefs,mute_unfocused=True)
-            with patch('rm_client.audio_preferences.save_audio') as save:
-                audio.apply_draft()
-            self.assertEqual(save.call_args.args[0].master_volume,40)
-            self.assertTrue(save.call_args.args[0].mute_unfocused)
+        from pathlib import Path
+        import json
+        import tempfile
+        import weakref
+
+        prefs = audio_preferences.AudioPreferences(master_volume=70)
+        with tempfile.TemporaryDirectory() as directory, \
+             patch.object(audio_preferences, "audio_path", return_value=Path(directory) / "audio.json"), \
+             patch.object(audio_preferences, "POOLS", weakref.WeakSet()):
+            try:
+                audio_preferences.save_audio(prefs)
+                d = self.dialog()
+                page = self.wait_ready(d, '音频')
+                page.audio_controls['master_volume'].spin.setValue(40)
+                # An independent writer changes a clean field after the page
+                # took its baseline. Verify real persistence, not a legacy
+                # save_audio call that the transaction no longer performs.
+                audio_preferences.save_audio(replace(prefs, mute_unfocused=True))
+                page.apply_draft()
+                saved = json.loads(audio_preferences.audio_path().read_text())
+                self.assertEqual(saved['master_volume'], 40)
+                self.assertTrue(saved['mute_unfocused'])
+                self.assertEqual(audio_preferences.current_audio().master_volume, 40)
+                self.assertTrue(audio_preferences.current_audio().mute_unfocused)
+                self.host.auto_save_config.assert_called_once_with()
+            finally:
+                audio_preferences.current_audio.cache_clear()
+                audio_preferences.selected_output.cache_clear()
 
     def test_cancelled_reset_does_not_change_live_values(self):
         self.host.registry.get('Crosshair').get_setting('Crosshair Scale').value=3

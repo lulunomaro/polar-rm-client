@@ -1,0 +1,30 @@
+[PASS] 默认取值就是 RM Dot  -> RM Dot
+[PASS] RM Dot 图元与接线前逐项相同  -> [('dot', 400.0, 300.0, 2.4), ('line', 382.0, 300.0, 394.0, 300.0), ('line', 406.0, 300.0, 418.0, 300.0), ('line', 400.0, 282.0, 400.0, 294.0), ('line', 400.0, 306.0, 400.0, 318.0)]
+[PASS] 默认绘制仍是一个实心点 + 四条线  -> [('pen', 1.7), ('brush', <BrushStyle.SolidPattern: 1>), ('brush', <BrushStyle.SolidPattern: 1>), ('ellipse', 400.0, 300.0, 2.4, <BrushStyle.SolidPattern: 1>), ('line', 382.0, 300.0, 394.0, 300.0), ('line', 406.0, 300.0, 418.0, 300.0), ('line', 400.0, 282.0, 400.0, 294.0), ('line', 400.0, 306.0, 400.0, 318.0)]
+[PASS] 默认手臂端点与旧代码一致  -> [('line', 382.0, 300.0, 394.0, 300.0), ('line', 406.0, 300.0, 418.0, 300.0), ('line', 400.0, 282.0, 400.0, 294.0), ('line', 400.0, 306.0, 400.0, 318.0)]
+[PASS] 取值能读到 Circle  -> Circle
+[PASS] Circle 有以 Size 为半径的圆环  -> [('dot', 400.0, 300.0, 2.4), ('ring', 400.0, 300.0, 20.0)]
+[PASS] Circle 不再画手臂  -> [('dot', 400.0, 300.0, 2.4), ('ring', 400.0, 300.0, 20.0)]
+[PASS] Circle 实际画了两个图元（点 + 环）  -> [('pen', 1.7), ('brush', <BrushStyle.SolidPattern: 1>), ('brush', <BrushStyle.SolidPattern: 1>), ('ellipse', 400.0, 300.0, 2.4, <BrushStyle.SolidPattern: 1>), ('brush', <BrushStyle.NoBrush: 0>), ('ellipse', 400.0, 300.0, 18.0, <BrushStyle.NoBrush: 0>), ('brush', <BrushStyle.SolidPattern: 1>)]
+[PASS] 圆环是无填充的（实心会糊住目标）  -> [('ellipse', 400.0, 300.0, 2.4, <BrushStyle.SolidPattern: 1>), ('ellipse', 400.0, 300.0, 18.0, <BrushStyle.NoBrush: 0>)]
+[PASS] 圆环半径跟着 Size 走  -> ('ellipse', 400.0, 300.0, 18.0, <BrushStyle.NoBrush: 0>)
+[PASS] Cross 是穿过中心的满长十字，无缺口  -> [('line', 376.0, 300.0, 424.0, 300.0), ('line', 400.0, 276.0, 400.0, 324.0)]
+[PASS] Cross 不画中心点（会被线盖住）  -> [('line', 376.0, 300.0, 424.0, 300.0), ('line', 400.0, 276.0, 400.0, 324.0)]
+[PASS] Size 仍决定准星跨度  -> [('line', -40.0, 0.0, 40.0, 0.0), ('line', 0.0, -40.0, 0.0, 40.0)]
+[PASS] 换样式不影响 Size 设置项本身
+[PASS] 样式取值始终落在界面提供的三个选项里  -> Cross vs ['RM Dot', 'Circle', 'Cross', 'CS2']
+[PASS] Cross 0.5x 以同一瞄准中心缩放  -> [('line', 391.0, 300.0, 409.0, 300.0), ('line', 400.0, 291.0, 400.0, 309.0)]
+[PASS] Cross 0.5x 恢复画笔状态
+[PASS] Circle 0.5x 圆环缩放且中心不漂移  -> [('ellipse', 400.0, 300.0, 1.2, <BrushStyle.SolidPattern: 1>), ('ellipse', 400.0, 300.0, 9.0, <BrushStyle.NoBrush: 0>)]
+[PASS] Cross 2.0x 以同一瞄准中心缩放  -> [('line', 364.0, 300.0, 436.0, 300.0), ('line', 400.0, 264.0, 400.0, 336.0)]
+[PASS] Cross 2.0x 恢复画笔状态
+[PASS] Circle 2.0x 圆环缩放且中心不漂移  -> [('ellipse', 400.0, 300.0, 4.8, <BrushStyle.SolidPattern: 1>), ('ellipse', 400.0, 300.0, 36.0, <BrushStyle.NoBrush: 0>)]
+[PASS] Cross 8.0x 以同一瞄准中心缩放  -> [('line', 256.0, 300.0, 544.0, 300.0), ('line', 400.0, 156.0, 400.0, 444.0)]
+[PASS] Cross 8.0x 恢复画笔状态
+[PASS] Circle 8.0x 圆环缩放且中心不漂移  -> [('ellipse', 400.0, 300.0, 19.2, <BrushStyle.SolidPattern: 1>), ('ellipse', 400.0, 300.0, 144.0, <BrushStyle.NoBrush: 0>)]
+[PASS] 查不到 Style 设置项时回落 RM Dot  -> RM Dot
+[PASS] 未知样式回落默认而不是抛异常
+[PASS] 模块整个不存在时回落默认  -> RM Dot
+[PASS] 模块不存在时准星仍画得出来
+
+合计 0 项失败

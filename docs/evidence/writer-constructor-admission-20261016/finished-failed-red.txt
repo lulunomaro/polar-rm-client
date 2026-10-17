@@ -1,0 +1,24 @@
+test_finished_failed_finalizer_is_retained_without_implicit_second_attempt (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_finished_failed_finalizer_is_retained_without_implicit_second_attempt) ... 
+  test_finished_failed_finalizer_is_retained_without_implicit_second_attempt (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_finished_failed_finalizer_is_retained_without_implicit_second_attempt) (kind='dt7') ... FAIL
+  test_finished_failed_finalizer_is_retained_without_implicit_second_attempt (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_finished_failed_finalizer_is_retained_without_implicit_second_attempt) (kind='cc') ... FAIL
+
+======================================================================
+FAIL: test_finished_failed_finalizer_is_retained_without_implicit_second_attempt (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_finished_failed_finalizer_is_retained_without_implicit_second_attempt) (kind='dt7')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 183, in test_finished_failed_finalizer_is_retained_without_implicit_second_attempt
+    self.assertIs(owner._thread, self.workers[-1])
+AssertionError: <Thread(dt7-close-retry, stopped daemon 140547819718336)> is not <Thread(dt7-writer, stopped daemon 140547819718336)>
+
+======================================================================
+FAIL: test_finished_failed_finalizer_is_retained_without_implicit_second_attempt (tests.test_writer_constructor_admission.WriterConstructorAdmissionTests.test_finished_failed_finalizer_is_retained_without_implicit_second_attempt) (kind='cc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/client-writer-constructor/tests/test_writer_constructor_admission.py", line 183, in test_finished_failed_finalizer_is_retained_without_implicit_second_attempt
+    self.assertIs(owner._thread, self.workers[-1])
+AssertionError: <Thread(cc-close-retry, stopped daemon 140547819718336)> is not <Thread(cc-writer, stopped daemon 140547819718336)>
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (failures=2)

@@ -1,0 +1,8 @@
+test_cs2_column_title_snapshot_keeps_existing_copy_semantics (test_economy_value_dependencies.EconomyVocabularyCompatibility.test_cs2_column_title_snapshot_keeps_existing_copy_semantics) ... ok
+test_existing_consumers_share_label_identity_and_in_place_changes (test_economy_value_dependencies.EconomyVocabularyCompatibility.test_existing_consumers_share_label_identity_and_in_place_changes) ... ok
+test_public_label_contents_and_insertion_order_remain_stable (test_economy_value_dependencies.EconomyVocabularyCompatibility.test_public_label_contents_and_insertion_order_remain_stable) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK

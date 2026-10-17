@@ -151,9 +151,15 @@ class UiCjkFontReadabilityTests(unittest.TestCase):
                 self.assertAlmostEqual(a.x() - b.x(), start)
         cjk = layout.glyphRuns(0, 2)
         self.assertTrue(cjk)
+        installed_cjk = set(QFontDatabase.families(QFontDatabase.WritingSystem.SimplifiedChinese))
+        preferred_cjk = set(ui.cjk_ui_font(self.font).families()) & installed_cjk
+        self.assertEqual(sum(len(run.glyphIndexes()) for run in cjk), 2)
         for run in cjk:
             self.assertEqual(run.rawFont().weight(), QFont.Normal)
-            self.assertIn(run.rawFont().familyName(), ui._ui_fonts._cjk_families())
+            # Generic system fallback names can resolve to a different real
+            # installed face (e.g. Noto CJK on Linux). Require CJK coverage,
+            # rather than comparing the raw face to an unresolved font alias.
+            self.assertIn(run.rawFont().familyName(), preferred_cjk or installed_cjk)
         for run in layout.glyphRuns():
             self.assertNotIn(0, run.glyphIndexes())
             for position in run.positions():
@@ -188,7 +194,10 @@ class UiCjkFontReadabilityTests(unittest.TestCase):
                 second = ui.ui_text_layout(other, text)
                 self.assertIsNot(first, second)
                 self.assertNotAlmostEqual(first.lineAt(0).naturalTextWidth(), second.lineAt(0).naturalTextWidth())
-                expected = qt_line(other, text, spans=spans).lineAt(0).naturalTextWidth()
+                # QTextLine borrows its layout's storage. Keep the owner alive
+                # while measuring; a temporary layout can segfault in Qt 6.8.
+                reference = qt_line(other, text, spans=spans)
+                expected = reference.lineAt(0).naturalTextWidth()
                 self.assertEqual(ui.ui_text_advance(other, text), expected)
                 metric = expected if spans else QFontMetricsF(other).horizontalAdvance(text)
                 self.host.text_advance(self.font, text)

@@ -1,0 +1,26 @@
+
+--- 1) 能不能只认出那一种 ---
+[ OK ] 假车只认 vendor5a 时，只有它判 PASS  {'vendor5a': 'PASS', 'a5_tail': 'NO-CHANGE', 'dbus18': 'NO-CHANGE', 'km12': 'NO-CHANGE', 'keys2': 'NO-CHANGE'}
+[ OK ] 假车只认 keys2 时，答案必须换成 keys2（不许还是 vendor5a）  {'vendor5a': 'NO-CHANGE', 'a5_tail': 'NO-CHANGE', 'dbus18': 'NO-CHANGE', 'km12': 'NO-CHANGE', 'keys2': 'PASS'}
+[ OK ] 一种都不认时全部 NO-CHANGE，且不会冒出一个 PASS  {'NO-CHANGE'}
+[ OK ] 帧被接受但键位漂了 -> 判 PARTIAL（帧型对、载荷错，方向完全不同）  PARTIAL
+
+--- 2) 候选表本身 ---
+[ OK ] vendor5a 与运行期实现打出来的字节完全一致（不许两份实现跑偏）  5A 10 01 36 00 00 00 20 00 00 00 00 00 00 00 00 00 10 00 00 DF 6F
+[ OK ] 候选之间字节长度不许撞车（撞了就扫出来分不清是谁）  {'vendor5a': 22, 'a5_tail': 21, 'dbus18': 18, 'km12': 12, 'keys2': 2}
+[ OK ] km12 就是 dbus18 的 bytes6-17（所以不再单列 raw12）  00 00 00 00 00 00 00 00 00 10 00 00
+[ OK ] vendor5a 的第 8-19 字节就是同一串 12 字节载荷（三种帧共享载荷）  00 00 00 00 00 00 00 00 00 10 00 00
+[ OK ] 每种都有同帧型的清零版（换下一种之前必须先把键位松开）  ['a5_tail', 'dbus18', 'keys2', 'km12', 'vendor5a']
+
+--- 3) 扫完是否真的写过清零帧 ---
+[ OK ] 每种帧都写了非零版与清零版  writes=45
+[ OK ] 扫到该种之后确实发过它的清零帧（不然键会带着走下一轮）  8/1
+[ OK ] 假车最终键位归零（没留下粘住的痕迹）  0
+
+--- 4) 读不到回读时必须拒绝下结论 ---
+[ OK ] 读不到 km_key -> NO-READBACK，绝不给 PASS/NO-CHANGE  [{'name': 'vendor5a', 'verdict': 'NO-READBACK', 'sent': 0, 'bytes': 22, 'samples': 0, 'note': '读不到车上回读，整轮扫帧型都不成立'}]
+
+--- 5) profile 没定案时一个字节都不写 ---
+[ OK ] 未定案 -> 全部 BLOCKED 且没往 DT7 写东西  5 verdicts, writes=0
+
+扫帧型工具判据全部通过

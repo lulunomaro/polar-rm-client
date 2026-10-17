@@ -1,0 +1,88 @@
+{
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux x86_64 glibc 2.41",
+    "CI": "true",
+    "QT_QPA_PLATFORM": "offscreen",
+    "POLAR_DISABLE_LOCAL_CAPTURE": "1",
+    "POLAR_DISABLE_MEDIA_PRELOAD": "1"
+  },
+  "logs": [
+    {
+      "file": "review-admission-focused.log",
+      "sha256": "7343ba97fa622f72388b44d75e3a20c6e45caae6bf11afecf79684cf5085ef2b",
+      "source_commit": "70c410c65aa2fc781bae758b945e62e99bc6d27b",
+      "passed": 80,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "command": "PYTHONPATH=tests:. python -m unittest -v test_controller_angle_admission test_field_log_admission test_field_log_lifecycle_quality test_backend_angle_lifecycle test_angle_writer_handoff test_dt7_angle_ownership test_controller_angle_safety_review test_controller_angle_integration"
+    },
+    {
+      "file": "review-admission-adjacent.log",
+      "sha256": "7d9be99244278e80e1c21e453ac122271ed6c8931a8204849e6c930238f87c84",
+      "source_commit": "70c410c65aa2fc781bae758b945e62e99bc6d27b",
+      "passed": 76,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "command": "PYTHONPATH=tests:. python -m unittest -v test_backend_async_lifecycle test_backend_lifecycle_controller test_backend_lifecycle_callback_failures test_backend_lifecycle_input_failure test_lifecycle_coordinator test_mqtt_lifecycle_nonblocking"
+    },
+    {
+      "file": "extra-fixed.log",
+      "sha256": "579725bfd7eac614c4f45535004c3b1f7ac54f347203b8f0e9ffbccd10ae7207",
+      "source_commit": "70c410c65aa2fc781bae758b945e62e99bc6d27b",
+      "passed": 5,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "command": "python /tmp/review-admission-evidence/test_independent_admission.py /workspace/shared/review-admission-independent"
+    },
+    {
+      "file": "registered-probes-fixed.log",
+      "sha256": "e9e74cf436563f7c5569b9f1d99951d82d448f2500276d8a8e7e7f059185d6cb",
+      "source_commit": "70c410c65aa2fc781bae758b945e62e99bc6d27b",
+      "passed": 5,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "command": "python tests/test_admission_ownership_independent_review.py"
+    },
+    {
+      "file": "review-admission-red.log",
+      "sha256": "d26e662e07564a40c4540e5c3d08955ae762b39f7b929c20c3568909e92a4ecf",
+      "source_commit": "8ff426f27f1200ccefeb2ac8082dba2cb4ebb1b5",
+      "passed": 3,
+      "failed": 4,
+      "errors": 1,
+      "skipped": 0,
+      "exit_code": 1,
+      "command": "PYTHONPATH=tests:. python -m unittest -v test_controller_angle_admission test_field_log_admission"
+    },
+    {
+      "file": "extra-red.log",
+      "sha256": "262de31de43730052ad86c0845cfff1d4861bdb200c332cce3cc8a83d1a78bfa",
+      "source_commit": "8ff426f27f1200ccefeb2ac8082dba2cb4ebb1b5",
+      "passed": 2,
+      "failed": 2,
+      "errors": 1,
+      "skipped": 0,
+      "exit_code": 1,
+      "command": "python /tmp/review-admission-evidence/test_independent_admission.py /workspace/shared/review-admission-red"
+    },
+    {
+      "file": "review-admission-quality.log",
+      "sha256": "5b40c58e68cfa0d5c50d64f4a88cc16c22a2ca7e87d23fa8abf840ba6a779bbb",
+      "source_commit": "70c410c65aa2fc781bae758b945e62e99bc6d27b",
+      "exit_code": 0,
+      "status": "PASS",
+      "command": "python tools/quality_gate.py --json /tmp/review-admission-quality.json"
+    }
+  ],
+  "scope": "Independent scoped review; not aggregate or native qualification.",
+  "log_normalization": "Trailing whitespace was removed from three adjacent-suite log lines; diagnostic/test text is otherwise unchanged."
+}

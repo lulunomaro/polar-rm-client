@@ -1,76 +1,14 @@
-﻿"""阶段 3c 大域 mixin 化：ClickGUI 构建——GPU builders + legacy CPU GUI（D5）
-→ ClickGuiBuildersMixin。
+﻿"""ClickGUI builders for Jello and retained GPU/CPU interfaces.
 
-（REFACTOR_BLUEPRINT §5 阶段 3 表 3c 行 / §2 D5 节 / §5.6 冻结面）
+The public ``build_gpu_clickgui`` method keeps its historical draw-list return
+and host interaction-registration API for direct callers. Compositor paths use
+``polar.clickgui_frame.build_clickgui_frame`` to capture those registrations as
+an explicit draw/interaction result, then publish the matching geometry once.
+No layout, animation, typography, or backend-selection policy lives in that
+adapter; the builders below remain the single source of visual geometry.
 
-迁移范围（以 grep 重定位后的实际行号为准，蓝图原行号已漂移；五段不连续区块）：
-- 打开/关闭：``open_legacy_clickgui`` / ``return_to_jello_clickgui`` /
-  ``set_clickgui_visible``
-- GPU 构建总入口：``build_gpu_clickgui``（含 gui_scroll_viewports 每帧重置与
-  jello 主视图委托 ``self.jello_clickgui.build(...)``）
-- GPU builders 全族：``build_gpu_glass_rect`` / ``build_gpu_startup_button`` /
-  ``build_gpu_startup_session`` / ``build_gpu_startup_bottom_bar`` /
-  ``build_gpu_startup_hover_layer``；颜色工具 ``gpu_alpha`` /
-  ``gui_primary_text`` / ``gui_secondary_text`` / ``gui_disabled_text``；
-  ``build_gpu_panel_gui`` / ``build_gpu_old_gui`` / ``build_gpu_new_gui`` /
-  ``build_gpu_dropdown_gui``；``register_gui_scroll_viewport`` /
-  ``polar_view_modules``；PolarUnified/Multi 族 ``build_gpu_polar_glass`` /
-  ``build_gpu_polar_unified`` / ``build_gpu_scroll_island`` /
-  ``build_gpu_polar_multi`` / ``build_gpu_polar_module_row`` /
-  ``build_gpu_module_row``；设置行族 ``build_gpu_settings`` /
-  ``build_gpu_setting_row`` / ``build_gpu_inline_settings`` /
-  ``build_gpu_toggle``；``build_gpu_mode_switcher`` /
-  ``build_gpu_legacy_return`` / ``build_gpu_toasts`` / ``build_gpu_tooltip`` /
-  ``elide_for_gpu`` / ``build_gpu_keybind_overlay``
-- legacy CPU GUI 全族：``draw_panel_gui`` … ``draw_tooltip``
-  （profile_widget/panel_category_bar/panel_module_list/settings_area/
-  bind_row/setting_row/compact_setting_row/search_bar/old_gui/new_gui/
-  new_panel_shell/new_module_block/dropdown_gui/dropdown_panel/
-  inline_settings/module_draw_height/inline_bind_height/
-  inline_setting_height/waterfall_reveal/compact_keybind/mode_switcher/
-  legacy_return/toasts/keybind_overlay/toggle_switch/pill/tooltip）
-- 模式工具：``active_clickgui_mode`` / ``gui_mode_label``（staticmethod）
-
-纪律与特别注意（蓝图 3c 行，保守边界中文注明）：
-- 方法体**零修改**（含注释与空行），纯移动进本 Mixin；
-- **builder 边画边 add_hotspot 协议保持**（蓝图 3c 特别注意项）：
-  ``add_hotspot`` 与 ``_hotspot_clip`` 裁剪状态属 D15 输入域，仍在
-  polar_app.py；builders 经 ``self.add_hotspot(...)`` /
-  ``self._hotspot_clip`` 的调用面与每帧开销不变；
-- **gui_scroll_viewports 注册机制保持**：``register_gui_scroll_viewport``
-  随域迁入，但 ``gui_scroll_viewports`` 列表字段仍在
-  ``PolarRMWindow.__init__`` 原位初始化；``build_gpu_clickgui`` 开头的
-  每帧 ``self.gui_scroll_viewports = []`` 重置逻辑随方法零修改搬运；
-- ``__qualname__`` 钉回：全部迁入方法（含 staticmethod
-  ``gui_mode_label``）在模块底部把 ``__qualname__`` 钉回
-  ``PolarRMWindow.<name>``，api_freeze_test 的 qualname 基线比对不变；
-- MRO：ClickGuiBuildersMixin 位于继承列表 VideoBackendMixin 之后、
-  QOpenGLWidget 之前，且与既有 Mixin 无同名成员（已逐一核对）→
-  属性解析到本 Mixin，调用面不变；
-- 共享辅助经继承访问、不重复处理：``draw_glass_text`` / ``draw_text`` /
-  ``elide`` / ``text_advance`` / ``font``（TextMetricsMixin，阶段 1）、
-  ``panel_modules`` / ``get_gui_scale`` / ``get_auto_ui_scale`` /
-  ``current_profile``（D17，阶段 3a）、``anim_duration`` / ``setting_bool`` /
-  ``category_icon``（D19，留 polar_app.py）等均经 ``self`` 继续调用。
-
-偏差决策（保守边界）：
-- ``invalidate_transient_overlay_scene``（D2 FBO 失效协议辅助）与
-  ``_finalize_economy_restore``（D6 冻结面方法）在源文件中夹于打开/关闭
-  组之间，但不属 D5 → 留在 polar_app.py；
-- ``build_gpu_startup_launcher`` / ``build_gpu_robot_profile_launcher``：
-  启动页发射器装配入口，蓝图 §2 D5 清单未列入（§5.6 冻结面直调成员）→
-  留在 polar_app.py；本 Mixin 的 startup 按钮/底栏/hover 层 builders 被
-  它们经 ``self`` 调用，调用面不变；
-- ``draw_economy_overlay_compat`` 属 D6 经济域（蓝图 §2 D6 明确列出，
-  随阶段 3d 迁移）→ 不迁；
-- ``add_hotspot``（D15 输入域核心）、``draw_gui_cached_layer`` /
-  ``get_gui_scale_for_bounds`` / ``invalidate_gui_cache``（D2 缓存协议
-  辅助）、``liquid_press_amount`` / ``draw_hud_liquid_glass``（共享液态
-  玻璃辅助，沿用阶段 2f/3b 偏差决策）→ 均留在 polar_app.py；
-- 蓝图提到的 ``paint_gpu_clickgui`` 在当前代码中不存在（jello 主视图构建
-  在 jello_clickgui.JelloClickGuiRenderer.build 内，本阶段禁触
-  jello_clickgui.py），``build_gpu_clickgui`` 经
-  ``self.jello_clickgui.build`` 委托的调用面不变。
+Shared text/scale helpers are inherited. Input clipping and ``add_hotspot`` stay
+on PolarRMWindow. Existing methods retain their frozen compatibility qualnames.
 """
 
 from __future__ import annotations
@@ -208,6 +146,10 @@ class ClickGuiBuildersMixin:
         self.update()
 
     def build_gpu_clickgui(self, width: int, height: int, alpha: float) -> ClickGuiDrawList:
+        """Compatibility entrypoint: build draws and register host hit targets.
+
+        Use ``build_clickgui_frame`` when layout and presentation are separate.
+        """
         started = time.perf_counter()
         hotspot_start = len(self.hotspots)
         self.gui_scroll_viewports = []

@@ -1,0 +1,6 @@
+..Field audit log shutdown incomplete or records lost: {'pending_records': 0, 'dropped_records': 2, 'write_errors': 0, 'closed': True, 'closing': True, 'worker_active': False}
+.......
+----------------------------------------------------------------------
+Ran 9 tests in 0.013s
+
+OK

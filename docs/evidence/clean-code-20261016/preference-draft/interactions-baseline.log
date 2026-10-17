@@ -1,0 +1,43 @@
+test_clean_fields_follow_live_and_update_normalized_baseline (test_registry_draft_contract.RegistryDraftContract.test_clean_fields_follow_live_and_update_normalized_baseline) ... Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+ok
+test_failed_apply_retains_reset_intent_and_baseline (test_registry_draft_contract.RegistryDraftContract.test_failed_apply_retains_reset_intent_and_baseline) ... ok
+test_forced_edit_skips_widget_read_during_refresh (test_registry_draft_contract.RegistryDraftContract.test_forced_edit_skips_widget_read_during_refresh) ... ok
+test_incomplete_page_does_not_observe_or_mutate_draft (test_registry_draft_contract.RegistryDraftContract.test_incomplete_page_does_not_observe_or_mutate_draft) ... ok
+test_pending_edit_survives_live_changes (test_registry_draft_contract.RegistryDraftContract.test_pending_edit_survives_live_changes) ... ok
+test_reset_equal_to_baseline_remains_explicit_edit (test_registry_draft_contract.RegistryDraftContract.test_reset_equal_to_baseline_remains_explicit_edit) ... ok
+test_return_to_baseline_resumes_following_live (test_registry_draft_contract.RegistryDraftContract.test_return_to_baseline_resumes_following_live) ... ok
+test_successful_apply_accepts_pre_callback_snapshot_then_reconciles (test_registry_draft_contract.RegistryDraftContract.test_successful_apply_accepts_pre_callback_snapshot_then_reconciles) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.759s
+
+OK

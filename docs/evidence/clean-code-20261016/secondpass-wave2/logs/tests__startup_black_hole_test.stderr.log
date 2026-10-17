@@ -1,0 +1,12 @@
+test_custom_and_nonmedia_modes_stay_selected (__main__.BlackHoleWallpaperTests.test_custom_and_nonmedia_modes_stay_selected) ... ok
+test_default_and_reset_options (__main__.BlackHoleWallpaperTests.test_default_and_reset_options) ... ok
+test_export_remembers_migration_revision (__main__.BlackHoleWallpaperTests.test_export_remembers_migration_revision) ... ok
+test_legacy_default_migrates_once_without_mutating_input (__main__.BlackHoleWallpaperTests.test_legacy_default_migrates_once_without_mutating_input) ... ok
+test_missing_asset_falls_back_without_repeated_load (__main__.BlackHoleWallpaperTests.test_missing_asset_falls_back_without_repeated_load) ... ok
+test_particle_and_cpu_gpu_switch_restore_static_glass (__main__.BlackHoleWallpaperTests.test_particle_and_cpu_gpu_switch_restore_static_glass) ... ok
+test_still_and_thumbnail_are_cached_without_decoder (__main__.BlackHoleWallpaperTests.test_still_and_thumbnail_are_cached_without_decoder) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.124s
+
+OK

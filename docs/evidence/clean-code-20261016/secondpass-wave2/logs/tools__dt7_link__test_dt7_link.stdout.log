@@ -1,0 +1,149 @@
+
+--- 1) DT7 口那一帧：逐字节对齐反汇编现场 ---
+[ OK ] 总长 22（4 头 + 4 前缀 + 12 载荷 + 2 尾）  22
+[ OK ] 字节 0 = 0x5A（厂商 mov byte [hdr],0x5a）  0x5a
+[ OK ] 字节 1 = length 0x10 = 前缀4 + 载荷12（含 cmd 那 2 字节，不含尾）  16
+[ OK ] 字节 2 = protocol_version 1  1
+[ OK ] 字节 3 = crc8 只覆盖 out[0..2]，初值 0x77  0x36
+[ OK ] out[4..5] = sequence_number u16（厂商这条恒 0）  00 00
+[ OK ] out[6..7] = cmd u16 线值 0x2000（小端落进线缆是 00 20）  00 20
+[ OK ] out[8..19] = 12 字节载荷原样在后面  d3 ff 78 00 07 00 01 00 11 00 00 00
+[ OK ] 尾 2 字节 = crc16 覆盖 out[0..19]，小端，初值 0x1862  cb 50
+[ OK ] 金向量：与厂商字节序列复原结果一致  5A10013600000020D3FF78000700010011000000CB50
+[ OK ] 能解回来且族判定正确  {'variant': 'dji_rc_v1', 'seq': 0, 'cmd_wire': 8192, 'cmd_set': 0, 'cmd_id': 32, 'protocol_version': 1, 'payload': b'\xd3\xffx\x00\x07\x00\x01\x00\x11\x00\x00\x00'}
+[ OK ] 改载荷一字节 之后必须解不出东西
+[ OK ] 改长度域 之后必须解不出东西
+[ OK ] 改 crc8 之后必须解不出东西
+[ OK ] 空帧/短帧不炸
+
+--- 2) A5(图传/裁判) 与 5A(DT7) 两族并存、互不认 ---
+[ OK ] a5_tail：datalen 不含 cmd（厂商 payload.Length-2）  4
+[ OK ] a5_tail：5 + 2 + 载荷 + 2  13
+[ OK ] a5 用 student 族解得开
+[ OK ] a5 用 rc 族解不开（两族初值不同，别互相冒充）
+[ OK ] DT7 帧用 student 族解不开
+[ OK ] frame_variant=a5_no_tail 真的没有尾 2 字节  9
+[ OK ] datalen_includes_cmd=True 时长度域多算 2  4
+[ OK ] crc_variant=video 用第三族初值 0x77/0x3692
+[ OK ] student 族与裁判系统那份实现同源 len=0
+[ OK ] student 族与裁判系统那份实现同源 len=1
+[ OK ] student 族与裁判系统那份实现同源 len=20
+[ OK ] 未知 frame_variant 必须抛
+
+--- 3) 载荷 = Input_Device_Status_RC（12 字节、无中键）---
+[ OK ] 载荷 12 字节  12
+[ OK ] 字段顺序/位宽对得上（含 reserved=通道中值 1024）  d3 ff 78 00 07 00 01 00 11 00 00 04
+[ OK ] 键位是 uint16（16 个键，不是老八键）
+[ OK ] 鼠标是有符号增量（int16 负值正常落进载荷）
+[ OK ] 默认 profile 里就没有 mid 字段
+
+--- 4) 配置说不通就拒发（宁可不动，也不骗人）---
+[ OK ] 命令号空 -> 拒发并写明  False DT7 命令号未定案（profile 里 cmd_wire / cmd_id_keyboard 都是空），拒绝发包
+[ OK ] 有值但未确认 -> 依然拒发  False 命令号未确认（cmd_confirmed=false）：先定案再真发；工具试号请显式置 allow_experimental_cmd
+[ OK ] 拒发的帧不计入 sent  0/1
+[ OK ] 试号工具显式放行时才肯发  实验命令号，别当已定案
+[ OK ] 字段数与格式符对不上 -> 拒发  False 字段数不匹配：layout 5 个 vs fields 6 个
+[ OK ] 未知字段名也要被拒  未知载荷字段 'nonsense'（可用：['keyboard_value', 'left', 'mid', 'mouse_x', 'mouse_y', 'mouse_z', 'reserved', 'right', 'sdr', 'seq', 'version']）
+[ OK ] 未知 crc 族名要带错误出场（不是静默退回）  crc_variant 未知：'magic'
+[ OK ] 中键没有落点：照发其它字段但把话说清楚（不能因中键把 WASD 拒了）  True 中键未表达（载荷无 mid 位）
+
+--- 5) 限流不吞时隙、seq 语义、串口句柄长持 ---
+[ OK ] 同一时刻第二帧被限流丢掉  False 超过 30Hz 上限，本帧未发
+[ OK ] 被限流那帧不消耗时隙：过了一个周期照发  True 2
+[ OK ] 厂商这条 seq 恒 0（seq_increments=false）  0
+[ OK ] seq_increments=true 时确实在递增（现场若发现要递增可一键切）  0000 0100
+[ OK ] 连续三帧只开一次串口（旧版每帧开关一次，会被 DTR/RTS 与端口独占拖死）  opens=1
+[ OK ] 打开的是厂商 RC 口的 961200  961200
+[ OK ] 写出去的三帧都是 22 字节
+[ OK ] close() 真的关掉句柄
+
+--- 6) 仓库 profile 与容错 ---
+[ OK ] 仓库 profile 存在  /workspace/shared/client-quality-integration/configs/dt7_profile.json
+[ OK ] 仓库 profile 自检通过（无错误、载荷 12 字节）
+[ OK ] 仓库 profile 就是厂商那族：5A/dji_rc_v1/rc_check/0x2000/961200  {'cmd_wire': 8192, 'cmd_set': 0, 'cmd_id_keyboard': None, 'cmd_confirmed': True, 'allow_experimental_cmd': False, 'allow_robot_port': False, 'payload_layout': '<hhhBBHH', 'payload_fields': ['mouse_x', 'mouse_y', 'mouse_z', 'left', 'right', 'keyboard_value', 'reserved'], 'frame_variant': 'dji_rc_v1', 'datalen_includes_cmd': True, 'crc_variant': 'rc_check', 'protocol_version': 1, 'seq_increments': False, 'baudrate': 961200, 'max_hz': 30.0, 'mouse_limit': 200, 'reserved_value': 1024, 'open_retry_s': 0.5, '_profile_error': '', '_profile_path': '/workspace/shared/client-quality-integration/configs/dt7_profile.json', '_payload_size': 12}
+[ OK ] 仓库 profile 的默认载荷布局 = Input_Device_Status_RC
+[ OK ] 改 profile 就能换号（不改代码）
+[ OK ] 确认是独立的显式开关：换号后没确认就不许真发
+[ OK ] 没写的字段保留默认
+[ OK ] profile 坏了：退回[未定案]并把错误带出来  profile 读失败，按默认（不发）：Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+[ OK ] 越界值被拒收并留下原因  cmd_wire 超 16 位：99999
+[ OK ] 布局与字段不一致在 load 阶段就报出来
+
+--- 7) 桥侧闸门 / 键鼠来源互斥 / 每条降级路径都松手 ---
+[ OK ] 默认不直连 DT7
+[ OK ] 开关关着时一帧都不发  []
+[ OK ] 默认掩码下只把驾驶键送出去（0x11 -> 0x01，SHIFT 要显式放行）  {'pressed_bits': 1, 'mouse_dx': -45, 'mouse_y': 120, 'mouse_z': 7, 'left': False, 'right': False, 'mid': False, 'qualification_token': None}
+[ OK ] 被挡掉的键要报名字  ['SHIFT']
+[ OK ] 显式放行 SHIFT 之后 0x11 原样透传（掩码不是死路，是可开关）  {'pressed_bits': 17, 'mouse_dx': -45, 'mouse_y': 120, 'mouse_z': 7, 'left': False, 'right': False, 'mid': False, 'qualification_token': None}
+[ OK ] 主动松手会发全零帧（DT7 没有过期兜底）  1
+[ OK ] 同开两条键鼠出口 -> 判冲突并写明是谁  键鼠来源只能有一个，当前同时开着：直连 DT7、0x0306 自定义控制器
+[ OK ] 冲突时谁都不发（两个写者抢同一个 DT7 字段比停发危险）  [] []
+[ OK ] 只留一条时恢复正常发送
+[ OK ] RobotLink 有设置项 Direct DT7 Egress
+[ OK ] RobotLink 有设置项 DT7 Port
+[ OK ] RobotLink 有设置项 DT7 Real TX
+[ OK ] 直连默认关
+[ OK ] 真发闸默认关（不勾就绝不碰串口）
+[ OK ] 没 Allow Drive -> 不生效并把原因写脸上  直连 DT7 出口未生效（急停/未授权/模块未启用）
+[ OK ] 三闸齐开 -> 生效
+[ OK ] 没勾真发时句柄仍是 mock
+[ OK ] 勾了真发才切成非 mock
+[ OK ] 换真发闸不该每 tick 重建句柄
+[ OK ] 异步写线程有界退出
+[ OK ] 闸门全开时 C 路真的产帧（22 字节、走 mock 出口）  1 
+[ OK ] 按中键时只丢中键、驾驶键照发  中键未表达（载荷无 mid 位）
+[ OK ] 急停一票否决
+[ OK ] 急停补松手帧  00 00 00 00 00 00 00 00 00 00 00 04
+[ OK ] 撤 Allow Drive 也要补松手帧（旧代码这里只停发）  5
+[ OK ] 直接关掉开关也要补松手帧  6
+
+--- 8) student 族与队内固件那份官方 CRC 交叉验收 ---
+[SKIP] 没有固件树
+
+--- 9) 现场探针工具与运行期实现必须同构（两边各写一份最容易跑偏）---
+[ OK ] dt7_vcp_probe.vendor_frame == 运行期 build_frame  5A 10 01 36 00 00 00 20 D3 FF 78 00 07 00 01 00 11 00 00 00 CB 50
+[ OK ] 探针帧能被运行期解码器认出来
+[ OK ] 金向量与探针产物也一致  5A 10 01 36 00 00 00 20 D3 FF 78 00 07 00 01 00 11 00 00 00 CB 50
+
+--- 10) 越界值：截进位宽并说明，而不是抛错把整帧废掉 ---
+[ OK ] 鼠标越界被截到 int16 边界（不是抛错）  32767 -32768
+[ OK ] 键位超 16 位时按位截断  0xffff
+[ OK ] 被截过哪几个字段要记下来  ['mouse_x', 'mouse_y', 'keyboard_value']
+[ OK ] 越界那一帧照样发得出去（WASD 不能被鼠标值连坐）
+[ OK ] 发完之后 last_note 说清楚截了什么  越界截断：mouse_x
+[ OK ] 正常范围内的值不受影响、也不误报截断  [] ''
+[ OK ] clamp_field 对 bool 化的左右键不会越界
+
+--- 12) 每帧鼠标增量上限（防一帧甩到云台限位）---
+[ OK ] 仓库 profile 带了 mouse_limit 且是有限值  200
+[ OK ] 界面掉帧攒出来的巨大位移被截到 ±mouse_limit  200 -200
+[ OK ] 截断要写在 note 里，不静默  越界截断：mouse_x/mouse_y
+[ OK ] mouse_limit=0 表示不额外限制（仍受 int16 截断保护）
+[ OK ] 上限设成 int16 边界时按该边界截断  (-32767,)
+[ OK ] mouse_limit 写错类型要报错（不能静默当成不限制）
+[ OK ] 负上限也要报错
+[ OK ] 运行期拿到垃圾 mouse_limit 时按不限制走，但值仍受 int16 保护
+
+--- 14) DT7 口掉线恢复（车上拔一次线就会撞）---
+[ OK ] 第一帧正常写出去、并记住真在用的口  True COM9
+[ OK ] 写失败这一帧报失败并说清原因  写 DT7 口失败：COM9 写入失败（句柄已丢弃，下一帧重开）：设备已移除
+[ OK ] 死句柄必须被丢掉并关掉（留着就会永久失效）  None True
+[ OK ] resolved_port 清空，水印不会显示一个已经不存在的口
+[ OK ] 下一帧自动重开并恢复发送  True ok opens=2
+[ OK ] 打开失败要退避：退避窗口内不再砸端口  写 DT7 口失败：DT7 端口暂时不重试: 拒绝访问
+[ OK ] 退避不改变'失败就是失败'的返回  False/False
+[ OK ] 退避窗口过后要重新尝试（不是一辈子放弃）  写 DT7 口失败：拒绝访问
+[ OK ] 注入 write_bytes 时 resolved_port 不该冒充真口
+
+--- 13) 云台直控请求会顶掉 C 路鼠标（固件仲裁要看得见）---
+[ OK ] C 路生效且没有云台请求时，不该冒出误导提示  ''
+[ OK ] 造的条件真的让请求位立起来了（否则这条测试什么都没测）  1
+[ OK ] 上位机云台直控请求占着 -> 明确说鼠标这条路被顶掉  云台直控请求占着（0x04 param0 bit0）：固件中间档走 AUTO_AIM，DT7 鼠标不控云台
+[ OK ] 撤回请求后提示要跟着消失（不许留残影）  ''
+[ OK ] C 路本身没生效时不该给这条提示（闸门没过别吓操作手）  ''
+
+--- 11) 厂商类型定义 == 我们的字节（外部锚点，不是自洽断言）---
+[SKIP] 找不到 D:\rmbuild\dump12\dump.cs
+
+DT7 直连出口（帧型/CRC/载荷/闸门/互斥/松手）全部通过
+跳过项（别当已验）：没有固件树：CRC 交叉验收未跑；没有 dump.cs：厂商类型锚点未跑

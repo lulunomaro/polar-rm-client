@@ -1,73 +1,14 @@
-"""阶段 3f 大域 mixin 化：动作处理 / 配置动作 / 资格赛（D16）→ ConfigActionsMixin。
+"""UI adapters for configuration effects, module actions, and qualifications.
 
-（REFACTOR_BLUEPRINT §5 阶段 3 表 3f 行 / §2 D16 节 / §5.6 冻结面）
-
-迁移范围（以 grep 重定位后的实际行号为准，蓝图原行号已漂移；单一连续区块
-polar_app.py 4093–4843）：
-- 设置变更回调：``after_setting_changed``
-- 配置动作路由：``handle_config_action``
-- 资格赛流程：``handle_qualification_action`` /
-  ``start_kmc_qualification_test``（KMC 75Hz 心跳资格赛）
-- 紧凑 HUD 恢复：``restore_compact_hud``
-- 模块开关联动：``on_module_toggled``
-- GUI 音效 / 击杀特效预览 / 标定动作：
-  ``play_gui_transition_sound`` / ``preview_elimination_fx`` /
-  ``handle_calibration_action``
-
-纪律与特别注意（蓝图 3f 行，保守边界中文注明）：
-- 类内方法体**零修改**（含注释与空行），纯移动进本 Mixin；
-- **唯一例外**（语义等价、非行为修改）：``handle_qualification_action``
-  内的局部导入 ``from ..preflight import run_preflight`` 因文件包层级从
-  rm_client/ui/ 深化为 rm_client/ui/polar/mixins/ 重定位为
-  ``from ....preflight import run_preflight``——两者均解析到同一模块
-  rm_client.preflight，运行时语义完全一致；
-- polar_app.py 中位于 start_kmc_qualification_test 与 restore_compact_hud
-  之间的"阶段 3d"迁出注记注释块随本连续区块**整体随行搬运**（纯移动），
-  polar_app.py 原位以新的"阶段 3f"注记替代；
-- 状态字段初始化不动：``_qualification_runtime_baseline`` /
-  ``_qualification_kmc_timer`` / ``_qualification_soak_started_at`` /
-  ``_last_module_toggle_at`` / ``_hud_static_defer_since`` 及
-  ``registry.add_toggle_listener(self.on_module_toggled)`` 接线仍全部在
-  ``PolarRMWindow.__init__`` 原位（D0 状态 schema 不动）；KMC 计时器回调
-  finish/send_neutral 为方法内闭包，随体整体搬入；
-- 与阶段 3e 注册表的对账（任务纪律 2）：``InputDispatchMixin`` 的模块级
-  ``_DISPATCH_HANDLERS`` 中 _on_action_config_action → self.handle_config_action、
-  _on_action_setting_toggle/_on_action_setting_slider/_on_action_setting_mode_next/
-  _on_action_jello_mode_select → self.after_setting_changed，均为经实例的
-  属性查找，ConfigActionsMixin 位于 PolarRMWindow 继承列表 InputDispatchMixin
-  之后、QOpenGLWidget 之前，名字经 MRO 正常解析，路由不受影响；
-  __init__ 中 add_toggle_listener(self.on_module_toggled) 取绑定方法同理；
-- 共享辅助经继承访问、不重复处理：``_capture_qualification_runtime_baseline``
-  / ``_qualification_baseline``（D1，仍在本文件）、``save_current_config`` /
-  ``reload_current_config`` / ``import_config_from_dialog`` / ``auto_save_config``
-  （D17 PersistenceMixin）、``import_wallpaper_from_dialog`` /
-  ``reset_wallpaper_profile`` / ``import_custom_ui_sound`` /
-  ``custom_ui_sound_selection``（D17）、``apply_scenario`` / ``apply_match_mode``
-  / ``apply_robot_profile`` / ``current_robot_profile_key``（D17/D4）、
-  ``open/close_hero_deploy_interface`` / ``hero_range_profile_selected`` /
-  ``hero_lob_preview``（D7）、``publish_spin_control_state``（D15）、
-  ``start_economy_qualification_test`` / ``economy_uses_mock_transport``（D6
-  EconomyMixin）、``update_backend_readiness`` / ``readiness_video_source``（D1）、
-  ``invalidate_gui_cache``（兼容壳）、``invalidate_transient_overlay_scene``、
-  ``setting_bool`` / ``setting_mode`` / ``get_setting_number``（TextMetrics/
-  PersistenceMixin）、``active_clickgui_mode``（ClickGuiBuildersMixin）、
-  ``toast`` / ``accept_combat_event``（VideoBackendMixin）等均经 ``self``
-  继续调用，调用面不变；
-- **保守边界决策**：QFileDialog / QInputDialog / HeroLobPlanner 在
-  polar_app.py 中的全部使用点均已随块迁出（grep 核实无其他使用），但按
-  "只增不删"纪律**保留 polar_app.py 原 import 行不删**——polar_app 作为
-  兼容壳继续 re-export 这些符号，避免任何潜在动态引用面漂移；
-- ``__qualname__`` 钉回：全部迁入方法在模块底部把 ``__qualname__`` 钉回
-  ``PolarRMWindow.<name>``，api_freeze_test 的 qualname 基线比对不变；
-- MRO：ConfigActionsMixin 位于继承列表 InputDispatchMixin 之后、
-  QOpenGLWidget 之前，且与既有 Mixin 无同名成员（九个方法此前均唯一
-  定义于 PolarRMWindow 类体内，已逐一核对）→ 属性解析到本 Mixin，
-  ``window.<成员>`` 表面不变。
+Setting changes share a stable-identity effect plan across direct GUI controls
+and the settings center. Runtime effects stay explicit here; validation and
+transaction ownership live in the configuration package.
 """
 
 from __future__ import annotations
 
 import json
+from enum import Enum
 import time
 from pathlib import Path
 from typing import Any
@@ -79,11 +20,22 @@ from ...jello_locale import chinese_enabled, ui_text
 
 # 相对导入层级：rm_client/ui/polar/mixins/ → ... = rm_client.ui、.... = rm_client
 from ....combat_events import CombatEvent
+from ....configuration.commands import (
+    ConfigCommand, ConfigCommandKind, QualificationCommand,
+    resolve_config_command, resolve_qualification_command,
+)
+from ....configuration.effects import SettingEffect, effects_for_setting
+from ....configuration.registry import setting_identity
 from ....control import (build_dt7_selftest_report, evaluate_dt7_hold,
                          evaluate_dt7_selftest, evaluate_radio_km_selftest,
                          KEYBOARD_BITS)
+from ....emergency_actions import request_control_lock, request_emergency_stop
 from ....hero_lob import HeroLobPlanner
 from ....model import PRIMARY_GUI_MODE, Module, Setting
+from ....qualification_observations import (
+    QualificationEvidence, economy_evidence, estop_evidence, firmware_zero_evidence,
+    hero_evidence, recovery_evidence, soak_evidence, video_evidence,
+)
 from ...overlay_coordinator import OverlayKind
 
 __all__ = [
@@ -91,665 +43,628 @@ __all__ = [
 ]
 
 
+class QualificationRefresh(Enum):
+    """Explicit UI completion behavior, including legacy cancellation paths."""
+    SKIP = "skip"
+    REQUIRED = "required"
+
+
 class ConfigActionsMixin:
     """D16 动作处理 / 配置动作 / 资格赛（设置变更回调 + 配置动作 + KMC 资格赛）。"""
 
     def after_setting_changed(self, setting: Setting) -> None:
+        """Execute the same post-commit effects for every settings editor."""
+        if self.reject_pending_configuration_edit():
+            return
+        plan = effects_for_setting(setting_identity(self.registry, setting), setting.value)
         self.invalidate_gui_cache()
-        angles = self.registry.get("ControllerAngles")
-        if angles is not None and any(setting is item for item in angles.settings):
-            self.backend._sync_controller_angles(self.registry)
-        # 驾驶/键鼠槽位的改绑要立即生效，不能等下次加载配置；
-        # 否则用户改完键后前几次按键仍按旧绑定开车。
-        link_module = self.registry.get("RobotLink")
-        if link_module is not None and not bool(setting.value) and any(
-            setting is link_module.get_setting(name)
-            for name in ("Allow Drive", "Custom Controller Egress", "Radio KM Egress")
-        ):
-            # A gate's falling edge must neutralize pending inputs immediately,
-            # including shortcut changes which never open a blocking menu.
-            self.backend.lock_control("RobotLink output gate disabled")
+        handlers = {
+            SettingEffect.SYNC_CONTROLLER_ANGLES: self._sync_controller_angle_setting,
+            SettingEffect.CLOSE_OUTPUT_GATE: self._close_disabled_output_gate,
+            SettingEffect.SYNC_CONTROL_BINDINGS: self._sync_control_binding_setting,
+            SettingEffect.INVALIDATE_HUD_PALETTE: self._invalidate_hud_palette_setting,
+            SettingEffect.APPLY_SCENARIO: self._apply_scenario_setting,
+            SettingEffect.APPLY_MATCH_MODE: self._apply_match_mode_setting,
+            SettingEffect.APPLY_ALLIANCE: self._apply_alliance_setting,
+            SettingEffect.APPLY_LEGACY_ALLIANCE: self._apply_legacy_alliance_setting,
+            SettingEffect.APPLY_ROBOT_PROFILE: self._apply_robot_profile_setting,
+            SettingEffect.APPLY_GUI_MODE: self._apply_gui_mode_setting,
+            SettingEffect.APPLY_COMBAT_PRESET: self._apply_combat_preset_setting,
+            SettingEffect.ANNOUNCE_RIGHT_DISPLAY: self._announce_right_display_setting,
+            SettingEffect.SAVE_STARTUP_PREFERENCE: self._save_startup_preference_setting,
+            SettingEffect.RELOAD_PROFILE: self._reload_profile_setting,
+            SettingEffect.PRELOAD_ELIMINATION_SOUNDS: self._preload_elimination_setting,
+            SettingEffect.SYNC_QUICK_ACTION_WHEEL: self._sync_wheel_setting,
+            SettingEffect.APPLY_SPIN_SETTING: self._apply_spin_setting,
+            SettingEffect.ANNOUNCE_RADIO_EGRESS: self._announce_radio_egress_setting,
+        }
+        for effect in plan.effects:
+            handlers[effect](setting)
+        if plan.auto_save:
+            self.auto_save_config()
+
+    def _sync_controller_angle_setting(self, setting: Setting) -> None:
+        self.backend._sync_controller_angles(self.registry)
+
+    def _close_disabled_output_gate(self, setting: Setting) -> None:
+        # A falling gate neutralizes pending inputs even outside a modal menu.
+        self.backend.lock_control("RobotLink output gate disabled")
+        try:
             self.control.release_all(self.state, self.registry)
+        finally:
             self.control.clear_pending()
-        if link_module is not None and str(getattr(setting, "name", "")).startswith("Bind "):
-            if setting is link_module.get_setting(str(setting.name)):
-                self.sync_control_binds()
-                self.auto_save_config()
-                return
-        hud = self.registry.get("HUD")
-        if hud and setting is hud.get_setting("Visual Tone"):
-            # The palette is memoized for one UI frame.  A direct UI setting
-            # change can occur before the next timer tick, so invalidate it
-            # explicitly rather than displaying the previous tone for a frame.
-            self._hud_palette_cache = None
-        scenario = self.registry.get("Scenario")
-        if scenario and setting is scenario.get_setting("Mode"):
-            self.apply_scenario(str(setting.value), close_home=False)
-            self.auto_save_config()
-            return
-        match_mode = self.registry.get("MatchMode")
-        if match_mode and setting is match_mode.get_setting("Mode"):
-            self.apply_match_mode(str(setting.value), close_home=False)
-            self.auto_save_config()
-            return
-        alliance_profile = self.registry.get("AllianceProfile")
-        if alliance_profile and setting is alliance_profile.get_setting("Side"):
-            self.apply_robot_profile(self.current_robot_profile_key(), close_home=False, announce=False)
-            self.vision_kill_detector.reset()
-            self.toast(f"阵营：{setting.value}")
-            self.auto_save_config()
-            return
-        if match_mode and setting is match_mode.get_setting("Alliance"):
-            if alliance_profile:
-                side = alliance_profile.get_setting("Side")
-                if side:
-                    side.value = setting.value
-            self.apply_robot_profile(self.current_robot_profile_key(), close_home=False, announce=False)
-            self.vision_kill_detector.reset()
-            self.auto_save_config()
-            return
-        robot_profile = self.registry.get("RobotProfile")
-        if robot_profile and setting in robot_profile.settings:
-            self.apply_robot_profile(self.current_robot_profile_key(), close_home=False, announce=False)
-            self.auto_save_config()
-            return
-        click_gui = self.registry.get("ClickGui")
-        if click_gui and setting is click_gui.get_setting("Mode"):
-            self.mode_manager.set_mode(str(setting.value))
-            self.module_expanded.clear()
-            self.play_gui_transition_sound("expand")
-            self.toast(f"GUI 模式：{setting.value}")
-        if hud and setting is hud.get_setting("Combat Preset"):
-            minecraft = self.registry.get("MinecraftCombatHUD")
-            selected = str(setting.value) == "Minecraft 1.21.11"
-            if minecraft is not None and minecraft.enabled != selected:
-                self.registry.toggle_module(minecraft, source="preset")
-            self.invalidate_transient_overlay_scene()
-        if hud and setting is hud.get_setting("Right Display"):
-            self.toast(f"右侧 HUD：{setting.value}")
-        config_manager = self.registry.get("ConfigManager")
-        if config_manager and setting is config_manager.get_setting("Load On Start"):
-            try:
-                self.config_store.save_startup_preferences(self.current_profile(), bool(setting.value))
-            except OSError as exc:
-                self.toast(f"启动设置保存失败：{exc}", kind="warning")
-        if config_manager and setting is config_manager.get_setting("Profile"):
-            self.reload_current_config()
-            return
-        elimination_fx = self.registry.get("EliminationFX")
-        if elimination_fx and setting is elimination_fx.get_setting("Preset"):
-            self.kill_fx.preload_preset_sounds(str(setting.value))
-        quick_wheel = self.registry.get("QuickActionWheel")
-        if quick_wheel and setting in quick_wheel.settings:
-            self.sync_quick_action_wheel_settings()
+
+    def _sync_control_binding_setting(self, setting: Setting) -> None:
+        self.sync_control_binds()
+
+    def _invalidate_hud_palette_setting(self, setting: Setting) -> None:
+        self._hud_palette_cache = None
+
+    def _apply_scenario_setting(self, setting: Setting) -> None:
+        self.apply_scenario(str(setting.value), close_home=False)
+
+    def _apply_match_mode_setting(self, setting: Setting) -> None:
+        self.apply_match_mode(str(setting.value), close_home=False)
+
+    def _apply_robot_profile_setting(self, setting: Setting) -> None:
+        self.apply_robot_profile(self.current_robot_profile_key(), close_home=False, announce=False)
+
+    def _apply_alliance_setting(self, setting: Setting) -> None:
+        self._apply_robot_profile_setting(setting)
+        self.vision_kill_detector.reset()
+        self.toast(f"阵营：{setting.value}")
+
+    def _apply_legacy_alliance_setting(self, setting: Setting) -> None:
+        alliance = self.registry.get("AllianceProfile")
+        side = alliance.get_setting("Side") if alliance else None
+        if side is not None:
+            side.value = setting.value
+        self._apply_robot_profile_setting(setting)
+        self.vision_kill_detector.reset()
+
+    def _apply_gui_mode_setting(self, setting: Setting) -> None:
+        self.mode_manager.set_mode(str(setting.value))
+        self.module_expanded.clear()
+        self.play_gui_transition_sound("expand")
+        self.toast(f"GUI 模式：{setting.value}")
+
+    def _apply_combat_preset_setting(self, setting: Setting) -> None:
+        minecraft = self.registry.get("MinecraftCombatHUD")
+        selected = str(setting.value) == "Minecraft 1.21.11"
+        if minecraft is not None and minecraft.enabled != selected:
+            self.registry.toggle_module(minecraft, source="preset")
+        self.invalidate_transient_overlay_scene()
+
+    def _announce_right_display_setting(self, setting: Setting) -> None:
+        self.toast(f"右侧 HUD：{setting.value}")
+
+    def _save_startup_preference_setting(self, setting: Setting) -> None:
+        try:
+            self.config_store.save_startup_preferences(self.current_profile(), bool(setting.value))
+        except OSError as exc:
+            self.toast(f"启动设置保存失败：{exc}", kind="warning")
+
+    def _reload_profile_setting(self, setting: Setting) -> None:
+        self.reload_current_config()
+
+    def _preload_elimination_setting(self, setting: Setting) -> None:
+        self.kill_fx.preload_preset_sounds(str(setting.value))
+
+    def _sync_wheel_setting(self, setting: Setting) -> None:
+        self.sync_quick_action_wheel_settings()
+
+    def _apply_spin_setting(self, setting: Setting) -> None:
         spin = self.registry.get("SpinMode")
-        if spin and setting in spin.settings:
-            mock_setting = spin.get_setting("Mock Output")
-            if setting is mock_setting and not bool(setting.value) and spin.enabled:
-                # Arming live transport must never inherit the default/on-screen
-                # enabled state. Force the module off; the operator must make a
-                # second explicit toggle to send an enable command.
-                self.registry.toggle_module(spin, source="live_output_armed")
-                self.toast("Spin live output armed; toggle SpinMode again to enable")
-                self.auto_save_config()
-                return
-            # Switching back to Mock sends one explicit live disable before
-            # local output is suppressed, clearing any robot-side latch.
-            force_disable = bool(setting is mock_setting and bool(setting.value))
-            self.publish_spin_control_state(
-                False if force_disable else spin.enabled,
-                source=f"setting:{setting.name}",
-                force_live_disable=force_disable,
-            )
-        if link_module is not None and setting is link_module.get_setting("Radio KM Egress"):
-            # 开关只给"意愿"，三道闸还差两块，这里当场把缺的说出来，
-            # 免得界面勾上了、车不动、只能回去翻代码。
-            on = bool(setting.value)
-            missing = []
-            if not link_module.enabled:
-                missing.append("启用模块 RobotLink")
-            drive = link_module.get_setting("Allow Drive")
-            if drive is None or not bool(drive.value):
-                missing.append("勾选 Allow Drive")
-            if on and missing:
-                self.toast("无线键鼠出口已开，但还差：" + "、".join(missing))
-            elif on:
-                # 规则级互锁必须在这儿提醒一次：《2026 通信协议》2.2.1 写明
-                # 键鼠控制指令来源只能是"官方选手端"或"自定义客户端"之一。
-                # 两边同时开不会报错，只会有一边白干。
-                self.toast("无线键鼠出口已开（图传 0x0311）；"
-                           "记得把键鼠来源选成\u201c自定义客户端\u201d，"
-                           "官方选手端同时开着时只认一个来源")
-            else:
-                self.toast("无线键鼠出口已关")
-        self.auto_save_config()
+        mock_setting = spin.get_setting("Mock Output")
+        if setting is mock_setting and not bool(setting.value) and spin.enabled:
+            # Arming live transport requires a second explicit enable action.
+            self.registry.toggle_module(spin, source="live_output_armed")
+            self.toast("Spin live output armed; toggle SpinMode again to enable")
+            return
+        # Switching to Mock clears the live robot-side latch once.
+        force_disable = setting is mock_setting and bool(setting.value)
+        self.publish_spin_control_state(
+            False if force_disable else spin.enabled,
+            source=f"setting:{setting.name}",
+            force_live_disable=force_disable,
+        )
+
+    def _announce_radio_egress_setting(self, setting: Setting) -> None:
+        link = self.registry.get("RobotLink")
+        missing = []
+        if not link.enabled:
+            missing.append("启用模块 RobotLink")
+        drive = link.get_setting("Allow Drive")
+        if drive is None or not bool(drive.value):
+            missing.append("勾选 Allow Drive")
+        if bool(setting.value) and missing:
+            self.toast("无线键鼠出口已开，但还差：" + "、".join(missing))
+        elif bool(setting.value):
+            self.toast("无线键鼠出口已开（图传 0x0311）；"
+                       "记得把键鼠来源选成\u201c自定义客户端\u201d，"
+                       "官方选手端同时开着时只认一个来源")
+        else:
+            self.toast("无线键鼠出口已关")
 
     def handle_config_action(self, action_name: str) -> None:
+        command = resolve_config_command(action_name)
+        # Editors historically bypass student extensions; all other commands,
+        # including unknown extension IDs, remain available to that boundary.
+        if command is not None and command.kind is ConfigCommandKind.EDITOR:
+            self._open_configuration_editor(command.name)
+            return
+        if self.handle_student_config_action(action_name) or command is None:
+            return
+        self._execute_config_command(command)
+
+    def _execute_config_command(self, command: ConfigCommand) -> None:
+        handlers = {
+            ConfigCommandKind.QUALIFICATION: self.handle_qualification_action,
+            ConfigCommandKind.SAFETY: self._apply_safety_command,
+            ConfigCommandKind.DIAGNOSTIC: self._run_link_diagnostic,
+            ConfigCommandKind.ANGLES: self._apply_angle_command,
+            ConfigCommandKind.PROFILE: self._apply_profile_command,
+            ConfigCommandKind.CALIBRATION: self.handle_calibration_action,
+            ConfigCommandKind.ELIMINATION: self._preview_elimination_command,
+            ConfigCommandKind.DEPLOY: self._open_deploy_command,
+            ConfigCommandKind.LOB: self._apply_lob_command,
+        }
+        if command.kind is ConfigCommandKind.SOUND_IMPORT:
+            self.import_custom_ui_sound(command.sound_slot)
+        elif command.kind is ConfigCommandKind.SOUND_PREVIEW:
+            self._preview_ui_sound(command.sound_slot)
+        else:
+            handlers[command.kind](command.name)
+
+    def _open_configuration_editor(self, action_name: str) -> None:
         if action_name == "Open Keybind Manager":
             from ...jello_keybinds import open_keyboard_manager
             open_keyboard_manager(self)
             return
-        if action_name in ("Open Crosshair Editor", "Import Crosshair Code", "Import Crosshair File", "Crosshair Import Details"):
-            from ....cs2_crosshair import import_dialog, open_crosshair_editor, show_import_details
-            if action_name == "Open Crosshair Editor":
-                open_crosshair_editor(self)
-            elif action_name == "Crosshair Import Details":
-                show_import_details(self)
+        from ....cs2_crosshair import import_dialog, open_crosshair_editor, show_import_details
+        if action_name == "Open Crosshair Editor":
+            open_crosshair_editor(self)
+        elif action_name == "Crosshair Import Details":
+            show_import_details(self)
+        else:
+            import_dialog(self, file=action_name == "Import Crosshair File")
+
+    def _apply_safety_command(self, action_name: str) -> None:
+        if action_name == "Trigger E-Stop":
+            result = request_emergency_stop(self.backend, self.control)
+            if result.failures:
+                self.toast(result.message, kind="warning")
             else:
-                import_dialog(self, file=action_name == "Import Crosshair File")
-            return
-        if self.handle_student_config_action(action_name):
-            return
-        qualification_actions = {
-            "New Qualification Session",
-            "Reset Qualification Session",
-            "Run Preflight",
-            "Run Video Test",
-            "Run KMC Test",
-            "Record DT7 Safety Test",
-            "Run Economy Send Test",
-            "Record E-Stop Test",
-            "Observe Firmware Zero",
-            "Record Firmware Zero Test",
-            "Run Loss Recovery Test",
-            "Record Hero Test",
-            "Record Economy Test",
-            "Review PRM1 Vision Schema",
-            "Run PRM1 Vision Bench",
-            "Review PRM1 Spin Schema",
-            "Run PRM1 Spin Bench",
-            "Start Match Soak",
-            "Stop Match Soak",
-            "Export Evidence",
-            "Field Sign-off",
-            "Arm Match Control",
-            "Lock Match Control",
-        }
-        if action_name in qualification_actions:
-            self.handle_qualification_action(action_name)
-        elif action_name == "Trigger E-Stop":
-            self.control.reset_inputs()
-            ok, reason = self.backend.trigger_estop()
-            self.control.clear_pending()
-            self.toast("E-STOP ACTIVE" if ok else f"E-STOP ACTIVE ({reason})")
-        elif action_name == "Release E-Stop":
+                self.toast(result.message)
+        else:
             self.backend.release_estop()
             self.toast("E-STOP RELEASED — verify robot before control")
-        elif action_name == "Run DT7 Link Selftest":
-            self.run_dt7_link_selftest()
-        elif action_name == "Rescan Serial Ports":
-            self.rescan_serial_ports()
-        elif action_name == "Run Wireless KM Selftest":
-            self.run_radio_km_selftest()
-        elif action_name in {"Arm Angle Forward", "Disarm Angle Forward", "Show Angle Status"}:
-            status = self.backend._sync_controller_angles(self.registry)
-            link = self.backend.controller_angles
-            if action_name == "Disarm Angle Forward":
-                link.disarm()
-                self.toast("角度转发已锁定；车端独立超时仍必须有效")
-            elif action_name == "Arm Angle Forward":
-                if not link.config.mock_output:
-                    answer, accepted = QInputDialog.getText(
-                        self, "实体控制器角度转发", "确认机械臂已支撑隔离、0x0302 接收与独立超时已验证。\n"
-                        "本次会向官方选手端发送真实关节目标。输入 ARM 授权本次进程：")
-                    if not accepted or answer.strip() != "ARM":
-                        return
-                # A slow dialog never authorizes cached input. Recheck gates,
-                # require a fresh sample, then wait for another source frame.
-                self.backend._sync_controller_angles(self.registry)
-                ok, why = link.arm()
-                self.toast(("角度转发已授权：" if ok else "角度转发未授权：") + why)
-            else:
-                self.toast(f"角度有效={status['valid']} 已授权={status['armed']} "
-                           f"真发={status['forwarded']} mock={status['mock_forwarded']}；"
-                           f"{status['last_error']}")
-        elif action_name == "Save Current":
-            self.save_current_config()
-        elif action_name == "Reload Profile":
-            self.reload_current_config()
-        elif action_name == "Import Config":
-            self.import_config_from_dialog()
-        elif action_name == "Import Wallpaper":
-            self.import_wallpaper_from_dialog()
-        elif action_name == "Reset Wallpaper":
-            self.reset_wallpaper_profile()
-        elif action_name == "Restore Compact HUD":
-            self.restore_compact_hud()
-        elif action_name in ("Capture Chessboard", "Solve Calibration", "Export Tongji YAML"):
-            self.handle_calibration_action(action_name)
-        elif action_name in ("Preview FX", "Test Elimination"):
-            self.preview_elimination_fx(single=action_name == "Test Elimination")
-        elif action_name == "Open Deploy Interface":
-            self.open_hero_deploy_interface()
-        elif action_name in (
-            "Calibrate Lob Yaw",
-            "Calibrate Lob Pitch",
-            "Confirm Relocalization",
-            "Invalidate Relocalization",
-            "Preview Lob",
-            "Arm Assisted Lob",
-            "Disarm Assisted Lob",
-        ):
-            module = self.registry.get("HeroLob")
-            timeout = self.get_setting_number(module, "Telemetry Timeout", 0.50)
-            telemetry_fresh = bool(
-                self.state.native_gimbal_online
-                and self.state.native_telemetry_at > 0.0
-                and time.perf_counter() - self.state.native_telemetry_at <= timeout
-            )
-            if action_name == "Calibrate Lob Yaw":
-                if telemetry_fresh:
-                    bearing = self.get_setting_number(module, "Bearing", 0.0)
-                    offset = module.get_setting("Yaw Offset") if module else None
-                    current_offset = float(offset.value) if offset is not None else 0.0
-                    correction = HeroLobPlanner.normalize_degrees(
-                        self.state.native_yaw_deg - (bearing + current_offset)
-                    )
-                    candidate = current_offset + correction
-                    if (
-                        offset is not None
-                        and offset.min_value is not None
-                        and offset.max_value is not None
-                        and float(offset.min_value) <= candidate <= float(offset.max_value)
-                    ):
-                        offset.value = candidate
-                        tolerance = self.get_setting_number(
-                            module, "Yaw Calibration Tolerance", 1.0
-                        )
-                        residual = abs(
-                            HeroLobPlanner.normalize_degrees(
-                                bearing + float(offset.value) - self.state.native_yaw_deg
-                            )
-                        )
-                        self.state.hero_lob_yaw_calibrated = residual <= tolerance
-                        self.toast(
-                            f"Hero lob yaw calibrated {float(offset.value):+.2f} deg"
-                            if self.state.hero_lob_yaw_calibrated
-                            else f"Yaw calibration residual {residual:.2f} deg"
-                        )
-                    else:
-                        self.state.hero_lob_yaw_calibrated = False
-                        self.toast("Yaw calibration blocked: correction exceeds offset range")
-                else:
-                    self.toast("Yaw calibration blocked: fresh gimbal telemetry required")
-            elif action_name == "Calibrate Lob Pitch":
-                if telemetry_fresh:
-                    solution, _readiness = HeroLobPlanner.preview_from_state(
-                        self.state,
-                        module,
-                        hero_range_profile=self.hero_range_profile_selected(),
-                    )
-                    offset = module.get_setting("Pitch Offset") if module else None
-                    current_offset = float(offset.value) if offset is not None else 0.0
-                    candidate = current_offset + (
-                        self.state.native_pitch_deg - solution.pitch_deg
-                    )
-                    if (
-                        solution.reachable
-                        and offset is not None
-                        and offset.min_value is not None
-                        and offset.max_value is not None
-                        and float(offset.min_value) <= candidate <= float(offset.max_value)
-                    ):
-                        offset.value = candidate
-                        tolerance = self.get_setting_number(
-                            module, "Pitch Calibration Tolerance", 1.5
-                        )
-                        corrected, _ = HeroLobPlanner.preview_from_state(
-                            self.state,
-                            module,
-                            hero_range_profile=self.hero_range_profile_selected(),
-                        )
-                        residual = abs(self.state.native_pitch_deg - corrected.pitch_deg)
-                        self.state.hero_lob_pitch_calibrated = residual <= tolerance
-                        self.toast(
-                            f"Hero lob pitch calibrated {float(offset.value):+.2f} deg"
-                            if self.state.hero_lob_pitch_calibrated
-                            else f"Pitch calibration residual {residual:.2f} deg"
-                        )
-                    else:
-                        self.state.hero_lob_pitch_calibrated = False
-                        self.toast("Pitch calibration blocked: unreachable or offset out of range")
-                else:
-                    self.toast("Pitch calibration blocked: fresh gimbal telemetry required")
-            elif action_name == "Confirm Relocalization":
-                if (
-                    telemetry_fresh
-                    and self.state.hero_lob_yaw_calibrated
-                    and self.state.hero_lob_pitch_calibrated
-                ):
-                    self.state.hero_lob_relocalization_valid = True
-                    self.toast("Hero lob relocalization confirmed")
-                else:
-                    self.toast("Relocalization blocked: fresh telemetry and both calibrations required")
-            elif action_name == "Invalidate Relocalization":
-                self.state.hero_lob_relocalization_valid = False
-                self.state.hero_lob_armed = False
-                self.state.hero_lob_status = "BLOCKED: relocalization invalid"
-                self.toast(self.state.hero_lob_status)
-            elif action_name == "Preview Lob":
-                self.hero_lob_preview()
-            elif action_name == "Arm Assisted Lob":
-                solution, readiness = self.hero_lob_preview(announce=False)
-                if module is not None and module.enabled and solution.reachable and readiness.ready:
-                    self.state.hero_lob_armed = True
-                    self.state.hero_lob_status = "ARMED PREVIEW ONLY"
-                    self.toast("Hero lob armed (decision support only; no automatic fire)")
-                else:
-                    self.state.hero_lob_armed = False
-                    self.state.hero_lob_status = readiness.summary
-                    self.toast(self.state.hero_lob_status)
-            else:
-                self.state.hero_lob_armed = False
-                self.state.hero_lob_status = "DISARMED"
-                self.toast("Hero lob disarmed")
-            self.frame_scheduler.force()
-        elif action_name in ("Import Enable Sound", "Import Disable Sound", "Import Invalid Sound"):
-            slot = action_name.removeprefix("Import ").removesuffix(" Sound").lower()
-            self.import_custom_ui_sound(slot)
-        elif action_name.startswith("Preview ") and action_name in (
-            "Preview Enable", "Preview Disable", "Preview Invalid"
-        ):
-            audio = self.registry.get("AudioFeedback")
-            volume = self.get_setting_number(audio, "UI Volume", 45.0)
-            self.ui_audio.preview(
-                action_name.removeprefix("Preview ").lower(),
-                volume,
-                self.setting_mode(audio, "Sound Theme", "Polar UI"),
-                self.custom_ui_sound_selection(audio),
-            )
+
+    def _run_link_diagnostic(self, action_name: str) -> None:
+        handlers = {
+            "Run DT7 Link Selftest": self.run_dt7_link_selftest,
+            "Rescan Serial Ports": self.rescan_serial_ports,
+            "Run Wireless KM Selftest": self.run_radio_km_selftest,
+        }
+        handlers[action_name]()
+
+    def _apply_angle_command(self, action_name: str) -> None:
+        status = self.backend._sync_controller_angles(self.registry)
+        link = self.backend.controller_angles
+        if action_name == "Disarm Angle Forward":
+            link.disarm()
+            self.toast("角度转发已锁定；车端独立超时仍必须有效")
+        elif action_name == "Arm Angle Forward":
+            if not link.config.mock_output:
+                answer, accepted = QInputDialog.getText(
+                    self, "实体控制器角度转发", "确认机械臂已支撑隔离、0x0302 接收与独立超时已验证。\n"
+                    "本次会向官方选手端发送真实关节目标。输入 ARM 授权本次进程：")
+                if not accepted or answer.strip() != "ARM":
+                    return
+            # The dialog never authorizes cached input. Recheck gates and wait
+            # for another fresh source frame after the operator's confirmation.
+            self.backend._sync_controller_angles(self.registry)
+            ok, why = link.arm()
+            self.toast(("角度转发已授权：" if ok else "角度转发未授权：") + why)
+        else:
+            self.toast(f"角度有效={status['valid']} 已授权={status['armed']} "
+                       f"真发={status['forwarded']} mock={status['mock_forwarded']}；"
+                       f"{status['last_error']}")
+
+    def _apply_profile_command(self, action_name: str) -> None:
+        handlers = {
+            "Save Current": self.save_current_config,
+            "Reload Profile": self.reload_current_config,
+            "Import Config": self.import_config_from_dialog,
+            "Import Wallpaper": self.import_wallpaper_from_dialog,
+            "Reset Wallpaper": self.reset_wallpaper_profile,
+            "Restore Compact HUD": self.restore_compact_hud,
+        }
+        handlers[action_name]()
+
+    def _preview_elimination_command(self, action_name: str) -> None:
+        self.preview_elimination_fx(single=action_name == "Test Elimination")
+
+    def _open_deploy_command(self, action_name: str) -> None:
+        self.open_hero_deploy_interface()
+
+    def _preview_ui_sound(self, slot: str) -> None:
+        audio = self.registry.get("AudioFeedback")
+        self.ui_audio.preview(
+            slot, self.get_setting_number(audio, "UI Volume", 45.0),
+            self.setting_mode(audio, "Sound Theme", "Polar UI"),
+            self.custom_ui_sound_selection(audio),
+        )
+
+    def _apply_lob_command(self, action_name: str) -> None:
+        module = self.registry.get("HeroLob")
+        timeout = self.get_setting_number(module, "Telemetry Timeout", 0.50)
+        telemetry_fresh = bool(
+            self.state.native_gimbal_online and self.state.native_telemetry_at > 0.0
+            and time.perf_counter() - self.state.native_telemetry_at <= timeout
+        )
+        if action_name == "Calibrate Lob Yaw":
+            self._calibrate_lob_yaw(module, telemetry_fresh)
+        elif action_name == "Calibrate Lob Pitch":
+            self._calibrate_lob_pitch(module, telemetry_fresh)
+        elif action_name == "Confirm Relocalization":
+            self._confirm_lob_relocalization(telemetry_fresh)
+        elif action_name == "Invalidate Relocalization":
+            self.state.hero_lob_relocalization_valid = False
+            self.state.hero_lob_armed = False
+            self.state.hero_lob_status = "BLOCKED: relocalization invalid"
+            self.toast(self.state.hero_lob_status)
+        elif action_name == "Preview Lob":
+            self.hero_lob_preview()
+        elif action_name == "Arm Assisted Lob":
+            self._arm_lob_preview(module)
+        else:
+            self.state.hero_lob_armed = False
+            self.state.hero_lob_status = "DISARMED"
+            self.toast("Hero lob disarmed")
+        self.frame_scheduler.force()
+
+    @staticmethod
+    def _lob_offset_in_range(offset: Setting | None, candidate: float) -> bool:
+        return bool(offset is not None and offset.min_value is not None and offset.max_value is not None
+                    and float(offset.min_value) <= candidate <= float(offset.max_value))
+
+    def _calibrate_lob_yaw(self, module: Module | None, telemetry_fresh: bool) -> None:
+        if not telemetry_fresh:
+            self.toast("Yaw calibration blocked: fresh gimbal telemetry required")
+            return
+        bearing = self.get_setting_number(module, "Bearing", 0.0)
+        offset = module.get_setting("Yaw Offset") if module else None
+        current_offset = float(offset.value) if offset is not None else 0.0
+        correction = HeroLobPlanner.normalize_degrees(self.state.native_yaw_deg - (bearing + current_offset))
+        candidate = current_offset + correction
+        if not self._lob_offset_in_range(offset, candidate):
+            self.state.hero_lob_yaw_calibrated = False
+            self.toast("Yaw calibration blocked: correction exceeds offset range")
+            return
+        offset.value = candidate
+        tolerance = self.get_setting_number(module, "Yaw Calibration Tolerance", 1.0)
+        residual = abs(HeroLobPlanner.normalize_degrees(bearing + float(offset.value) - self.state.native_yaw_deg))
+        self.state.hero_lob_yaw_calibrated = residual <= tolerance
+        self.toast(f"Hero lob yaw calibrated {float(offset.value):+.2f} deg"
+                   if self.state.hero_lob_yaw_calibrated else f"Yaw calibration residual {residual:.2f} deg")
+
+    def _calibrate_lob_pitch(self, module: Module | None, telemetry_fresh: bool) -> None:
+        if not telemetry_fresh:
+            self.toast("Pitch calibration blocked: fresh gimbal telemetry required")
+            return
+        solution, _ = HeroLobPlanner.preview_from_state(
+            self.state, module, hero_range_profile=self.hero_range_profile_selected())
+        offset = module.get_setting("Pitch Offset") if module else None
+        current_offset = float(offset.value) if offset is not None else 0.0
+        candidate = current_offset + (self.state.native_pitch_deg - solution.pitch_deg)
+        if not solution.reachable or not self._lob_offset_in_range(offset, candidate):
+            self.state.hero_lob_pitch_calibrated = False
+            self.toast("Pitch calibration blocked: unreachable or offset out of range")
+            return
+        offset.value = candidate
+        tolerance = self.get_setting_number(module, "Pitch Calibration Tolerance", 1.5)
+        corrected, _ = HeroLobPlanner.preview_from_state(
+            self.state, module, hero_range_profile=self.hero_range_profile_selected())
+        residual = abs(self.state.native_pitch_deg - corrected.pitch_deg)
+        self.state.hero_lob_pitch_calibrated = residual <= tolerance
+        self.toast(f"Hero lob pitch calibrated {float(offset.value):+.2f} deg"
+                   if self.state.hero_lob_pitch_calibrated else f"Pitch calibration residual {residual:.2f} deg")
+
+    def _confirm_lob_relocalization(self, telemetry_fresh: bool) -> None:
+        if telemetry_fresh and self.state.hero_lob_yaw_calibrated and self.state.hero_lob_pitch_calibrated:
+            self.state.hero_lob_relocalization_valid = True
+            self.toast("Hero lob relocalization confirmed")
+        else:
+            self.toast("Relocalization blocked: fresh telemetry and both calibrations required")
+
+    def _arm_lob_preview(self, module: Module | None) -> None:
+        solution, readiness = self.hero_lob_preview(announce=False)
+        if module is not None and module.enabled and solution.reachable and readiness.ready:
+            self.state.hero_lob_armed = True
+            self.state.hero_lob_status = "ARMED PREVIEW ONLY"
+            self.toast("Hero lob armed (decision support only; no automatic fire)")
+        else:
+            self.state.hero_lob_armed = False
+            self.state.hero_lob_status = readiness.summary
+            self.toast(self.state.hero_lob_status)
 
     def handle_qualification_action(self, action_name: str) -> None:
-        """Run qualification operations without trusting persisted booleans."""
-
-        qualification = self.backend.qualification
+        """Run qualified commands; failure always revokes control authority."""
         try:
-            if action_name == "New Qualification Session":
-                operator, ok = QInputDialog.getText(self, ui_text("Field qualification", chinese_enabled(self.registry)), ui_text("Operator name:", chinese_enabled(self.registry)))
-                if not ok:
-                    return
-                firmware_hash, ok = QInputDialog.getText(
-                    self, ui_text("Field qualification", chinese_enabled(self.registry)), ui_text("Robot firmware SHA-256:", chinese_enabled(self.registry))
-                )
-                if not ok:
-                    return
-                qualification.new_session(
-                    robot_id=str(self.state.robot_id),
-                    firmware_hash=firmware_hash,
-                    match_mode=self.match_mode_manager.current.key,
-                    video_source=self.readiness_video_source() or "UNDECLARED",
-                    operator=operator,
-                )
-                self.backend.lock_control("new qualification session")
-                self._qualification_runtime_baseline = self._capture_qualification_runtime_baseline()
-                self.toast("Qualification session created; control remains LOCKED")
-            elif action_name == "Reset Qualification Session":
-                qualification.reset()
-                self.backend.lock_control("qualification reset")
-                self._qualification_runtime_baseline = self._capture_qualification_runtime_baseline()
-                self.toast("Qualification evidence reset")
-            elif action_name == "Run Preflight":
-                from ....preflight import run_preflight
-
-                result = run_preflight(
-                    self.paths,
-                    official=self.scenario_manager.current.key == "OfficialEvent",
-                    codec_selftest=True,
-                    active_udp_owned_by_client=bool(self.backend.udp.running),
-                )
-                qualification.record_automatic(
-                    "preflight",
-                    result.passed,
-                    measured=result.as_dict(),
-                    threshold="all startup checks pass",
-                )
-                self.toast("Preflight PASS" if result.passed else "Preflight BLOCKED")
-            elif action_name == "Run Video Test":
-                source = self.readiness_video_source()
-                stats = self.backend.stats()
-                section = stats.get("native_0310" if source == "native_0310" else "udp", {})
-                decoded = int(section.get("decoded_frames", 0) or 0)
-                fresh = bool(section.get("decoded_connected", False))
-                baseline = self._qualification_baseline()
-                baseline_frames = int(
-                    baseline.get("native_frames" if source == "native_0310" else "udp_frames", 0)
-                )
-                session = qualification.session
-                session_age = time.time() - session.created_at if session is not None else 0.0
-                # A single button cannot fabricate the mandated 60-second
-                # transmitter run. It records a pass only when an external
-                # qualification runner has populated an observed duration.
-                duration = float(section.get("continuous_decoded_seconds", 0.0) or 0.0)
-                passed = (
-                    session is not None
-                    and source in {"udp", "native_0310"}
-                    and fresh
-                    and decoded > baseline_frames
-                    and duration >= 60.0
-                    and session_age >= 60.0
-                )
-                qualification.record_automatic(
-                    "codec_field_test",
-                    passed,
-                    measured={
-                        "source": source,
-                        "frames": decoded,
-                        "frames_since_baseline": max(0, decoded - baseline_frames),
-                        "seconds": duration,
-                        "session_age_seconds": session_age,
-                    },
-                    threshold={"seconds": 60, "fresh": True, "new_frames": True},
-                )
-                self.toast("Video field test PASS" if passed else "Video test needs a 60 s field capture")
-            elif action_name == "Run KMC Test":
-                self.start_kmc_qualification_test()
-                return
-            elif action_name == "Record DT7 Safety Test":
-                from rm_client.backend.dt7_link import profile_digest
-                writer = getattr(self.backend, "_dt7_link", None)
-                session = qualification.session
-                if writer is None or writer.mock_output or session is None:
-                    self.toast("需要当前真实 DT7 出口、资格会话及已完成的车辆回读探针")
-                    return
-                digest = profile_digest(writer.profile)
-                if not qualification.test_passed("dt7_link_test"):
-                    self.toast("先完成 RobotLink → Run DT7 Link Selftest；诊断 PASS 不等于电机安全")
-                    return
-                self.backend.lock_control("DT7 physical safety observation; no automatic arm")
-                observer, ok = QInputDialog.getText(self, "DT7 物理安全观察", "实际在场观察者姓名：")
-                if not ok or not observer.strip():
-                    return
-                phrase, ok = QInputDialog.getText(self, "DT7 物理安全观察",
-                    "由现场人员实际测量物理急停、DR16/DBUS 失联归零，并确认重连无运动。\n"
-                    "键位回读不代表电机停机；未实测请取消。确认后输入：\nESTOP LOSS RECONNECT OBSERVED")
-                if not ok or phrase.strip() != "ESTOP LOSS RECONNECT OBSERVED":
-                    return
-                estop_ms, ok = QInputDialog.getDouble(self, "DT7 物理测量", "实测物理急停到执行器归零（ms）：", 1000, 0, 10000, 1)
-                if not ok:
-                    return
-                loss_ms, ok = QInputDialog.getDouble(self, "DT7 物理测量", "实测 DR16/DBUS 失联到执行器归零（ms）：", 1000, 0, 10000, 1)
-                if not ok:
-                    return
-                if (qualification.session is not session or getattr(self.backend, "_dt7_link", None) is not writer
-                        or profile_digest(writer.profile) != digest):
-                    self.toast("测试期间会话或 DT7 配置已改变；不记录过期测量")
-                    return
-                result = qualification.record_supervised_dt7_safety(observer=observer,
-                    firmware_hash=session.firmware_hash, profile_sha256=digest,
-                    measured={"physical_estop_observed": True, "physical_loss_zero_observed": True,
-                        "reconnect_stayed_neutral": True, "estop_zero_ms": estop_ms, "loss_zero_ms": loss_ms})
-                self.toast(f"DT7 物理记录 {result.status}；仍需核心资格、重新双人签字及人工 Arm")
-                return
-            elif action_name == "Run Economy Send Test":
-                self.start_economy_qualification_test()
-                return
-            elif action_name == "Observe Firmware Zero":
-                baseline = self._qualification_baseline()
-                if self.backend.safety.estop_at <= float(baseline.get("estop_at", 0.0)):
-                    self.toast("Trigger a new F12 E-stop in this qualification session first")
-                    return
-                phrase, accepted = QInputDialog.getText(
-                    self,
-                    ui_text("Physical firmware watchdog observation", chinese_enabled(self.registry)),
-                    ui_text("After physically observing neutral output, type ZERO OBSERVED:", chinese_enabled(self.registry)),
-                )
-                if not accepted or phrase.strip() != "ZERO OBSERVED":
-                    self.toast("Firmware zero observation cancelled")
-                    return
-                elapsed_ms = self.backend.record_firmware_zero_observation()
-                self.toast(f"Physical neutral output observed at {elapsed_ms:.1f} ms")
-                return
-            elif action_name in {
-                "Record E-Stop Test", "Record Firmware Zero Test", "Run Loss Recovery Test", "Record Hero Test", "Record Economy Test"
-            }:
-                stats = self.backend.stats()
-                safety_evidence = dict(stats.get("safety_evidence", {}))
-                baseline = self._qualification_baseline()
-                latest_economy = self.economy_bridge.latest
-                estop_is_new = (
-                    self.backend.safety.estop_at > float(baseline.get("estop_at", 0.0))
-                )
-                observed = {
-                    "Record E-Stop Test": (
-                        "estop_robot_test",
-                        estop_is_new
-                        and bool(safety_evidence.get("estop_zero_publish_ok", False)),
-                    ),
-                    "Record Firmware Zero Test": (
-                        "firmware_loss_zero_test",
-                        estop_is_new
-                        and bool(self.state.backend_stats.get("firmware_zero_observed_ms", 0.0))
-                        and float(self.state.backend_stats.get("firmware_zero_observed_ms", 9999.0)) <= 500.0,
-                    ),
-                    "Run Loss Recovery Test": (
-                        "loss_recovery_test",
-                        self.backend.mqtt.reconnect_count
-                        > int(baseline.get("mqtt_reconnect_count", 0))
-                        and float(safety_evidence.get("mqtt_disconnect_lock_at", 0.0))
-                        > float(baseline.get("captured_at_perf", 0.0))
-                        and float(safety_evidence.get("mqtt_reconnected_locked_at", 0.0))
-                        > float(baseline.get("captured_at_perf", 0.0))
-                        and self.backend.safety.control_state.value == "LOCKED",
-                    ),
-                    "Record Hero Test": (
-                        "hero_deploy_status_test",
-                        self.state.deploy_status_revision
-                        >= int(baseline.get("deploy_revision", 0)) + 2
-                        and self.state.deploy_status_at
-                        > float(baseline.get("captured_at_perf", 0.0))
-                        and int(self.state.deploy_mode) == 0,
-                    ),
-                    "Record Economy Test": (
-                        "economy_live_test",
-                        latest_economy is not None
-                        and latest_economy.status == "succeeded"
-                        and not latest_economy.request.mock
-                        and latest_economy.request.timestamp
-                        >= float(baseline.get("captured_at_wall", 0.0))
-                        and self.state.economy_status_revision
-                        > int(baseline.get("economy_revision", 0))
-                        and not self.economy_uses_mock_transport(),
-                    ),
-                }
-                key, passed = observed[action_name]
-                measured: Any = {"runtime_observed": passed}
-                threshold: Any = "live lifecycle observed"
-                if action_name == "Record Firmware Zero Test":
-                    measured = {
-                        "zero_observed_ms": float(
-                            self.state.backend_stats.get("firmware_zero_observed_ms", 0.0)
-                        )
-                    }
-                    threshold = {"maximum_ms": 500, "physical_observer_required": True}
-                qualification.record_automatic(
-                    key,
-                    passed,
-                    measured=measured,
-                    threshold=threshold,
-                )
-                self.toast(f"{key}: {'PASS' if passed else 'BLOCKED'}")
-            elif action_name in {
-                "Review PRM1 Vision Schema",
-                "Run PRM1 Vision Bench",
-                "Review PRM1 Spin Schema",
-                "Run PRM1 Spin Bench",
-            }:
-                # PRM1 authorisation is deliberately harder than core KMC: a
-                # named reviewer records the exact firmware-bound schema, then
-                # a supervised fixture must have observed both active and
-                # watchdog/disable states. A persisted module toggle can never
-                # manufacture either record.
-                key_map = {
-                    "Review PRM1 Vision Schema": "prm1_vision_schema_review",
-                    "Run PRM1 Vision Bench": "prm1_vision_bench_test",
-                    "Review PRM1 Spin Schema": "prm1_spin_schema_review",
-                    "Run PRM1 Spin Bench": "prm1_spin_bench_test",
-                }
-                reviewer, accepted = QInputDialog.getText(
-                    self,
-                    ui_text("PRM1 capability evidence", chinese_enabled(self.registry)),
-                    ui_text("Named schema reviewer / bench safety observer:", chinese_enabled(self.registry)),
-                )
-                if not accepted or not reviewer.strip():
-                    return
-                phrase, accepted = QInputDialog.getText(
-                    self,
-                    ui_text("PRM1 capability evidence", chinese_enabled(self.registry)),
-                    ui_text("Type OBSERVED ON FIXTURE to confirm supervised evidence:", chinese_enabled(self.registry)),
-                )
-                passed = bool(accepted and phrase.strip() == "OBSERVED ON FIXTURE")
-                qualification.record_supervised_prm1(
-                    key_map[action_name],
-                    passed,
-                    reviewer=reviewer,
-                    measured={"active_and_watchdog_observed": passed},
-                    threshold="same robot + firmware hash; supervised active/disable/watchdog evidence",
-                )
-                self.backend.lock_control("PRM1 evidence recorded; explicit re-arm required")
-                self.toast(f"{key_map[action_name]}: {'PASS' if passed else 'BLOCKED'} · LOCKED")
-            elif action_name == "Start Match Soak":
-                self._qualification_soak_started_at = time.perf_counter()
-                self.toast("Match-duration soak started")
-            elif action_name == "Stop Match Soak":
-                started = float(getattr(self, "_qualification_soak_started_at", 0.0))
-                elapsed = time.perf_counter() - started if started > 0.0 else 0.0
-                required = max(420.0, float(self.state.match_duration_sec or 0.0))
-                qualification.record_automatic(
-                    "latency_soak_test",
-                    elapsed >= required,
-                    measured={"seconds": elapsed},
-                    threshold={"minimum_seconds": required},
-                )
-                self.toast("Soak PASS" if elapsed >= required else "Soak stopped too early")
-            elif action_name == "Export Evidence":
-                destination = QFileDialog.getExistingDirectory(self, ui_text("Export field evidence", chinese_enabled(self.registry)))
-                if destination:
-                    target = qualification.store.export_current(Path(destination))
-                    self.toast(f"Evidence exported: {target.name}")
-            elif action_name == "Field Sign-off":
-                lead, ok = QInputDialog.getText(self, ui_text("Dual sign-off", chinese_enabled(self.registry)), ui_text("Safety lead name:", chinese_enabled(self.registry)))
-                if ok:
-                    qualification.sign_off(lead)
-                    self.toast("Dual sign-off recorded")
-            elif action_name == "Arm Match Control":
-                session = qualification.session
-                ok, reason = self.backend.arm_match_control(
-                    robot_id=str(self.state.robot_id),
-                    firmware_hash=session.firmware_hash if session is not None else "",
-                    match_mode=self.match_mode_manager.current.key,
-                    video_source=self.readiness_video_source(),
-                )
-                self.toast("MATCH CONTROL ARMED" if ok else f"Arm blocked: {reason}")
-            elif action_name == "Lock Match Control":
-                self.control.reset_inputs()
-                self.backend.mqtt.publish_estop_zero()
-                self.backend.lock_control("operator lock")
-                self.toast("Match control LOCKED")
+            refresh = self._execute_qualification_command(resolve_qualification_command(action_name))
         except Exception as exc:
             self.backend.lock_control(f"qualification error: {exc}")
             self.toast(f"Qualification blocked: {exc}")
-        self.update_backend_readiness(force=True)
-        self.frame_scheduler.force()
+            refresh = QualificationRefresh.REQUIRED
+        if refresh is QualificationRefresh.REQUIRED:
+            self.update_backend_readiness(force=True)
+            self.frame_scheduler.force()
+
+    def _execute_qualification_command(self, command: QualificationCommand | None) -> QualificationRefresh:
+        if command in {
+            QualificationCommand.ESTOP, QualificationCommand.FIRMWARE_ZERO,
+            QualificationCommand.LOSS_RECOVERY, QualificationCommand.HERO, QualificationCommand.ECONOMY,
+        }:
+            self._record_runtime_qualification(command)
+            return QualificationRefresh.REQUIRED
+        if command in {
+            QualificationCommand.PRM1_VISION_SCHEMA, QualificationCommand.PRM1_VISION_BENCH,
+            QualificationCommand.PRM1_SPIN_SCHEMA, QualificationCommand.PRM1_SPIN_BENCH,
+        }:
+            return self._record_prm1_qualification(command)
+        handlers = {
+            QualificationCommand.NEW_SESSION: self._new_qualification_session,
+            QualificationCommand.RESET_SESSION: self._reset_qualification_session,
+            QualificationCommand.PREFLIGHT: self._record_qualification_preflight,
+            QualificationCommand.VIDEO: self._record_qualification_video,
+            QualificationCommand.KMC: self._start_qualification_kmc,
+            QualificationCommand.DT7_SAFETY: self._record_dt7_safety_observation,
+            QualificationCommand.ECONOMY_SEND: self._start_qualification_economy,
+            QualificationCommand.OBSERVE_ZERO: self._observe_qualification_firmware_zero,
+            QualificationCommand.START_SOAK: self._start_qualification_soak,
+            QualificationCommand.STOP_SOAK: self._stop_qualification_soak,
+            QualificationCommand.EXPORT: self._export_qualification_evidence,
+            QualificationCommand.SIGN_OFF: self._sign_off_qualification,
+            QualificationCommand.ARM: self._arm_qualified_match_control,
+            QualificationCommand.LOCK: self._lock_qualified_match_control,
+        }
+        # Direct callers historically refresh even for an unknown command.
+        return handlers[command]() if command is not None else QualificationRefresh.REQUIRED
+
+    def _new_qualification_session(self) -> QualificationRefresh:
+        operator, ok = QInputDialog.getText(self, ui_text("Field qualification", chinese_enabled(self.registry)),
+                                            ui_text("Operator name:", chinese_enabled(self.registry)))
+        if not ok:
+            return QualificationRefresh.SKIP
+        firmware_hash, ok = QInputDialog.getText(
+            self, ui_text("Field qualification", chinese_enabled(self.registry)),
+            ui_text("Robot firmware SHA-256:", chinese_enabled(self.registry)))
+        if not ok:
+            return QualificationRefresh.SKIP
+        self.backend.qualification.new_session(
+            robot_id=str(self.state.robot_id), firmware_hash=firmware_hash,
+            match_mode=self.match_mode_manager.current.key,
+            video_source=self.readiness_video_source() or "UNDECLARED", operator=operator)
+        self.backend.lock_control("new qualification session")
+        self._qualification_runtime_baseline = self._capture_qualification_runtime_baseline()
+        self.toast("Qualification session created; control remains LOCKED")
+        return QualificationRefresh.REQUIRED
+
+    def _reset_qualification_session(self) -> QualificationRefresh:
+        self.backend.qualification.reset()
+        self.backend.lock_control("qualification reset")
+        self._qualification_runtime_baseline = self._capture_qualification_runtime_baseline()
+        self.toast("Qualification evidence reset")
+        return QualificationRefresh.REQUIRED
+
+    def _record_qualification_preflight(self) -> QualificationRefresh:
+        from ....preflight import run_preflight
+
+        result = run_preflight(
+            self.paths, official=self.scenario_manager.current.key == "OfficialEvent",
+            codec_selftest=True, active_udp_owned_by_client=bool(self.backend.udp.running))
+        self.backend.qualification.record_automatic(
+            "preflight", result.passed, measured=result.as_dict(), threshold="all startup checks pass")
+        self.toast("Preflight PASS" if result.passed else "Preflight BLOCKED")
+        return QualificationRefresh.REQUIRED
+
+    def _record_qualification_video(self) -> QualificationRefresh:
+        source = self.readiness_video_source()
+        source_key = "native_0310" if source == "native_0310" else "udp"
+        section = self.backend.stats().get(source_key, {})
+        baseline = self._qualification_baseline()
+        session = self.backend.qualification.session
+        evidence = video_evidence(
+            source=source, session_exists=session is not None,
+            session_age=time.time() - session.created_at if session is not None else 0.0,
+            decoded_frames=int(section.get("decoded_frames", 0) or 0),
+            baseline_frames=int(baseline.get("native_frames" if source == "native_0310" else "udp_frames", 0)),
+            fresh=bool(section.get("decoded_connected", False)),
+            continuous_seconds=float(section.get("continuous_decoded_seconds", 0.0) or 0.0))
+        self._record_automatic_evidence(evidence)
+        self.toast("Video field test PASS" if evidence.passed else "Video test needs a 60 s field capture")
+        return QualificationRefresh.REQUIRED
+
+    def _record_automatic_evidence(self, evidence: QualificationEvidence) -> None:
+        self.backend.qualification.record_automatic(
+            evidence.key, evidence.passed, measured=evidence.measured, threshold=evidence.threshold)
+
+    def _start_qualification_kmc(self) -> QualificationRefresh:
+        self.start_kmc_qualification_test()
+        return QualificationRefresh.SKIP
+
+    def _start_qualification_economy(self) -> QualificationRefresh:
+        self.start_economy_qualification_test()
+        return QualificationRefresh.SKIP
+
+    def _record_dt7_safety_observation(self) -> QualificationRefresh:
+        from ....backend.dt7_link import profile_digest
+
+        qualification = self.backend.qualification
+        writer = getattr(self.backend, "_dt7_link", None)
+        session = qualification.session
+        if writer is None or writer.mock_output or session is None:
+            self.toast("需要当前真实 DT7 出口、资格会话及已完成的车辆回读探针")
+            return QualificationRefresh.SKIP
+        digest = profile_digest(writer.profile)
+        if not qualification.test_passed("dt7_link_test"):
+            self.toast("先完成 RobotLink → Run DT7 Link Selftest；诊断 PASS 不等于电机安全")
+            return QualificationRefresh.SKIP
+        self.backend.lock_control("DT7 physical safety observation; no automatic arm")
+        observer, ok = QInputDialog.getText(self, "DT7 物理安全观察", "实际在场观察者姓名：")
+        if not ok or not observer.strip():
+            return QualificationRefresh.SKIP
+        phrase, ok = QInputDialog.getText(self, "DT7 物理安全观察",
+            "由现场人员实际测量物理急停、DR16/DBUS 失联归零，并确认重连无运动。\n"
+            "键位回读不代表电机停机；未实测请取消。确认后输入：\nESTOP LOSS RECONNECT OBSERVED")
+        if not ok or phrase.strip() != "ESTOP LOSS RECONNECT OBSERVED":
+            return QualificationRefresh.SKIP
+        estop_ms, ok = QInputDialog.getDouble(self, "DT7 物理测量", "实测物理急停到执行器归零（ms）：", 1000, 0, 10000, 1)
+        if not ok:
+            return QualificationRefresh.SKIP
+        loss_ms, ok = QInputDialog.getDouble(self, "DT7 物理测量", "实测 DR16/DBUS 失联到执行器归零（ms）：", 1000, 0, 10000, 1)
+        if not ok:
+            return QualificationRefresh.SKIP
+        if (qualification.session is not session or getattr(self.backend, "_dt7_link", None) is not writer
+                or profile_digest(writer.profile) != digest):
+            self.toast("测试期间会话或 DT7 配置已改变；不记录过期测量")
+            return QualificationRefresh.SKIP
+        result = qualification.record_supervised_dt7_safety(
+            observer=observer, firmware_hash=session.firmware_hash, profile_sha256=digest,
+            measured={"physical_estop_observed": True, "physical_loss_zero_observed": True,
+                      "reconnect_stayed_neutral": True, "estop_zero_ms": estop_ms, "loss_zero_ms": loss_ms})
+        self.toast(f"DT7 物理记录 {result.status}；仍需核心资格、重新双人签字及人工 Arm")
+        return QualificationRefresh.SKIP
+
+    def _observe_qualification_firmware_zero(self) -> QualificationRefresh:
+        baseline = self._qualification_baseline()
+        if self.backend.safety.estop_at <= float(baseline.get("estop_at", 0.0)):
+            self.toast("Trigger a new F12 E-stop in this qualification session first")
+            return QualificationRefresh.SKIP
+        phrase, accepted = QInputDialog.getText(
+            self, ui_text("Physical firmware watchdog observation", chinese_enabled(self.registry)),
+            ui_text("After physically observing neutral output, type ZERO OBSERVED:", chinese_enabled(self.registry)))
+        if not accepted or phrase.strip() != "ZERO OBSERVED":
+            self.toast("Firmware zero observation cancelled")
+            return QualificationRefresh.SKIP
+        elapsed_ms = self.backend.record_firmware_zero_observation()
+        self.toast(f"Physical neutral output observed at {elapsed_ms:.1f} ms")
+        return QualificationRefresh.SKIP
+
+    def _record_runtime_qualification(self, command: QualificationCommand) -> None:
+        observers = {
+            QualificationCommand.ESTOP: self._observe_estop_evidence,
+            QualificationCommand.FIRMWARE_ZERO: self._observe_firmware_zero_evidence,
+            QualificationCommand.LOSS_RECOVERY: self._observe_recovery_evidence,
+            QualificationCommand.HERO: self._observe_hero_evidence,
+            QualificationCommand.ECONOMY: self._observe_economy_evidence,
+        }
+        evidence = observers[command](self._qualification_baseline())
+        self._record_automatic_evidence(evidence)
+        self.toast(f"{evidence.key}: {'PASS' if evidence.passed else 'BLOCKED'}")
+
+    def _observe_estop_evidence(self, baseline: dict) -> QualificationEvidence:
+        safety = self.backend.stats().get("safety_evidence", {})
+        return estop_evidence(estop_at=self.backend.safety.estop_at,
+                              baseline_estop_at=float(baseline.get("estop_at", 0.0)),
+                              zero_published=bool(safety.get("estop_zero_publish_ok", False)))
+
+    def _observe_firmware_zero_evidence(self, baseline: dict) -> QualificationEvidence:
+        return firmware_zero_evidence(estop_at=self.backend.safety.estop_at,
+            baseline_estop_at=float(baseline.get("estop_at", 0.0)),
+            observed_ms=float(self.state.backend_stats.get("firmware_zero_observed_ms", 0.0)))
+
+    def _observe_recovery_evidence(self, baseline: dict) -> QualificationEvidence:
+        safety = self.backend.stats().get("safety_evidence", {})
+        return recovery_evidence(reconnect_count=self.backend.mqtt.reconnect_count,
+            baseline_reconnect_count=int(baseline.get("mqtt_reconnect_count", 0)),
+            disconnect_lock_at=float(safety.get("mqtt_disconnect_lock_at", 0.0)),
+            reconnected_locked_at=float(safety.get("mqtt_reconnected_locked_at", 0.0)),
+            baseline_at=float(baseline.get("captured_at_perf", 0.0)),
+            control_locked=self.backend.safety.control_state.value == "LOCKED")
+
+    def _observe_hero_evidence(self, baseline: dict) -> QualificationEvidence:
+        return hero_evidence(revision=self.state.deploy_status_revision,
+            baseline_revision=int(baseline.get("deploy_revision", 0)), observed_at=self.state.deploy_status_at,
+            baseline_at=float(baseline.get("captured_at_perf", 0.0)), deploy_mode=int(self.state.deploy_mode))
+
+    def _observe_economy_evidence(self, baseline: dict) -> QualificationEvidence:
+        latest = self.economy_bridge.latest
+        return economy_evidence(succeeded=latest is not None and latest.status == "succeeded",
+            request_is_mock=latest is None or latest.request.mock,
+            request_at=latest.request.timestamp if latest is not None else 0.0,
+            baseline_at=float(baseline.get("captured_at_wall", 0.0)), revision=self.state.economy_status_revision,
+            baseline_revision=int(baseline.get("economy_revision", 0)),
+            transport_is_mock=self.economy_uses_mock_transport())
+
+    def _record_prm1_qualification(self, command: QualificationCommand) -> QualificationRefresh:
+        keys = {
+            QualificationCommand.PRM1_VISION_SCHEMA: "prm1_vision_schema_review",
+            QualificationCommand.PRM1_VISION_BENCH: "prm1_vision_bench_test",
+            QualificationCommand.PRM1_SPIN_SCHEMA: "prm1_spin_schema_review",
+            QualificationCommand.PRM1_SPIN_BENCH: "prm1_spin_bench_test",
+        }
+        reviewer, accepted = QInputDialog.getText(
+            self, ui_text("PRM1 capability evidence", chinese_enabled(self.registry)),
+            ui_text("Named schema reviewer / bench safety observer:", chinese_enabled(self.registry)))
+        if not accepted or not reviewer.strip():
+            return QualificationRefresh.SKIP
+        phrase, accepted = QInputDialog.getText(
+            self, ui_text("PRM1 capability evidence", chinese_enabled(self.registry)),
+            ui_text("Type OBSERVED ON FIXTURE to confirm supervised evidence:", chinese_enabled(self.registry)))
+        passed = bool(accepted and phrase.strip() == "OBSERVED ON FIXTURE")
+        self.backend.qualification.record_supervised_prm1(
+            keys[command], passed, reviewer=reviewer,
+            measured={"active_and_watchdog_observed": passed},
+            threshold="same robot + firmware hash; supervised active/disable/watchdog evidence")
+        self.backend.lock_control("PRM1 evidence recorded; explicit re-arm required")
+        self.toast(f"{keys[command]}: {'PASS' if passed else 'BLOCKED'} · LOCKED")
+        return QualificationRefresh.REQUIRED
+
+    def _start_qualification_soak(self) -> QualificationRefresh:
+        self._qualification_soak_started_at = time.perf_counter()
+        self.toast("Match-duration soak started")
+        return QualificationRefresh.REQUIRED
+
+    def _stop_qualification_soak(self) -> QualificationRefresh:
+        evidence = soak_evidence(started_at=float(getattr(self, "_qualification_soak_started_at", 0.0)),
+            now=time.perf_counter(), match_duration=float(self.state.match_duration_sec or 0.0))
+        self._record_automatic_evidence(evidence)
+        self.toast("Soak PASS" if evidence.passed else "Soak stopped too early")
+        return QualificationRefresh.REQUIRED
+
+    def _export_qualification_evidence(self) -> QualificationRefresh:
+        destination = QFileDialog.getExistingDirectory(
+            self, ui_text("Export field evidence", chinese_enabled(self.registry)))
+        if destination:
+            target = self.backend.qualification.store.export_current(Path(destination))
+            self.toast(f"Evidence exported: {target.name}")
+        return QualificationRefresh.REQUIRED
+
+    def _sign_off_qualification(self) -> QualificationRefresh:
+        lead, ok = QInputDialog.getText(self, ui_text("Dual sign-off", chinese_enabled(self.registry)),
+                                       ui_text("Safety lead name:", chinese_enabled(self.registry)))
+        if ok:
+            self.backend.qualification.sign_off(lead)
+            self.toast("Dual sign-off recorded")
+        return QualificationRefresh.REQUIRED
+
+    def _arm_qualified_match_control(self) -> QualificationRefresh:
+        session = self.backend.qualification.session
+        ok, reason = self.backend.arm_match_control(
+            robot_id=str(self.state.robot_id), firmware_hash=session.firmware_hash if session is not None else "",
+            match_mode=self.match_mode_manager.current.key, video_source=self.readiness_video_source())
+        self.toast("MATCH CONTROL ARMED" if ok else f"Arm blocked: {reason}")
+        return QualificationRefresh.REQUIRED
+
+    def _lock_qualified_match_control(self) -> QualificationRefresh:
+        result = request_control_lock(self.backend, self.control, self.backend.mqtt.publish_estop_zero)
+        if result.failures:
+            self.toast(result.message, kind="warning")
+        else:
+            self.toast(result.message)
+        return QualificationRefresh.REQUIRED
 
     RADIO_KM_SELFTEST_MS = 2500
 
@@ -1041,6 +956,8 @@ class ConfigActionsMixin:
         self.auto_save_config()
 
     def on_module_toggled(self, module: Module, enabled: bool, source: str) -> None:
+        if self.reject_pending_configuration_edit():
+            return
         if module.name in {"ControllerAngles", "RobotLink"}:
             self.backend._sync_controller_angles(self.registry)
         if module.name == "RobotLink" and not enabled:

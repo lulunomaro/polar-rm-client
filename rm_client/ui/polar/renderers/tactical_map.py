@@ -1,64 +1,10 @@
-"""阶段 2d 渲染器提取：战术地图 / 官方地图 / 状态坞（D10）→ TacticalMapMixin。
+"""Tactical-map painting and ordered window effects.
 
-（REFACTOR_BLUEPRINT §5 阶段 2 表 2d 行 / §2 D10 节方法清单 / §5.6 冻结面 / §6 缓存纪律）
-
-迁移范围（以 grep 重定位后的实际行号为准，蓝图原行号 9104–10863 已因多轮修复
-与并行编辑漂移；实际区段为 polar_app.py 7409–9160 的**连续块**，中间无外域方法）：
-共 55 个方法——
-- 右侧 HUD 模式分发/入口：``draw_right_hud_mode`` / ``queue_gpu_module_list`` /
-  ``draw_module_list_for_tactical_map`` / ``draw_match_header``
-- 战术地图入口/交互态：``draw_tactical_map_hud`` / ``tactical_map_rect`` /
-  ``tactical_map_morph_progress`` / ``tactical_map_hold_amount`` /
-  ``publish_map_click_from_screen`` / ``open_event_command_menu``
-- chrome/status 助手：``tactical_map_chrome`` / ``tactical_map_status_display`` /
-  ``effective_tactical_map_status_display`` / ``tactical_map_status_kind`` /
-  ``tactical_map_footer_height`` / ``liquid_status_footer_height``
-- 液态地图：``draw_liquid_tactical_map_hud`` / ``official_map_fit_rect`` /
-  ``draw_liquid_map_robots`` / ``draw_liquid_mini_status_overlay`` /
-  ``draw_liquid_mini_status_chip`` / ``liquid_entity_color`` / ``map_team_color`` /
-  ``map_control_color`` / ``draw_liquid_radar_pointer``
-- 状态坞：``draw_liquid_status_dock`` / ``draw_liquid_status_row`` /
-  ``draw_liquid_status_item`` / ``liquid_status_color`` / ``draw_liquid_status_bar`` /
-  ``draw_liquid_status_card``
-- 官方地图（含缺陷 D 修复区，零修改迁移）：``draw_official_map`` /
-  ``_map_fit_cuts_panel_corners`` / ``_rounded_map_layer`` / ``official_map_image`` /
-  ``official_map_display_image`` / ``map_point`` / ``draw_map_zones`` /
-  ``draw_map_robots`` / ``draw_map_markers``
-- 轨道坞/黑洞盘：``draw_map_status_orbit_dock`` / ``draw_blackhole_disc_row`` /
-  ``animated_status_ratio`` / ``draw_blackhole_status_disc`` /
-  ``draw_status_label_capsule``
-- 状态行数据：``compact_map_status_label`` / ``map_status_groups`` /
-  ``map_telemetry_status_rows`` / ``draw_match_status_lines`` /
-  ``draw_match_status_stack`` / ``draw_match_status_rings`` /
-  ``match_status_ring_rows`` / ``match_status_rows``
-- 遥测条：``draw_telemetry_strip`` / ``draw_compact_telemetry_strip``
-
-纪律与偏差决策（中文记录）：
-- 方法体**零修改**（含注释与空行），纯移动进本 Mixin；尤其 ``draw_official_map``
-  与其两个直接辅助 ``_map_fit_cuts_panel_corners`` / ``_rounded_map_layer`` 是刚
-  完成的缺陷 D 修复（含 clip_radius 语义注释），逐字保留；
-- ``_map_round_cache`` 是惰性创建字段（方法内 getattr 创建）——保持惰性创建不动，
-  **未触碰 PolarRMWindow.__init__**；
-- ``queue_gpu_module_list`` / ``draw_module_list_for_tactical_map`` 名字虽含 modlist
-  但按蓝图归属 D10（阶段 2c 已确认），本次一并迁入；二者内部经 self 调用的
-  ``module_list_layout`` / ``draw_module_list_fast_rows`` 由 ModuleListMixin 继承
-  提供（PolarRMWindow MRO 中 TacticalMapMixin 排在其后），调用面不变；
-- ``fit_aspect`` / ``format_time`` / ``short_ring_number`` / ``short_outpost_value``
-  已在阶段 1 迁至 ui/polar/text_metrics.py，本域方法均经 ``self.`` 调用 → 经
-  TextMetricsMixin 继承访问，本模块无需导入这些符号；
-- ``open_event_command_menu`` 方法体内使用 QInputDialog 模态对话框（零修改迁移
-  所必需）→ 从 PySide6.QtWidgets 显式导入；
-- 边界保守决策：``handle_tactical_map_hold_event`` 属 D15 输入/dispatch 域 → 不迁；
-  ``liquid_map_enabled`` / ``liquid_map_setting`` / ``liquid_map_bool`` 位于 HUD
-  风格助手族（蓝图 §2 归 D9"主题服务"）→ 留在 polar_app.py，本 Mixin 经 self
-  继续访问；``_client_asset_path``（D19 共享辅助）仍留在 polar_app.py 原位；
-  ``tactical_map_hold`` / ``tactical_map_state`` / ``map_display_cache`` 等
-  __init__ 状态 schema 字段全部原位不动（§5.6 冻结面 + §6 缓存纪律）。
-
-冻结面纪律：与阶段 2a/2b/2c 一致——api_freeze_test 对方法类成员比对
-``__qualname__``（基线值形如 "PolarRMWindow.<name>"），故在本模块底部把全部
-迁入方法的 ``__qualname__`` 钉回 ``PolarRMWindow.<name>``，使 ``window.<name>``
-签名与迁移前 bit 级一致。
+Qt-free geometry owns projection, container targets and rounded-image sampling;
+telemetry values own radar freshness and typed penalty/timeline observations.
+The existing MapIslandState owns reversible animation. This adapter retains registry observation, image/cache lifetime, hotspot publication
+and backend command calls; pure values never grant permission to send a mark.
+Historical window method names and signatures remain compatibility entrypoints.
 """
 
 from __future__ import annotations
@@ -77,7 +23,7 @@ from PySide6.QtGui import (
     QPen,
     QPolygonF,
 )
-# 零修改迁移所需：open_event_command_menu 的模态输入对话框。
+# Event-command dialogs remain an ordered UI/backend interaction.
 from PySide6.QtWidgets import QInputDialog
 
 # 相对导入层级：rm_client/ui/polar/renderers/ → .... = rm_client、... = rm_client.ui
@@ -89,6 +35,15 @@ from ...paint import draw_bar, glow_rect, rounded_rect, text_width, with_alpha
 from ...theme import THEME, color
 from ...jello_locale import chinese_enabled
 from ...hud_locale import hud_text, hud_template, hud_buff_name
+from ...tactical_map_geometry import (
+    MapExtent, MapViewport, NormalizedMapPoint, RoundedMapSampling,
+    fit_cuts_panel_corners, normalized_field_coordinate,
+)
+from ...tactical_map_interaction import MapHitGeometry, map_hit_position
+from ...tactical_map_telemetry import (
+    RADAR_TTL_SECONDS, RadarLifetime, RadarMarker, own_active_buffs,
+    penalty_notices, radar_coordinate_metres, special_mechanisms,
+)
 
 __all__ = [
     "TacticalMapMixin",
@@ -100,13 +55,12 @@ __all__ = [
 # ---------------------------------------------------------------------------
 
 # RadarInfoToClient 断供后标记保留时长；期间线性淡出，超时整体隐藏。
-_RADAR_TTL_SEC = 6.0
+_RADAR_TTL_SEC = RADAR_TTL_SECONDS
 
 
 def _radar_coord_to_m(value: float, span_m: float) -> float:
     """官方雷达坐标为厘米（RMUC 场地 2800x1500cm）；兼容米制输入。"""
-    v = float(value)
-    return v / 100.0 if v > max(0.1, span_m) + 0.5 else v
+    return radar_coordinate_metres(value, span_m)
 
 
 def draw_radar_overlay(
@@ -131,10 +85,8 @@ def draw_radar_overlay(
         return 0
     seen_at = float(getattr(host.state, "radar_detections_at", 0.0) or 0.0)
     now = time.perf_counter()
-    if seen_at <= 0.0:
-        return 0
-    age = now - seen_at
-    if age > _RADAR_TTL_SEC:
+    lifetime = RadarLifetime.visible_at(seen_at, now, _RADAR_TTL_SEC)
+    if lifetime is None:
         return 0
     detail = (0.0 if compact else 1.0) if detail_progress is None else max(0.0, min(1.0, detail_progress))
     # `RadarOverlay / Map`：经典面板与液态玻璃面板都走这一个门（本函数是
@@ -142,7 +94,7 @@ def draw_radar_overlay(
     # Both（默认）时永远为 True——画面与接线前逐像素相同。
     if not host.radar_overlay_map_visible(detail):
         return 0
-    fade = max(0.0, min(1.0, (_RADAR_TTL_SEC - age) / 2.0))
+    fade = lifetime.opacity
     base_opacity = p.opacity()
     warn_color = host.hud_warning()
     accent_color = host.hud_accent()
@@ -150,12 +102,9 @@ def draw_radar_overlay(
     drawn = 0
     for index, det in enumerate(detections):
         try:
-            x_m = _radar_coord_to_m(det.get("target_pos_x", 0.0), field.width_m)
-            y_m = _radar_coord_to_m(det.get("target_pos_y", 0.0), field.height_m)
-            highlighted = (
-                int(det.get("is_high_light", 0) or 0) != 0
-                and host.radar_high_light_enabled()
-            )
+            marker = RadarMarker.from_wire(det, field.width_m, field.height_m)
+            x_m, y_m = marker.x_m, marker.y_m
+            highlighted = marker.highlighted and host.radar_high_light_enabled()
         except (TypeError, ValueError):
             continue
         if x_m <= 0.0 and y_m <= 0.0:
@@ -206,28 +155,7 @@ def draw_penalty_strip(host: Any, p: QPainter, field_rect: QRectF, *, compact: b
     """
     penalties = getattr(host.state, "penalties", None) or []
     active = getattr(host.state, "active_penalty", None) or {}
-    entries: list[tuple[int, int, int]] = []  # (penalty_type, total_num, effect_sec)
-
-    def _push(item: dict) -> None:
-        try:
-            ptype = int(item.get("penalty_type", 0))
-        except (TypeError, ValueError):
-            return
-        if any(existing[0] == ptype for existing in entries):
-            return
-        try:
-            total = int(item.get("total_penalty_num", 0) or 0)
-            effect = int(item.get("penalty_effect_sec", 0) or 0)
-        except (TypeError, ValueError):
-            total, effect = 0, 0
-        entries.append((ptype, total, effect))
-
-    if active:
-        _push(active)
-    for item in reversed(penalties):
-        _push(item)
-        if len(entries) >= 3:
-            break
+    entries = penalty_notices(active, penalties)
     if not entries:
         return 0
 
@@ -235,7 +163,8 @@ def draw_penalty_strip(host: Any, p: QPainter, field_rect: QRectF, *, compact: b
     warn_color = host.hud_warning()
     font = host.font("poppins_medium", 6.8)
     y = field_rect.top() + (6.0 if compact else 30.0)
-    for ptype, total, effect in entries:
+    for notice in entries:
+        ptype, total, effect = notice.penalty_type, notice.total_count, notice.effect_seconds
         text = f"判罚 T{ptype}" + (f" ×{total}" if total > 1 else "") + (f" · {effect}s" if effect > 0 else "")
         strip_w = max(64.0, host.text_advance(font, text) + 18.0)
         capsule = QRectF(field_rect.left() + 6.0, y, min(strip_w, field_rect.width() - 12.0), 15.0)
@@ -496,32 +425,11 @@ class TacticalMapMixin:
                 own_id = int(getattr(self.state, "robot_id", 0) or 0)
             except (TypeError, ValueError):
                 own_id = 0
-            for row in getattr(self.state, "buff_rows", ()) or ():
-                if row.get("buff_type") is None:
-                    continue
-                try:
-                    if int(row.get("robot_id", 0) or 0) != own_id:
-                        continue
-                except (TypeError, ValueError):
-                    continue
-                if not row.get("active"):
-                    continue
-                name = str(row.get("name") or f"Buff {row.get('buff_type')}")
-                try:
-                    remaining = max(0, int(row.get("remaining", 0) or 0))
-                except (TypeError, ValueError):
-                    remaining = 0
-                rows.append(("buff", name, remaining))
+            entries = own_active_buffs(getattr(self.state, "buff_rows", ()) or (), own_id)
+            rows.extend(entry.as_row() for entry in entries)
         if self._bool_on("BuffTimeline", "Special Mechanism"):
-            for item in getattr(self.state, "special_mechanisms", ()) or ():
-                try:
-                    mechanism_id = int(item.get("mechanism_id", 0) or 0)
-                    seconds = max(0, int(item.get("time_sec", 0) or 0))
-                except (AttributeError, TypeError, ValueError):
-                    continue
-                if mechanism_id <= 0:
-                    continue
-                rows.append(("mechanism", f"MECH{mechanism_id}", seconds))
+            entries = special_mechanisms(getattr(self.state, "special_mechanisms", ()) or ())
+            rows.extend(entry.as_row() for entry in entries)
         return rows[: self.BUFF_TIMELINE_MAX_ITEMS]
 
     def buff_timeline_band(self, width: int, height: int) -> QRectF | None:
@@ -582,6 +490,7 @@ class TacticalMapMixin:
             x += chip_w + 4.0
 
     def draw_tactical_map_hud(self, p: QPainter, width: int, height: int) -> None:
+        self._tactical_map_hit_geometry = MapHitGeometry.empty()
         module = self.registry.get("TacticalMap")
         if module is not None and not module.enabled:
             return
@@ -683,30 +592,11 @@ class TacticalMapMixin:
         setting = module.get_setting("Map Size") if module else None
         mode = str(setting.value) if setting else "Wide"
         density = self.hud_density()
-        # CombatCompact 始终以缩略尺寸作为 morph 起点。不能在按键按下时
-        # 先切换 base size，否则会在连续动画开始前产生一次明显跳变。
-        if self.minecraft_hud_active():
-            # MC composition owns a dedicated upper-left safe area.  Do not
-            # mutate Map Size: leaving the preset restores the user's exact
-            # POLAR geometry on the next frame.
-            base_w = min(216.0, max(168.0, width * 0.19))
-            base_h = min(154.0, max(116.0, height * 0.19))
-        elif density == "CombatCompact":
-            base_w, base_h = 170.0, 118.0
-        elif mode == "Compact":
-            base_w, base_h = 220.0, 170.0
-        elif mode == "Full Tactical":
-            base_w, base_h = 360.0, 270.0
-        else:
-            base_w, base_h = 280.0, 212.0
-        expanded_w = min(520.0, width * 0.48)
-        expanded_h = min(380.0, height * 0.56)
-        target_w = expanded_w if self.tactical_map_hold else base_w
-        target_h = expanded_h if self.tactical_map_hold else base_h
-        target_w = min(target_w, max(190.0, width - 36.0))
-        target_h = min(target_h, max(150.0, height - 96.0))
+        # The collapsed target stays independent of Tab so reversal never jumps.
+        base = MapExtent.collapsed(width, height, mode, density, self.minecraft_hud_active())
+        target = base.target(width, height, self.tactical_map_hold)
         map_y = 48.0 if self.minecraft_hud_active() else 58.0
-        self.tactical_map_state.set_target(12.0, map_y, target_w, target_h, self.tactical_map_hold)
+        self.tactical_map_state.set_target(12.0, map_y, target.width, target.height, self.tactical_map_hold)
         state = self.tactical_map_state.container
         return QRectF(state.x, state.y, state.width, state.height)
 
@@ -757,14 +647,18 @@ class TacticalMapMixin:
             return False
         field = self.tactical_map_field_layout
         rect = self.tactical_map_field_rect
-        if field is None or rect.isNull() or not rect.contains(point):
+        if field is None:
             return False
-        nx = (point.x() - rect.left()) / max(1.0, rect.width())
-        ny = (rect.bottom() - point.y()) / max(1.0, rect.height())
+        position = map_hit_position(point, rect, getattr(self, "_tactical_map_hit_geometry", None))
+        if position is None:
+            return False
+        # Capture before settings, command publication or toast can fail. The
+        # eventual release and drag remain map-owned even after Tab reverses.
+        self.pointer_interaction.own_release()
+        self._control_mouse_point = None
         if self.tactical_map_field_mirrored:
-            nx, ny = 1.0 - nx, 1.0 - ny
-        map_x = max(0.0, min(1.0, nx)) * field.width_m
-        map_y = max(0.0, min(1.0, ny)) * field.height_m
+            position = position.mirrored()
+        map_x, map_y = position.field_metres(field.width_m, field.height_m)
         is_send_all, mark_type = self.map_click_command_values()
         ok, reason = self.backend.publish_map_click_cmd(
             is_send_all=is_send_all,
@@ -913,6 +807,7 @@ class TacticalMapMixin:
         config: MatchModeConfig,
         rect: QRectF,
     ) -> None:
+        self._tactical_map_hit_geometry = MapHitGeometry.empty()
         hold_amount = self.tactical_map_hold_amount()
         compact_density = self.hud_density() == "CombatCompact" or self.minecraft_hud_active()
         compact = compact_density
@@ -956,6 +851,15 @@ class TacticalMapMixin:
         p.save()
         p.setClipRect(rect.adjusted(1.0, 1.0, -1.0, -1.0))
         field_rect = self.draw_official_map(p, map_rect, config)
+        self.tactical_map_field_rect = QRectF(field_rect)
+        self.tactical_map_field_layout = config.field
+        alliance_profile = self.registry.get("AllianceProfile")
+        self.tactical_map_field_mirrored = bool(
+            config.field.mirror_for_blue
+            and self.alliance_side() == "Blue"
+            and self.setting_bool(module, "Mirror Blue", True)
+            and self.setting_bool(alliance_profile, "Mirror Tactical Map", True)
+        )
         content_alpha = self.anim.value("hud.tactical_map.liquid.content", 1.0, self.anim_duration(0.20), Easings.ease_out_cubic, initial=0.0)
         p.save()
         p.setOpacity(p.opacity() * content_alpha)
@@ -1520,6 +1424,7 @@ class TacticalMapMixin:
         opacity_setting = self.registry.get("TacticalMap").get_setting("Opacity") if self.registry.get("TacticalMap") else None
         image_opacity = float(opacity_setting.value) if opacity_setting else 0.72
         rounded_rect(p, rect, 6, color("#050506", 0.72), color("#ffffff", 0.08))
+        masked = None
         if image is None or image.isNull():
             self.draw_text(p, rect, hud_text("official map asset missing", chinese_enabled(self.registry)), self.font("poppins_regular", 8.0), self.hud_danger(), Qt.AlignmentFlag.AlignCenter)
             fit = self.fit_aspect(rect, config.field.width_m / max(0.1, config.field.height_m))
@@ -1531,7 +1436,6 @@ class TacticalMapMixin:
             # 当前生效），不能依赖。drawImage 没有路径交集变体，因此用引擎无关的
             # 圆角预裁剪缓存：仅当 fit 方角真的侵入圆弧缺口（折叠动画等比穿越点、
             # 展开贴满态）时才预合成带透明角的位图，其余帧保持原直绘零开销。
-            masked = None
             if self._map_fit_cuts_panel_corners(rect, fit, 6.0):
                 masked = self._rounded_map_layer(p, image, fit, rect, 6.0)
             p.save()
@@ -1560,6 +1464,10 @@ class TacticalMapMixin:
             else:
                 p.fillRect(fit, color("#07111d", 0.16 if self.hud_clean() else 0.28))
         rounded_rect(p, fit, 4, color("#000000", 0.0), with_alpha(self.hud_accent(), 0.30 if self.hud_clean() else 0.22), 1.0)
+        self._tactical_map_hit_geometry = MapHitGeometry.from_paint(
+            fit, rect, p.combinedTransform(), p.clipPath() if p.hasClipping() else None,
+            rounded=masked is not None,
+        )
         return fit
 
     def _map_fit_cuts_panel_corners(self, rect: QRectF, fit: QRectF, radius: float) -> bool:
@@ -1570,8 +1478,7 @@ class TacticalMapMixin:
         """
         gaps_x = (fit.left() - rect.left(), rect.right() - fit.right())
         gaps_y = (fit.top() - rect.top(), rect.bottom() - fit.bottom())
-        margin = radius + 1.0
-        return any(gx < margin and gy < margin for gx in gaps_x for gy in gaps_y)
+        return fit_cuts_panel_corners(gaps_x, gaps_y, radius)
 
     def _rounded_map_layer(self, p: QPainter, image: QImage, fit: QRectF, rect: QRectF, radius: float) -> QImage | None:
         """把源图按圆角掩码预合成进带透明角的缓存位图（缺陷 D）。
@@ -1593,19 +1500,12 @@ class TacticalMapMixin:
                 scale *= float(device.devicePixelRatioF())
             except Exception:
                 pass
-        scale = max(0.5, min(scale, 4.0))
-        width = max(1, int(math.ceil(fit.width() * scale)))
-        height = max(1, int(math.ceil(fit.height() * scale)))
-        sx = width / max(0.001, fit.width())
-        sy = height / max(0.001, fit.height())
-        radius_px = radius * scale
-        # key 必须完整决定掩码形状：除尺寸/半径外还要含 fit 相对面板的偏移
-        # （同尺寸不同偏移 => rounded(fit)∩rounded(rect) 的角部掩码不同）。
-        offset_key = (
-            round((fit.left() - rect.left()) * sx, 2),
-            round((fit.top() - rect.top()) * sy, 2),
-        )
-        key = (image.cacheKey(), width, height, round(radius_px, 2), offset_key)
+        sampling = RoundedMapSampling.for_extent(fit.width(), fit.height(), scale, radius)
+        width, height = sampling.width, sampling.height
+        sx, sy = sampling.scale_x, sampling.scale_y
+        # Source identity and relative panel offset both affect mask reuse.
+        offset_key = sampling.panel_offset(fit.left() - rect.left(), fit.top() - rect.top())
+        key = sampling.cache_key(image.cacheKey(), offset_key)
         cached = cache.get(key)
         if cached is not None:
             return cached
@@ -1659,8 +1559,8 @@ class TacticalMapMixin:
         return cached
 
     def map_point(self, rect: QRectF, field: FieldLayout, x_m: float, y_m: float) -> QPointF:
-        nx = max(0.0, min(1.0, x_m / max(0.1, field.width_m)))
-        ny = max(0.0, min(1.0, y_m / max(0.1, field.height_m)))
+        nx = normalized_field_coordinate(x_m, field.width_m)
+        ny = normalized_field_coordinate(y_m, field.height_m)
         tactical = self.registry.get("TacticalMap")
         profile = self.registry.get("AllianceProfile")
         mirror = (
@@ -1669,10 +1569,11 @@ class TacticalMapMixin:
             and self.setting_bool(tactical, "Mirror Blue", True)
             and self.setting_bool(profile, "Mirror Tactical Map", True)
         )
+        point = NormalizedMapPoint(nx, ny)
         if mirror:
-            nx = 1.0 - nx
-            ny = 1.0 - ny
-        return QPointF(rect.left() + rect.width() * nx, rect.bottom() - rect.height() * ny)
+            point = point.mirrored()
+        viewport = MapViewport(rect.left(), rect.bottom(), rect.width(), rect.height())
+        return QPointF(*viewport.screen_point(point))
 
     def draw_map_zones(
         self,
@@ -2577,8 +2478,7 @@ class TacticalMapMixin:
 
 
 # ---------------------------------------------------------------------------
-# API 冻结面 qualname 固定（见模块 docstring「冻结面纪律」；阶段 2a 先例：
-# renderers/combat_target_hud.py 底部同一手法）。
+# Preserve the established window API identities for inherited map methods.
 # ---------------------------------------------------------------------------
 
 _QUALNAME_PINNED_MEMBERS = (
