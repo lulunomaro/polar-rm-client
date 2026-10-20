@@ -686,6 +686,7 @@ class RmVideoBackend(UDPVideoReceiver):
             self.decode_h265 = False
             self.latest_bgr = None
             self.latest_bgr_at = 0.0
+            self.last_frame_at = 0.0
         admission = VideoSourceAdmission()
         admission.attempt("HEVC recovery reset", self.h265_recovery.reset)
         admission.attempt("UDP stop", super().request_stop)
@@ -712,6 +713,9 @@ class RmVideoBackend(UDPVideoReceiver):
         with self._lock:
             self._video_generation += 1
             self._h265_generation += 1
+            self.latest_bgr = None
+            self.latest_bgr_at = 0.0
+            self.last_frame_at = 0.0
         # Stop packet production before detaching decoder pipes. No restart
         # lock is held while waiting; stop invalidates the decoder generation.
         super().stop()
@@ -755,6 +759,7 @@ class RmVideoBackend(UDPVideoReceiver):
                 self.h265_decoder.request_stop()
 
     def stats(self) -> dict[str, Any]:
+        ingress = self.ingress_stats()
         decoder = self.h265_decoder
         h265_at = (decoder.latest_timestamp() if decoder and self.decode_h265
                    and decoder.available
@@ -771,6 +776,7 @@ class RmVideoBackend(UDPVideoReceiver):
                 and time.perf_counter() - self.last_frame_at <= 2.0
             )
             return {
+                "ingress": ingress,
                 "connected": connected,
                 "host": self.host,
                 "port": self.port,
