@@ -9,8 +9,9 @@ materials or lower the normal HUD's frame rate.
 from __future__ import annotations
 
 from collections import OrderedDict
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime
+from functools import lru_cache
 import math
 import re
 from pathlib import Path
@@ -67,6 +68,14 @@ class MinecraftHudLayout:
     multiplier: float = 1.0
     logical_size: tuple[int, int] = (1, 1)
     origin: tuple[float, float] = (0.0, 0.0)
+
+    def copy_geometry(self):
+        # frozen dataclasses do not make Qt rectangles immutable. Public
+        # callers may adjust their own hit geometry without poisoning caches.
+        return replace(self,hotbar=QRectF(self.hotbar),scoreboard=QRectF(self.scoreboard),
+            slots=tuple(QRectF(r) for r in self.slots),hearts=tuple(QRectF(r) for r in self.hearts),
+            armor=tuple(QRectF(r) for r in self.armor),food=tuple(QRectF(r) for r in self.food),
+            boss_bars=tuple(QRectF(r) for r in self.boss_bars),effects_origin=QPointF(self.effects_origin))
 
     def slot_at(self, point: QPointF) -> int | None:
         for index, rect in enumerate(self.slots):
@@ -160,6 +169,7 @@ class MinecraftBitmapFont:
         return float(image.width())
 
 
+@lru_cache(maxsize=2048)
 def _scoreboard_display(text: str, chinese: bool) -> str:
     # Formatting controls are not vocabulary and must remain byte-for-byte.
     parts = re.split(r"(§.)", text)
@@ -214,12 +224,20 @@ class MinecraftCombatHudRenderer:
         self._layer_priority_key: tuple[Any, ...] | None = None
         self._layer_next_refresh_at = 0.0
         self.layer_rebuilds = 0
+        self._metrics_cache = OrderedDict()
+        self._logical_geometry_cache = OrderedDict()
+        self._screen_geometry_cache = OrderedDict()
 
     @property
     def available(self) -> bool:
         return self.font.available and all(not image.isNull() for image in self.images.values())
 
     def _scoreboard_metrics(self, lines: tuple[str, ...]) -> tuple[float, float]:
+        lines = tuple(lines)
+        cached = self._metrics_cache.get(lines)
+        if cached is not None:
+            self._metrics_cache.move_to_end(lines)
+            return cached
         # Reserve actual display extents, including provider ascents/shadows.
         # Reserving both localizations keeps language changes from moving the
         # interaction geometry while never clipping a wider translated line.
@@ -229,7 +247,10 @@ class MinecraftCombatHudRenderer:
             display = text if index in (0, len(lines)-1) else _scoreboard_display(text, True)
             widths.append(max(self.styled_font.width(text), self.styled_font.width(display)))
             heights.append(max(self.styled_font.height(text), self.styled_font.height(display)))
-        return max(112, max(widths, default=104) + 8), max(12, sum(heights) + 5)
+        result = max(112, max(widths, default=104) + 8), max(12, sum(heights) + 5)
+        self._metrics_cache[lines] = result
+        if len(self._metrics_cache) > 256:self._metrics_cache.popitem(last=False)
+        return result
 
     def _display_text_width(self, raw: str) -> float:
         display = getattr(raw, "display", raw)
@@ -243,6 +264,14 @@ class MinecraftCombatHudRenderer:
         height: int,
         scoreboard_lines: Iterable[str] = (),
     ) -> MinecraftHudLayout:
+        # Geometry depends on measured extents, not changing numeric content.
+        # These private retained layouts are read-only within the renderer.
+        lines = tuple(str(line) for line in scoreboard_lines)
+        score_width, score_height = self._scoreboard_metrics(lines)
+        key = (width, height, score_width, score_height)
+        if key in self._logical_geometry_cache:
+            self._logical_geometry_cache.move_to_end(key)
+            return self._logical_geometry_cache[key]
         scale = 1.0
         hotbar = QRectF((width - 182 * scale) // 2, height - 22 * scale, 182 * scale, 22 * scale)
         slots = tuple(
@@ -259,8 +288,6 @@ class MinecraftCombatHudRenderer:
         )
         # Retain the layout field for consumers, but reserve no boss-bar space.
         boss: tuple[QRectF, ...] = ()
-        lines = tuple(str(line) for line in scoreboard_lines)
-        score_width, score_height = self._scoreboard_metrics(lines)
         score_w = score_width * scale
         score_h = score_height * scale
         # Hypixel-style sidebars keep the upper-right clear for ArrayList/mod
@@ -269,7 +296,7 @@ class MinecraftCombatHudRenderer:
         score_y = max(40 * scale, min((height-score_h)*.5,height-score_h-52*scale))
         scoreboard = QRectF(width - score_w - 4 * scale, score_y, score_w, score_h)
         # Preserve the existing effect-tile position independently of top HUD chrome.
-        return MinecraftHudLayout(
+        result = MinecraftHudLayout(
             scale,
             hotbar,
             slots,
@@ -280,6 +307,9 @@ class MinecraftCombatHudRenderer:
             scoreboard,
             QPointF(4 * scale, 58 * scale),
         )
+        self._logical_geometry_cache[key] = result
+        if len(self._logical_geometry_cache) > 16:self._logical_geometry_cache.popitem(last=False)
+        return result
 
     @staticmethod
     def _map_rect(rect: QRectF, scale: float, origin_x: float, origin_y: float) -> QRectF:
@@ -308,6 +338,10 @@ class MinecraftCombatHudRenderer:
         requested = max(0.25, base_scale * multiplier)
 
         score_width, score_height = self._scoreboard_metrics(lines)
+        geometry_key = (width,height,base_scale,multiplier,score_width,score_height)
+        if geometry_key in self._screen_geometry_cache:
+            self._screen_geometry_cache.move_to_end(geometry_key)
+            return self._screen_geometry_cache[geometry_key].copy_geometry()
         # Content-aware safety cap, not Minecraft's conservative 320x240 cap:
         # user scaling remains useful while the actual hotbar/effects/score
         # extents are guaranteed to stay inside the framebuffer.
@@ -328,7 +362,7 @@ class MinecraftCombatHudRenderer:
         origin_y = (height - logical_height * effective) * 0.5
         logical = self._logical_layout(logical_width, logical_height, lines)
         map_rect = lambda value: self._map_rect(value, effective, origin_x, origin_y)
-        return MinecraftHudLayout(
+        result = MinecraftHudLayout(
             effective,
             map_rect(logical.hotbar),
             tuple(map_rect(rect) for rect in logical.slots),
@@ -346,6 +380,9 @@ class MinecraftCombatHudRenderer:
             (logical_width, logical_height),
             (origin_x, origin_y),
         )
+        self._screen_geometry_cache[geometry_key] = result
+        if len(self._screen_geometry_cache) > 16:self._screen_geometry_cache.popitem(last=False)
+        return result.copy_geometry()
 
     @staticmethod
     def assignments(module: Any) -> tuple[str, ...]:

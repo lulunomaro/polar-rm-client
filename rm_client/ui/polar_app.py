@@ -1158,6 +1158,9 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         super().resizeEvent(event)
 
     def initializeGL(self) -> None:
+        from .render_runtime import RenderRuntime
+        if not hasattr(self, 'render_runtime'):
+            self.render_runtime = RenderRuntime()
         self.gpu_compositor.initialize()
         self.vision_wire_gpu.initialize()
         self.island_icon_gpu.initialize()
@@ -1170,6 +1173,7 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         # Record the actual driver, not the configured backend label. This
         # distinguishes a failed GPU pass / slow compatibility paint from a
         # software or different-adapter OpenGL context on the user's machine.
+        observed = False
         try:
             context = self.context()
             functions = context.extraFunctions()
@@ -1177,13 +1181,18 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
             for key, enum in (("vendor", 0x1F00), ("renderer", 0x1F01), ("version", 0x1F02)):
                 value = functions.glGetString(enum)
                 driver[key] = value.decode("utf-8", "replace") if isinstance(value, bytes) else str(value)
+            self.render_runtime.initialized(driver, self.gpu_compositor.available, self.gpu_compositor.last_error)
+            observed = True
             self.backend.field_log.emit(
                 "renderer_init", **driver,
                 stencil_bits=context.format().stencilBufferSize(),
                 gpu_available=self.gpu_compositor.available,
                 gpu_error=self.gpu_compositor.last_error,
             )
-        except Exception:
+        except Exception as exc:
+            if not observed:
+                self.render_runtime.initialized({'diagnostic_error':str(exc)}, self.gpu_compositor.available,
+                    self.gpu_compositor.last_error or str(exc))
             _LOG.debug("OpenGL driver diagnostics unavailable", exc_info=True)
         # Native passes only draw into private FBOs. The window framebuffer is
         # touched once by GpuFrameCompositor, avoiding Qt/GL state collisions.
@@ -1211,6 +1220,9 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
             # the generator. Resume only after a successful visible GPU frame.
             self._gpu_prewarm_timer.start(16)
         presented = time.perf_counter()
+        runtime = getattr(self, 'render_runtime', None)
+        if runtime is not None:
+            runtime.frame(gpu_presented, (presented-started)*1000, self.gpu_compositor.last_error)
         frame = self._frame_telemetry.record_frame(started, presented)
         self.state.fps = frame.fps
         if frame.report is not None:
@@ -1236,6 +1248,7 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
                 ui_wakeup_gap_ms=self._tick_diagnostics.gap_ms,
                 gpu_prewarm_last_ms=self._gpu_prewarm_last_ms,
                 gpu_prewarm_max_ms=self._gpu_prewarm_max_ms,
+                graphics_runtime=runtime.snapshot() if runtime is not None else {},
             )
             self._frame_telemetry.acknowledge_report(frame.report)
         # 不再依据视频或偶发纹理上传耗时自动降档。摄像头保持源帧率，

@@ -1,0 +1,3409 @@
+{
+  "baseline": "7c6b4f2a1467ac4ce857cc9031ae8cab06c6f5e5",
+  "scope": "Issue 27 scoped changes, NOT complete real-device or all-scene performance acceptance",
+  "regression": {
+    "run_started_at_utc": "2026-10-26T13:43:11Z",
+    "selected_count": 33,
+    "counts": {
+      "PASS": 32,
+      "SKIP": 0,
+      "INCOMPLETE": 0,
+      "FAIL": 1
+    },
+    "passed": false,
+    "source_stability": {
+      "schema_version": 1,
+      "status": "PASS",
+      "detail": "Declared verification source inputs have identical start/end fingerprints",
+      "scope": {
+        "directories": [
+          "rm_client",
+          "tests",
+          "tools",
+          "configs"
+        ],
+        "suffixes": [
+          ".bat",
+          ".c",
+          ".cfg",
+          ".cpp",
+          ".h",
+          ".hpp",
+          ".ini",
+          ".json",
+          ".ps1",
+          ".py",
+          ".spec",
+          ".toml",
+          ".yaml",
+          ".yml"
+        ],
+        "all_file_directories": [
+          "tests/fixtures"
+        ],
+        "root_files": [
+          "main.py",
+          "requirements*.txt"
+        ],
+        "exclusions": [
+          "hidden directories",
+          "__pycache__"
+        ],
+        "limits": "Start/end comparison only; includes all internal tests/fixtures files; excludes assets outside that fixture directory, external fixtures, installed packages and transient edits restored between captures."
+      },
+      "before": {
+        "status": "available",
+        "sha256": "6ce35a6e2005e1c8ab4cd7600bbe3a0ebd36ee1e49576ba0a240f3077e7205de",
+        "file_count": 1035
+      },
+      "after": {
+        "status": "available",
+        "sha256": "6ce35a6e2005e1c8ab4cd7600bbe3a0ebd36ee1e49576ba0a240f3077e7205de",
+        "file_count": 1035
+      }
+    }
+  },
+  "results": [
+    {
+      "path": "tests/endfield/settings/test_center.py",
+      "status": "PASS",
+      "tests_run": 6,
+      "detail": "6 unittest tests passed"
+    },
+    {
+      "path": "tests/endfield/settings/test_geometry.py",
+      "status": "PASS",
+      "tests_run": 11,
+      "detail": "11 unittest tests passed"
+    },
+    {
+      "path": "tests/endfield/settings/test_keybinds.py",
+      "status": "PASS",
+      "tests_run": 11,
+      "detail": "11 unittest tests passed"
+    },
+    {
+      "path": "tests/endfield/settings/test_scroll.py",
+      "status": "PASS",
+      "tests_run": 8,
+      "detail": "8 unittest tests passed"
+    },
+    {
+      "path": "tests/endfield/test_endfield_bundled_pack.py",
+      "status": "PASS",
+      "tests_run": 3,
+      "detail": "3 unittest tests passed"
+    },
+    {
+      "path": "tests/endfield/test_endfield_native.py",
+      "status": "PASS",
+      "tests_run": 8,
+      "detail": "8 unittest tests passed"
+    },
+    {
+      "path": "tests/endfield/test_endfield_pack_setup.py",
+      "status": "PASS",
+      "tests_run": 14,
+      "detail": "14 unittest tests passed"
+    },
+    {
+      "path": "tests/endfield/test_renderer_pack_priority.py",
+      "status": "PASS",
+      "tests_run": 3,
+      "detail": "3 unittest tests passed"
+    },
+    {
+      "path": "tests/test_cs2_crosshair_import.py",
+      "status": "FAIL",
+      "tests_run": 23,
+      "detail": "FAIL: test_small_embedding_stacks_and_scrolls_without_horizontal_overflow (__main__.EditorAndPaintTests.test_small_embedding_stacks_and_scrolls_without_horizontal_overflow) (size=(1140, 830)) | FAIL: test_small_embedding_stacks_and_scrolls_without_horizontal_overflow (__main__.EditorAndPaintTests.test_small_embedding_stacks_and_scrolls_without_horizontal_overflow) (size=(640, 480)) | FAIL: test_small_embedding_stacks_and_scrolls_without_horizontal_overflow (__main__.EditorAndPaintTests.test_smal"
+    },
+    {
+      "path": "tests/test_cs2_settings_center.py",
+      "status": "PASS",
+      "tests_run": 13,
+      "detail": "13 unittest tests passed"
+    },
+    {
+      "path": "tests/test_emergency_action_failures.py",
+      "status": "PASS",
+      "tests_run": 7,
+      "detail": "7 unittest tests passed"
+    },
+    {
+      "path": "tests/test_emergency_shortcut_lifetime.py",
+      "status": "PASS",
+      "tests_run": 7,
+      "detail": "7 unittest tests passed"
+    },
+    {
+      "path": "tests/test_frame_telemetry.py",
+      "status": "PASS",
+      "tests_run": 5,
+      "detail": "5 unittest tests passed"
+    },
+    {
+      "path": "tests/test_frame_telemetry_contract.py",
+      "status": "PASS",
+      "tests_run": 6,
+      "detail": "6 unittest tests passed"
+    },
+    {
+      "path": "tests/test_fullscreen_composition.py",
+      "status": "PASS",
+      "tests_run": 15,
+      "detail": "15 unittest tests passed"
+    },
+    {
+      "path": "tests/test_fullscreen_input_extended.py",
+      "status": "PASS",
+      "tests_run": 14,
+      "detail": "14 unittest tests passed"
+    },
+    {
+      "path": "tests/test_gpu_warmup_contract.py",
+      "status": "PASS",
+      "tests_run": 10,
+      "detail": "10 unittest tests passed"
+    },
+    {
+      "path": "tests/test_gpu_warmup_owner.py",
+      "status": "PASS",
+      "tests_run": 10,
+      "detail": "10 unittest tests passed"
+    },
+    {
+      "path": "tests/test_issue27_graphics.py",
+      "status": "PASS",
+      "tests_run": 15,
+      "detail": "15 unittest tests passed"
+    },
+    {
+      "path": "tests/test_jello_resource_pack.py",
+      "status": "PASS",
+      "tests_run": 9,
+      "detail": "9 unittest tests passed"
+    },
+    {
+      "path": "tests/test_minecraft_cjk_readability.py",
+      "status": "PASS",
+      "tests_run": 11,
+      "detail": "11 unittest tests passed"
+    },
+    {
+      "path": "tests/test_minecraft_lossless_upload_crop.py",
+      "status": "PASS",
+      "tests_run": 1,
+      "detail": "1 unittest tests passed"
+    },
+    {
+      "path": "tests/test_normal_video_timeline.py",
+      "status": "PASS",
+      "tests_run": 18,
+      "detail": "18 unittest tests passed"
+    },
+    {
+      "path": "tests/test_qt_launch_abort.py",
+      "status": "PASS",
+      "tests_run": 7,
+      "detail": "7 unittest tests passed"
+    },
+    {
+      "path": "tests/test_render_performance_regressions.py",
+      "status": "PASS",
+      "tests_run": 15,
+      "detail": "15 unittest tests passed"
+    },
+    {
+      "path": "tests/test_settings_cold_start.py",
+      "status": "PASS",
+      "tests_run": 14,
+      "detail": "14 unittest tests passed"
+    },
+    {
+      "path": "tests/test_startup_settings_fullscreen.py",
+      "status": "PASS",
+      "tests_run": 19,
+      "detail": "19 unittest tests passed"
+    },
+    {
+      "path": "tests/test_tick_controller.py",
+      "status": "PASS",
+      "tests_run": 14,
+      "detail": "14 unittest tests passed"
+    },
+    {
+      "path": "tests/test_video_generation_selection.py",
+      "status": "PASS",
+      "tests_run": 3,
+      "detail": "3 unittest tests passed"
+    },
+    {
+      "path": "tests/test_video_reconnect.py",
+      "status": "PASS",
+      "tests_run": 6,
+      "detail": "6 unittest tests passed"
+    },
+    {
+      "path": "tests/test_window_assembly.py",
+      "status": "PASS",
+      "tests_run": 12,
+      "detail": "12 unittest tests passed"
+    },
+    {
+      "path": "tests/test_window_economy_commands.py",
+      "status": "PASS",
+      "tests_run": 8,
+      "detail": "8 unittest tests passed"
+    },
+    {
+      "path": "tests/top_match_bar_minecraft_fusion_test.py",
+      "status": "PASS",
+      "tests_run": 20,
+      "detail": "20 unittest tests passed"
+    }
+  ],
+  "passing_suite_tests": 323,
+  "baseline_failure": {
+    "suite": "test_cs2_crosshair_import",
+    "same_on_unchanged_baseline": true,
+    "signatures": [
+      "FAIL: test_small_embedding_stacks_and_scrolls_without_horizontal_overflow (__main__.EditorAndPaintTests.test_small_embedding_stacks_and_scrolls_without_horizontal_overflow) (size=(1140, 830))",
+      "FAIL: test_small_embedding_stacks_and_scrolls_without_horizontal_overflow (__main__.EditorAndPaintTests.test_small_embedding_stacks_and_scrolls_without_horizontal_overflow) (size=(640, 480))",
+      "FAIL: test_small_embedding_stacks_and_scrolls_without_horizontal_overflow (__main__.EditorAndPaintTests.test_small_embedding_stacks_and_scrolls_without_horizontal_overflow) (size=(360, 360))",
+      "FAIL: test_small_embedding_stacks_and_scrolls_without_horizontal_overflow (__main__.EditorAndPaintTests.test_small_embedding_stacks_and_scrolls_without_horizontal_overflow) (size=(300, 240))"
+    ]
+  },
+  "hud_final": {
+    "before": {
+      "size": [
+        2560,
+        1440
+      ],
+      "dpr": 1.0,
+      "fps_limit": 90,
+      "vsync": 0,
+      "cprofile": false,
+      "driver": {
+        "vendor": "NVIDIA Corporation",
+        "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+        "version": "3.3.0 NVIDIA 596.21"
+      },
+      "cpu_one_core_percent": 85.23681670316918,
+      "cpu_machine_percent": 2.663650521974037,
+      "gpu_engine_samples": {
+        "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+          "samples": 15,
+          "mean_percent": 5.833642264386138,
+          "max_percent": 6.198429213882233
+        },
+        "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+          "samples": 15,
+          "mean_percent": 0.0,
+          "max_percent": 0.0
+        }
+      },
+      "zero_3d_engine_count": 33,
+      "gpu_missing_samples": 0,
+      "gpu_counter_error": "",
+      "metrics": {
+        "gpu_static_ui_key": {
+          "count": 691,
+          "mean_ms": 0.01683733714966834,
+          "median_ms": 0.01610000617802143,
+          "p95_ms": 0.02469999890308827,
+          "p99_ms": 0.04739999712910503,
+          "max_ms": 0.056899996707215905
+        },
+        "paint_gpu_background": {
+          "count": 691,
+          "mean_ms": 0.0706716351032152,
+          "median_ms": 0.020000006770715117,
+          "p95_ms": 0.2531000063754618,
+          "p99_ms": 0.3184000088367611,
+          "max_ms": 0.6084999913582578
+        },
+        "minecraft.draw": {
+          "count": 691,
+          "mean_ms": 1.5683745297868823,
+          "median_ms": 0.6828000041423365,
+          "p95_ms": 5.172699995455332,
+          "p99_ms": 5.626700003631413,
+          "max_ms": 7.430700003169477
+        },
+        "draw_dynamic_island": {
+          "count": 691,
+          "mean_ms": 0.2485389289107206,
+          "median_ms": 0.23379999038297683,
+          "p95_ms": 0.34420000156387687,
+          "p99_ms": 0.4594000056385994,
+          "max_ms": 0.6664999964414164
+        },
+        "draw_tactical_map_hud": {
+          "count": 691,
+          "mean_ms": 0.9300947900205802,
+          "median_ms": 0.890600000275299,
+          "p95_ms": 1.197300007333979,
+          "p99_ms": 1.427100010914728,
+          "max_ms": 1.6434999997727573
+        },
+        "draw_minecraft_module_list": {
+          "count": 691,
+          "mean_ms": 0.3924151955099302,
+          "median_ms": 0.3699000080814585,
+          "p95_ms": 0.5154000100446865,
+          "p99_ms": 0.6312999903457239,
+          "max_ms": 0.9738999942783266
+        },
+        "paint_hud_motion_overlay": {
+          "count": 691,
+          "mean_ms": 4.078397684207141,
+          "median_ms": 3.1020000024000183,
+          "p95_ms": 7.8206999896792695,
+          "p99_ms": 8.759799995459616,
+          "max_ms": 10.934899997664616
+        },
+        "clickgui.prepare_frame": {
+          "count": 691,
+          "mean_ms": 0.10211186688366398,
+          "median_ms": 0.0957000011112541,
+          "p95_ms": 0.13250000483822078,
+          "p99_ms": 0.20419999782461673,
+          "max_ms": 0.8473000052617863
+        },
+        "clickgui.render": {
+          "count": 691,
+          "mean_ms": 0.7454005785664819,
+          "median_ms": 0.7226000016089529,
+          "p95_ms": 0.9576000011293218,
+          "p99_ms": 1.0983999964082614,
+          "max_ms": 2.143599995179102
+        },
+        "flush_gpu_hud_commands": {
+          "count": 691,
+          "mean_ms": 0.8785801736823945,
+          "median_ms": 0.8514999935869128,
+          "p95_ms": 1.109399992856197,
+          "p99_ms": 1.2930999946547672,
+          "max_ms": 2.2661999973934144
+        },
+        "paint_gpu_target_hud_layer": {
+          "count": 691,
+          "mean_ms": 0.6231164978842376,
+          "median_ms": 0.6108000088715926,
+          "p95_ms": 0.7148000004235655,
+          "p99_ms": 0.8380999934161082,
+          "max_ms": 1.6423000051872805
+        },
+        "compositor.prepare_blur": {
+          "count": 691,
+          "mean_ms": 0.022445874908324413,
+          "median_ms": 0.001300009898841381,
+          "p95_ms": 0.11130000348202884,
+          "p99_ms": 0.149500003317371,
+          "max_ms": 0.21830000332556665
+        },
+        "compositor.render_glass": {
+          "count": 1382,
+          "mean_ms": 0.05545274963507742,
+          "median_ms": 0.04640000406652689,
+          "p95_ms": 0.14040000678505749,
+          "p99_ms": 0.17579999985173345,
+          "max_ms": 1.021099989884533
+        },
+        "compositor.prepare_treated_backdrop": {
+          "count": 691,
+          "mean_ms": 0.0015910275443221204,
+          "median_ms": 0.001500011421740055,
+          "p95_ms": 0.0020000006770715117,
+          "p99_ms": 0.0028999929782003164,
+          "max_ms": 0.006200003554113209
+        },
+        "compositor.present": {
+          "count": 691,
+          "mean_ms": 0.02227250379041867,
+          "median_ms": 0.02099999983329326,
+          "p95_ms": 0.029000002541579306,
+          "p99_ms": 0.04320000880397856,
+          "max_ms": 0.09580000187270343
+        },
+        "paintGL": {
+          "count": 691,
+          "mean_ms": 6.44731780026137,
+          "median_ms": 5.513999989489093,
+          "p95_ms": 10.336100007407367,
+          "p99_ms": 11.440400005085394,
+          "max_ms": 13.891800001147203
+        },
+        "qt.paint.ProbeWindow": {
+          "count": 691,
+          "mean_ms": 6.657892908879411,
+          "median_ms": 5.749799995101057,
+          "p95_ms": 10.624000002280809,
+          "p99_ms": 11.771200006478466,
+          "max_ms": 14.407499998924322
+        },
+        "on_tick": {
+          "count": 957,
+          "mean_ms": 0.5698935214660978,
+          "median_ms": 0.4140999953961,
+          "p95_ms": 1.1135999957332388,
+          "p99_ms": 1.709599993773736,
+          "max_ms": 7.686199998715892
+        },
+        "present_interval": {
+          "count": 690,
+          "mean_ms": 11.565465507252762,
+          "median_ms": 10.547249999945052,
+          "p95_ms": 21.008800002164207,
+          "p99_ms": 27.195700007723644,
+          "max_ms": 45.65299999376293
+        },
+        "paint_overlay": {
+          "count": 8,
+          "mean_ms": 0.25032499979715794,
+          "median_ms": 0.24214999575633556,
+          "p95_ms": 0.3436999977566302,
+          "p99_ms": 0.3436999977566302,
+          "max_ms": 0.3436999977566302
+        }
+      },
+      "source_sha256": {
+        "rm_client/ui/polar_app.py": "2915a35d43687230e6c4134203b8784c4b333f8291dc19705123cfa873a55a31",
+        "rm_client/ui/minecraft_hud.py": "524db35e9332dab30ab30588fa7d1deed53ea66c816d99dc6f06cae0977adcf0",
+        "rm_client/ui/polar/renderers/combat_target_hud.py": "0562aadc05d8a60c89c3d3d03b79c31303da2c636f3bbdc83596529b4b6584a7",
+        "rm_client/ui/endfield/menu/native.py": "2742d7f959ed13934f1a27eda251fa6c7bb984eccfd936cc236e20d8a97e2dd8",
+        "rm_client/ui/endfield/menu/assets/native_renderer/CURRENT.json": "921d4a09b3328ada862bd013cf72228b6ddf6a22ec505a481137fd4c191953d0"
+      },
+      "probe_sha256": "e48634471d314d10440b0f6b6ea1f19ae3b8f4edc68982156bf24e7f1c6b3969",
+      "native_device": {},
+      "native_observed_fps": 0.0,
+      "graphics_runtime": {},
+      "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+    },
+    "after": {
+      "size": [
+        2560,
+        1440
+      ],
+      "dpr": 1.0,
+      "fps_limit": 90,
+      "vsync": 0,
+      "cprofile": false,
+      "driver": {
+        "vendor": "NVIDIA Corporation",
+        "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+        "version": "3.3.0 NVIDIA 596.21"
+      },
+      "cpu_one_core_percent": 74.1600173512182,
+      "cpu_machine_percent": 2.317500542225569,
+      "gpu_engine_samples": {
+        "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+          "samples": 15,
+          "mean_percent": 6.234213703454272,
+          "max_percent": 6.92159505275469
+        },
+        "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+          "samples": 15,
+          "mean_percent": 0.0,
+          "max_percent": 0.0
+        }
+      },
+      "zero_3d_engine_count": 33,
+      "gpu_missing_samples": 0,
+      "gpu_counter_error": "",
+      "metrics": {
+        "gpu_static_ui_key": {
+          "count": 709,
+          "mean_ms": 0.01605416074879888,
+          "median_ms": 0.015700003132224083,
+          "p95_ms": 0.021500003640539944,
+          "p99_ms": 0.04370001261122525,
+          "max_ms": 0.057199998991563916
+        },
+        "paint_gpu_background": {
+          "count": 709,
+          "mean_ms": 0.06428377994937803,
+          "median_ms": 0.01829999382607639,
+          "p95_ms": 0.22539999918080866,
+          "p99_ms": 0.27740000223275274,
+          "max_ms": 0.7755999977234751
+        },
+        "minecraft.draw": {
+          "count": 709,
+          "mean_ms": 1.2277365301007324,
+          "median_ms": 0.31519999902229756,
+          "p95_ms": 4.947199995513074,
+          "p99_ms": 5.259500001557171,
+          "max_ms": 6.257000000914559
+        },
+        "draw_dynamic_island": {
+          "count": 709,
+          "mean_ms": 0.234738646014541,
+          "median_ms": 0.22119999630376697,
+          "p95_ms": 0.3225000109523535,
+          "p99_ms": 0.43369999912101775,
+          "max_ms": 1.1831999872811139
+        },
+        "draw_tactical_map_hud": {
+          "count": 709,
+          "mean_ms": 0.891386319110459,
+          "median_ms": 0.8627999923191965,
+          "p95_ms": 1.091500002075918,
+          "p99_ms": 1.3463000068441033,
+          "max_ms": 1.8496999982744455
+        },
+        "draw_minecraft_module_list": {
+          "count": 709,
+          "mean_ms": 0.3744349790937681,
+          "median_ms": 0.35770000249613076,
+          "p95_ms": 0.4830999969271943,
+          "p99_ms": 0.6565999938175082,
+          "max_ms": 0.7757999992463738
+        },
+        "paint_hud_motion_overlay": {
+          "count": 709,
+          "mean_ms": 3.6243214387515934,
+          "median_ms": 2.613100004964508,
+          "p95_ms": 7.52660000580363,
+          "p99_ms": 8.785800004261546,
+          "max_ms": 10.364200003095903
+        },
+        "clickgui.prepare_frame": {
+          "count": 709,
+          "mean_ms": 0.1010434415392717,
+          "median_ms": 0.09370000043418258,
+          "p95_ms": 0.1162000116892159,
+          "p99_ms": 0.2669000095920637,
+          "max_ms": 0.9988000092562288
+        },
+        "clickgui.render": {
+          "count": 709,
+          "mean_ms": 0.7052482367890239,
+          "median_ms": 0.690999993821606,
+          "p95_ms": 0.8643000037409365,
+          "p99_ms": 1.0812999971676618,
+          "max_ms": 1.611100000445731
+        },
+        "flush_gpu_hud_commands": {
+          "count": 709,
+          "mean_ms": 0.8357393512487863,
+          "median_ms": 0.81490000593476,
+          "p95_ms": 1.0380000021541491,
+          "p99_ms": 1.3984999968670309,
+          "max_ms": 1.7554000078234822
+        },
+        "paint_gpu_target_hud_layer": {
+          "count": 709,
+          "mean_ms": 0.037657969399080816,
+          "median_ms": 0.03619999915827066,
+          "p95_ms": 0.04579999949783087,
+          "p99_ms": 0.07419999747071415,
+          "max_ms": 0.16419999883510172
+        },
+        "compositor.prepare_blur": {
+          "count": 709,
+          "mean_ms": 0.02509196083555957,
+          "median_ms": 0.0011999945854768157,
+          "p95_ms": 0.10689999908208847,
+          "p99_ms": 0.14609999198000878,
+          "max_ms": 0.9895999974105507
+        },
+        "compositor.render_glass": {
+          "count": 1418,
+          "mean_ms": 0.06176614946287062,
+          "median_ms": 0.04444999649422243,
+          "p95_ms": 0.1627000019652769,
+          "p99_ms": 0.20480000239331275,
+          "max_ms": 0.9646999969845638
+        },
+        "compositor.prepare_treated_backdrop": {
+          "count": 709,
+          "mean_ms": 0.0014911139210192184,
+          "median_ms": 0.0013999961083754897,
+          "p95_ms": 0.001800013706088066,
+          "p99_ms": 0.0022999884095042944,
+          "max_ms": 0.023999993572942913
+        },
+        "compositor.present": {
+          "count": 709,
+          "mean_ms": 0.02104894198806975,
+          "median_ms": 0.019799990695901215,
+          "p95_ms": 0.024200009647756815,
+          "p99_ms": 0.04089999129064381,
+          "max_ms": 0.265800001216121
+        },
+        "paintGL": {
+          "count": 709,
+          "mean_ms": 5.321108462751681,
+          "median_ms": 4.288000011001714,
+          "p95_ms": 9.380300005432218,
+          "p99_ms": 10.531599997193553,
+          "max_ms": 12.00910001352895
+        },
+        "qt.paint.ProbeWindow": {
+          "count": 709,
+          "mean_ms": 5.527153032472586,
+          "median_ms": 4.518200003076345,
+          "p95_ms": 9.636600007070228,
+          "p99_ms": 11.032899987185374,
+          "max_ms": 12.198999989777803
+        },
+        "on_tick": {
+          "count": 985,
+          "mean_ms": 0.5363569542769163,
+          "median_ms": 0.41730000521056354,
+          "p95_ms": 1.0640999971656129,
+          "p99_ms": 1.3999999937368557,
+          "max_ms": 2.450300002237782
+        },
+        "present_interval": {
+          "count": 708,
+          "mean_ms": 11.276438559311288,
+          "median_ms": 10.149849993467797,
+          "p95_ms": 21.18789999803994,
+          "p99_ms": 24.16439999069553,
+          "max_ms": 39.47930000140332
+        },
+        "paint_overlay": {
+          "count": 8,
+          "mean_ms": 0.22481250016426202,
+          "median_ms": 0.2299999978276901,
+          "p95_ms": 0.2457000082358718,
+          "p99_ms": 0.2457000082358718,
+          "max_ms": 0.2457000082358718
+        }
+      },
+      "source_sha256": {
+        "rm_client/ui/polar_app.py": "40fffddc6a56d8aecc7e9dfde002e495c2193da53777cd56b0c9cca5617464a8",
+        "rm_client/ui/minecraft_hud.py": "0ff67e47d0f06ef7982732b45df4b7a4221d64023e8aedfa597942efff6a57ff",
+        "rm_client/ui/polar/renderers/combat_target_hud.py": "694d95f97c0e1816d98cff8cafeb74f765b9a44f9713ab5422aaaba0f0ea502a",
+        "rm_client/ui/endfield/menu/native.py": "789374d97aaf6e2ca811755844c4cb779c14c824f1af71618b56278eb296da9a",
+        "rm_client/ui/endfield/menu/assets/native_renderer/CURRENT.json": "aedb61de41bdba2d5f5946e444067f5f6b0e628b97784c2fd268789936d49ece"
+      },
+      "probe_sha256": "e48634471d314d10440b0f6b6ea1f19ae3b8f4edc68982156bf24e7f1c6b3969",
+      "native_device": {
+        "frame_limit": 90,
+        "luid": "luid:00000000:00014186",
+        "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+        "selection_note": ""
+      },
+      "native_observed_fps": 0.0,
+      "graphics_runtime": {
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21",
+          "implementation": "driver OpenGL (hardware status follows driver identity)"
+        },
+        "initializations": 1,
+        "initialization_failures": 0,
+        "gpu_frames": 1335,
+        "compatibility_frames": 0,
+        "last_fallback": "",
+        "cpu_submit_p95_ms": 9.393900007125922,
+        "cpu_submit_p99_ms": 10.87940001161769,
+        "samples": 720,
+        "scope": "CPU submission including Qt OpenGL painter; not GPU execution time"
+      },
+      "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+    }
+  },
+  "hud_earlier_repeat": {
+    "before": {
+      "size": [
+        2560,
+        1440
+      ],
+      "dpr": 1.0,
+      "fps_limit": 90,
+      "vsync": 0,
+      "cprofile": false,
+      "driver": {
+        "vendor": "NVIDIA Corporation",
+        "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+        "version": "3.3.0 NVIDIA 596.21"
+      },
+      "cpu_one_core_percent": 81.6621547811987,
+      "cpu_machine_percent": 2.551942336912459,
+      "gpu_engine_samples": {
+        "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+          "samples": 15,
+          "mean_percent": 6.66887425235494,
+          "max_percent": 7.300876690868556
+        },
+        "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+          "samples": 15,
+          "mean_percent": 0.0,
+          "max_percent": 0.0
+        }
+      },
+      "zero_3d_engine_count": 33,
+      "gpu_missing_samples": 0,
+      "gpu_counter_error": "",
+      "metrics": {
+        "on_tick": {
+          "count": 959,
+          "mean_ms": 0.5665234619127858,
+          "median_ms": 0.4628999886335805,
+          "p95_ms": 1.1847999994643033,
+          "p99_ms": 1.6060000052675605,
+          "max_ms": 2.3120999976526946
+        },
+        "gpu_static_ui_key": {
+          "count": 686,
+          "mean_ms": 0.01517055435180827,
+          "median_ms": 0.013449993275571615,
+          "p95_ms": 0.021400002879090607,
+          "p99_ms": 0.04770001396536827,
+          "max_ms": 0.10930000280495733
+        },
+        "paint_gpu_background": {
+          "count": 686,
+          "mean_ms": 0.06456239069723754,
+          "median_ms": 0.017949998436961323,
+          "p95_ms": 0.22479999461211264,
+          "p99_ms": 0.31380000291392207,
+          "max_ms": 0.5990999925415963
+        },
+        "minecraft.draw": {
+          "count": 686,
+          "mean_ms": 1.5899712828978347,
+          "median_ms": 0.6596499952138402,
+          "p95_ms": 5.395600004703738,
+          "p99_ms": 5.963099989457987,
+          "max_ms": 6.457299998146482
+        },
+        "draw_dynamic_island": {
+          "count": 686,
+          "mean_ms": 0.22123688010569478,
+          "median_ms": 0.20980000408599153,
+          "p95_ms": 0.3003000019816682,
+          "p99_ms": 0.46689998998772353,
+          "max_ms": 0.5665000062435865
+        },
+        "draw_tactical_map_hud": {
+          "count": 686,
+          "mean_ms": 0.8417425660676806,
+          "median_ms": 0.8059500105446205,
+          "p95_ms": 1.0864000068977475,
+          "p99_ms": 1.4528000028803945,
+          "max_ms": 1.9567000126698986
+        },
+        "draw_minecraft_module_list": {
+          "count": 686,
+          "mean_ms": 0.3646225945527853,
+          "median_ms": 0.34419999428791925,
+          "p95_ms": 0.5058999959146604,
+          "p99_ms": 0.6437999982153997,
+          "max_ms": 0.8397000055992976
+        },
+        "paint_hud_motion_overlay": {
+          "count": 686,
+          "mean_ms": 3.9048835279193637,
+          "median_ms": 2.8737500033457763,
+          "p95_ms": 7.893100002547726,
+          "p99_ms": 9.311300003901124,
+          "max_ms": 10.244000004604459
+        },
+        "clickgui.prepare_frame": {
+          "count": 686,
+          "mean_ms": 0.1019215747402131,
+          "median_ms": 0.09095000132219866,
+          "p95_ms": 0.1360000023851171,
+          "p99_ms": 0.545499991858378,
+          "max_ms": 1.0046999959740788
+        },
+        "clickgui.render": {
+          "count": 686,
+          "mean_ms": 0.680640233236327,
+          "median_ms": 0.6614000012632459,
+          "p95_ms": 0.8887000003596768,
+          "p99_ms": 1.0738999990280718,
+          "max_ms": 1.8297999922651798
+        },
+        "flush_gpu_hud_commands": {
+          "count": 686,
+          "mean_ms": 0.8114521863799726,
+          "median_ms": 0.7832999981474131,
+          "p95_ms": 1.0563999967416748,
+          "p99_ms": 1.3401000032899901,
+          "max_ms": 1.9525000097928569
+        },
+        "paint_gpu_target_hud_layer": {
+          "count": 686,
+          "mean_ms": 0.6047013121663523,
+          "median_ms": 0.5893000052310526,
+          "p95_ms": 0.7424999930663034,
+          "p99_ms": 0.8966000023065135,
+          "max_ms": 1.187799993203953
+        },
+        "compositor.prepare_blur": {
+          "count": 686,
+          "mean_ms": 0.023298250688966255,
+          "median_ms": 0.0012999953469261527,
+          "p95_ms": 0.10699999984353781,
+          "p99_ms": 0.18050000653602183,
+          "max_ms": 0.9479000000283122
+        },
+        "compositor.render_glass": {
+          "count": 1372,
+          "mean_ms": 0.05367215782916106,
+          "median_ms": 0.04410000110510737,
+          "p95_ms": 0.13099999341648072,
+          "p99_ms": 0.21479999122675508,
+          "max_ms": 0.908799993339926
+        },
+        "compositor.prepare_treated_backdrop": {
+          "count": 686,
+          "mean_ms": 0.0015546650849432078,
+          "median_ms": 0.0014999968698248267,
+          "p95_ms": 0.0018999999156221747,
+          "p99_ms": 0.0027999922167509794,
+          "max_ms": 0.03239999932702631
+        },
+        "compositor.present": {
+          "count": 686,
+          "mean_ms": 0.021226093258386963,
+          "median_ms": 0.019899998733308166,
+          "p95_ms": 0.025200002710334957,
+          "p99_ms": 0.045199994929134846,
+          "max_ms": 0.18480001017451286
+        },
+        "paintGL": {
+          "count": 686,
+          "mean_ms": 6.13507667675875,
+          "median_ms": 5.128499993588775,
+          "p95_ms": 10.329199998523109,
+          "p99_ms": 11.623599988524802,
+          "max_ms": 12.816900009056553
+        },
+        "qt.paint.ProbeWindow": {
+          "count": 686,
+          "mean_ms": 6.366837463414116,
+          "median_ms": 5.350049999833573,
+          "p95_ms": 10.656699989340268,
+          "p99_ms": 12.15280000178609,
+          "max_ms": 20.77669999562204
+        },
+        "present_interval": {
+          "count": 685,
+          "mean_ms": 11.629725985414261,
+          "median_ms": 10.26889999047853,
+          "p95_ms": 21.69859998684842,
+          "p99_ms": 33.04049999860581,
+          "max_ms": 54.09620000864379
+        },
+        "paint_overlay": {
+          "count": 8,
+          "mean_ms": 0.22639999951934442,
+          "median_ms": 0.21610000112559646,
+          "p95_ms": 0.28220000967849046,
+          "p99_ms": 0.28220000967849046,
+          "max_ms": 0.28220000967849046
+        }
+      },
+      "source_sha256": null,
+      "probe_sha256": null,
+      "native_device": {},
+      "native_observed_fps": null,
+      "graphics_runtime": {},
+      "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+    },
+    "after": {
+      "size": [
+        2560,
+        1440
+      ],
+      "dpr": 1.0,
+      "fps_limit": 90,
+      "vsync": 0,
+      "cprofile": false,
+      "driver": {
+        "vendor": "NVIDIA Corporation",
+        "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+        "version": "3.3.0 NVIDIA 596.21"
+      },
+      "cpu_one_core_percent": 71.73935371366736,
+      "cpu_machine_percent": 2.241854803552105,
+      "gpu_engine_samples": {
+        "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+          "samples": 15,
+          "mean_percent": 5.730770472850655,
+          "max_percent": 6.039972801640689
+        },
+        "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+          "samples": 15,
+          "mean_percent": 0.0,
+          "max_percent": 0.0
+        }
+      },
+      "zero_3d_engine_count": 33,
+      "gpu_missing_samples": 0,
+      "gpu_counter_error": "",
+      "metrics": {
+        "on_tick": {
+          "count": 998,
+          "mean_ms": 0.5168738478055375,
+          "median_ms": 0.37510000402107835,
+          "p95_ms": 1.116700004786253,
+          "p99_ms": 1.5843000001041219,
+          "max_ms": 1.7764999938663095
+        },
+        "gpu_static_ui_key": {
+          "count": 718,
+          "mean_ms": 0.014925905002973725,
+          "median_ms": 0.013299999409355223,
+          "p95_ms": 0.0219999928958714,
+          "p99_ms": 0.04050000279676169,
+          "max_ms": 0.12029999925289303
+        },
+        "paint_gpu_background": {
+          "count": 718,
+          "mean_ms": 0.061464624228585035,
+          "median_ms": 0.017899998056236655,
+          "p95_ms": 0.22659999376628548,
+          "p99_ms": 0.2826999989338219,
+          "max_ms": 0.8493999921483919
+        },
+        "minecraft.draw": {
+          "count": 718,
+          "mean_ms": 1.0858523678013465,
+          "median_ms": 0.3091000035055913,
+          "p95_ms": 4.416299998410977,
+          "p99_ms": 4.7845999943092465,
+          "max_ms": 5.4392000020015985
+        },
+        "draw_dynamic_island": {
+          "count": 718,
+          "mean_ms": 0.21400389986383161,
+          "median_ms": 0.20049999875482172,
+          "p95_ms": 0.3184999950462952,
+          "p99_ms": 0.4794000124093145,
+          "max_ms": 0.6151999987196177
+        },
+        "draw_tactical_map_hud": {
+          "count": 718,
+          "mean_ms": 0.8255970753255251,
+          "median_ms": 0.7954000029712915,
+          "p95_ms": 1.0359000007156283,
+          "p99_ms": 1.2647999974433333,
+          "max_ms": 2.3573000071337447
+        },
+        "draw_minecraft_module_list": {
+          "count": 718,
+          "mean_ms": 0.3549752088619038,
+          "median_ms": 0.33510000503156334,
+          "p95_ms": 0.4771999956574291,
+          "p99_ms": 0.6023000023560598,
+          "max_ms": 1.0427000088384375
+        },
+        "paint_hud_motion_overlay": {
+          "count": 718,
+          "mean_ms": 3.3537905295116794,
+          "median_ms": 2.465749996190425,
+          "p95_ms": 6.845399999292567,
+          "p99_ms": 9.110700004384853,
+          "max_ms": 11.53129999875091
+        },
+        "clickgui.prepare_frame": {
+          "count": 718,
+          "mean_ms": 0.10029540400793854,
+          "median_ms": 0.08940000407164916,
+          "p95_ms": 0.12190001143608242,
+          "p99_ms": 0.2994999958900735,
+          "max_ms": 2.1890999923925847
+        },
+        "clickgui.render": {
+          "count": 718,
+          "mean_ms": 0.6700504178946259,
+          "median_ms": 0.6543000054080039,
+          "p95_ms": 0.8625000045867637,
+          "p99_ms": 0.9725999989314005,
+          "max_ms": 1.8964000046253204
+        },
+        "flush_gpu_hud_commands": {
+          "count": 718,
+          "mean_ms": 0.799048746284065,
+          "median_ms": 0.7753500030958094,
+          "p95_ms": 1.0239999974146485,
+          "p99_ms": 1.3015000004088506,
+          "max_ms": 2.7700999926310033
+        },
+        "paint_gpu_target_hud_layer": {
+          "count": 718,
+          "mean_ms": 0.03787311965688508,
+          "median_ms": 0.036600002204068005,
+          "p95_ms": 0.04539999645203352,
+          "p99_ms": 0.07500000356230885,
+          "max_ms": 0.19139998767059296
+        },
+        "compositor.prepare_blur": {
+          "count": 718,
+          "mean_ms": 0.024485097576904275,
+          "median_ms": 0.001100008375942707,
+          "p95_ms": 0.10850001126527786,
+          "p99_ms": 0.15749999147374183,
+          "max_ms": 0.2961999998660758
+        },
+        "compositor.render_glass": {
+          "count": 1436,
+          "mean_ms": 0.059361141903032766,
+          "median_ms": 0.04084999818587676,
+          "p95_ms": 0.15940000594127923,
+          "p99_ms": 0.20589999621734023,
+          "max_ms": 0.5631000094581395
+        },
+        "compositor.prepare_treated_backdrop": {
+          "count": 718,
+          "mean_ms": 0.0013688022134926761,
+          "median_ms": 0.001300009898841381,
+          "p95_ms": 0.0016999983927235007,
+          "p99_ms": 0.0021000014385208488,
+          "max_ms": 0.005900001269765198
+        },
+        "compositor.present": {
+          "count": 718,
+          "mean_ms": 0.019961977752073458,
+          "median_ms": 0.01930000144056976,
+          "p95_ms": 0.02370000584051013,
+          "p99_ms": 0.036299999919719994,
+          "max_ms": 0.05909999890718609
+        },
+        "paintGL": {
+          "count": 718,
+          "mean_ms": 4.999794150689846,
+          "median_ms": 4.120100005820859,
+          "p95_ms": 8.637399994768202,
+          "p99_ms": 10.711599999922328,
+          "max_ms": 13.054900002316572
+        },
+        "qt.paint.ProbeWindow": {
+          "count": 718,
+          "mean_ms": 5.16846351005532,
+          "median_ms": 4.301450004277285,
+          "p95_ms": 8.904900008928962,
+          "p99_ms": 10.838000001967885,
+          "max_ms": 13.274500000989065
+        },
+        "present_interval": {
+          "count": 717,
+          "mean_ms": 11.126174476974146,
+          "median_ms": 9.753699996508658,
+          "p95_ms": 20.68090000830125,
+          "p99_ms": 22.80839999730233,
+          "max_ms": 25.259800007916056
+        },
+        "paint_overlay": {
+          "count": 8,
+          "mean_ms": 0.21121249847055878,
+          "median_ms": 0.20430000586202368,
+          "p95_ms": 0.24169999232981354,
+          "p99_ms": 0.24169999232981354,
+          "max_ms": 0.24169999232981354
+        }
+      },
+      "source_sha256": null,
+      "probe_sha256": null,
+      "native_device": {
+        "luid": "luid:00000000:00014186",
+        "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+        "selection_note": ""
+      },
+      "native_observed_fps": null,
+      "graphics_runtime": {
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21",
+          "implementation": "driver OpenGL (hardware status follows driver identity)"
+        },
+        "initializations": 1,
+        "initialization_failures": 0,
+        "gpu_frames": 1360,
+        "compatibility_frames": 0,
+        "last_fallback": "",
+        "cpu_submit_p95_ms": 8.547200006432831,
+        "cpu_submit_p99_ms": 10.691600007703528,
+        "samples": 720,
+        "scope": "CPU submission including Qt OpenGL painter; not GPU execution time"
+      },
+      "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+    }
+  },
+  "other_scene_short_traces": {
+    "startup": {
+      "before": {
+        "size": [
+          2560,
+          1440
+        ],
+        "dpr": 1.0,
+        "fps_limit": 90,
+        "vsync": 0,
+        "cprofile": false,
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21"
+        },
+        "cpu_one_core_percent": 61.27546578844739,
+        "cpu_machine_percent": 1.914858305888981,
+        "gpu_engine_samples": {
+          "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+            "samples": 8,
+            "mean_percent": 3.6238519655653163,
+            "max_percent": 6.4679837661644495
+          },
+          "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 8,
+            "mean_percent": 0.0,
+            "max_percent": 0.0
+          }
+        },
+        "zero_3d_engine_count": 33,
+        "gpu_missing_samples": 0,
+        "gpu_counter_error": "",
+        "metrics": {
+          "on_tick": {
+            "count": 306,
+            "mean_ms": 0.5235843142335534,
+            "median_ms": 0.40404999890597537,
+            "p95_ms": 1.0248000035062432,
+            "p99_ms": 1.5137000009417534,
+            "max_ms": 1.7443999968236312
+          },
+          "gpu_static_ui_key": {
+            "count": 216,
+            "mean_ms": 0.007591203905542864,
+            "median_ms": 0.006300004315562546,
+            "p95_ms": 0.008999995770864189,
+            "p99_ms": 0.012499993317760527,
+            "max_ms": 0.20450000010896474
+          },
+          "paint_gpu_background": {
+            "count": 216,
+            "mean_ms": 0.037666203516656185,
+            "median_ms": 0.034699995012488216,
+            "p95_ms": 0.04730001091957092,
+            "p99_ms": 0.12959999730810523,
+            "max_ms": 0.1880000054370612
+          },
+          "clickgui.prepare_frame": {
+            "count": 216,
+            "mean_ms": 0.021910185414189647,
+            "median_ms": 0.022100008209235966,
+            "p95_ms": 0.026599998818710446,
+            "p99_ms": 0.04060000355821103,
+            "max_ms": 0.06520000169984996
+          },
+          "clickgui.render": {
+            "count": 216,
+            "mean_ms": 0.14052824109158893,
+            "median_ms": 0.1293500026804395,
+            "p95_ms": 0.24340000527445227,
+            "p99_ms": 0.2764999953797087,
+            "max_ms": 0.3020000003743917
+          },
+          "compositor.prepare_blur": {
+            "count": 216,
+            "mean_ms": 0.0012231487037044847,
+            "median_ms": 0.000900006853044033,
+            "p95_ms": 0.001300009898841381,
+            "p99_ms": 0.0046000059228390455,
+            "max_ms": 0.054499992984347045
+          },
+          "compositor.render_glass": {
+            "count": 432,
+            "mean_ms": 0.08806018535391626,
+            "median_ms": 0.10689999908208847,
+            "p95_ms": 0.21389999892562628,
+            "p99_ms": 0.2589999930933118,
+            "max_ms": 0.39659999310970306
+          },
+          "compositor.prepare_treated_backdrop": {
+            "count": 216,
+            "mean_ms": 0.001233333090634982,
+            "median_ms": 0.0011999945854768157,
+            "p95_ms": 0.0017999991541728377,
+            "p99_ms": 0.0020000006770715117,
+            "max_ms": 0.0023000029614195228
+          },
+          "compositor.present": {
+            "count": 216,
+            "mean_ms": 0.020465277851110807,
+            "median_ms": 0.019500002963468432,
+            "p95_ms": 0.02439999661874026,
+            "p99_ms": 0.03700000524986535,
+            "max_ms": 0.08530000923201442
+          },
+          "paintGL": {
+            "count": 216,
+            "mean_ms": 0.6677439816013686,
+            "median_ms": 0.6613500081584789,
+            "p95_ms": 0.8338000043295324,
+            "p99_ms": 1.0909999982686713,
+            "max_ms": 1.4507000014418736
+          },
+          "qt.paint.ProbeWindow": {
+            "count": 216,
+            "mean_ms": 0.8563574070581969,
+            "median_ms": 0.8447499931207858,
+            "p95_ms": 1.1722999915946275,
+            "p99_ms": 1.3845000066794455,
+            "max_ms": 1.6362000023946166
+          },
+          "present_interval": {
+            "count": 215,
+            "mean_ms": 18.44137581390177,
+            "median_ms": 10.243299999274313,
+            "p95_ms": 53.5299000039231,
+            "p99_ms": 193.49429999419954,
+            "max_ms": 236.07549999724142
+          }
+        },
+        "source_sha256": null,
+        "probe_sha256": null,
+        "native_device": {},
+        "native_observed_fps": null,
+        "graphics_runtime": {},
+        "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+      },
+      "after": {
+        "size": [
+          2560,
+          1440
+        ],
+        "dpr": 1.0,
+        "fps_limit": 90,
+        "vsync": 0,
+        "cprofile": false,
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21"
+        },
+        "cpu_one_core_percent": 62.722646693566844,
+        "cpu_machine_percent": 1.9600827091739639,
+        "gpu_engine_samples": {
+          "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+            "samples": 8,
+            "mean_percent": 2.9484495886443662,
+            "max_percent": 4.131547266930116
+          },
+          "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 8,
+            "mean_percent": 0.0,
+            "max_percent": 0.0
+          }
+        },
+        "zero_3d_engine_count": 33,
+        "gpu_missing_samples": 0,
+        "gpu_counter_error": "",
+        "metrics": {
+          "on_tick": {
+            "count": 282,
+            "mean_ms": 0.5399195035855147,
+            "median_ms": 0.494699997943826,
+            "p95_ms": 1.0777999996207654,
+            "p99_ms": 1.4247000071918592,
+            "max_ms": 1.538199998321943
+          },
+          "gpu_static_ui_key": {
+            "count": 202,
+            "mean_ms": 0.0073767321485113165,
+            "median_ms": 0.007000002369750291,
+            "p95_ms": 0.010499992640689015,
+            "p99_ms": 0.013699987903237343,
+            "max_ms": 0.03619999915827066
+          },
+          "paint_gpu_background": {
+            "count": 202,
+            "mean_ms": 0.03683712782388977,
+            "median_ms": 0.035400000342633575,
+            "p95_ms": 0.04679999256040901,
+            "p99_ms": 0.0737999944249168,
+            "max_ms": 0.1269999920623377
+          },
+          "clickgui.prepare_frame": {
+            "count": 202,
+            "mean_ms": 0.022282178161001885,
+            "median_ms": 0.021500003640539944,
+            "p95_ms": 0.028400012524798512,
+            "p99_ms": 0.047900000936351717,
+            "max_ms": 0.14439999358728528
+          },
+          "clickgui.render": {
+            "count": 202,
+            "mean_ms": 0.13631089029448698,
+            "median_ms": 0.12700000661425292,
+            "p95_ms": 0.2052999916486442,
+            "p99_ms": 0.26889999571722,
+            "max_ms": 0.34890000824816525
+          },
+          "compositor.prepare_blur": {
+            "count": 202,
+            "mean_ms": 0.0010465335453593051,
+            "median_ms": 0.000900006853044033,
+            "p95_ms": 0.0012999953469261527,
+            "p99_ms": 0.005099995178170502,
+            "max_ms": 0.012699994840659201
+          },
+          "compositor.render_glass": {
+            "count": 404,
+            "mean_ms": 0.0984074254975525,
+            "median_ms": 0.11804998939624056,
+            "p95_ms": 0.23879999935161322,
+            "p99_ms": 0.3003000019816682,
+            "max_ms": 1.5369000029750168
+          },
+          "compositor.prepare_treated_backdrop": {
+            "count": 202,
+            "mean_ms": 0.0015693067775873265,
+            "median_ms": 0.001300009898841381,
+            "p95_ms": 0.0018999999156221747,
+            "p99_ms": 0.005800000508315861,
+            "max_ms": 0.025600005756132305
+          },
+          "compositor.present": {
+            "count": 202,
+            "mean_ms": 0.02072574226427731,
+            "median_ms": 0.019499995687510818,
+            "p95_ms": 0.024500011932104826,
+            "p99_ms": 0.035900011425837874,
+            "max_ms": 0.14980000560171902
+          },
+          "paintGL": {
+            "count": 202,
+            "mean_ms": 0.7040772273978634,
+            "median_ms": 0.6790499974158593,
+            "p95_ms": 0.8996000105980784,
+            "p99_ms": 1.4563000004272908,
+            "max_ms": 2.361499995458871
+          },
+          "qt.paint.ProbeWindow": {
+            "count": 202,
+            "mean_ms": 0.9054217818521636,
+            "median_ms": 0.8743000071262941,
+            "p95_ms": 1.2029000063193962,
+            "p99_ms": 1.6050999984145164,
+            "max_ms": 2.5406999920960516
+          },
+          "present_interval": {
+            "count": 201,
+            "mean_ms": 19.83504676617988,
+            "median_ms": 10.344099995563738,
+            "p95_ms": 56.86070000228938,
+            "p99_ms": 198.56330000038724,
+            "max_ms": 241.90660000022035
+          }
+        },
+        "source_sha256": null,
+        "probe_sha256": null,
+        "native_device": {
+          "luid": "luid:00000000:00014186",
+          "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+          "selection_note": ""
+        },
+        "native_observed_fps": null,
+        "graphics_runtime": {
+          "driver": {
+            "vendor": "NVIDIA Corporation",
+            "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+            "version": "3.3.0 NVIDIA 596.21",
+            "implementation": "driver OpenGL (hardware status follows driver identity)"
+          },
+          "initializations": 1,
+          "initialization_failures": 0,
+          "gpu_frames": 231,
+          "compatibility_frames": 0,
+          "last_fallback": "",
+          "cpu_submit_p95_ms": 1.069099991582334,
+          "cpu_submit_p99_ms": 1.7416999908164144,
+          "samples": 231,
+          "scope": "CPU submission including Qt OpenGL painter; not GPU execution time"
+        },
+        "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+      }
+    },
+    "clickgui": {
+      "before": {
+        "size": [
+          2560,
+          1440
+        ],
+        "dpr": 1.0,
+        "fps_limit": 90,
+        "vsync": 0,
+        "cprofile": false,
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21"
+        },
+        "cpu_one_core_percent": 78.90534527274458,
+        "cpu_machine_percent": 2.465792039773268,
+        "gpu_engine_samples": {
+          "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+            "samples": 8,
+            "mean_percent": 4.46072190319078,
+            "max_percent": 7.007991194958804
+          },
+          "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 8,
+            "mean_percent": 0.0,
+            "max_percent": 0.0
+          }
+        },
+        "zero_3d_engine_count": 33,
+        "gpu_missing_samples": 0,
+        "gpu_counter_error": "",
+        "metrics": {
+          "on_tick": {
+            "count": 261,
+            "mean_ms": 0.5462544062977721,
+            "median_ms": 0.5260000034468248,
+            "p95_ms": 1.0531000007176772,
+            "p99_ms": 1.5189999976428226,
+            "max_ms": 1.766199988196604
+          },
+          "gpu_static_ui_key": {
+            "count": 183,
+            "mean_ms": 0.016730600383382067,
+            "median_ms": 0.01610000617802143,
+            "p95_ms": 0.02200000744778663,
+            "p99_ms": 0.0492000108351931,
+            "max_ms": 0.05129999772179872
+          },
+          "paint_gpu_background": {
+            "count": 183,
+            "mean_ms": 0.08174317007530685,
+            "median_ms": 0.020199993741698563,
+            "p95_ms": 0.24080000002868474,
+            "p99_ms": 0.26780000189319253,
+            "max_ms": 0.29940000968053937
+          },
+          "clickgui.prepare_frame": {
+            "count": 183,
+            "mean_ms": 0.4560240433688779,
+            "median_ms": 0.10770000517368317,
+            "p95_ms": 1.8051999941235408,
+            "p99_ms": 2.6596999960020185,
+            "max_ms": 16.943900001933798
+          },
+          "clickgui.render": {
+            "count": 183,
+            "mean_ms": 1.087727868446668,
+            "median_ms": 1.069099991582334,
+            "p95_ms": 1.2590999976964667,
+            "p99_ms": 1.4250999956857413,
+            "max_ms": 1.4463999978033826
+          },
+          "flush_gpu_hud_commands": {
+            "count": 183,
+            "mean_ms": 0.005494535609932179,
+            "median_ms": 0.0051000097300857306,
+            "p95_ms": 0.006999995093792677,
+            "p99_ms": 0.013800003216601908,
+            "max_ms": 0.01440000778529793
+          },
+          "compositor.prepare_blur": {
+            "count": 183,
+            "mean_ms": 0.04191912640372159,
+            "median_ms": 0.0010999938240274787,
+            "p95_ms": 0.14600000577047467,
+            "p99_ms": 0.2294000005349517,
+            "max_ms": 0.5508000031113625
+          },
+          "compositor.render_glass": {
+            "count": 366,
+            "mean_ms": 0.07133606509267368,
+            "median_ms": 0.03759999526664615,
+            "p95_ms": 0.20569999469444156,
+            "p99_ms": 0.2716000017244369,
+            "max_ms": 1.0234999936074018
+          },
+          "compositor.prepare_treated_backdrop": {
+            "count": 183,
+            "mean_ms": 0.007756284130813524,
+            "median_ms": 0.001500011421740055,
+            "p95_ms": 0.02160000440198928,
+            "p99_ms": 0.0354999938281253,
+            "max_ms": 0.04430000262800604
+          },
+          "compositor.present": {
+            "count": 183,
+            "mean_ms": 0.020550819902039576,
+            "median_ms": 0.018799997633323073,
+            "p95_ms": 0.029000002541579306,
+            "p99_ms": 0.0627999979769811,
+            "max_ms": 0.08319999324157834
+          },
+          "paintGL": {
+            "count": 183,
+            "mean_ms": 3.7992393444966566,
+            "median_ms": 3.2571000047028065,
+            "p95_ms": 5.340899995644577,
+            "p99_ms": 16.340799993486144,
+            "max_ms": 20.010099993669428
+          },
+          "qt.paint.ProbeWindow": {
+            "count": 183,
+            "mean_ms": 4.013159562394028,
+            "median_ms": 3.4700999967753887,
+            "p95_ms": 5.528900001081638,
+            "p99_ms": 16.563299999688752,
+            "max_ms": 20.230399997672066
+          },
+          "present_interval": {
+            "count": 182,
+            "mean_ms": 21.882095054984298,
+            "median_ms": 11.189500000909902,
+            "p95_ms": 95.52740000071935,
+            "p99_ms": 204.77650000248104,
+            "max_ms": 230.40709999622777
+          },
+          "minecraft.draw": {
+            "count": 4,
+            "mean_ms": 5.312924997269874,
+            "median_ms": 5.19749999511987,
+            "p95_ms": 5.702499998733401,
+            "p99_ms": 5.702499998733401,
+            "max_ms": 5.702499998733401
+          },
+          "draw_dynamic_island": {
+            "count": 4,
+            "mean_ms": 1.525349998701131,
+            "median_ms": 1.470399998652283,
+            "p95_ms": 2.3388999979943037,
+            "p99_ms": 2.3388999979943037,
+            "max_ms": 2.3388999979943037
+          },
+          "draw_tactical_map_hud": {
+            "count": 4,
+            "mean_ms": 0.9695750013634097,
+            "median_ms": 0.9701000017230399,
+            "p95_ms": 1.0099000064656138,
+            "p99_ms": 1.0099000064656138,
+            "max_ms": 1.0099000064656138
+          },
+          "draw_minecraft_module_list": {
+            "count": 4,
+            "mean_ms": 0.6408250010281336,
+            "median_ms": 0.6041500018909574,
+            "p95_ms": 0.7679999980609864,
+            "p99_ms": 0.7679999980609864,
+            "max_ms": 0.7679999980609864
+          },
+          "paint_hud_motion_overlay": {
+            "count": 4,
+            "mean_ms": 9.993100000428967,
+            "median_ms": 10.048899996036198,
+            "p95_ms": 10.896000007051043,
+            "p99_ms": 10.896000007051043,
+            "max_ms": 10.896000007051043
+          },
+          "paint_overlay": {
+            "count": 4,
+            "mean_ms": 10.041474997706246,
+            "median_ms": 10.096749996591825,
+            "p95_ms": 10.94100000045728,
+            "p99_ms": 10.94100000045728,
+            "max_ms": 10.94100000045728
+          }
+        },
+        "source_sha256": null,
+        "probe_sha256": null,
+        "native_device": {},
+        "native_observed_fps": null,
+        "graphics_runtime": {},
+        "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+      },
+      "after": {
+        "size": [
+          2560,
+          1440
+        ],
+        "dpr": 1.0,
+        "fps_limit": 90,
+        "vsync": 0,
+        "cprofile": false,
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21"
+        },
+        "cpu_one_core_percent": 79.6429090192621,
+        "cpu_machine_percent": 2.488840906851941,
+        "gpu_engine_samples": {
+          "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+            "samples": 8,
+            "mean_percent": 4.18169915999254,
+            "max_percent": 5.658213416448198
+          },
+          "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 8,
+            "mean_percent": 0.0,
+            "max_percent": 0.0
+          }
+        },
+        "zero_3d_engine_count": 33,
+        "gpu_missing_samples": 0,
+        "gpu_counter_error": "",
+        "metrics": {
+          "gpu_static_ui_key": {
+            "count": 196,
+            "mean_ms": 0.019934184077713753,
+            "median_ms": 0.018649996491149068,
+            "p95_ms": 0.028099995688535273,
+            "p99_ms": 0.03330000618007034,
+            "max_ms": 0.2474000066285953
+          },
+          "paint_gpu_background": {
+            "count": 196,
+            "mean_ms": 0.09313724468502559,
+            "median_ms": 0.02135000249836594,
+            "p95_ms": 0.2798000059556216,
+            "p99_ms": 0.3364000003784895,
+            "max_ms": 0.3657999914139509
+          },
+          "clickgui.prepare_frame": {
+            "count": 196,
+            "mean_ms": 0.44055153037853806,
+            "median_ms": 0.11409999569877982,
+            "p95_ms": 1.6953000013018027,
+            "p99_ms": 2.6184000016655773,
+            "max_ms": 17.111400011344813
+          },
+          "clickgui.render": {
+            "count": 196,
+            "mean_ms": 1.1735765305906058,
+            "median_ms": 1.1430999948061071,
+            "p95_ms": 1.4248999941628426,
+            "p99_ms": 2.047000001766719,
+            "max_ms": 3.0595999996876344
+          },
+          "flush_gpu_hud_commands": {
+            "count": 196,
+            "mean_ms": 0.006671938869973873,
+            "median_ms": 0.006400005077011883,
+            "p95_ms": 0.009100011084228754,
+            "p99_ms": 0.010500007192604244,
+            "max_ms": 0.011200012522749603
+          },
+          "compositor.prepare_blur": {
+            "count": 196,
+            "mean_ms": 0.049032143207875134,
+            "median_ms": 0.0011999945854768157,
+            "p95_ms": 0.19109999993816018,
+            "p99_ms": 0.21389999892562628,
+            "max_ms": 0.24389999452978373
+          },
+          "compositor.render_glass": {
+            "count": 392,
+            "mean_ms": 0.06793877605095801,
+            "median_ms": 0.03425000613788143,
+            "p95_ms": 0.1973000034922734,
+            "p99_ms": 0.23750000400468707,
+            "max_ms": 0.3370999911567196
+          },
+          "compositor.prepare_treated_backdrop": {
+            "count": 196,
+            "mean_ms": 0.008240816265354124,
+            "median_ms": 0.001500011421740055,
+            "p95_ms": 0.023300002794712782,
+            "p99_ms": 0.029000002541579306,
+            "max_ms": 0.03329999162815511
+          },
+          "compositor.present": {
+            "count": 196,
+            "mean_ms": 0.02040357124927568,
+            "median_ms": 0.01974999759113416,
+            "p95_ms": 0.025699991965666413,
+            "p99_ms": 0.03090000245720148,
+            "max_ms": 0.0518000015290454
+          },
+          "paintGL": {
+            "count": 196,
+            "mean_ms": 3.9607270410502977,
+            "median_ms": 3.4660999954212457,
+            "p95_ms": 5.5622999934712425,
+            "p99_ms": 16.06950000859797,
+            "max_ms": 21.352900002966635
+          },
+          "qt.paint.ProbeWindow": {
+            "count": 196,
+            "mean_ms": 4.209526020104579,
+            "median_ms": 3.7145999958738685,
+            "p95_ms": 5.824599997140467,
+            "p99_ms": 16.273600005661137,
+            "max_ms": 21.555800005444326
+          },
+          "on_tick": {
+            "count": 279,
+            "mean_ms": 0.5936405014252544,
+            "median_ms": 0.6780999974580482,
+            "p95_ms": 1.2234000023454428,
+            "p99_ms": 1.5127999940887094,
+            "max_ms": 2.776699999230914
+          },
+          "present_interval": {
+            "count": 195,
+            "mean_ms": 20.435247692288474,
+            "median_ms": 11.667700004181825,
+            "p95_ms": 68.85339999280404,
+            "p99_ms": 198.3343000028981,
+            "max_ms": 210.93390000169165
+          },
+          "minecraft.draw": {
+            "count": 4,
+            "mean_ms": 5.411750003986526,
+            "median_ms": 5.464200003189035,
+            "p95_ms": 5.822999999509193,
+            "p99_ms": 5.822999999509193,
+            "max_ms": 5.822999999509193
+          },
+          "draw_dynamic_island": {
+            "count": 4,
+            "mean_ms": 1.5908249988569878,
+            "median_ms": 1.504949999798555,
+            "p95_ms": 2.2357999987434596,
+            "p99_ms": 2.2357999987434596,
+            "max_ms": 2.2357999987434596
+          },
+          "draw_tactical_map_hud": {
+            "count": 4,
+            "mean_ms": 1.0647250019246712,
+            "median_ms": 1.058750000083819,
+            "p95_ms": 1.258500007679686,
+            "p99_ms": 1.258500007679686,
+            "max_ms": 1.258500007679686
+          },
+          "draw_minecraft_module_list": {
+            "count": 4,
+            "mean_ms": 0.7819749989721458,
+            "median_ms": 0.7245999950100668,
+            "p95_ms": 1.0039000044343993,
+            "p99_ms": 1.0039000044343993,
+            "max_ms": 1.0039000044343993
+          },
+          "paint_hud_motion_overlay": {
+            "count": 4,
+            "mean_ms": 10.41339999937918,
+            "median_ms": 10.329149998142384,
+            "p95_ms": 11.229499999899417,
+            "p99_ms": 11.229499999899417,
+            "max_ms": 11.229499999899417
+          },
+          "paint_overlay": {
+            "count": 4,
+            "mean_ms": 10.469349999766564,
+            "median_ms": 10.38275000610156,
+            "p95_ms": 11.297599994577467,
+            "p99_ms": 11.297599994577467,
+            "max_ms": 11.297599994577467
+          }
+        },
+        "source_sha256": null,
+        "probe_sha256": null,
+        "native_device": {
+          "luid": "luid:00000000:00014186",
+          "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+          "selection_note": ""
+        },
+        "native_observed_fps": null,
+        "graphics_runtime": {
+          "driver": {
+            "vendor": "NVIDIA Corporation",
+            "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+            "version": "3.3.0 NVIDIA 596.21",
+            "implementation": "driver OpenGL (hardware status follows driver identity)"
+          },
+          "initializations": 1,
+          "initialization_failures": 0,
+          "gpu_frames": 225,
+          "compatibility_frames": 0,
+          "last_fallback": "",
+          "cpu_submit_p95_ms": 6.843399998615496,
+          "cpu_submit_p99_ms": 21.342899999581277,
+          "samples": 225,
+          "scope": "CPU submission including Qt OpenGL painter; not GPU execution time"
+        },
+        "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+      }
+    },
+    "settings": {
+      "before": {
+        "size": [
+          2560,
+          1440
+        ],
+        "dpr": 1.0,
+        "fps_limit": 90,
+        "vsync": 0,
+        "cprofile": false,
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21"
+        },
+        "cpu_one_core_percent": 271.74265344619397,
+        "cpu_machine_percent": 8.491957920193562,
+        "gpu_engine_samples": {
+          "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+            "samples": 8,
+            "mean_percent": 4.932823373179501,
+            "max_percent": 7.283612775746125
+          },
+          "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 8,
+            "mean_percent": 0.0,
+            "max_percent": 0.0
+          }
+        },
+        "zero_3d_engine_count": 33,
+        "gpu_missing_samples": 0,
+        "gpu_counter_error": "",
+        "metrics": {
+          "on_tick": {
+            "count": 261,
+            "mean_ms": 0.5424237548921371,
+            "median_ms": 0.4898999904980883,
+            "p95_ms": 1.1815999896498397,
+            "p99_ms": 1.6341000009560958,
+            "max_ms": 1.847099993028678
+          },
+          "gpu_static_ui_key": {
+            "count": 186,
+            "mean_ms": 0.015399462427012622,
+            "median_ms": 0.01444999361410737,
+            "p95_ms": 0.023600005079060793,
+            "p99_ms": 0.030499999411404133,
+            "max_ms": 0.03409999771974981
+          },
+          "paint_gpu_background": {
+            "count": 186,
+            "mean_ms": 0.08044623629307694,
+            "median_ms": 0.01960000372491777,
+            "p95_ms": 0.23830001009628177,
+            "p99_ms": 0.3166000096825883,
+            "max_ms": 0.32040000951383263
+          },
+          "minecraft.draw": {
+            "count": 186,
+            "mean_ms": 1.9305338714583475,
+            "median_ms": 0.6571499980054796,
+            "p95_ms": 5.501799998455681,
+            "p99_ms": 6.23529999575112,
+            "max_ms": 6.239900001673959
+          },
+          "draw_dynamic_island": {
+            "count": 186,
+            "mean_ms": 0.3392215053330586,
+            "median_ms": 0.2262499983771704,
+            "p95_ms": 0.5908000021008775,
+            "p99_ms": 1.8029000057140365,
+            "max_ms": 2.0044999982928857
+          },
+          "draw_tactical_map_hud": {
+            "count": 186,
+            "mean_ms": 0.8333231188214174,
+            "median_ms": 0.8162500016624108,
+            "p95_ms": 1.0188000014750287,
+            "p99_ms": 1.2531999964267015,
+            "max_ms": 1.3403000048128888
+          },
+          "draw_minecraft_module_list": {
+            "count": 186,
+            "mean_ms": 0.45645967623787204,
+            "median_ms": 0.3401499998290092,
+            "p95_ms": 0.5048000020906329,
+            "p99_ms": 0.7734999962849542,
+            "max_ms": 17.85329999984242
+          },
+          "paint_hud_motion_overlay": {
+            "count": 186,
+            "mean_ms": 4.307281720293661,
+            "median_ms": 2.959799996460788,
+            "p95_ms": 8.228300008340739,
+            "p99_ms": 10.34369999251794,
+            "max_ms": 20.353200001409277
+          },
+          "clickgui.prepare_frame": {
+            "count": 186,
+            "mean_ms": 0.3131795698033285,
+            "median_ms": 0.08275000436697155,
+            "p95_ms": 0.836499995784834,
+            "p99_ms": 1.3152000028640032,
+            "max_ms": 2.0663000032072887
+          },
+          "clickgui.render": {
+            "count": 186,
+            "mean_ms": 0.6131795704394819,
+            "median_ms": 0.6064500048523769,
+            "p95_ms": 0.7710999925620854,
+            "p99_ms": 0.872499993420206,
+            "max_ms": 0.8897999941837043
+          },
+          "flush_gpu_hud_commands": {
+            "count": 186,
+            "mean_ms": 0.9571876346668159,
+            "median_ms": 0.8143500090227462,
+            "p95_ms": 1.4163000014377758,
+            "p99_ms": 1.8736000056378543,
+            "max_ms": 2.891799987992272
+          },
+          "paint_gpu_target_hud_layer": {
+            "count": 186,
+            "mean_ms": 0.5527537632001294,
+            "median_ms": 0.534999999217689,
+            "p95_ms": 0.6523000047309324,
+            "p99_ms": 0.821399997221306,
+            "max_ms": 0.8735000010346994
+          },
+          "compositor.prepare_blur": {
+            "count": 186,
+            "mean_ms": 0.031257526975961264,
+            "median_ms": 0.0012999953469261527,
+            "p95_ms": 0.11070001346524805,
+            "p99_ms": 0.24680000205989927,
+            "max_ms": 0.5967000033706427
+          },
+          "compositor.render_glass": {
+            "count": 372,
+            "mean_ms": 0.050108333442783266,
+            "median_ms": 0.03060000017285347,
+            "p95_ms": 0.14449999434873462,
+            "p99_ms": 0.18780000391416252,
+            "max_ms": 0.35519999801181257
+          },
+          "compositor.prepare_treated_backdrop": {
+            "count": 186,
+            "mean_ms": 0.0015021511009313487,
+            "median_ms": 0.0014999968698248267,
+            "p95_ms": 0.0018999999156221747,
+            "p99_ms": 0.0022999884095042944,
+            "max_ms": 0.005699999746866524
+          },
+          "compositor.present": {
+            "count": 186,
+            "mean_ms": 0.019824731611816953,
+            "median_ms": 0.018999999156221747,
+            "p95_ms": 0.024299995857290924,
+            "p99_ms": 0.04470000567380339,
+            "max_ms": 0.051099996198900044
+          },
+          "paintGL": {
+            "count": 186,
+            "mean_ms": 6.629033871645969,
+            "median_ms": 5.350300001737196,
+            "p95_ms": 11.176900006830692,
+            "p99_ms": 13.99890000175219,
+            "max_ms": 22.435099992435426
+          },
+          "qt.paint.ProbeWindow": {
+            "count": 186,
+            "mean_ms": 6.814294623621609,
+            "median_ms": 5.504100008693058,
+            "p95_ms": 11.37790000939276,
+            "p99_ms": 14.2611999908695,
+            "max_ms": 22.535700001753867
+          },
+          "paint_overlay": {
+            "count": 4,
+            "mean_ms": 0.1340750022791326,
+            "median_ms": 0.12659999629249796,
+            "p95_ms": 0.22810000518802553,
+            "p99_ms": 0.22810000518802553,
+            "max_ms": 0.22810000518802553
+          },
+          "present_interval": {
+            "count": 185,
+            "mean_ms": 21.467813513496562,
+            "median_ms": 10.811200001626275,
+            "p95_ms": 76.86310001008678,
+            "p99_ms": 213.44410000892822,
+            "max_ms": 227.64379999716766
+          }
+        },
+        "source_sha256": null,
+        "probe_sha256": null,
+        "native_device": {},
+        "native_observed_fps": null,
+        "graphics_runtime": {},
+        "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+      },
+      "after": {
+        "size": [
+          2560,
+          1440
+        ],
+        "dpr": 1.0,
+        "fps_limit": 90,
+        "vsync": 0,
+        "cprofile": false,
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21"
+        },
+        "cpu_one_core_percent": 95.06283508085737,
+        "cpu_machine_percent": 2.9707135962767928,
+        "gpu_engine_samples": {
+          "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+            "samples": 8,
+            "mean_percent": 5.114212662683167,
+            "max_percent": 7.424846824776115
+          },
+          "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 8,
+            "mean_percent": 0.0,
+            "max_percent": 0.0
+          }
+        },
+        "zero_3d_engine_count": 33,
+        "gpu_missing_samples": 0,
+        "gpu_counter_error": "",
+        "metrics": {
+          "on_tick": {
+            "count": 250,
+            "mean_ms": 0.5751247998559847,
+            "median_ms": 0.4887999966740608,
+            "p95_ms": 1.2076999992132187,
+            "p99_ms": 1.474500008043833,
+            "max_ms": 1.7038000078173354
+          },
+          "gpu_static_ui_key": {
+            "count": 180,
+            "mean_ms": 0.016548332900533244,
+            "median_ms": 0.01619999238755554,
+            "p95_ms": 0.023599990527145565,
+            "p99_ms": 0.027700007194653153,
+            "max_ms": 0.030800001695752144
+          },
+          "paint_gpu_background": {
+            "count": 180,
+            "mean_ms": 0.08703611165401526,
+            "median_ms": 0.0195500033441931,
+            "p95_ms": 0.28809999639634043,
+            "p99_ms": 0.334700001985766,
+            "max_ms": 0.3404000017326325
+          },
+          "minecraft.draw": {
+            "count": 180,
+            "mean_ms": 1.5811322218117614,
+            "median_ms": 0.3276999996160157,
+            "p95_ms": 5.035300011513755,
+            "p99_ms": 6.054999990737997,
+            "max_ms": 6.072799995308742
+          },
+          "draw_dynamic_island": {
+            "count": 180,
+            "mean_ms": 0.34351000051376307,
+            "median_ms": 0.23355000303126872,
+            "p95_ms": 0.708199993823655,
+            "p99_ms": 1.863400000729598,
+            "max_ms": 2.7995999989798293
+          },
+          "draw_tactical_map_hud": {
+            "count": 180,
+            "mean_ms": 0.8927033332939673,
+            "median_ms": 0.8630000011180528,
+            "p95_ms": 1.1045999999623746,
+            "p99_ms": 1.31790000887122,
+            "max_ms": 1.3762000016868114
+          },
+          "draw_minecraft_module_list": {
+            "count": 180,
+            "mean_ms": 0.3817916668291825,
+            "median_ms": 0.35269999352749437,
+            "p95_ms": 0.5477000086102635,
+            "p99_ms": 0.7126999989850447,
+            "max_ms": 1.0214000067207962
+          },
+          "paint_hud_motion_overlay": {
+            "count": 180,
+            "mean_ms": 3.9868611111564354,
+            "median_ms": 2.644100008183159,
+            "p95_ms": 8.06870000087656,
+            "p99_ms": 9.386999998241663,
+            "max_ms": 9.554400006891228
+          },
+          "clickgui.prepare_frame": {
+            "count": 180,
+            "mean_ms": 0.2815088889393438,
+            "median_ms": 0.08290000550914556,
+            "p95_ms": 0.9103000047616661,
+            "p99_ms": 1.489299989771098,
+            "max_ms": 2.7750000008381903
+          },
+          "clickgui.render": {
+            "count": 180,
+            "mean_ms": 0.684256666297895,
+            "median_ms": 0.6685999978799373,
+            "p95_ms": 0.9012999944388866,
+            "p99_ms": 1.1248999944655225,
+            "max_ms": 1.1264000058872625
+          },
+          "flush_gpu_hud_commands": {
+            "count": 180,
+            "mean_ms": 0.9946638890445078,
+            "median_ms": 0.8674500058987178,
+            "p95_ms": 1.6020000039134175,
+            "p99_ms": 2.152200002456084,
+            "max_ms": 3.472600001259707
+          },
+          "paint_gpu_target_hud_layer": {
+            "count": 180,
+            "mean_ms": 0.03989555577087837,
+            "median_ms": 0.03860000288113952,
+            "p95_ms": 0.05020000389777124,
+            "p99_ms": 0.08779999916441739,
+            "max_ms": 0.08969999908003956
+          },
+          "compositor.prepare_blur": {
+            "count": 180,
+            "mean_ms": 0.035620000400942646,
+            "median_ms": 0.0012999953469261527,
+            "p95_ms": 0.12739999510813504,
+            "p99_ms": 0.16060000052675605,
+            "max_ms": 0.16589999722782522
+          },
+          "compositor.render_glass": {
+            "count": 360,
+            "mean_ms": 0.060962222414673306,
+            "median_ms": 0.02920000406447798,
+            "p95_ms": 0.17099999240599573,
+            "p99_ms": 0.2482999989297241,
+            "max_ms": 0.4273999948054552
+          },
+          "compositor.prepare_treated_backdrop": {
+            "count": 180,
+            "mean_ms": 0.001670555179266052,
+            "median_ms": 0.001400010660290718,
+            "p95_ms": 0.0019999861251562834,
+            "p99_ms": 0.005900001269765198,
+            "max_ms": 0.03069998638238758
+          },
+          "compositor.present": {
+            "count": 180,
+            "mean_ms": 0.021000555554767035,
+            "median_ms": 0.020000006770715117,
+            "p95_ms": 0.02689998655114323,
+            "p99_ms": 0.030100010917522013,
+            "max_ms": 0.032199997804127634
+          },
+          "paintGL": {
+            "count": 180,
+            "mean_ms": 5.899996666590192,
+            "median_ms": 4.536399996140972,
+            "p95_ms": 10.610799989080988,
+            "p99_ms": 12.793100002454594,
+            "max_ms": 14.465200001723133
+          },
+          "qt.paint.ProbeWindow": {
+            "count": 180,
+            "mean_ms": 6.096938333535541,
+            "median_ms": 4.761299998790491,
+            "p95_ms": 10.725800006184727,
+            "p99_ms": 12.997899990295991,
+            "max_ms": 14.672099991003051
+          },
+          "paint_overlay": {
+            "count": 4,
+            "mean_ms": 0.10260000635753386,
+            "median_ms": 0.10040000779554248,
+            "p95_ms": 0.14960000407882035,
+            "p99_ms": 0.14960000407882035,
+            "max_ms": 0.14960000407882035
+          },
+          "present_interval": {
+            "count": 179,
+            "mean_ms": 22.167910614513335,
+            "median_ms": 11.260700004640967,
+            "p95_ms": 132.55300000309944,
+            "p99_ms": 217.96309998899233,
+            "max_ms": 283.9900000108173
+          }
+        },
+        "source_sha256": null,
+        "probe_sha256": null,
+        "native_device": {
+          "luid": "luid:00000000:00014186",
+          "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+          "selection_note": ""
+        },
+        "native_observed_fps": null,
+        "graphics_runtime": {
+          "driver": {
+            "vendor": "NVIDIA Corporation",
+            "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+            "version": "3.3.0 NVIDIA 596.21",
+            "implementation": "driver OpenGL (hardware status follows driver identity)"
+          },
+          "initializations": 1,
+          "initialization_failures": 0,
+          "gpu_frames": 205,
+          "compatibility_frames": 0,
+          "last_fallback": "",
+          "cpu_submit_p95_ms": 10.852899999008514,
+          "cpu_submit_p99_ms": 19.326299996464513,
+          "samples": 205,
+          "scope": "CPU submission including Qt OpenGL painter; not GPU execution time"
+        },
+        "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+      }
+    },
+    "keybinds": {
+      "before": {
+        "size": [
+          2560,
+          1440
+        ],
+        "dpr": 1.0,
+        "fps_limit": 90,
+        "vsync": 0,
+        "cprofile": false,
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21"
+        },
+        "cpu_one_core_percent": 100.17647889458615,
+        "cpu_machine_percent": 3.1305149654558173,
+        "gpu_engine_samples": {
+          "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+            "samples": 8,
+            "mean_percent": 4.885635029240296,
+            "max_percent": 7.030344785637288
+          },
+          "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 8,
+            "mean_percent": 0.0,
+            "max_percent": 0.0
+          }
+        },
+        "zero_3d_engine_count": 33,
+        "gpu_missing_samples": 0,
+        "gpu_counter_error": "",
+        "metrics": {
+          "gpu_static_ui_key": {
+            "count": 199,
+            "mean_ms": 0.015336684075338607,
+            "median_ms": 0.014900011592544615,
+            "p95_ms": 0.02030000905506313,
+            "p99_ms": 0.037300007534213364,
+            "max_ms": 0.05729999975301325
+          },
+          "paint_gpu_background": {
+            "count": 199,
+            "mean_ms": 0.0764567838032875,
+            "median_ms": 0.019700004486367106,
+            "p95_ms": 0.2294000005349517,
+            "p99_ms": 0.2868000010494143,
+            "max_ms": 0.2925000007962808
+          },
+          "minecraft.draw": {
+            "count": 199,
+            "mean_ms": 1.7277492456993406,
+            "median_ms": 0.6499000010080636,
+            "p95_ms": 5.20410000171978,
+            "p99_ms": 5.377000008593313,
+            "max_ms": 5.466599992359988
+          },
+          "draw_dynamic_island": {
+            "count": 199,
+            "mean_ms": 0.3195562816444953,
+            "median_ms": 0.21739999647252262,
+            "p95_ms": 0.5864999984623864,
+            "p99_ms": 1.687799987848848,
+            "max_ms": 1.9414000125834718
+          },
+          "draw_tactical_map_hud": {
+            "count": 199,
+            "mean_ms": 0.8319226131907865,
+            "median_ms": 0.8049000025494024,
+            "p95_ms": 1.0047999967355281,
+            "p99_ms": 1.4890000020386651,
+            "max_ms": 1.7107000021496788
+          },
+          "draw_minecraft_module_list": {
+            "count": 199,
+            "mean_ms": 0.45602864380481295,
+            "median_ms": 0.3429999924264848,
+            "p95_ms": 0.5302000063238665,
+            "p99_ms": 0.8689999958733097,
+            "max_ms": 18.43199999711942
+          },
+          "paint_hud_motion_overlay": {
+            "count": 199,
+            "mean_ms": 4.069441708621461,
+            "median_ms": 2.829399993061088,
+            "p95_ms": 7.959199996548705,
+            "p99_ms": 9.083500000997446,
+            "max_ms": 20.535500007099472
+          },
+          "clickgui.prepare_frame": {
+            "count": 199,
+            "mean_ms": 0.2574703514127847,
+            "median_ms": 0.08040000102482736,
+            "p95_ms": 0.8323000074597076,
+            "p99_ms": 1.0374999983469024,
+            "max_ms": 1.8568000086816028
+          },
+          "clickgui.render": {
+            "count": 199,
+            "mean_ms": 0.6402050249978207,
+            "median_ms": 0.6278999935602769,
+            "p95_ms": 0.8456999930785969,
+            "p99_ms": 1.0023000068031251,
+            "max_ms": 1.1089999898103997
+          },
+          "flush_gpu_hud_commands": {
+            "count": 199,
+            "mean_ms": 0.9262080403921152,
+            "median_ms": 0.8193999965442345,
+            "p95_ms": 1.399400003720075,
+            "p99_ms": 1.6149000002769753,
+            "max_ms": 2.5431000103708357
+          },
+          "paint_gpu_target_hud_layer": {
+            "count": 199,
+            "mean_ms": 0.5495974876076666,
+            "median_ms": 0.542099995072931,
+            "p95_ms": 0.64080000447575,
+            "p99_ms": 0.7553000032203272,
+            "max_ms": 0.7678999972995371
+          },
+          "compositor.prepare_blur": {
+            "count": 199,
+            "mean_ms": 0.02661909524587699,
+            "median_ms": 0.0012999953469261527,
+            "p95_ms": 0.10109999857377261,
+            "p99_ms": 0.21919999562669545,
+            "max_ms": 0.3530999965732917
+          },
+          "compositor.render_glass": {
+            "count": 398,
+            "mean_ms": 0.05004447233312104,
+            "median_ms": 0.03204999666195363,
+            "p95_ms": 0.1345000055152923,
+            "p99_ms": 0.17929999739862978,
+            "max_ms": 0.31460000900551677
+          },
+          "compositor.prepare_treated_backdrop": {
+            "count": 199,
+            "mean_ms": 0.001485426819546326,
+            "median_ms": 0.0014999968698248267,
+            "p95_ms": 0.001800013706088066,
+            "p99_ms": 0.003000008291564882,
+            "max_ms": 0.005599998985417187
+          },
+          "compositor.present": {
+            "count": 199,
+            "mean_ms": 0.019766331823477194,
+            "median_ms": 0.019100014469586313,
+            "p95_ms": 0.02300000051036477,
+            "p99_ms": 0.039300008211284876,
+            "max_ms": 0.047200010158121586
+          },
+          "paintGL": {
+            "count": 199,
+            "mean_ms": 6.3634683421477165,
+            "median_ms": 5.185399990295991,
+            "p95_ms": 10.948900002404116,
+            "p99_ms": 12.486799998441711,
+            "max_ms": 22.639200004050508
+          },
+          "qt.paint.ProbeWindow": {
+            "count": 199,
+            "mean_ms": 6.548452260670014,
+            "median_ms": 5.331000007572584,
+            "p95_ms": 11.26970000041183,
+            "p99_ms": 12.6929999969434,
+            "max_ms": 22.73070000228472
+          },
+          "on_tick": {
+            "count": 273,
+            "mean_ms": 0.5392996336746237,
+            "median_ms": 0.570699994568713,
+            "p95_ms": 1.0888999968301505,
+            "p99_ms": 1.3520000065909699,
+            "max_ms": 1.4550000050803646
+          },
+          "paint_overlay": {
+            "count": 4,
+            "mean_ms": 0.10820000170497224,
+            "median_ms": 0.10090000432683155,
+            "p95_ms": 0.16989999858196825,
+            "p99_ms": 0.16989999858196825,
+            "max_ms": 0.16989999858196825
+          },
+          "present_interval": {
+            "count": 198,
+            "mean_ms": 20.097529292935647,
+            "median_ms": 10.500700002012309,
+            "p95_ms": 72.20419999794103,
+            "p99_ms": 215.78270000463817,
+            "max_ms": 220.31319999950938
+          }
+        },
+        "source_sha256": null,
+        "probe_sha256": null,
+        "native_device": {},
+        "native_observed_fps": null,
+        "graphics_runtime": {},
+        "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+      },
+      "after": {
+        "size": [
+          2560,
+          1440
+        ],
+        "dpr": 1.0,
+        "fps_limit": 90,
+        "vsync": 0,
+        "cprofile": false,
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21"
+        },
+        "cpu_one_core_percent": 106.4826990034891,
+        "cpu_machine_percent": 3.3275843438590345,
+        "gpu_engine_samples": {
+          "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+            "samples": 8,
+            "mean_percent": 4.6287153651565776,
+            "max_percent": 7.351148182744205
+          },
+          "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 8,
+            "mean_percent": 0.0,
+            "max_percent": 0.0
+          }
+        },
+        "zero_3d_engine_count": 33,
+        "gpu_missing_samples": 0,
+        "gpu_counter_error": "",
+        "metrics": {
+          "on_tick": {
+            "count": 259,
+            "mean_ms": 0.6106725867957229,
+            "median_ms": 0.641100006760098,
+            "p95_ms": 1.357300003292039,
+            "p99_ms": 1.6567999991821125,
+            "max_ms": 2.2587999992538244
+          },
+          "gpu_static_ui_key": {
+            "count": 181,
+            "mean_ms": 0.017039778430750645,
+            "median_ms": 0.015999990864656866,
+            "p95_ms": 0.026299996534362435,
+            "p99_ms": 0.035500008380040526,
+            "max_ms": 0.036699988413602114
+          },
+          "paint_gpu_background": {
+            "count": 181,
+            "mean_ms": 0.10132707188482196,
+            "median_ms": 0.02130000211764127,
+            "p95_ms": 0.29910000739619136,
+            "p99_ms": 0.39960000140126795,
+            "max_ms": 1.508699991973117
+          },
+          "minecraft.draw": {
+            "count": 181,
+            "mean_ms": 1.5788022097514027,
+            "median_ms": 0.3412999940337613,
+            "p95_ms": 5.090200007543899,
+            "p99_ms": 5.69079999695532,
+            "max_ms": 6.398099998477846
+          },
+          "draw_dynamic_island": {
+            "count": 181,
+            "mean_ms": 0.3820889504325386,
+            "median_ms": 0.2742999931797385,
+            "p95_ms": 0.6770999898435548,
+            "p99_ms": 1.5824000001884997,
+            "max_ms": 1.8119000014849007
+          },
+          "draw_tactical_map_hud": {
+            "count": 181,
+            "mean_ms": 0.9340237569963066,
+            "median_ms": 0.9086000063689426,
+            "p95_ms": 1.2102000036975369,
+            "p99_ms": 1.4751999988220632,
+            "max_ms": 1.5467999910470098
+          },
+          "draw_minecraft_module_list": {
+            "count": 181,
+            "mean_ms": 0.49944696148782863,
+            "median_ms": 0.370699999621138,
+            "p95_ms": 0.5186000053072348,
+            "p99_ms": 1.2150999973528087,
+            "max_ms": 20.539999997708946
+          },
+          "paint_hud_motion_overlay": {
+            "count": 181,
+            "mean_ms": 4.256801104648373,
+            "median_ms": 2.8055000002495944,
+            "p95_ms": 8.364799999981187,
+            "p99_ms": 9.990400008973666,
+            "max_ms": 27.892300000530668
+          },
+          "clickgui.prepare_frame": {
+            "count": 181,
+            "mean_ms": 0.31878121571232004,
+            "median_ms": 0.09210000280290842,
+            "p95_ms": 0.8683999913046136,
+            "p99_ms": 1.2096999998902902,
+            "max_ms": 1.8062000017380342
+          },
+          "clickgui.render": {
+            "count": 181,
+            "mean_ms": 0.7067049723420837,
+            "median_ms": 0.6790999905206263,
+            "p95_ms": 0.9330000029876828,
+            "p99_ms": 1.334500004304573,
+            "max_ms": 2.510099991923198
+          },
+          "flush_gpu_hud_commands": {
+            "count": 181,
+            "mean_ms": 1.0549723757115754,
+            "median_ms": 0.9572999988449737,
+            "p95_ms": 1.5839999978197739,
+            "p99_ms": 2.4563000042689964,
+            "max_ms": 2.734900001087226
+          },
+          "paint_gpu_target_hud_layer": {
+            "count": 181,
+            "mean_ms": 0.041722099007961456,
+            "median_ms": 0.039699996705166996,
+            "p95_ms": 0.054100004490464926,
+            "p99_ms": 0.09370000043418258,
+            "max_ms": 0.17579999985173345
+          },
+          "compositor.prepare_blur": {
+            "count": 181,
+            "mean_ms": 0.03894917150439684,
+            "median_ms": 0.0013999961083754897,
+            "p95_ms": 0.14030000602360815,
+            "p99_ms": 0.1942999952007085,
+            "max_ms": 0.2710000117076561
+          },
+          "compositor.render_glass": {
+            "count": 362,
+            "mean_ms": 0.06327099475214638,
+            "median_ms": 0.032349991670344025,
+            "p95_ms": 0.1745000045048073,
+            "p99_ms": 0.2496999950380996,
+            "max_ms": 0.5005999992135912
+          },
+          "compositor.prepare_treated_backdrop": {
+            "count": 181,
+            "mean_ms": 0.0015143645947891704,
+            "median_ms": 0.0013999961083754897,
+            "p95_ms": 0.0021000014385208488,
+            "p99_ms": 0.0030999945010989904,
+            "max_ms": 0.012500007869675756
+          },
+          "compositor.present": {
+            "count": 181,
+            "mean_ms": 0.021877899995583074,
+            "median_ms": 0.019800005247816443,
+            "p95_ms": 0.0312999909510836,
+            "p99_ms": 0.05459999374579638,
+            "max_ms": 0.07339999137911946
+          },
+          "paintGL": {
+            "count": 181,
+            "mean_ms": 6.282906630237263,
+            "median_ms": 4.848800002946518,
+            "p95_ms": 10.961399995721877,
+            "p99_ms": 13.07729999825824,
+            "max_ms": 29.83460000541527
+          },
+          "qt.paint.ProbeWindow": {
+            "count": 181,
+            "mean_ms": 6.5012038674125785,
+            "median_ms": 5.070100000011735,
+            "p95_ms": 11.236900012590922,
+            "p99_ms": 13.29799999075476,
+            "max_ms": 29.944000008981675
+          },
+          "paint_overlay": {
+            "count": 4,
+            "mean_ms": 0.12737500219373032,
+            "median_ms": 0.09950000821845606,
+            "p95_ms": 0.2538999979151413,
+            "p99_ms": 0.2538999979151413,
+            "max_ms": 0.2538999979151413
+          },
+          "present_interval": {
+            "count": 180,
+            "mean_ms": 22.10949388884021,
+            "median_ms": 10.943050001515076,
+            "p95_ms": 117.29660000128206,
+            "p99_ms": 211.4646999980323,
+            "max_ms": 230.60870000335854
+          }
+        },
+        "source_sha256": null,
+        "probe_sha256": null,
+        "native_device": {
+          "luid": "luid:00000000:00014186",
+          "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+          "selection_note": ""
+        },
+        "native_observed_fps": null,
+        "graphics_runtime": {
+          "driver": {
+            "vendor": "NVIDIA Corporation",
+            "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+            "version": "3.3.0 NVIDIA 596.21",
+            "implementation": "driver OpenGL (hardware status follows driver identity)"
+          },
+          "initializations": 1,
+          "initialization_failures": 0,
+          "gpu_frames": 200,
+          "compatibility_frames": 0,
+          "last_fallback": "",
+          "cpu_submit_p95_ms": 11.041899997508153,
+          "cpu_submit_p99_ms": 19.11629999813158,
+          "samples": 200,
+          "scope": "CPU submission including Qt OpenGL painter; not GPU execution time"
+        },
+        "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+      }
+    }
+  },
+  "escape_final": {
+    "before": {
+      "size": [
+        2560,
+        1440
+      ],
+      "dpr": 1.0,
+      "fps_limit": 90,
+      "vsync": 0,
+      "cprofile": false,
+      "driver": {
+        "vendor": "NVIDIA Corporation",
+        "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+        "version": "3.3.0 NVIDIA 596.21"
+      },
+      "cpu_one_core_percent": 108.09624424572321,
+      "cpu_machine_percent": 3.3780076326788504,
+      "gpu_engine_samples": {
+        "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+          "samples": 11,
+          "mean_percent": 5.219117549088024,
+          "max_percent": 5.8148295075391685
+        },
+        "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+          "samples": 11,
+          "mean_percent": 0.0,
+          "max_percent": 0.0
+        },
+        "luid_0x00000000_0x00015E1B_phys_0_eng_31_engtype_3D": {
+          "samples": 11,
+          "mean_percent": 0.022180789994803954,
+          "max_percent": 0.05164893832848925
+        }
+      },
+      "zero_3d_engine_count": 32,
+      "gpu_missing_samples": 0,
+      "gpu_counter_error": "",
+      "metrics": {
+        "on_tick": {
+          "count": 750,
+          "mean_ms": 0.6254477332695387,
+          "median_ms": 0.699100004567299,
+          "p95_ms": 1.3608000008389354,
+          "p99_ms": 2.0461999956751242,
+          "max_ms": 3.7656999920727685
+        },
+        "gpu_static_ui_key": {
+          "count": 535,
+          "mean_ms": 0.0108642991312353,
+          "median_ms": 0.0092999980552122,
+          "p95_ms": 0.016099991626106203,
+          "p99_ms": 0.04169999738223851,
+          "max_ms": 0.20710000535473228
+        },
+        "paint_gpu_background": {
+          "count": 535,
+          "mean_ms": 0.07404112123784165,
+          "median_ms": 0.01959998917300254,
+          "p95_ms": 0.26020000223070383,
+          "p99_ms": 0.3237999917473644,
+          "max_ms": 1.0331999947084114
+        },
+        "compositor.prepare_blur": {
+          "count": 535,
+          "mean_ms": 0.03804149561470253,
+          "median_ms": 0.0011999945854768157,
+          "p95_ms": 0.18060000729747117,
+          "p99_ms": 0.2825999981723726,
+          "max_ms": 0.4133000038564205
+        },
+        "compositor.render_glass": {
+          "count": 1070,
+          "mean_ms": 0.008968504283916658,
+          "median_ms": 0.0092999980552122,
+          "p95_ms": 0.015599987818859518,
+          "p99_ms": 0.02580000727903098,
+          "max_ms": 0.08939999679569155
+        },
+        "compositor.prepare_treated_backdrop": {
+          "count": 535,
+          "mean_ms": 0.00812672894604713,
+          "median_ms": 0.00100000761449337,
+          "p95_ms": 0.02370000584051013,
+          "p99_ms": 0.17349999689031392,
+          "max_ms": 0.24339999072253704
+        },
+        "compositor.present": {
+          "count": 535,
+          "mean_ms": 0.1492757011024351,
+          "median_ms": 0.16930000856518745,
+          "p95_ms": 0.2440000098431483,
+          "p99_ms": 0.35689999640453607,
+          "max_ms": 1.228399996762164
+        },
+        "paintGL": {
+          "count": 535,
+          "mean_ms": 0.5449618689691926,
+          "median_ms": 0.5004999984521419,
+          "p95_ms": 0.8085000008577481,
+          "p99_ms": 0.9519000013824552,
+          "max_ms": 1.6450999974040315
+        },
+        "qt.paint.ProbeWindow": {
+          "count": 535,
+          "mean_ms": 0.7870652335619763,
+          "median_ms": 0.6885000038892031,
+          "p95_ms": 1.2607999960891902,
+          "p99_ms": 2.577699997345917,
+          "max_ms": 4.131399997277185
+        },
+        "present_interval": {
+          "count": 534,
+          "mean_ms": 11.205906554300526,
+          "median_ms": 9.799800005566794,
+          "p95_ms": 17.699100004392676,
+          "p99_ms": 19.79199999186676,
+          "max_ms": 28.027799999108538
+        },
+        "flush_gpu_hud_commands": {
+          "count": 24,
+          "mean_ms": 0.0040583333126657335,
+          "median_ms": 0.0035999983083456755,
+          "p95_ms": 0.006600006599910557,
+          "p99_ms": 0.01030000566970557,
+          "max_ms": 0.01030000566970557
+        },
+        "paint_overlay": {
+          "count": 6,
+          "mean_ms": 0.015233337762765586,
+          "median_ms": 0.01514999894425273,
+          "p95_ms": 0.016200006939470768,
+          "p99_ms": 0.016200006939470768,
+          "max_ms": 0.016200006939470768
+        }
+      },
+      "source_sha256": null,
+      "probe_sha256": null,
+      "native_device": {},
+      "native_observed_fps": 74.96407596529781,
+      "graphics_runtime": {},
+      "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+    },
+    "after": {
+      "size": [
+        2560,
+        1440
+      ],
+      "dpr": 1.0,
+      "fps_limit": 90,
+      "vsync": 0,
+      "cprofile": false,
+      "driver": {
+        "vendor": "NVIDIA Corporation",
+        "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+        "version": "3.3.0 NVIDIA 596.21"
+      },
+      "cpu_one_core_percent": 125.63950440943414,
+      "cpu_machine_percent": 3.926234512794817,
+      "gpu_engine_samples": {
+        "luid_0x00000000_0x00014186_phys_0_eng_0_engtype_3D": {
+          "samples": 10,
+          "mean_percent": 4.726916247476361,
+          "max_percent": 5.601015841114591
+        },
+        "luid_0x00000000_0x00014186_phys_0_eng_1_engtype_VideoDecode": {
+          "samples": 10,
+          "mean_percent": 0.0,
+          "max_percent": 0.0
+        },
+        "luid_0x00000000_0x00015E1B_phys_0_eng_32_engtype_3D": {
+          "samples": 10,
+          "mean_percent": 0.024189370240871647,
+          "max_percent": 0.07755143094735184
+        }
+      },
+      "zero_3d_engine_count": 32,
+      "gpu_missing_samples": 0,
+      "gpu_counter_error": "",
+      "metrics": {
+        "on_tick": {
+          "count": 504,
+          "mean_ms": 0.874223214013332,
+          "median_ms": 0.756800000090152,
+          "p95_ms": 2.449699997669086,
+          "p99_ms": 3.2161999988602474,
+          "max_ms": 4.7657999966759235
+        },
+        "gpu_static_ui_key": {
+          "count": 328,
+          "mean_ms": 0.013097256669425406,
+          "median_ms": 0.012799995602108538,
+          "p95_ms": 0.018099992303177714,
+          "p99_ms": 0.030000010156072676,
+          "max_ms": 0.04859999171458185
+        },
+        "paint_gpu_background": {
+          "count": 328,
+          "mean_ms": 0.10085274361034219,
+          "median_ms": 0.020499996026046574,
+          "p95_ms": 0.3032999957213178,
+          "p99_ms": 0.34169999707955867,
+          "max_ms": 0.7773000106681138
+        },
+        "compositor.prepare_blur": {
+          "count": 328,
+          "mean_ms": 0.05430396324699381,
+          "median_ms": 0.0013999961083754897,
+          "p95_ms": 0.18270000873599201,
+          "p99_ms": 0.24900000425986946,
+          "max_ms": 0.3311000036774203
+        },
+        "compositor.render_glass": {
+          "count": 656,
+          "mean_ms": 0.0102724086279589,
+          "median_ms": 0.009800001862458885,
+          "p95_ms": 0.015199999324977398,
+          "p99_ms": 0.0261999957729131,
+          "max_ms": 0.8360000065295026
+        },
+        "compositor.prepare_treated_backdrop": {
+          "count": 328,
+          "mean_ms": 0.010557926920804808,
+          "median_ms": 0.001100008375942707,
+          "p95_ms": 0.023100001271814108,
+          "p99_ms": 0.18740000086836517,
+          "max_ms": 0.23269999655894935
+        },
+        "compositor.present": {
+          "count": 328,
+          "mean_ms": 0.13132469416077805,
+          "median_ms": 0.16830000095069408,
+          "p95_ms": 0.24290000146720558,
+          "p99_ms": 0.3029000072274357,
+          "max_ms": 0.31779998971614987
+        },
+        "paintGL": {
+          "count": 328,
+          "mean_ms": 0.6015942072713742,
+          "median_ms": 0.5442999972729012,
+          "p95_ms": 0.8910999895306304,
+          "p99_ms": 1.2865000026067719,
+          "max_ms": 1.8035999964922667
+        },
+        "qt.paint.ProbeWindow": {
+          "count": 328,
+          "mean_ms": 1.2591268292985993,
+          "median_ms": 0.9190999990096316,
+          "p95_ms": 2.886300004320219,
+          "p99_ms": 3.7681999965570867,
+          "max_ms": 5.337599999620579
+        },
+        "present_interval": {
+          "count": 327,
+          "mean_ms": 18.32428103974495,
+          "median_ms": 13.283799999044277,
+          "p95_ms": 40.035299985902384,
+          "p99_ms": 61.48629999370314,
+          "max_ms": 927.8166000003694
+        },
+        "flush_gpu_hud_commands": {
+          "count": 20,
+          "mean_ms": 0.004060001083416864,
+          "median_ms": 0.004099994839634746,
+          "p95_ms": 0.0050000089686363935,
+          "p99_ms": 0.0050000089686363935,
+          "max_ms": 0.0050000089686363935
+        },
+        "paint_overlay": {
+          "count": 6,
+          "mean_ms": 0.01821666955947876,
+          "median_ms": 0.0178500049514696,
+          "p95_ms": 0.022700012777931988,
+          "p99_ms": 0.022700012777931988,
+          "max_ms": 0.022700012777931988
+        },
+        "qt.paint.QQuickWidget": {
+          "count": 14,
+          "mean_ms": 0.013328568976638573,
+          "median_ms": 0.010849995305761695,
+          "p95_ms": 0.04230000195093453,
+          "p99_ms": 0.04230000195093453,
+          "max_ms": 0.04230000195093453
+        },
+        "qt.paint.QWidgetWindow": {
+          "count": 2,
+          "mean_ms": 0.03445000038482249,
+          "median_ms": 0.03445000038482249,
+          "p95_ms": 0.03789999755099416,
+          "p99_ms": 0.03789999755099416,
+          "max_ms": 0.03789999755099416
+        }
+      },
+      "source_sha256": null,
+      "probe_sha256": null,
+      "native_device": {
+        "frame_limit": 90,
+        "luid": "luid:00000000:00014186",
+        "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+        "selection_note": ""
+      },
+      "native_observed_fps": 74.73502065940805,
+      "graphics_runtime": {
+        "driver": {
+          "vendor": "NVIDIA Corporation",
+          "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+          "version": "3.3.0 NVIDIA 596.21",
+          "implementation": "driver OpenGL (hardware status follows driver identity)"
+        },
+        "initializations": 1,
+        "initialization_failures": 0,
+        "gpu_frames": 737,
+        "compatibility_frames": 0,
+        "last_fallback": "",
+        "cpu_submit_p95_ms": 0.8342000073753297,
+        "cpu_submit_p99_ms": 1.1142000003019348,
+        "samples": 720,
+        "scope": "CPU submission including Qt OpenGL painter; not GPU execution time"
+      },
+      "limits": "Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero."
+    }
+  },
+  "native_selection": {
+    "status": "PASS",
+    "scope": "Explicit owned D3D hardware-selection smoke; no robot/game/camera I/O.",
+    "cases": [
+      {
+        "requested": "auto",
+        "actual": {
+          "frame_limit": 144,
+          "luid": "luid:00000000:00014186",
+          "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+          "selection_note": ""
+        },
+        "nonblank": true
+      },
+      {
+        "requested": "luid:00000000:00014186",
+        "actual": {
+          "frame_limit": 144,
+          "luid": "luid:00000000:00014186",
+          "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+          "selection_note": ""
+        },
+        "nonblank": true
+      },
+      {
+        "requested": "luid:00000000:00015e7b",
+        "actual": {
+          "frame_limit": 144,
+          "luid": "luid:00000000:00015e7b",
+          "name": "Intel(R) UHD Graphics",
+          "selection_note": ""
+        },
+        "nonblank": true
+      },
+      {
+        "requested": "luid:ffffffff:ffffffff",
+        "actual": {
+          "frame_limit": 144,
+          "luid": "luid:00000000:00014186",
+          "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+          "selection_note": "Requested adapter unavailable; using system hardware default"
+        },
+        "nonblank": true
+      }
+    ],
+    "pack": {
+      "status": "PACK_VALID",
+      "files": 54,
+      "maps": {
+        "RMUC7v7": 118677,
+        "RMUL3v3": 8971,
+        "RMUL1v1": 4860
+      },
+      "binary_sha256": "251df21bb94f80c689b764c3098e3fae6f68fcda3a11ffc7422ddd26b4fe53ea",
+      "optional_boot": false,
+      "optional_audio": false,
+      "native_render_verified": false,
+      "limits": "Integrity/source check only; run python -m tools.endfield.verify_pack_runtime for owned D3D rendering. No hardware/match qualification."
+    },
+    "limits": "Hardware D3D selection only; Qt WGL remains OS-controlled. No throughput or real match qualification."
+  },
+  "native_all_fields": {
+    "scope": "actual owned D3D rendering; no game/device/robot I/O",
+    "cases": [
+      {
+        "mode": "RMUC7v7",
+        "width": 1280,
+        "height": 720,
+        "chinese": false,
+        "image": "RMUC7v7_1280x720.png",
+        "stats": {
+          "frames": 89.0,
+          "last_ms": 0.5667999939760193,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      },
+      {
+        "mode": "RMUC7v7",
+        "width": 2560,
+        "height": 1440,
+        "chinese": true,
+        "image": "RMUC7v7_2560x1440.png",
+        "stats": {
+          "frames": 198.0,
+          "last_ms": 0.8917999948607758,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      },
+      {
+        "mode": "RMUL3v3",
+        "width": 1280,
+        "height": 720,
+        "chinese": false,
+        "image": "RMUL3v3_1280x720.png",
+        "stats": {
+          "frames": 287.0,
+          "last_ms": 0.515899999300018,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      },
+      {
+        "mode": "RMUL3v3",
+        "width": 2560,
+        "height": 1440,
+        "chinese": true,
+        "image": "RMUL3v3_2560x1440.png",
+        "stats": {
+          "frames": 391.0,
+          "last_ms": 0.7296000112546608,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      },
+      {
+        "mode": "RMUL1v1",
+        "width": 1280,
+        "height": 720,
+        "chinese": false,
+        "image": "RMUL1v1_1280x720.png",
+        "stats": {
+          "frames": 479.0,
+          "last_ms": 0.7228000031318516,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      },
+      {
+        "mode": "RMUL1v1",
+        "width": 2560,
+        "height": 1440,
+        "chinese": true,
+        "image": "RMUL1v1_2560x1440.png",
+        "stats": {
+          "frames": 584.0,
+          "last_ms": 0.629100002697669,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      }
+    ],
+    "pack": {
+      "status": "PACK_VALID",
+      "files": 54,
+      "maps": {
+        "RMUC7v7": 118677,
+        "RMUL3v3": 8971,
+        "RMUL1v1": 4860
+      },
+      "binary_sha256": "251df21bb94f80c689b764c3098e3fae6f68fcda3a11ffc7422ddd26b4fe53ea",
+      "optional_boot": false,
+      "optional_audio": false,
+      "native_render_verified": false,
+      "limits": "Integrity/source check only; run python -m tools.endfield.verify_pack_runtime for owned D3D rendering. No hardware/match qualification."
+    },
+    "boot_audio_absent": true,
+    "owner_retired": true,
+    "status": "PASS",
+    "limits": "Not exact pixel parity, full app regression, throughput, packaging or match qualification."
+  },
+  "opengl_smokes": {
+    "PASS": 2,
+    "SKIP": 0,
+    "INCOMPLETE": 0,
+    "FAIL": 0
+  },
+  "mc_parity": {
+    "status": "PASS",
+    "scope": "real QPainter MC layer only; explicit baseline Python source, identical native assets",
+    "pixel_and_hit_pairs": 24,
+    "cases": [
+      {
+        "language": "English",
+        "size": [
+          1280,
+          720
+        ],
+        "multiplier": 0.5,
+        "dpr": 1
+      },
+      {
+        "language": "English",
+        "size": [
+          1280,
+          720
+        ],
+        "multiplier": 0.5,
+        "dpr": 1.5
+      },
+      {
+        "language": "English",
+        "size": [
+          1280,
+          720
+        ],
+        "multiplier": 0.5,
+        "dpr": 2
+      },
+      {
+        "language": "English",
+        "size": [
+          1600,
+          900
+        ],
+        "multiplier": 1,
+        "dpr": 1
+      },
+      {
+        "language": "English",
+        "size": [
+          1600,
+          900
+        ],
+        "multiplier": 1,
+        "dpr": 1.5
+      },
+      {
+        "language": "English",
+        "size": [
+          1600,
+          900
+        ],
+        "multiplier": 1,
+        "dpr": 2
+      },
+      {
+        "language": "English",
+        "size": [
+          1920,
+          1080
+        ],
+        "multiplier": 1.5,
+        "dpr": 1
+      },
+      {
+        "language": "English",
+        "size": [
+          1920,
+          1080
+        ],
+        "multiplier": 1.5,
+        "dpr": 1.5
+      },
+      {
+        "language": "English",
+        "size": [
+          1920,
+          1080
+        ],
+        "multiplier": 1.5,
+        "dpr": 2
+      },
+      {
+        "language": "English",
+        "size": [
+          2560,
+          1440
+        ],
+        "multiplier": 2,
+        "dpr": 1
+      },
+      {
+        "language": "English",
+        "size": [
+          2560,
+          1440
+        ],
+        "multiplier": 2,
+        "dpr": 1.5
+      },
+      {
+        "language": "English",
+        "size": [
+          2560,
+          1440
+        ],
+        "multiplier": 2,
+        "dpr": 2
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          1280,
+          720
+        ],
+        "multiplier": 0.5,
+        "dpr": 1
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          1280,
+          720
+        ],
+        "multiplier": 0.5,
+        "dpr": 1.5
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          1280,
+          720
+        ],
+        "multiplier": 0.5,
+        "dpr": 2
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          1600,
+          900
+        ],
+        "multiplier": 1,
+        "dpr": 1
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          1600,
+          900
+        ],
+        "multiplier": 1,
+        "dpr": 1.5
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          1600,
+          900
+        ],
+        "multiplier": 1,
+        "dpr": 2
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          1920,
+          1080
+        ],
+        "multiplier": 1.5,
+        "dpr": 1
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          1920,
+          1080
+        ],
+        "multiplier": 1.5,
+        "dpr": 1.5
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          1920,
+          1080
+        ],
+        "multiplier": 1.5,
+        "dpr": 2
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          2560,
+          1440
+        ],
+        "multiplier": 2,
+        "dpr": 1
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          2560,
+          1440
+        ],
+        "multiplier": 2,
+        "dpr": 1.5
+      },
+      {
+        "language": "简体中文",
+        "size": [
+          2560,
+          1440
+        ],
+        "multiplier": 2,
+        "dpr": 2
+      }
+    ]
+  },
+  "unchanged_non_renderer_endfield_files": 50,
+  "resource_audit_status": "PASS",
+  "personal_config_untouched_sha256": "67efb7a5cc0eae8d3e25868a6dd8ee219c73cc2fe85c85176da6d21d59f13475",
+  "remaining": [
+    "OpenGL adapter is OS/driver controlled; picker explicitly selects Esc D3D only",
+    "Esc CPU not improved in short run; no all-client CPU win claim",
+    "No real compressed-video or camera end-to-end performance test",
+    "No second-PC/driver-failure hardware qualification",
+    "No hardware decode added",
+    "Existing crosshair scrolling assertions still fail; overall scoped test report is NO-GO"
+  ]
+}

@@ -156,6 +156,11 @@ class CombatTargetHudMixin:
         target_visible = bool(module and module.enabled and presence.visible)
         crosshair = self.registry.get("Crosshair")
         style = crosshair.get_setting("Style") if crosshair is not None else None
+        if not target_visible and not (crosshair is not None and crosshair.enabled):
+            # The target FBO was already cleared above. An invisible target and
+            # disabled crosshair have no pixels: don't allocate/rasterize,
+            # sanitize and upload a transparent ROI on every display frame.
+            return True
         if not target_visible and crosshair is not None and crosshair.enabled and style is not None and style.value == "CS2":
             # The ring-sized central ROI clips large CS profiles. Record one
             # CS primitive draw in physical coordinates.

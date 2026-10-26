@@ -2,14 +2,20 @@
   "scope": "retained source renderer with RM content adapter",
   "reference_repository": "https://github.com/DDDuoDuo/EndfieldHUD",
   "reference_commit": "cdbd4f573c8fa3b9c2048fa3d1b089e69196537b",
-  "binary_sha256": "c6b65039111cb750bd1d7d1f4cf537cc8fdf4ba8030d38461cd87f8a195704c0",
-  "adapter_sha256": "65994449a68ffa60fdba6983b59e6f6cd50c9e34a8dbee04745532423a16fac8",
+  "binary_sha256": "251df21bb94f80c689b764c3098e3fae6f68fcda3a11ffc7422ddd26b4fe53ea",
+  "adapter_sha256": "98fba9d72daf15bcf5d23259efcd09878a148f0855081b02446d8d702826f52e",
   "adapter_sources": {
-    "native/endfield/bridge.cpp": "b369a38a2cde64d64a5e15e54830538439d622a1705d15e784d6d55c33946000",
-    "native/endfield/catalog_extension.inc": "45b122f36513f49228ff287366792ba05b4f86e77459ed43086408b113e6fe0c"
+    "native/endfield/bridge.cpp": "3d7461f2ce6affcc042a6b7ad7470dcbe5e29bc8d805a3c382ec8ebd8ac4475e",
+    "native/endfield/catalog_extension.inc": "48c7d86104b3c087e387554e25dd17ed354ddf129daa722625ad38eca3ebcba8",
+    "native/endfield/adapter_selection.hpp": "98c9528428c32dc596f38796bcd894eb54a6416d1aa9087c86b623b01ca3bf98"
   },
   "compiler": "clang version 19.1.7 (https://github.com/ziglang/zig-bootstrap de1b01a8c1dddf75a560123ac1c2ab182b4830da)\nTarget: x86_64-unknown-windows-gnu\nThread model: posix",
   "derived_translation_units": {
+    "client_adapter_renderer.cpp": {
+      "source": "native/renderer.cpp",
+      "operation": "DXGI device selection and actual adapter diagnostics; unchanged rendering",
+      "sha256": "f6c113136a90b4ca29c442499173f2c891f85f5dce2d61c849dfd408e2cd29ff"
+    },
     "physical_viewport_source_scene.cpp": {
       "source": "native/source_scene.cpp",
       "operation": "physical viewport bounds 4096 -> 8192; unchanged total pixel limit",
@@ -18,8 +24,8 @@
     "client_watch_content.cpp": {
       "source": "native/watch_content.cpp",
       "operation": "append bounded client entries using existing local caption/icon styles",
-      "extension_sha256": "45b122f36513f49228ff287366792ba05b4f86e77459ed43086408b113e6fe0c",
-      "sha256": "37cf443b9eb3e6f83c4690b485e441d27253f58d22f22090753c199a7f998bdc"
+      "extension_sha256": "48c7d86104b3c087e387554e25dd17ed354ddf129daa722625ad38eca3ebcba8",
+      "sha256": "04e66d95784b562a4a41fc25c33f1347a9c56cd94eac43fa7a61a6025aec4d54"
     }
   },
   "upstream_sources": {

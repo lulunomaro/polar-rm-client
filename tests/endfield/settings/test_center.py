@@ -74,7 +74,8 @@ class EndfieldSettingsTests(unittest.TestCase):
                             QTest.qWait(10)
                     video = dialog.tabs.widget(0)
                     rows = video.findChildren(SettingsRow)
-                    self.assertEqual(len(rows),11)
+                    self.assertEqual(len(rows),12)  # Includes the new rendering-adapter row.
+                    self.assertTrue(any(row.control.objectName()=='RenderAdapter' for row in rows))
                     self.assertEqual(dialog.size(),self.host.size())
                     for row in rows:
                         self.assertGreater(row.width(),video.width()*.9,row.label.text())

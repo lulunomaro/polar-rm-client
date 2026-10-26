@@ -41,7 +41,8 @@ def digest(path: Path) -> str:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-ADAPTER_SOURCES = ("native/endfield/bridge.cpp", "native/endfield/catalog_extension.inc")
+ADAPTER_SOURCES = ("native/endfield/bridge.cpp", "native/endfield/catalog_extension.inc",
+                   "native/endfield/adapter_selection.hpp")
 
 
 def adapter_digest() -> str:

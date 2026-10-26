@@ -11,6 +11,7 @@
 #include "native/watch_content.hpp"
 #include "native/watch_presentation.hpp"
 #include "native/chrome_presentation.hpp"
+#include "native/endfield/adapter_selection.hpp"
 #include <windows.h>
 #include <windowsx.h>
 #include <dcomp.h>
@@ -43,12 +44,13 @@ struct Shared {
     std::atomic<int> status{},phase{},action{}; // status 0 loading,1 ready,-1 fault,2 retired
     std::atomic<std::uint64_t> requestEpoch{},closedEpoch{};
     std::atomic<unsigned> width{1280},height{720};
+    std::atomic<unsigned> frameLimit{144};
     std::atomic<std::uint64_t> frames{},textures{},meshes{};
     std::atomic<double> lastMS{};
     std::atomic<int> hoverCode{};std::atomic<std::uint64_t> hoverChanges{};
     std::atomic<double> scrollPosition{1},scrollVelocity{},scrollHidden{},scrollRate{};
     std::atomic<bool> scrollDragging{},scrollCoasting{};
-    std::mutex mutex;std::deque<Event> events;std::string error,context,capture;
+    std::mutex mutex;std::deque<Event> events;std::string error,context,capture,deviceInfo;
     std::atomic<int> captureState{};
     std::atomic<std::uintptr_t> surface{}; // Owned-HWND diagnostics only.
     int probeCode{},probeReady{};std::array<double,4> probeRect{};
@@ -175,6 +177,9 @@ public:
         shared->surface=reinterpret_cast<std::uintptr_t>(window);
         renderer.initialize(window,width,height,{gpu::Driver::hardware,shared->root/"resources/shell/hud.hlsl",
             shared->offscreen?gpu::RenderTarget::offscreenForTests:gpu::RenderTarget::composition});
+        const auto info=polar::graphics::adapterReport();
+        Json identity(Json::Object{});identity["name"]=info.name;identity["luid"]=info.luid;identity["selection_note"]=info.note;
+        {std::lock_guard lock(shared->mutex);shared->deviceInfo=identity.encode();}
         options.assetRoot=input.assetRoot();options.pixelsPerPoint=2;
         rebuild(false);materials.upload(renderer.sourceGraphics());
         // Background stays in the client's existing GPU compositor. No desktop
@@ -432,9 +437,14 @@ LRESULT CALLBACK windowProc(HWND w,UINT m,WPARAM a,LPARAM b){
 void run(std::shared_ptr<Shared> s){
     ++live;const HRESULT com=CoInitializeEx(nullptr,COINIT_APARTMENTTHREADED);
     const auto dpi=s->parent?SetThreadDpiAwarenessContext(GetWindowDpiAwarenessContext(s->parent)):nullptr;
-    try{{Host host(s);while(!s->stop){MSG msg;while(PeekMessageW(&msg,nullptr,0,0,PM_REMOVE)){TranslateMessage(&msg);DispatchMessageW(&msg);}
-        const double begin=clockNow();host.step(begin);s->lastMS=(clockNow()-begin)*1000;
-        MsgWaitForMultipleObjectsEx(0,nullptr,s->phase?1:25,QS_ALLINPUT,MWMO_INPUTAVAILABLE);}}}
+    try{{Host host(s);double nextFrame=clockNow();while(!s->stop){MSG msg;while(PeekMessageW(&msg,nullptr,0,0,PM_REMOVE)){TranslateMessage(&msg);DispatchMessageW(&msg);}
+        const double begin=clockNow();
+        if(begin>=nextFrame){host.step(begin);s->lastMS=(clockNow()-begin)*1000;
+            // Absolute deadlines preserve the authored time-based curves. A
+            // late frame skips catch-up work instead of rendering in bursts.
+            nextFrame=std::max(nextFrame+1./s->frameLimit.load(),clockNow());}
+        const DWORD wait=s->phase?DWORD(std::clamp(std::ceil((nextFrame-clockNow())*1000.),1.,34.)):25;
+        MsgWaitForMultipleObjectsEx(0,nullptr,wait,QS_ALLINPUT,MWMO_INPUTAVAILABLE);}}}
     catch(const std::exception& e){{std::lock_guard lock(s->mutex);s->error=e.what();}s->status=-1;s->phase=0;}
     if(dpi)SetThreadDpiAwarenessContext(dpi);
     if(SUCCEEDED(com))CoUninitialize();if(s->status!=-1)s->status=2;--live;
@@ -455,6 +465,10 @@ API void pe_resize(std::uint64_t id,unsigned w,unsigned h){if(w>=320&&h>=240&&w<
 API void pe_input(std::uint64_t id,int kind,double x,double y,double value){if(std::isfinite(x)&&std::isfinite(y)&&std::isfinite(value))if(auto s=get(id))s->push({kind,x,y,value});}
 API void pe_context(std::uint64_t id,const char* value){if(!value||strlen(value)>4096)return;if(auto s=get(id)){std::lock_guard lock(s->mutex);s->context=value;}}
 API const char* pe_error(std::uint64_t id){static thread_local std::string error;if(auto s=get(id)){std::lock_guard lock(s->mutex);error=s->error;}else error="Native source owner retired";return error.c_str();}
+API const char* pe_device_info(std::uint64_t id){static thread_local std::string info;if(auto s=get(id)){std::lock_guard lock(s->mutex);
+    if(s->deviceInfo.empty())info="{}";else{auto data=Json::parse(s->deviceInfo);data["frame_limit"]=int(s->frameLimit.load());info=data.encode();}}
+    else info="{}";return info.c_str();}
+API void pe_frame_rate(std::uint64_t id,unsigned hz){if(hz>=30&&hz<=240)if(auto s=get(id))s->frameLimit=hz;}
 API void pe_stats(std::uint64_t id,double* values){if(!values)return;if(auto s=get(id)){values[0]=double(s->frames);values[1]=s->lastMS;values[2]=double(s->textures);values[3]=double(s->meshes);values[4]=double(live);}}
 // Bounded owned-session diagnostic; no scene serialization or framebuffer copy.
 API void pe_hover(std::uint64_t id,double* values){if(values)if(auto s=get(id)){values[0]=s->hoverCode;values[1]=double(s->hoverChanges);}}

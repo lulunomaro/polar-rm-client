@@ -76,6 +76,21 @@ def main() -> None:
                *(source_root / name for name in upstream)]
     derived = {}
     if args.native_library:
+        # Explicit DXGI adapter selection only; the pinned checkout and every
+        # material/shader/animation remain untouched. Fail if the seam changed.
+        original = source_root / 'native/renderer.cpp'
+        code = original.read_bytes()
+        marker = b'checked(D3D11CreateDevice(nullptr, '
+        if code.count(marker) != 1:
+            raise SystemExit('Pinned D3D device creation seam changed')
+        selected = b'#include "native/endfield/adapter_selection.hpp"\n' + code.replace(
+            marker, b'checked(polar::graphics::createDevice(nullptr, ')
+        generated = out / 'client_adapter_renderer.cpp'
+        generated.write_bytes(selected)
+        sources[sources.index(original)] = generated
+        derived[generated.name] = {'source':'native/renderer.cpp',
+            'operation':'DXGI device selection and actual adapter diagnostics; unchanged rendering',
+            'sha256':hashlib.sha256(selected).hexdigest()}
         # The source renderer already bounds targets to 8192 and 16M pixels,
         # but its scene-submission guard still rejects >4096 physical pixels.
         # At 200% DPI, a 2560 logical viewport is 5120 physical pixels. Port
@@ -133,11 +148,14 @@ def main() -> None:
         # MinGW names the standard (zero) D3D sampler reduction differently;
         # this is the Windows SDK enum value, not a material/filter substitution.
         optimize = ["-flto=thin"] if args.native_render else []
-        local_includes = ["-I", relative(source_root / "native")] if source.name == "physical_viewport_source_scene.cpp" else []
+        local_includes = ["-I", relative(source_root / "native")] if source.name in ("physical_viewport_source_scene.cpp",'client_adapter_renderer.cpp') else []
         command = [*compiler, "-std=c++20", "-O2", *optimize, "-ffunction-sections", "-fdata-sections",
                         "-DNOMINMAX", "-DUNICODE", "-D_UNICODE", "-D_WIN32_WINNT=0x0a00", *compatibility, "-I", relative(source_root),
-                        *local_includes, "-c", relative(source), "-o", relative(obj)]
-        signature = hashlib.sha256(source.read_bytes() + json.dumps([PIN, command, compiler_version]).encode()).hexdigest()
+                        *local_includes, '-I', '.', "-c", relative(source), "-o", relative(obj)]
+        # Local headers affect bridge AND the generated renderer translation
+        # unit. A cached object may not survive a selection-policy/header edit.
+        dependencies = adapter_digest() if args.native_library else ''
+        signature = hashlib.sha256(source.read_bytes() + json.dumps([PIN, command, compiler_version, dependencies]).encode()).hexdigest()
         sidecar = obj.with_suffix(".signature")
         if not (obj.is_file() and sidecar.is_file() and sidecar.read_text() == signature):
             subprocess.run(command, cwd=workspace, check=True, timeout=180)
