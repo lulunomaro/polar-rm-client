@@ -411,9 +411,17 @@ def test_decoded_video_timestamp_and_source_selection() -> None:
     check("Hero deploy selects Native 0x0310", manager._active_video_source == "native 0x0310")
     frame, _timestamp, source = manager.latest_video_frame(1.0, "Native 0x0310")
     check("Hero has no UDP fallback", frame is native and source == "native-0x0310")
+    for requested in ("Auto", "UDP HEVC"):
+        frame, _timestamp, source = manager.latest_video_frame(1.0, requested)
+        check("Hero overrides normal selector " + requested, frame is native and source == "native-0x0310")
+    manager.set_active_video_source("UDP HEVC")
+    check("Hero ignores normal decoder selection until exit sync",
+          manager._active_video_source == "native 0x0310" and not manager.udp.running)
     fake_native.frame = None
     frame, timestamp, source = manager.latest_video_frame(1.0, "Native 0x0310")
     check("Hero native loss yields no camera/UDP frame", frame is None and timestamp == 0.0 and source == "none")
+    frame, timestamp, source = manager.latest_video_frame(1.0, "Auto")
+    check("Hero native loss cannot use Auto UDP fallback", frame is None and timestamp == 0.0 and source == "none")
     fake_native.frame = native
     manager._apply_one(state, "DeployModeStatusSync", {"status": 0})
     check("Hero exit restores normal UDP source", manager.udp.running and manager._active_video_source == "udp hevc")
@@ -710,6 +718,8 @@ def test_backend_lock_requests_input_clear() -> None:
     # Simulate a link that has remained down longer than the two-second grace
     # period. Reconnect keeps LOCKED and may never replay the stale input.
     manager.mqtt.connected = False
+    manager.mqtt._started = True
+    manager.mqtt.poll_connection = lambda: None  # active fake link; no network I/O
     manager.mqtt.disconnected_at = time.perf_counter() - 2.1
     manager.tick()
     check("MQTT timeout requests input clear", reasons[-1] == "MQTT disconnected for more than 2 seconds")

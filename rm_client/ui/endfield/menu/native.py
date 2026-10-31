@@ -66,6 +66,12 @@ class NativeApi:
             for name, (arguments, result) in signatures.items():
                 function = getattr(lib, "pe_" + name)
                 function.argtypes, function.restype = arguments, result
+            if hasattr(lib, 'pe_device_info'):
+                lib.pe_device_info.argtypes = [u64]
+                lib.pe_device_info.restype = ptr
+            if hasattr(lib, 'pe_frame_rate'):
+                lib.pe_frame_rate.argtypes = [u64, uint]
+                lib.pe_frame_rate.restype = None
             _LIBRARIES[key] = lib
         self.lib = _LIBRARIES[key]
 
@@ -90,6 +96,7 @@ class EndfieldNativeMenu:
         self._backdrop_frame_ready = False
         self._context = None
         self._size = None
+        self._frame_limit = None
 
     def prepare(self, parent: int, width: int, height: int, *, offscreen=False) -> None:
         if self.attempted or self.retiring:
@@ -98,6 +105,7 @@ class EndfieldNativeMenu:
         try:
             self.api = NativeApi(library_path(self.renderer_pack))
             self.handle = int(self.api.create(parent, os.fsencode(self.pack / "native_source_runtime"), width, height, int(offscreen)))
+            self.sync_frame_limit()
             if not self.handle:
                 raise RuntimeError("Could not create source renderer owner")
             self.api.visible(self.handle, self.requested and not self._awaiting_backdrop)
@@ -134,6 +142,7 @@ class EndfieldNativeMenu:
     def tick(self, *, width: int, height: int, chinese: bool, mode: str, paused: bool) -> int:
         if not self.handle or self.retiring:
             return 0
+        self.sync_frame_limit()
         status = self.api.status(self.handle)
         if status == -1:
             self.error = self.api.error(self.handle).decode("utf-8", "replace")
@@ -178,3 +187,29 @@ class EndfieldNativeMenu:
         if self.handle:
             self.api.stats(self.handle, values)
         return dict(zip(("frames", "last_ms", "textures", "meshes", "owners"), values))
+
+    def device_info(self) -> dict:
+        if not self.handle or self.api is None:
+            return {}
+        try:
+            value = self.api.device_info(self.handle)
+            if not value:
+                return {}
+            if len(value) > 8192:
+                raise ValueError('oversized device diagnostics')
+            parsed = json.loads(value.decode('utf-8'))
+            if not isinstance(parsed, dict):
+                raise ValueError('invalid device diagnostics')
+            return parsed
+        except (AttributeError, ValueError, TypeError) as exc:
+            return {'selection_note': 'Device diagnostics unavailable: '+str(exc)}
+
+    def sync_frame_limit(self):
+        if not self.handle or self.api is None:
+            return
+        from rm_client.ui.cs2_video_settings import render_target
+        limit = int(render_target(144))
+        if self._frame_limit != limit:
+            try:self.api.frame_rate(self.handle,limit)
+            except AttributeError:return  # Explicit older developer DLL.
+            self._frame_limit = limit

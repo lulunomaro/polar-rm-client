@@ -27,6 +27,7 @@ class VideoPreferences:
     msaa: int = 0
     video_detail: str = "Legacy"
     video_filter: str = "Auto"
+    render_adapter: str = "auto"
 
 
 def validate_preferences(data):
@@ -34,6 +35,9 @@ def validate_preferences(data):
     if not isinstance(data,dict) or set(data)-set(defaults):
         raise ValueError("未知视频设置")
     values={**defaults,**data}
+    from .graphics_devices import valid_adapter
+    if not valid_adapter(values['render_adapter']):
+        raise ValueError("无效渲染显卡")
     if values["window_mode"] not in ("Windowed","Borderless"):
         raise ValueError("不支持的显示模式")
     if values["resolution"] not in ("Current","1280×720","1600×900","1920×1080","2560×1440","3840×2160"):
@@ -214,6 +218,8 @@ def open_video_settings(host, embedded=False):
         geom=screen.geometry() if screen else None
         add_setting_row(basic_form,"当前显示器",QLabel(f"{screen.name() if screen else '未知'}  ·  {actual_hz:.1f} Hz"))
         mode=combo(basic_form,"window_mode","显示模式",[("窗口","Windowed"),("全屏（无边框）","Borderless")],prefs.window_mode)
+        mode.setToolTip("选择显示模式后，点击右下角“应用当前页”生效。" if embedded
+                        else "选择显示模式后，点击“应用更改”生效。")
         resolution=combo(basic_form,"resolution","窗口渲染分辨率（物理像素）",[("保持当前","Current"),*((v,v) for v in ("1280×720","1600×900","1920×1080","2560×1440","3840×2160"))],prefs.resolution)
         resolution.setEnabled(mode.currentData()=="Windowed")
         mode.currentIndexChanged.connect(lambda _:resolution.setEnabled(mode.currentData()=="Windowed"))
@@ -225,6 +231,41 @@ def open_video_settings(host, embedded=False):
         combo(advanced_form,"msaa","多重采样抗锯齿（重启生效）",[("无",0),("2× MSAA",2),("4× MSAA",4),("8× MSAA",8)],prefs.msaa)
         combo(advanced_form,"video_detail","图传显示细节",[("保留当前优化","Legacy"),("720p预算","720p"),("1080p预算","1080p"),("原生分辨率","Native")],prefs.video_detail)
         combo(advanced_form,"video_filter","图传纹理过滤",[("保留当前","Auto"),("线性过滤","Linear"),("最近邻","Nearest")],prefs.video_filter)
+        from .graphics_devices import adapter_rows, device_summary, graphics_inventory
+        rows, inventory_error = adapter_rows(prefs.render_adapter)
+        adapter = combo(advanced_form,'render_adapter','渲染显卡（Esc D3D，重启生效）',rows,prefs.render_adapter)
+        adapter.setObjectName('RenderAdapter')
+        adapter.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        adapter.setMinimumContentsLength(16)
+        diagnostics = QLabel(device_summary(host))
+        diagnostics.setWordWrap(True)
+        diagnostics.setObjectName('GraphicsDiagnostics')
+        diagnostics.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        advanced_form.addRow(diagnostics)
+        graphics_note = QLabel('主窗口 QOpenGLWidget 使用 WGL：显卡由 Windows/驱动决定，不能用 Qt Quick 的 D3D 选项切换。\n'
+            '上方选择用于 Esc 独立 D3D 设备；主窗口请在 Windows 图形设置选择此客户端，再重启并核对实际设备。\n'
+            + (('显卡枚举失败：'+inventory_error) if inventory_error else ''))
+        graphics_note.setWordWrap(True)
+        advanced_form.addRow(graphics_note)
+        refresh_graphics = QPushButton('刷新设备诊断')
+        def refresh_device_info():
+            graphics_inventory.cache_clear()
+            refreshed, error = adapter_rows(adapter.currentData())
+            selected = adapter.currentData()
+            adapter.clear()
+            for label,value in refreshed:adapter.addItem(label,value)
+            adapter.setCurrentIndex(max(0,adapter.findData(selected)))
+            diagnostics.setText(device_summary(host) + ('\n枚举失败：'+error if error else ''))
+        refresh_graphics.clicked.connect(refresh_device_info)
+        advanced_form.addRow(refresh_graphics)
+        if os.name == 'nt':
+            windows_graphics = QPushButton('打开 Windows 图形设置（主窗口 OpenGL）')
+            def open_windows_graphics():
+                from PySide6.QtGui import QDesktopServices
+                from PySide6.QtCore import QUrl
+                QDesktopServices.openUrl(QUrl('ms-settings:display-advancedgraphics'))
+            windows_graphics.clicked.connect(open_windows_graphics)
+            advanced_form.addRow(windows_graphics)
         quality=QComboBox();quality.addItems(("自定义","低（图传720p / 无MSAA）","中（图传1080p / 2× MSAA）","高（原生图传 / 4× MSAA）"))
         from .settings_ui import SettingsRow
         advanced_form.insertRow(0,SettingsRow(QLabel("画面质量"),quality))
@@ -250,7 +291,7 @@ def open_video_settings(host, embedded=False):
             updated=validate_preferences({key:widget.currentData() for key,widget in controls.items()})
             apply_window_settings(host,updated)
             save_preferences(updated)
-            status.setText("已应用窗口/图传/帧率设置；VSync和MSAA需重启客户端后生效。液态玻璃未更改。")
+            status.setText("已保存设置；渲染显卡/VSync/MSAA需重启。OpenGL由Windows/驱动控制，请核对实际设备。液态玻璃未更改。")
         def apply_changes():
             try:
                 apply_draft()

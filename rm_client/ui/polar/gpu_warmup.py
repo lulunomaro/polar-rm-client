@@ -7,7 +7,7 @@ elapsed work. No timer, thread or upload starts during construction.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable, Iterator, Protocol
 
 WarmupJob = tuple[str, tuple[Any, ...], dict[str, Any]]
@@ -24,11 +24,14 @@ class GpuWarmupQueue:
     last_ms: float = 0.0
     max_ms: float = 0.0
     completed: bool = False
+    _steps: Iterator | None = field(default=None, repr=False)
+    _steps_owner: Iterator | None = field(default=None, repr=False)
 
     def replace(self, jobs: Iterator[WarmupJob]) -> None:
         """Replace queued work without consuming or running either iterator."""
         self.pending = jobs
         self.completed = False
+        self._steps = self._steps_owner = None
 
     def run_slice(
         self,
@@ -54,8 +57,22 @@ class GpuWarmupQueue:
             # A driver upload cannot be preempted. One job may exceed 3 ms;
             # report its actual duration rather than the scheduling target.
             while clock() - started < 0.003:
+                if self._steps_owner is jobs and self._steps is not None:
+                    try:
+                        next(self._steps)
+                    except StopIteration:
+                        self._steps = self._steps_owner = None
+                        break
+                    if self.pending is not jobs:
+                        break
+                    continue
                 kind, args, kwargs = next(jobs)
                 if kind == "text":
+                    prepare = getattr(uploads, 'prewarm_steps', None)
+                    if callable(prepare):
+                        self._steps = iter(prepare(*args, **kwargs))
+                        self._steps_owner = jobs
+                        continue
                     uploads.prewarm(*args, **kwargs)
                 elif kind == "image":
                     uploads.prewarm_images(*args)
@@ -65,6 +82,7 @@ class GpuWarmupQueue:
             self.completed = True
         except Exception as exc:
             self.pending = None
+            self._steps = self._steps_owner = None
             self.completed = False
             report_error(exc)
         finally:

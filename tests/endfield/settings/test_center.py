@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 ROOT = Path(__file__).resolve().parents[3]
@@ -43,6 +44,42 @@ class EndfieldSettingsTests(unittest.TestCase):
         self.host.auto_save_config.assert_not_called()
         self.host.backend.arm_match.assert_not_called()
 
+    def test_header_single_click_switches_pages_even_during_previous_fade(self):
+        self.host.show()
+        self.dialog.show()
+        QTest.qWait(550)
+        bar = self.dialog.navigation
+        selected = []
+        self.dialog.tabs.currentChanged.connect(selected.append)
+        targets = (1, 2, 3, 4, 5, 0, 1)
+        for index in targets:
+            QTest.mouseClick(bar, Qt.MouseButton.LeftButton, pos=bar.tabRect(index).center())
+            self.assertEqual(bar.currentIndex(), index)
+            self.assertEqual(self.dialog.tabs.currentIndex(), index)
+        self.assertEqual(selected, list(targets))
+        self.host.auto_save_config.assert_not_called()
+        self.host.backend.arm_match.assert_not_called()
+
+    def test_display_mode_is_staged_then_apply_switches_window_both_ways(self):
+        from rm_client.ui import cs2_video_settings as video
+        self.host.show()
+        self.dialog.show()
+        QTest.qWait(550)
+        mode = self.dialog.tabs.widget(0).controls["window_mode"]
+        with patch.object(video, "save_preferences") as save:
+            for value, fullscreen in (("Borderless", True), ("Windowed", False)):
+                before = self.host.isFullScreen()
+                mode.setCurrentIndex(mode.findData(value))
+                self.assertEqual(self.host.isFullScreen(), before)
+                self.assertIn("应用当前页", self.dialog.status.text())
+                self.assertIn(mode.currentText(), self.dialog.status.text())
+                QTest.mouseClick(self.dialog.apply_button, Qt.MouseButton.LeftButton)
+                QTest.qWait(80)
+                self.assertEqual(self.host.isFullScreen(), fullscreen)
+                self.assertEqual(save.call_args.args[0].window_mode, value)
+                self.assertIn("已应用", self.dialog.status.text())
+        self.host.backend.arm_match.assert_not_called()
+
     def test_video_rows_fill_wide_page_and_remain_readable_in_small_window(self):
         self.dialog.show()
         for width, height in ((1920,1080), (1000,620), (1280,720)):
@@ -74,7 +111,8 @@ class EndfieldSettingsTests(unittest.TestCase):
                             QTest.qWait(10)
                     video = dialog.tabs.widget(0)
                     rows = video.findChildren(SettingsRow)
-                    self.assertEqual(len(rows),11)
+                    self.assertEqual(len(rows),12)  # Includes the new rendering-adapter row.
+                    self.assertTrue(any(row.control.objectName()=='RenderAdapter' for row in rows))
                     self.assertEqual(dialog.size(),self.host.size())
                     for row in rows:
                         self.assertGreater(row.width(),video.width()*.9,row.label.text())

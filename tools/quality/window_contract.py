@@ -90,6 +90,16 @@ def load_contract(path: Path, baseline: dict) -> dict:
         if not isinstance(evidence, list) or not evidence or not all(isinstance(item, str) and ":" in item for item in evidence):
             raise ValueError(f"Private member lacks caller evidence: {name}")
     validate_private_retirements(contract, baseline)
+    for name, record in contract.get('frontend_implementations', {}).items():
+        if name.startswith('_') or name not in baseline['members']:
+            raise ValueError(f'Invalid frontend implementation: {name}')
+        if not record.get('reason') or not record.get('behavior_test'):
+            raise ValueError(f'Frontend implementation lacks behavior evidence: {name}')
+        expected = record.get('expected', {})
+        if not {'kind', 'type', 'sig'} <= expected.keys() or set(expected)-{'kind','type','sig','call_signature'}:
+            raise ValueError(f'Invalid frontend implementation evidence: {name}')
+        if expected['kind'] in PYTHON_CALLABLE_KINDS and not expected.get('call_signature'):
+            raise ValueError(f'Frontend override lacks call signature: {name}')
     for name, evidence in contract.get("removed_feature_members", {}).items():
         if name not in baseline["members"] or name.startswith("_"):
             raise ValueError(f"Invalid removed feature member: {name}")
@@ -130,6 +140,12 @@ def compatibility_snapshots(baseline: dict, current: dict, contract: dict) -> tu
             before[name] = dict(baseline["members"][name])
         if name in current["members"]:
             after[name] = dict(current["members"][name])
+            implementation = contract.get('frontend_implementations', {}).get(name)
+            if implementation and all(after[name].get(key) == value
+                                      for key, value in implementation['expected'].items()):
+                # Exact reviewed UI additions, not arbitrary type/name or
+                # signature exemptions. Historical evidence remains immutable.
+                after[name] = dict(before[name])
             if not before.get(name, {}).get("volatile"):
                 after[name].pop("volatile", None)
         if name in contract["python_signatures"]:

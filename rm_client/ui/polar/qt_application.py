@@ -80,6 +80,9 @@ def launch_qt_application(window_factory: Callable[[], QWidget]) -> None:
         # Configure swaps from the saved preference before creating any GL
         # context. The window's frame scheduler separately controls HUD updates.
         from ..cs2_video_settings import configure_surface
+        from ..cs2_video_settings import current_preferences
+        from ..graphics_devices import configure_process_graphics
+        configure_process_graphics(current_preferences().render_adapter)
         configure_surface(surface)
         surface.setDepthBufferSize(0)
         surface.setStencilBufferSize(0)

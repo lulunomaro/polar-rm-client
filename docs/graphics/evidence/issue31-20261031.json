@@ -1,0 +1,2546 @@
+{
+  "date": "2026-10-31",
+  "functional_commit": "f5e0362",
+  "baseline_commit": "b8a5857",
+  "scope": "Selected integration regressions and same-host desktop synthetic-video startup. Not real video/device/match qualification.",
+  "regression": {
+    "counts": {
+      "PASS": 75,
+      "SKIP": 0,
+      "INCOMPLETE": 0,
+      "FAIL": 0
+    },
+    "unit_tests": 693,
+    "script_assertions": 204,
+    "source_stability": {
+      "schema_version": 1,
+      "status": "PASS",
+      "detail": "Declared verification source inputs have identical start/end fingerprints",
+      "scope": {
+        "directories": [
+          "rm_client",
+          "tests",
+          "tools",
+          "configs"
+        ],
+        "suffixes": [
+          ".bat",
+          ".c",
+          ".cfg",
+          ".cpp",
+          ".h",
+          ".hpp",
+          ".ini",
+          ".json",
+          ".ps1",
+          ".py",
+          ".spec",
+          ".toml",
+          ".yaml",
+          ".yml"
+        ],
+        "all_file_directories": [
+          "tests/fixtures"
+        ],
+        "root_files": [
+          "main.py",
+          "requirements*.txt"
+        ],
+        "exclusions": [
+          "hidden directories",
+          "__pycache__"
+        ],
+        "limits": "Start/end comparison only; includes all internal tests/fixtures files; excludes assets outside that fixture directory, external fixtures, installed packages and transient edits restored between captures."
+      },
+      "before": {
+        "status": "available",
+        "sha256": "4fa16a2bce846d36cf17aaf73cd5b284df973b7571827a21858b63dbde49f6c1",
+        "file_count": 1042
+      },
+      "after": {
+        "status": "available",
+        "sha256": "4fa16a2bce846d36cf17aaf73cd5b284df973b7571827a21858b63dbde49f6c1",
+        "file_count": 1042
+      }
+    },
+    "results": [
+      {
+        "id": "tests/api_freeze_test",
+        "path": "tests/api_freeze_test.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "1 explicit assertions passed",
+        "tests_run": null,
+        "checks_passed": 1,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 3.078,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/backend_protocol_test",
+        "path": "tests/backend_protocol_test.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "declared script completion verified (203 counted assertions)",
+        "tests_run": null,
+        "checks_passed": 203,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 4.234,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/settings/test_center",
+        "path": "tests/endfield/settings/test_center.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 22.937,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/settings/test_dropdown",
+        "path": "tests/endfield/settings/test_dropdown.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "5 unittest tests passed",
+        "tests_run": 5,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 3.672,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/settings/test_geometry",
+        "path": "tests/endfield/settings/test_geometry.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "11 unittest tests passed",
+        "tests_run": 11,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 29.203,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/settings/test_keybinds",
+        "path": "tests/endfield/settings/test_keybinds.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "11 unittest tests passed",
+        "tests_run": 11,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 9.344,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/settings/test_return_to_menu",
+        "path": "tests/endfield/settings/test_return_to_menu.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "1 unittest tests passed",
+        "tests_run": 1,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 3.672,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/settings/test_scroll",
+        "path": "tests/endfield/settings/test_scroll.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.734,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_endfield_backdrop",
+        "path": "tests/endfield/test_endfield_backdrop.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "4 unittest tests passed",
+        "tests_run": 4,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.641,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_endfield_boot",
+        "path": "tests/endfield/test_endfield_boot.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "2 unittest tests passed",
+        "tests_run": 2,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.234,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_endfield_bundled_pack",
+        "path": "tests/endfield/test_endfield_bundled_pack.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "3 unittest tests passed",
+        "tests_run": 3,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.438,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_endfield_changelog",
+        "path": "tests/endfield/test_endfield_changelog.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "3 unittest tests passed",
+        "tests_run": 3,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.312,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_endfield_delivery",
+        "path": "tests/endfield/test_endfield_delivery.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.688,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_endfield_menu",
+        "path": "tests/endfield/test_endfield_menu.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "15 unittest tests passed",
+        "tests_run": 15,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.531,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_endfield_native",
+        "path": "tests/endfield/test_endfield_native.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.25,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_endfield_pack_setup",
+        "path": "tests/endfield/test_endfield_pack_setup.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "14 unittest tests passed",
+        "tests_run": 14,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.563,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_endfield_presentation",
+        "path": "tests/endfield/test_endfield_presentation.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.25,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_endfield_runtime_import",
+        "path": "tests/endfield/test_endfield_runtime_import.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "5 unittest tests passed",
+        "tests_run": 5,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.156,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_original_changelog",
+        "path": "tests/endfield/test_original_changelog.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 12.547,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/test_renderer_pack_priority",
+        "path": "tests/endfield/test_renderer_pack_priority.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "3 unittest tests passed",
+        "tests_run": 3,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.359,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/wiki/test_assets",
+        "path": "tests/endfield/wiki/test_assets.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "3 unittest tests passed",
+        "tests_run": 3,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.0,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/wiki/test_ime",
+        "path": "tests/endfield/wiki/test_ime.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "3 unittest tests passed",
+        "tests_run": 3,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.328,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/endfield/wiki/test_terminal",
+        "path": "tests/endfield/wiki/test_terminal.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "63 unittest tests passed",
+        "tests_run": 63,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 12.5,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_cached_window_layers",
+        "path": "tests/test_cached_window_layers.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "3 unittest tests passed",
+        "tests_run": 3,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 15.75,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_cs2_crosshair_import",
+        "path": "tests/test_cs2_crosshair_import.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "23 unittest tests passed",
+        "tests_run": 23,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 5.61,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_cs2_settings_center",
+        "path": "tests/test_cs2_settings_center.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "13 unittest tests passed",
+        "tests_run": 13,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.39,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_emergency_action_failures",
+        "path": "tests/test_emergency_action_failures.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "7 unittest tests passed",
+        "tests_run": 7,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.922,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_emergency_shortcut_lifetime",
+        "path": "tests/test_emergency_shortcut_lifetime.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "7 unittest tests passed",
+        "tests_run": 7,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.891,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_frame_telemetry",
+        "path": "tests/test_frame_telemetry.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "5 unittest tests passed",
+        "tests_run": 5,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.187,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_frame_telemetry_contract",
+        "path": "tests/test_frame_telemetry_contract.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "6 unittest tests passed",
+        "tests_run": 6,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.235,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_fullscreen_composition",
+        "path": "tests/test_fullscreen_composition.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "15 unittest tests passed",
+        "tests_run": 15,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.39,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_fullscreen_input_extended",
+        "path": "tests/test_fullscreen_input_extended.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "14 unittest tests passed",
+        "tests_run": 14,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 3.125,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_gpu_command_collection_lifetime",
+        "path": "tests/test_gpu_command_collection_lifetime.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "4 unittest tests passed",
+        "tests_run": 4,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 5.313,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_gpu_command_frame_rejection",
+        "path": "tests/test_gpu_command_frame_rejection.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.469,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_gpu_warmup_budget",
+        "path": "tests/test_gpu_warmup_budget.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "11 unittest tests passed",
+        "tests_run": 11,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.515,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_gpu_warmup_contract",
+        "path": "tests/test_gpu_warmup_contract.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "10 unittest tests passed",
+        "tests_run": 10,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 3.11,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_gpu_warmup_owner",
+        "path": "tests/test_gpu_warmup_owner.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "10 unittest tests passed",
+        "tests_run": 10,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.234,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_hero_deployment_removed",
+        "path": "tests/test_hero_deployment_removed.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "3 unittest tests passed",
+        "tests_run": 3,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.75,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_issue27_graphics",
+        "path": "tests/test_issue27_graphics.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "15 unittest tests passed",
+        "tests_run": 15,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 1.125,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_jello_atlas_pages",
+        "path": "tests/test_jello_atlas_pages.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "10 unittest tests passed",
+        "tests_run": 10,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.609,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_jello_resource_pack",
+        "path": "tests/test_jello_resource_pack.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "9 unittest tests passed",
+        "tests_run": 9,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 1.094,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_minecraft_cjk_readability",
+        "path": "tests/test_minecraft_cjk_readability.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "11 unittest tests passed",
+        "tests_run": 11,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 1.718,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_minecraft_lossless_upload_crop",
+        "path": "tests/test_minecraft_lossless_upload_crop.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "1 unittest tests passed",
+        "tests_run": 1,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 3.579,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_normal_video_timeline",
+        "path": "tests/test_normal_video_timeline.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "18 unittest tests passed",
+        "tests_run": 18,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.218,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_qt_launch_abort",
+        "path": "tests/test_qt_launch_abort.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "7 unittest tests passed",
+        "tests_run": 7,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.282,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_render_performance_regressions",
+        "path": "tests/test_render_performance_regressions.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "15 unittest tests passed",
+        "tests_run": 15,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.406,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_settings_cold_start",
+        "path": "tests/test_settings_cold_start.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "14 unittest tests passed",
+        "tests_run": 14,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 18.234,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_settings_configuration_quiescence",
+        "path": "tests/test_settings_configuration_quiescence.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "4 unittest tests passed",
+        "tests_run": 4,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 3.469,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_settings_host_close",
+        "path": "tests/test_settings_host_close.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "9 unittest tests passed",
+        "tests_run": 9,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 6.156,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_startup_activation",
+        "path": "tests/test_startup_activation.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "7 unittest tests passed",
+        "tests_run": 7,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.265,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_startup_activation_adapter",
+        "path": "tests/test_startup_activation_adapter.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "3 unittest tests passed",
+        "tests_run": 3,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.344,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_startup_confirmation_repeat",
+        "path": "tests/test_startup_confirmation_repeat.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.625,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_startup_display_locale",
+        "path": "tests/test_startup_display_locale.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "10 unittest tests passed",
+        "tests_run": 10,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 1.906,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_startup_glyph_slices",
+        "path": "tests/test_startup_glyph_slices.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "11 unittest tests passed",
+        "tests_run": 11,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.375,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_startup_navigation",
+        "path": "tests/test_startup_navigation.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "9 unittest tests passed",
+        "tests_run": 9,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.235,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_startup_navigation_contract",
+        "path": "tests/test_startup_navigation_contract.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "6 unittest tests passed",
+        "tests_run": 6,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.609,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_startup_settings_fullscreen",
+        "path": "tests/test_startup_settings_fullscreen.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "19 unittest tests passed",
+        "tests_run": 19,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 9.141,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_startup_texture_ownership",
+        "path": "tests/test_startup_texture_ownership.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "5 unittest tests passed",
+        "tests_run": 5,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.297,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_tick_controller",
+        "path": "tests/test_tick_controller.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "14 unittest tests passed",
+        "tests_run": 14,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.172,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_ui_cjk_font_readability",
+        "path": "tests/test_ui_cjk_font_readability.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "17 unittest tests passed",
+        "tests_run": 17,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.375,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_ui_switch",
+        "path": "tests/test_ui_switch.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.703,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_video_close_ownership",
+        "path": "tests/test_video_close_ownership.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 1.859,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_video_generation_selection",
+        "path": "tests/test_video_generation_selection.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "3 unittest tests passed",
+        "tests_run": 3,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.718,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_video_reconnect",
+        "path": "tests/test_video_reconnect.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "6 unittest tests passed",
+        "tests_run": 6,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.454,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_video_recovery",
+        "path": "tests/test_video_recovery.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "6 unittest tests passed",
+        "tests_run": 6,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.156,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_video_recovery_admission",
+        "path": "tests/test_video_recovery_admission.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "4 unittest tests passed",
+        "tests_run": 4,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.547,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_video_source_retry_admission",
+        "path": "tests/test_video_source_retry_admission.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "2 unittest tests passed",
+        "tests_run": 2,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.609,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_video_source_snapshot",
+        "path": "tests/test_video_source_snapshot.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "5 unittest tests passed",
+        "tests_run": 5,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.469,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_video_source_snapshot_evidence",
+        "path": "tests/test_video_source_snapshot_evidence.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "3 unittest tests passed",
+        "tests_run": 3,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.328,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_video_stop_nonblocking",
+        "path": "tests/test_video_stop_nonblocking.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "7 unittest tests passed",
+        "tests_run": 7,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.297,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_window_api_contract",
+        "path": "tests/test_window_api_contract.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "44 unittest tests passed",
+        "tests_run": 44,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.75,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_window_assembly",
+        "path": "tests/test_window_assembly.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "12 unittest tests passed",
+        "tests_run": 12,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.406,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/test_window_economy_commands",
+        "path": "tests/test_window_economy_commands.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "8 unittest tests passed",
+        "tests_run": 8,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 2.547,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/top_match_bar_minecraft_fusion_test",
+        "path": "tests/top_match_bar_minecraft_fusion_test.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "20 unittest tests passed",
+        "tests_run": 20,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 1.984,
+        "expected_failures": 0
+      },
+      {
+        "id": "tests/video/test_video_package",
+        "path": "tests/video/test_video_package.py",
+        "category": "offline",
+        "evidence": "offline assertions only; no physical hardware qualification",
+        "status": "PASS",
+        "detail": "2 unittest tests passed",
+        "tests_run": 2,
+        "checks_passed": 0,
+        "skipped": 0,
+        "returncode": 0,
+        "duration_s": 0.25,
+        "expected_failures": 0
+      }
+    ]
+  },
+  "startup": {
+    "final-before": {
+      "scene": "startup",
+      "size": [
+        2560,
+        1440
+      ],
+      "dpr": 1.0,
+      "fps_limit": 90,
+      "vsync": 0,
+      "driver": {
+        "vendor": "NVIDIA Corporation",
+        "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+        "version": "3.3.0 NVIDIA 596.21"
+      },
+      "metrics": {
+        "gpu_static_ui_key": {
+          "count": 543,
+          "mean_ms": 0.01096869240742512,
+          "median_ms": 0.00960000033956021,
+          "p95_ms": 0.014700000974698924,
+          "p99_ms": 0.03739999920071568,
+          "max_ms": 0.15619999976479448
+        },
+        "paint_gpu_background": {
+          "count": 543,
+          "mean_ms": 0.04933057090671241,
+          "median_ms": 0.04400000034365803,
+          "p95_ms": 0.07390000064333435,
+          "p99_ms": 0.13670000043930486,
+          "max_ms": 1.0136000000784406
+        },
+        "clickgui.prepare_frame": {
+          "count": 543,
+          "mean_ms": 0.030602025780023905,
+          "median_ms": 0.027099998987978324,
+          "p95_ms": 0.043000000005122274,
+          "p99_ms": 0.08650000017951243,
+          "max_ms": 0.7112999992386904
+        },
+        "clickgui.render": {
+          "count": 543,
+          "mean_ms": 0.1777767955737875,
+          "median_ms": 0.16069999946921598,
+          "p95_ms": 0.2750999992713332,
+          "p99_ms": 0.44809999963035807,
+          "max_ms": 1.1021999998774845
+        },
+        "compositor.prepare_blur": {
+          "count": 543,
+          "mean_ms": 0.0014513812291199637,
+          "median_ms": 0.0013000008038943633,
+          "p95_ms": 0.0018999999156221747,
+          "p99_ms": 0.0027999994927085936,
+          "max_ms": 0.02860000131477136
+        },
+        "compositor.render_glass": {
+          "count": 1086,
+          "mean_ms": 0.1291074585546483,
+          "median_ms": 0.13784999919153051,
+          "p95_ms": 0.3113999991910532,
+          "p99_ms": 0.5032999997638399,
+          "max_ms": 1.3858000002073823
+        },
+        "compositor.prepare_treated_backdrop": {
+          "count": 543,
+          "mean_ms": 0.0018558010893788542,
+          "median_ms": 0.0017999991541728377,
+          "p95_ms": 0.0024000000848900527,
+          "p99_ms": 0.003099999958067201,
+          "max_ms": 0.02499999936844688
+        },
+        "compositor.present": {
+          "count": 543,
+          "mean_ms": 0.025451381170200734,
+          "median_ms": 0.02320000021427404,
+          "p95_ms": 0.03730000025825575,
+          "p99_ms": 0.067299999500392,
+          "max_ms": 0.17889999980980065
+        },
+        "paintGL": {
+          "count": 543,
+          "mean_ms": 0.9216022099314461,
+          "median_ms": 0.8617000003141584,
+          "p95_ms": 1.3140000010025688,
+          "p99_ms": 1.9412000001466367,
+          "max_ms": 2.355300000999705
+        },
+        "on_tick": {
+          "count": 792,
+          "mean_ms": 0.7282534091158632,
+          "median_ms": 0.5981999993309728,
+          "p95_ms": 1.5700000003562309,
+          "p99_ms": 2.3046999995131046,
+          "max_ms": 3.226400000130525
+        },
+        "present_interval": {
+          "count": 542,
+          "mean_ms": 22.126811808119214,
+          "median_ms": 12.443249999705586,
+          "p95_ms": 73.40020000083314,
+          "p99_ms": 254.01330000022426,
+          "max_ms": 295.546800000011
+        }
+      },
+      "source_sha256": {
+        "rm_client/ui/polar_app.py": "1003b193d03fd0f029bd484a7da30fb9d4623c578f813d39525f65a0e4b9ee07",
+        "rm_client/ui/minecraft_hud.py": "0ff67e47d0f06ef7982732b45df4b7a4221d64023e8aedfa597942efff6a57ff",
+        "rm_client/ui/clickgui_gpu.py": "035b0a4594733bb1abb3788478af3cbac969cc7f9713a597d633e9cbd9ff2f18",
+        "rm_client/ui/polar/gpu_warmup.py": "15af057aa99ddf1de4649aec57bd832e663e53333fa76543d188f88faa4f2025",
+        "rm_client/ui/polar/renderers/combat_target_hud.py": "694d95f97c0e1816d98cff8cafeb74f765b9a44f9713ab5422aaaba0f0ea502a",
+        "rm_client/ui/endfield/menu/native.py": "789374d97aaf6e2ca811755844c4cb779c14c824f1af71618b56278eb296da9a",
+        "rm_client/ui/endfield/menu/assets/native_renderer/CURRENT.json": "aedb61de41bdba2d5f5946e444067f5f6b0e628b97784c2fd268789936d49ece"
+      },
+      "probe_sha256": "1d83da6f49a4c9f89ffe97029235a42e6e6f18cec16f03aaae7d1f212ede732e",
+      "cpu_one_core_mean_percent": 77.10725795762123,
+      "gpu_counter_error": "",
+      "phases_ms": {
+        "ui_imported": 1890.3362000000925,
+        "application_created": 1936.2958000001527,
+        "window_constructed": 3139.8296000006667,
+        "first_swap": 5345.488000000842,
+        "show_returned": 5371.999599999981
+      },
+      "warmup_max_ms": 277.1866000002774,
+      "warmup_completed": false,
+      "top_long_events": [
+        {
+          "at_ms": 4174.9846000002435,
+          "duration_ms": 1065.2413000007073,
+          "receiver": "ProbeWindow",
+          "event": 14
+        },
+        {
+          "at_ms": 4548.554400000285,
+          "duration_ms": 691.6441000012128,
+          "receiver": "ProbeWindow",
+          "event": 12
+        },
+        {
+          "at_ms": 9117.588300001444,
+          "duration_ms": 277.3051999993186,
+          "receiver": "QWindowsGuiEventDispatcher",
+          "event": 1
+        },
+        {
+          "at_ms": 9117.60360000153,
+          "duration_ms": 277.2614999994403,
+          "receiver": "QTimer",
+          "event": 1
+        },
+        {
+          "at_ms": 5493.337500000052,
+          "duration_ms": 270.0211000010313,
+          "receiver": "QWindowsGuiEventDispatcher",
+          "event": 1
+        },
+        {
+          "at_ms": 5493.349300000773,
+          "duration_ms": 269.97540000047593,
+          "receiver": "QTimer",
+          "event": 1
+        },
+        {
+          "at_ms": 9907.562100001087,
+          "duration_ms": 269.4446000004973,
+          "receiver": "QWindowsGuiEventDispatcher",
+          "event": 1
+        },
+        {
+          "at_ms": 9907.598400001007,
+          "duration_ms": 269.38329999939015,
+          "receiver": "QTimer",
+          "event": 1
+        },
+        {
+          "at_ms": 7642.083800001274,
+          "duration_ms": 267.53999999891676,
+          "receiver": "QWindowsGuiEventDispatcher",
+          "event": 1
+        },
+        {
+          "at_ms": 7642.107400000896,
+          "duration_ms": 267.4900999991223,
+          "receiver": "QTimer",
+          "event": 1
+        },
+        {
+          "at_ms": 9624.779700001454,
+          "duration_ms": 265.3493999987404,
+          "receiver": "QWindowsGuiEventDispatcher",
+          "event": 1
+        },
+        {
+          "at_ms": 9624.814800001332,
+          "duration_ms": 265.28890000008687,
+          "receiver": "QTimer",
+          "event": 1
+        }
+      ],
+      "long_events_over_8ms": 108,
+      "raw_metrics_sha256": "774615a15eecdd6c8149ad749fcd8c0c2f90cff49a3d06caf00d638a1ba3e2bf",
+      "utilization_summary": {
+        "cpu_one_core_percent": {
+          "samples": 24,
+          "mean": 77.10725795762123,
+          "p95": 98.6923776206006,
+          "max": 157.03684697745234
+        },
+        "gpu_engines_percent": {
+          "luid_0x00000000_0x00014F7E_phys_0_eng_0_engtype_3D": {
+            "samples": 23,
+            "mean": 3.112876218243887,
+            "p95": 4.73301269695826,
+            "max": 5.162661713732413
+          },
+          "luid_0x00000000_0x00014F7E_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 23,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          }
+        },
+        "scope": "Each actually sampled PDH engine separately; never summed. Absent engines have no entry, not an invented zero. Raw traces identified by SHA256."
+      }
+    },
+    "final-after": {
+      "scene": "startup",
+      "size": [
+        2560,
+        1440
+      ],
+      "dpr": 1.0,
+      "fps_limit": 90,
+      "vsync": 0,
+      "driver": {
+        "vendor": "NVIDIA Corporation",
+        "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+        "version": "3.3.0 NVIDIA 596.21"
+      },
+      "metrics": {
+        "gpu_static_ui_key": {
+          "count": 902,
+          "mean_ms": 0.012594900186930704,
+          "median_ms": 0.010599998859106563,
+          "p95_ms": 0.0166000008903211,
+          "p99_ms": 0.0351999988197349,
+          "max_ms": 0.9903999998641666
+        },
+        "paint_gpu_background": {
+          "count": 902,
+          "mean_ms": 0.055136807094501826,
+          "median_ms": 0.04619999890564941,
+          "p95_ms": 0.08399999933317304,
+          "p99_ms": 0.161899999511661,
+          "max_ms": 1.2074999995093094
+        },
+        "clickgui.prepare_frame": {
+          "count": 902,
+          "mean_ms": 0.01750487802497797,
+          "median_ms": 0.014500001270789653,
+          "p95_ms": 0.04369999987829942,
+          "p99_ms": 0.06450000000768341,
+          "max_ms": 0.15150000035646372
+        },
+        "clickgui.render": {
+          "count": 902,
+          "mean_ms": 0.19937128601624154,
+          "median_ms": 0.16630000027362257,
+          "p95_ms": 0.4270999997970648,
+          "p99_ms": 0.705000000380096,
+          "max_ms": 1.177300000563264
+        },
+        "compositor.prepare_blur": {
+          "count": 902,
+          "mean_ms": 0.0014203991135795283,
+          "median_ms": 0.0012999989849049598,
+          "p95_ms": 0.0018999999156221747,
+          "p99_ms": 0.00270000055024866,
+          "max_ms": 0.04690000059781596
+        },
+        "compositor.render_glass": {
+          "count": 1804,
+          "mean_ms": 0.12440776054002964,
+          "median_ms": 0.1339999998890562,
+          "p95_ms": 0.3333000004204223,
+          "p99_ms": 0.5163000005268259,
+          "max_ms": 1.5168000008998206
+        },
+        "compositor.prepare_treated_backdrop": {
+          "count": 902,
+          "mean_ms": 0.0019221729185129413,
+          "median_ms": 0.0015999994502635673,
+          "p95_ms": 0.0029000002541579306,
+          "p99_ms": 0.004200001058052294,
+          "max_ms": 0.04720000106317457
+        },
+        "compositor.present": {
+          "count": 902,
+          "mean_ms": 0.02630388024008506,
+          "median_ms": 0.022700000045006163,
+          "p95_ms": 0.04050000097777229,
+          "p99_ms": 0.07959999857121147,
+          "max_ms": 0.2488999998604413
+        },
+        "paintGL": {
+          "count": 902,
+          "mean_ms": 0.955945343642869,
+          "median_ms": 0.8611499997641658,
+          "p95_ms": 1.5512999998463783,
+          "p99_ms": 2.1684000003006076,
+          "max_ms": 3.8284999991446966
+        },
+        "on_tick": {
+          "count": 1387,
+          "mean_ms": 0.781382480196639,
+          "median_ms": 0.565199999982724,
+          "p95_ms": 1.8297000005986774,
+          "p99_ms": 2.6668999998946674,
+          "max_ms": 4.053099999509868
+        },
+        "present_interval": {
+          "count": 901,
+          "mean_ms": 13.298788790234337,
+          "median_ms": 12.953299999935552,
+          "p95_ms": 21.899899998970795,
+          "p99_ms": 27.759700000387966,
+          "max_ms": 379.6313000002556
+        }
+      },
+      "source_sha256": {
+        "rm_client/ui/polar_app.py": "1003b193d03fd0f029bd484a7da30fb9d4623c578f813d39525f65a0e4b9ee07",
+        "rm_client/ui/minecraft_hud.py": "0ff67e47d0f06ef7982732b45df4b7a4221d64023e8aedfa597942efff6a57ff",
+        "rm_client/ui/clickgui_gpu.py": "72871ac54bd603687414762504614b5a0e73aed059b1991815002b6a3d20ad6f",
+        "rm_client/ui/polar/gpu_warmup.py": "870401cf96d08404aff99ae0ff37d337d71f57ab05e5be2894df519c5592a4c4",
+        "rm_client/ui/polar/renderers/combat_target_hud.py": "694d95f97c0e1816d98cff8cafeb74f765b9a44f9713ab5422aaaba0f0ea502a",
+        "rm_client/ui/endfield/menu/native.py": "789374d97aaf6e2ca811755844c4cb779c14c824f1af71618b56278eb296da9a",
+        "rm_client/ui/endfield/menu/assets/native_renderer/CURRENT.json": "2d67031b3bc8b9663537742b362f9915a3f851775547e2436d751e345ba91d82"
+      },
+      "probe_sha256": "1d83da6f49a4c9f89ffe97029235a42e6e6f18cec16f03aaae7d1f212ede732e",
+      "cpu_one_core_mean_percent": 79.7340360737874,
+      "gpu_counter_error": "",
+      "phases_ms": {
+        "ui_imported": 704.2057999988174,
+        "application_created": 759.2140999986441,
+        "window_constructed": 1779.2462999987038,
+        "first_swap": 3691.2728999996034,
+        "show_returned": 3703.098299998601
+      },
+      "warmup_max_ms": 8.940300000176649,
+      "warmup_completed": false,
+      "top_long_events": [
+        {
+          "at_ms": 2590.3230999992957,
+          "duration_ms": 984.2131999994308,
+          "receiver": "ProbeWindow",
+          "event": 14
+        },
+        {
+          "at_ms": 2718.173899998874,
+          "duration_ms": 856.3174000009894,
+          "receiver": "ProbeWindow",
+          "event": 12
+        },
+        {
+          "at_ms": 3811.1830999987433,
+          "duration_ms": 369.71380000068166,
+          "receiver": "ProbeWindow",
+          "event": 77
+        },
+        {
+          "at_ms": 3811.2016999984917,
+          "duration_ms": 367.9967000007309,
+          "receiver": "ProbeWindow",
+          "event": 12
+        },
+        {
+          "at_ms": 3756.1225999997987,
+          "duration_ms": 37.14099999888276,
+          "receiver": "QWindowsGuiEventDispatcher",
+          "event": 1
+        },
+        {
+          "at_ms": 3756.127699998615,
+          "duration_ms": 37.099299999681534,
+          "receiver": "QTimer",
+          "event": 1
+        },
+        {
+          "at_ms": 3704.389499998797,
+          "duration_ms": 23.84160000110569,
+          "receiver": "QObject",
+          "event": 43
+        },
+        {
+          "at_ms": 3671.177499998521,
+          "duration_ms": 20.123400001466507,
+          "receiver": "QWidgetWindow",
+          "event": 206
+        },
+        {
+          "at_ms": 3741.8708999994124,
+          "duration_ms": 13.62669999980426,
+          "receiver": "QObject",
+          "event": 43
+        },
+        {
+          "at_ms": 3728.6499999991065,
+          "duration_ms": 12.461500000426895,
+          "receiver": "QObject",
+          "event": 43
+        },
+        {
+          "at_ms": 15224.798799999917,
+          "duration_ms": 9.127100000114297,
+          "receiver": "QWindowsGuiEventDispatcher",
+          "event": 1
+        },
+        {
+          "at_ms": 15224.832099998821,
+          "duration_ms": 9.038199999849894,
+          "receiver": "QTimer",
+          "event": 1
+        }
+      ],
+      "long_events_over_8ms": 12,
+      "raw_metrics_sha256": "a6967bff5d468802cb8e66e62119d51b4b01a0dcf78f7ec5a5dafd6ff754d69b",
+      "utilization_summary": {
+        "cpu_one_core_percent": {
+          "samples": 24,
+          "mean": 79.7340360737874,
+          "p95": 147.84087399819512,
+          "max": 301.92518646859315
+        },
+        "gpu_engines_percent": {
+          "luid_0x00000000_0x00014F7E_phys_0_eng_0_engtype_3D": {
+            "samples": 23,
+            "mean": 3.6867153518585636,
+            "p95": 4.011536063230526,
+            "max": 4.218894110413282
+          },
+          "luid_0x00000000_0x00014F7E_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 23,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_0_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_10_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_11_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_12_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_13_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_14_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_15_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_16_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_17_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_18_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_19_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_1_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_20_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_21_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_22_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_23_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_24_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_25_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_26_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_27_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_28_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_29_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_2_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_30_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_31_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_32_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_3_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_4_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_5_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_6_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_7_engtype_3D": {
+            "samples": 21,
+            "mean": 0.00499912286557044,
+            "p95": 0.0,
+            "max": 0.10498158017697924
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_8_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_9_engtype_3D": {
+            "samples": 21,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          }
+        },
+        "scope": "Each actually sampled PDH engine separately; never summed. Absent engines have no entry, not an invented zero. Raw traces identified by SHA256."
+      }
+    },
+    "final-complete": {
+      "scene": "startup",
+      "size": [
+        2560,
+        1440
+      ],
+      "dpr": 1.0,
+      "fps_limit": 90,
+      "vsync": 0,
+      "driver": {
+        "vendor": "NVIDIA Corporation",
+        "renderer": "NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2",
+        "version": "3.3.0 NVIDIA 596.21"
+      },
+      "metrics": {
+        "gpu_static_ui_key": {
+          "count": 4993,
+          "mean_ms": 0.010046905662091462,
+          "median_ms": 0.0090000012278324,
+          "p95_ms": 0.013999999282532372,
+          "p99_ms": 0.0366000003850786,
+          "max_ms": 0.2398999986326089
+        },
+        "paint_gpu_background": {
+          "count": 4993,
+          "mean_ms": 0.0497259363274422,
+          "median_ms": 0.0441999982285779,
+          "p95_ms": 0.07349999941652641,
+          "p99_ms": 0.12910000077681616,
+          "max_ms": 1.1623000009421958
+        },
+        "clickgui.prepare_frame": {
+          "count": 4993,
+          "mean_ms": 0.03946527136564674,
+          "median_ms": 0.03710000055434648,
+          "p95_ms": 0.06030000076862052,
+          "p99_ms": 0.11810000069090165,
+          "max_ms": 7.518599999457365
+        },
+        "clickgui.render": {
+          "count": 4993,
+          "mean_ms": 0.18470506710563178,
+          "median_ms": 0.16219999997701962,
+          "p95_ms": 0.3113999991910532,
+          "p99_ms": 0.6252999992284458,
+          "max_ms": 1.427900000635418
+        },
+        "compositor.prepare_blur": {
+          "count": 4993,
+          "mean_ms": 0.0013877628691040134,
+          "median_ms": 0.0012999989849049598,
+          "p95_ms": 0.0018000009731622413,
+          "p99_ms": 0.002599999788799323,
+          "max_ms": 0.04129999979340937
+        },
+        "compositor.render_glass": {
+          "count": 9986,
+          "mean_ms": 0.1188015421481263,
+          "median_ms": 0.12450000031094532,
+          "p95_ms": 0.29429999995045364,
+          "p99_ms": 0.4139000011491589,
+          "max_ms": 1.5686999995523365
+        },
+        "compositor.prepare_treated_backdrop": {
+          "count": 4993,
+          "mean_ms": 0.0019528139443483923,
+          "median_ms": 0.0018999999156221747,
+          "p95_ms": 0.002499999027349986,
+          "p99_ms": 0.003200000719516538,
+          "max_ms": 0.09510000018053688
+        },
+        "compositor.present": {
+          "count": 4993,
+          "mean_ms": 0.026978590020371267,
+          "median_ms": 0.02370000038354192,
+          "p95_ms": 0.03600000127335079,
+          "p99_ms": 0.07080000068526715,
+          "max_ms": 1.2570999988383846
+        },
+        "paintGL": {
+          "count": 4993,
+          "mean_ms": 0.9137092930229482,
+          "median_ms": 0.8440000001428416,
+          "p95_ms": 1.4866999990772456,
+          "p99_ms": 1.9807999997283332,
+          "max_ms": 10.69880000068224
+        },
+        "on_tick": {
+          "count": 7245,
+          "mean_ms": 0.7137986059337197,
+          "median_ms": 0.6262999995669816,
+          "p95_ms": 1.5870999995968305,
+          "p99_ms": 2.134100001057959,
+          "max_ms": 3.9192999993247213
+        },
+        "present_interval": {
+          "count": 4992,
+          "mean_ms": 12.01663539663473,
+          "median_ms": 11.59044999985781,
+          "p95_ms": 20.285700000385987,
+          "p99_ms": 25.834399999439484,
+          "max_ms": 372.14160000075935
+        }
+      },
+      "source_sha256": {
+        "rm_client/ui/polar_app.py": "1003b193d03fd0f029bd484a7da30fb9d4623c578f813d39525f65a0e4b9ee07",
+        "rm_client/ui/minecraft_hud.py": "0ff67e47d0f06ef7982732b45df4b7a4221d64023e8aedfa597942efff6a57ff",
+        "rm_client/ui/clickgui_gpu.py": "72871ac54bd603687414762504614b5a0e73aed059b1991815002b6a3d20ad6f",
+        "rm_client/ui/polar/gpu_warmup.py": "870401cf96d08404aff99ae0ff37d337d71f57ab05e5be2894df519c5592a4c4",
+        "rm_client/ui/polar/renderers/combat_target_hud.py": "694d95f97c0e1816d98cff8cafeb74f765b9a44f9713ab5422aaaba0f0ea502a",
+        "rm_client/ui/endfield/menu/native.py": "789374d97aaf6e2ca811755844c4cb779c14c824f1af71618b56278eb296da9a",
+        "rm_client/ui/endfield/menu/assets/native_renderer/CURRENT.json": "2d67031b3bc8b9663537742b362f9915a3f851775547e2436d751e345ba91d82"
+      },
+      "probe_sha256": "1d83da6f49a4c9f89ffe97029235a42e6e6f18cec16f03aaae7d1f212ede732e",
+      "cpu_one_core_mean_percent": 53.76467240204536,
+      "gpu_counter_error": "",
+      "phases_ms": {
+        "ui_imported": 743.2957000000897,
+        "application_created": 835.0060000011581,
+        "window_constructed": 1866.629300000568,
+        "first_swap": 3223.8209000006464,
+        "show_returned": 3229.2981000009604
+      },
+      "warmup_max_ms": 49.17319999913161,
+      "warmup_completed": true,
+      "top_long_events": [
+        {
+          "at_ms": 2472.5577000008343,
+          "duration_ms": 646.7164999994566,
+          "receiver": "ProbeWindow",
+          "event": 14
+        },
+        {
+          "at_ms": 2549.2164000006596,
+          "duration_ms": 570.0121999998373,
+          "receiver": "ProbeWindow",
+          "event": 12
+        },
+        {
+          "at_ms": 3326.2501999997767,
+          "duration_ms": 364.62790000041423,
+          "receiver": "ProbeWindow",
+          "event": 77
+        },
+        {
+          "at_ms": 3326.2680000007094,
+          "duration_ms": 363.90380000011646,
+          "receiver": "ProbeWindow",
+          "event": 12
+        },
+        {
+          "at_ms": 60085.761600001206,
+          "duration_ms": 69.50569999935396,
+          "receiver": "ProbeWindow",
+          "event": 77
+        },
+        {
+          "at_ms": 60085.8019999996,
+          "duration_ms": 68.70590000107768,
+          "receiver": "ProbeWindow",
+          "event": 12
+        },
+        {
+          "at_ms": 27231.69130000133,
+          "duration_ms": 49.29399999855377,
+          "receiver": "QWindowsGuiEventDispatcher",
+          "event": 1
+        },
+        {
+          "at_ms": 27231.711800000994,
+          "duration_ms": 49.250000000029104,
+          "receiver": "QTimer",
+          "event": 1
+        },
+        {
+          "at_ms": 36114.906800001336,
+          "duration_ms": 39.63559999829158,
+          "receiver": "QWindowsGuiEventDispatcher",
+          "event": 1
+        },
+        {
+          "at_ms": 36114.94160000075,
+          "duration_ms": 39.57529999934195,
+          "receiver": "QTimer",
+          "event": 1
+        },
+        {
+          "at_ms": 27514.954399999624,
+          "duration_ms": 36.898400001518894,
+          "receiver": "QWindowsGuiEventDispatcher",
+          "event": 1
+        },
+        {
+          "at_ms": 27514.96550000047,
+          "duration_ms": 36.86779999952705,
+          "receiver": "QTimer",
+          "event": 1
+        }
+      ],
+      "long_events_over_8ms": 101,
+      "raw_metrics_sha256": "4103dcf01bf4dc431d62aff07d962433d2bd8f2445bccf158856082c29482681",
+      "utilization_summary": {
+        "cpu_one_core_percent": {
+          "samples": 120,
+          "mean": 53.76467240204536,
+          "p95": 87.54184500174547,
+          "max": 307.0894627874026
+        },
+        "gpu_engines_percent": {
+          "luid_0x00000000_0x00014F7E_phys_0_eng_0_engtype_3D": {
+            "samples": 119,
+            "mean": 3.3832391546598863,
+            "p95": 4.055704362554503,
+            "max": 5.09174860613887
+          },
+          "luid_0x00000000_0x00014F7E_phys_0_eng_1_engtype_VideoDecode": {
+            "samples": 119,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_0_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_10_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_11_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_12_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_13_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_14_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_15_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_16_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_17_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_18_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_19_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_1_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_20_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_21_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_22_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_23_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_24_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_25_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_26_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_27_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_28_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_29_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_2_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_30_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_31_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_32_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_3_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_4_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_5_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_6_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_7_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_8_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0024206666104762847,
+            "p95": 0.0,
+            "max": 0.2832179934257253
+          },
+          "luid_0x00000000_0x0001645E_phys_0_eng_9_engtype_3D": {
+            "samples": 117,
+            "mean": 0.0,
+            "p95": 0.0,
+            "max": 0.0
+          }
+        },
+        "scope": "Each actually sampled PDH engine separately; never summed. Absent engines have no entry, not an invented zero. Raw traces identified by SHA256."
+      }
+    }
+  },
+  "glyph_parity": {
+    "status": "PASS",
+    "baseline_commit": "b8a5857",
+    "baseline_gpu_sha256": "035b0a4594733bb1abb3788478af3cbac969cc7f9713a597d633e9cbd9ff2f18",
+    "current_gpu_sha256": "72871ac54bd603687414762504614b5a0e73aed059b1991815002b6a3d20ad6f",
+    "cases": [
+      {
+        "dpr": 1,
+        "size": 9,
+        "shaped": false,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 1,
+        "size": 9,
+        "shaped": true,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 1,
+        "size": 18,
+        "shaped": false,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 1,
+        "size": 18,
+        "shaped": true,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 1.5,
+        "size": 9,
+        "shaped": false,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 1.5,
+        "size": 9,
+        "shaped": true,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 1.5,
+        "size": 18,
+        "shaped": false,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 1.5,
+        "size": 18,
+        "shaped": true,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 2,
+        "size": 9,
+        "shaped": false,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 2,
+        "size": 9,
+        "shaped": true,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 2,
+        "size": 18,
+        "shaped": false,
+        "pixels_and_metrics_equal": true
+      },
+      {
+        "dpr": 2,
+        "size": 18,
+        "shaped": true,
+        "pixels_and_metrics_equal": true
+      }
+    ],
+    "scope": "Actual Qt QImage atlas pixels/metrics versus frozen unmodified baseline; GL texture upload replaced, not GPU frame parity"
+  },
+  "native-selection": {
+    "status": "PASS",
+    "scope": "Explicit owned D3D hardware-selection smoke; no robot/game/camera I/O.",
+    "cases": [
+      {
+        "requested": "auto",
+        "actual": {
+          "frame_limit": 144,
+          "luid": "luid:00000000:00014f7e",
+          "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+          "selection_note": ""
+        },
+        "nonblank": true
+      },
+      {
+        "requested": "luid:00000000:00014f7e",
+        "actual": {
+          "frame_limit": 144,
+          "luid": "luid:00000000:00014f7e",
+          "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+          "selection_note": ""
+        },
+        "nonblank": true
+      },
+      {
+        "requested": "luid:00000000:000164bf",
+        "actual": {
+          "frame_limit": 144,
+          "luid": "luid:00000000:000164bf",
+          "name": "Intel(R) UHD Graphics",
+          "selection_note": ""
+        },
+        "nonblank": true
+      },
+      {
+        "requested": "luid:ffffffff:ffffffff",
+        "actual": {
+          "frame_limit": 144,
+          "luid": "luid:00000000:00014f7e",
+          "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+          "selection_note": "Requested adapter unavailable; using system hardware default"
+        },
+        "nonblank": true
+      }
+    ],
+    "pack": {
+      "status": "PACK_VALID",
+      "files": 54,
+      "maps": {
+        "RMUC7v7": 118677,
+        "RMUL3v3": 8971,
+        "RMUL1v1": 4860
+      },
+      "binary_sha256": "b606ee7882cabb4d1a7a77863fc38eac4e7c9780bef503716692e994d05fdea2",
+      "optional_boot": false,
+      "optional_audio": false,
+      "native_render_verified": false,
+      "limits": "Integrity/source check only; run python -m tools.endfield.verify_pack_runtime for owned D3D rendering. No hardware/match qualification."
+    },
+    "limits": "Hardware D3D selection only; Qt WGL remains OS-controlled. No throughput or real match qualification."
+  },
+  "native-fields": {
+    "scope": "actual owned D3D rendering; no game/device/robot I/O",
+    "cases": [
+      {
+        "mode": "RMUC7v7",
+        "width": 1280,
+        "height": 720,
+        "chinese": false,
+        "image": "RMUC7v7_1280x720.png",
+        "stats": {
+          "frames": 172.0,
+          "last_ms": 0.5523999989236472,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      },
+      {
+        "mode": "RMUC7v7",
+        "width": 2560,
+        "height": 1440,
+        "chinese": true,
+        "image": "RMUC7v7_2560x1440.png",
+        "stats": {
+          "frames": 393.0,
+          "last_ms": 0.4743999998026993,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      },
+      {
+        "mode": "RMUL3v3",
+        "width": 1280,
+        "height": 720,
+        "chinese": false,
+        "image": "RMUL3v3_1280x720.png",
+        "stats": {
+          "frames": 565.0,
+          "last_ms": 0.7999999997991836,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      },
+      {
+        "mode": "RMUL3v3",
+        "width": 2560,
+        "height": 1440,
+        "chinese": true,
+        "image": "RMUL3v3_2560x1440.png",
+        "stats": {
+          "frames": 782.0,
+          "last_ms": 8.454599999822676,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      },
+      {
+        "mode": "RMUL1v1",
+        "width": 1280,
+        "height": 720,
+        "chinese": false,
+        "image": "RMUL1v1_1280x720.png",
+        "stats": {
+          "frames": 951.0,
+          "last_ms": 0.5874999988009222,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      },
+      {
+        "mode": "RMUL1v1",
+        "width": 2560,
+        "height": 1440,
+        "chinese": true,
+        "image": "RMUL1v1_2560x1440.png",
+        "stats": {
+          "frames": 1164.0,
+          "last_ms": 0.835999999253545,
+          "textures": 56.0,
+          "meshes": 57.0,
+          "owners": 1.0
+        }
+      }
+    ],
+    "pack": {
+      "status": "PACK_VALID",
+      "files": 54,
+      "maps": {
+        "RMUC7v7": 118677,
+        "RMUL3v3": 8971,
+        "RMUL1v1": 4860
+      },
+      "binary_sha256": "b606ee7882cabb4d1a7a77863fc38eac4e7c9780bef503716692e994d05fdea2",
+      "optional_boot": false,
+      "optional_audio": false,
+      "native_render_verified": false,
+      "limits": "Integrity/source check only; run python -m tools.endfield.verify_pack_runtime for owned D3D rendering. No hardware/match qualification."
+    },
+    "boot_audio_absent": true,
+    "owner_retired": true,
+    "status": "PASS",
+    "limits": "Not exact pixel parity, full app regression, throughput, packaging or match qualification."
+  },
+  "desktop-endfield": {
+    "theme": "endfield",
+    "scope": "Windows GPU with inert transports",
+    "renderer": "EndfieldWikiRenderer",
+    "settings_pages": 6,
+    "keyboard": "EndfieldKeybindManager",
+    "cancel_keeps_menu": true,
+    "target": "jello",
+    "result": "PASS",
+    "retired": true
+  },
+  "desktop-jello": {
+    "theme": "jello",
+    "scope": "Windows GPU with inert transports",
+    "renderer": "JelloClickGuiRenderer",
+    "settings_pages": 6,
+    "keyboard": "JelloKeyboardManager",
+    "cancel_keeps_menu": true,
+    "target": "endfield",
+    "result": "PASS",
+    "retired": true
+  },
+  "desktop-settings": {
+    "platform": "windows",
+    "dpr": 1.0,
+    "cases": [
+      {
+        "size": [
+          1280,
+          720
+        ],
+        "page": "视频",
+        "rows": 12,
+        "capture": "1280x720_page_0.png"
+      },
+      {
+        "size": [
+          1280,
+          720
+        ],
+        "page": "音频",
+        "rows": 14,
+        "capture": "1280x720_page_1.png"
+      },
+      {
+        "size": [
+          1280,
+          720
+        ],
+        "page": "游戏",
+        "rows": 34,
+        "capture": "1280x720_page_2.png"
+      },
+      {
+        "size": [
+          1280,
+          720
+        ],
+        "page": "键盘 / 鼠标",
+        "rows": 91,
+        "capture": "1280x720_page_3.png"
+      },
+      {
+        "size": [
+          1280,
+          720
+        ],
+        "page": "准星",
+        "rows": 31,
+        "capture": "1280x720_page_4.png"
+      },
+      {
+        "size": [
+          1280,
+          720
+        ],
+        "page": "界面 / HUD",
+        "rows": 82,
+        "capture": "1280x720_page_5.png"
+      }
+    ],
+    "scope": "native Qt preferences with inert device adapters; no external-window screenshot or game process",
+    "gl_backdrop": {
+      "valid_context": true,
+      "cached_size": [
+        320,
+        180
+      ]
+    },
+    "status": "PASS"
+  },
+  "desktop_gl": {
+    "PASS": 2,
+    "SKIP": 0,
+    "INCOMPLETE": 0,
+    "FAIL": 0
+  },
+  "api_mutation": "PASS: deleting draw_watermark is detected; restoring it returns a clean comparison. Historic snapshot unchanged.",
+  "limits": [
+    "No physical devices/capture/inference/uplink.",
+    "Startup sources use an OS-warm filesystem, not an OS cache-flush cold boot.",
+    "First-frame and final immutable-page texture uploads still have non-preemptible long tasks; complete 60-second trace records 49.17ms maximum warmup slice.",
+    "Render GPU picker controls native Esc D3D, not OS-routed Qt WGL.",
+    "No full repository / second-PC / real match qualification. Issues #27 and #31 remain open."
+  ]
+}

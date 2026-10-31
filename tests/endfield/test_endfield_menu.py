@@ -13,6 +13,9 @@ from test_escape_menu import APP, Host
 
 
 class NativeMenu:
+    def device_info(self):
+        return {}
+
     def __init__(self):
         self.requested = False
         self.phase = 0

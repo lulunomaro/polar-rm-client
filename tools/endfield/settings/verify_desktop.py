@@ -11,6 +11,45 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path[:0] = [str(ROOT), str(ROOT / "tests")]
 
 
+def check_dropdown(combo, capture):
+    """实际点击并检查透明度，避免把不可见的透明弹窗误判为展开成功。"""
+    from time import monotonic
+    from PySide6.QtCore import Qt
+    from PySide6.QtTest import QTest
+    from PySide6.QtWidgets import QApplication
+
+    def until(predicate):
+        deadline = monotonic() + 3
+        while not predicate() and monotonic() < deadline:
+            QTest.qWait(10)
+        assert predicate(), "Dropdown did not finish its visible/hidden transition"
+
+    original = combo.currentIndex()
+    QTest.mouseClick(combo, Qt.MouseButton.LeftButton)
+    popup = combo.view().window()
+    until(lambda: popup.isVisible() and popup.windowOpacity() > .99
+          and not combo._popup_timer.isActive())
+    assert popup.grab().save(str(capture))
+    # Qt 的双击保护期后再点击列表，模拟两次独立的用户点击。
+    QTest.qWait(QApplication.doubleClickInterval())
+    target = (original + 1) % combo.count()
+    view = combo.view()
+    index = combo.model().index(target, combo.modelColumn(), combo.rootModelIndex())
+    view.scrollTo(index)
+    QTest.mouseMove(view.viewport(), view.visualRect(index).center())
+    QTest.mouseClick(view.viewport(), Qt.MouseButton.LeftButton,
+                     pos=view.visualRect(index).center())
+    until(lambda: not popup.isVisible())
+    assert combo.currentIndex() == target
+    QTest.mouseClick(combo, Qt.MouseButton.LeftButton)
+    until(lambda: popup.isVisible() and popup.windowOpacity() > .99
+          and not combo._popup_timer.isActive())
+    QTest.keyClick(view, Qt.Key.Key_Escape)
+    until(lambda: not popup.isVisible())
+    assert combo.currentIndex() == target
+    combo.setCurrentIndex(original)
+
+
 def run(out, sizes):
     os.environ["QT_QPA_PLATFORM"] = "windows"
     from PySide6.QtCore import Qt
@@ -35,6 +74,11 @@ def run(out, sizes):
                 QTest.qWait(550)
                 for index in range(dialog.tabs.count()):
                     if index:
+                        bar = dialog.navigation
+                        QTest.mouseClick(bar, Qt.MouseButton.LeftButton,
+                                         pos=bar.tabRect(index).center())
+                        assert bar.currentIndex() == index
+                        assert dialog.tabs.currentIndex() == index
                         ready_page(dialog,dialog.tabs.tabText(index))
                     else:
                         dialog.tabs.setCurrentIndex(0)
@@ -66,13 +110,7 @@ def run(out, sizes):
                 dialog.tabs.setCurrentIndex(0)
                 QTest.qWait(400)
                 combo = dialog.tabs.widget(0).controls["hud_hz"]
-                combo.showPopup()
-                QTest.qWait(180)
-                assert combo.view().window().isVisible()
-                combo.view().window().grab().save(str(out/f"{width}x{height}_dropdown.png"))
-                combo.hidePopup()
-                QTest.qWait(180)
-                assert not combo.view().window().isVisible()
+                check_dropdown(combo, out/f"{width}x{height}_dropdown.png")
                 dialog.reject()
                 QTest.qWait(200)
                 assert not dialog.isVisible()
@@ -108,6 +146,7 @@ def run(out, sizes):
         QTest.qWait(550)
         assert not dialog.panel.backdrop.isNull()
         dialog.grab().save(str(out/"gl_backdrop.png"))
+        check_dropdown(dialog.tabs.widget(0).controls["hud_hz"], out/"gl_dropdown.png")
         report["gl_backdrop"] = {"valid_context":True,"cached_size":[dialog.panel.backdrop.width(),dialog.panel.backdrop.height()]}
     finally:
         dialog.hide()

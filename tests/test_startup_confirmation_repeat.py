@@ -15,6 +15,7 @@ from test_clickgui_background_dismiss import APP, Host
 from rm_client.ui.polar.mixins.input_dispatch_mixin import InputDispatchMixin
 from rm_client.ui.polar.renderers.startup_scene import StartupSceneMixin
 from rm_client.robot_profiles import profiles_for_match
+from rm_client.match_modes import MatchModeManager
 
 
 class StartupConfirmationRepeatTests(unittest.TestCase):
@@ -25,7 +26,7 @@ class StartupConfirmationRepeatTests(unittest.TestCase):
         self.host.wallpaper_picker_visible = False
         self.host.startup_step = 'scenario'
         self.host.scenario_manager = NS(current=NS(key='CampusSimulation'))
-        self.host.match_mode_manager = NS(current=NS(key='RMUC7v7'))
+        self.host.match_mode_manager = MatchModeManager('RMUC7v7', season=2026)
         self.host.current_robot_profile_key = lambda: 'Hero'
         self.host.startup_page_after_scenario = lambda: 'match'
         self.host.startup_page_before_robot = lambda: 'match'

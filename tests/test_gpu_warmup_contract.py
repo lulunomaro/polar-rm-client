@@ -91,6 +91,9 @@ class GpuWarmupContractTests(unittest.TestCase):
             self.assertEqual(interval, 16)
             record("timer")
         with ExitStack() as patches:
+            # This suite exercises the legacy indivisible-upload port; the
+            # incremental glyph port has its own resumable-owner tests.
+            patches.enter_context(patch.object(window.clickgui_gpu, "prewarm_steps", None))
             patches.enter_context(patch.object(window._window_lifecycle, "closing", paused == "closing"))
             patches.enter_context(patch.object(window.gpu_compositor, "available", paused != "unavailable"))
             patches.enter_context(patch.object(window, "isVisible", lambda: paused != "hidden"))

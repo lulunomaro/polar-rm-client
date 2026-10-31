@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT))
 
 
 def main() -> int:
+    global ROOT
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--width", type=int, default=2560)
@@ -35,11 +36,17 @@ def main() -> int:
     parser.add_argument("--vsync", type=int, choices=(0, 1), default=1)
     parser.add_argument("--stencil", type=int, choices=(-1, 0, 8), default=0)
     parser.add_argument("--preview-controls", action="store_true", help="Retain enabled RobotLink module presentation, while all output stays mock")
-    parser.add_argument("--scene", choices=("hud", "clickgui", "economy", "cs2-kill"), default="hud")
+    parser.add_argument("--scene", choices=("hud", "clickgui", "economy", "cs2-kill",'startup','escape','settings','keybinds'), default="hud")
+    parser.add_argument('--source-root', type=Path, help='Explicit local baseline checkout; no downloads or source edits')
+    parser.add_argument('--fps-limit', type=int, choices=(60,75,90,120,144), default=90)
+    parser.add_argument('--startup-trace', action='store_true', help='Record launch phases and event-loop long tasks; use --warmup 0 for initial frames')
     parser.add_argument("--cs2-assets", type=Path, help="Explicit local personal pack to copy into the isolated test runtime")
     parser.add_argument("--settings", help="Open an existing module's Jello settings (requires --scene clickgui)")
     parser.add_argument("--cycles", type=int, default=0, help="After timing, exercise up to 100 rapid ClickGUI/ESC reversals; mock control only")
     args = parser.parse_args()
+    if args.source_root:
+        ROOT = args.source_root.resolve()
+        sys.path.insert(0,str(ROOT))
     if not 0 < args.seconds <= 60 or not 0 <= args.warmup <= 30:
         parser.error("Use bounded positive timing budgets")
     if args.local_vision and not args.webcam:
@@ -74,13 +81,20 @@ def main() -> int:
     os.environ["POLAR_USER_DATA_ROOT"] = str(user)
     os.environ["POLAR_DISABLE_LOCAL_CAPTURE"] = "0" if args.webcam else "1"
     os.environ["POLAR_VISION_SOURCE"] = "Local" if args.local_vision else "Mock"
+    (user/'video_preferences.json').write_text(json.dumps({'hud_hz':args.fps_limit,'fps_limit':args.fps_limit,'vsync':bool(args.vsync)}),encoding='utf-8')
     if os.environ.get("QT_QPA_PLATFORM", "").lower() in ("offscreen", "minimal"):
         parser.error("This probe requires an actual desktop OpenGL surface")
 
-    from PySide6.QtCore import QTimer, Qt
+    launch_started = time.perf_counter()
+    launch_phases = {}
+    long_events = []
+    def phase(name):
+        launch_phases[name] = (time.perf_counter()-launch_started)*1000
+    from PySide6.QtCore import QTimer, Qt, QEvent
     from PySide6.QtGui import QColor, QImage, QLinearGradient, QPainter, QPixmap, QSurfaceFormat
     from PySide6.QtWidgets import QApplication
     from rm_client.ui.polar_app import PolarRMWindow
+    phase('ui_imported')
 
     fmt = QSurfaceFormat()
     fmt.setVersion(3, 3)
@@ -89,7 +103,27 @@ def main() -> int:
     fmt.setDepthBufferSize(0)
     fmt.setStencilBufferSize(args.stencil)
     QSurfaceFormat.setDefaultFormat(fmt)
-    app = QApplication(["POLAR HUD mock-only OpenGL probe"])
+    samples = defaultdict(list)
+    active = False
+    previous_present = None
+    class ProbeApplication(QApplication):
+        def notify(self, receiver, event):
+            if args.startup_trace:
+                started = time.perf_counter()
+                try:
+                    return super().notify(receiver,event)
+                finally:
+                    elapsed=(time.perf_counter()-started)*1000
+                    if elapsed >= 8 and len(long_events)<2048:
+                        long_events.append(dict(at_ms=(started-launch_started)*1000,
+                            duration_ms=elapsed,receiver=receiver.metaObject().className(),event=int(event.type())))
+            if not active or event.type()!=QEvent.Type.Paint:
+                return super().notify(receiver,event)
+            started=time.perf_counter()
+            try:return super().notify(receiver,event)
+            finally:samples['qt.paint.'+receiver.metaObject().className()].append((time.perf_counter()-started)*1000)
+    app = ProbeApplication(["POLAR HUD mock-only OpenGL probe"])
+    phase('application_created')
     if args.cs2_assets:
         from rm_client.ui.cs2_assets import Cs2Assets
         pack = Cs2Assets(args.cs2_assets)
@@ -100,9 +134,15 @@ def main() -> int:
         for source in pack.paths.values():
             shutil.copyfile(source, private / source.name)
         shutil.copyfile(args.cs2_assets / "manifest.json", private / "manifest.json")
-    samples = defaultdict(list)
-    active = False
-    previous_present = None
+    # Diagnostics belong to this probe, even when UI imports come from an
+    # explicitly selected older checkout which has no sampler module yet.
+    import importlib.util
+    sampler_spec=importlib.util.spec_from_file_location('owned_gpu_sampler',Path(__file__).parent/'diagnostics/gpu_engines.py')
+    sampler_module=importlib.util.module_from_spec(sampler_spec)
+    sampler_spec.loader.exec_module(sampler_module)
+    engines = sampler_module.GpuEngineSampler()
+    utilization = []
+    cpu_previous = [time.process_time(),time.perf_counter()]
 
     class ProbeWindow(PolarRMWindow):
         def ensure_camera_started(self):
@@ -129,7 +169,12 @@ def main() -> int:
                 previous_present = ended
 
     window = ProbeWindow()
-    window.home_visible = False
+    phase('window_constructed')
+    def first_swap():
+        if 'first_swap' not in launch_phases:
+            phase('first_swap')
+    window.frameSwapped.connect(first_swap)
+    window.home_visible = args.scene == 'startup'
     window.gui_visible = False
     window.ui_audio_enabled = False
     window.resize(args.width, args.height)
@@ -179,6 +224,15 @@ def main() -> int:
     if not args.webcam:
         video.start(33)
     window.show()
+    phase('show_returned')
+    child = None
+    if args.scene=='escape':window.set_escape_menu_visible(True)
+    elif args.scene=='settings':
+        from rm_client.ui.cs2_settings_center import build_settings_center
+        child=build_settings_center(window);child.show()
+    elif args.scene=='keybinds':
+        from rm_client.ui.jello_keybinds import build_keyboard_manager
+        child=build_keyboard_manager(window);child.show()
     if args.scene == "clickgui":
         window.set_clickgui_visible(True, announce=False, play_sound=False)
         if args.settings:
@@ -208,10 +262,24 @@ def main() -> int:
         fx_timer.start(800)
         preview_kill()
     profiler = None
+    native_start = [0.,0.]
+    utilization_timer=QTimer(window)
+    def sample_utilization():
+        if not active:return
+        cpu,wall=time.process_time(),time.perf_counter()
+        core_percent=100*(cpu-cpu_previous[0])/max(.001,wall-cpu_previous[1])
+        cpu_previous[:]=[cpu,wall]
+        utilization.append(dict(cpu_one_core_percent=core_percent,
+            cpu_machine_percent=core_percent/max(1,os.cpu_count() or 1),gpu_engines=engines.sample()))
+    utilization_timer.timeout.connect(sample_utilization)
+    utilization_timer.start(500)
     def begin():
         nonlocal active, profiler
         samples.clear()
         active = True
+        cpu_previous[:]=[time.process_time(),time.perf_counter()]
+        native=getattr(window,'_endfield_menu',None)
+        native_start[:]=[native.stats()['frames'] if native is not None else 0.,time.perf_counter()]
         if args.cprofile:
             import cProfile
             profiler = cProfile.Profile()
@@ -220,6 +288,7 @@ def main() -> int:
     def finish():
         nonlocal active
         active = False
+        utilization_timer.stop();engines.close()
         if args.capture:
             window.grabFramebuffer().save(str(args.out / "scene.png"))
         if profiler is not None:
@@ -279,7 +348,7 @@ def main() -> int:
         result = {}
         for key, values in samples.items():
             ordered = sorted(values)
-            result[key] = dict(count=len(values), mean_ms=statistics.mean(values), median_ms=statistics.median(values), p95_ms=ordered[min(len(ordered)-1, int(len(ordered)*.95))], max_ms=max(values))
+            result[key] = dict(count=len(values), mean_ms=statistics.mean(values), median_ms=statistics.median(values), p95_ms=ordered[min(len(ordered)-1, int(len(ordered)*.95))],p99_ms=ordered[min(len(ordered)-1,int(len(ordered)*.99))], max_ms=max(values))
         window.makeCurrent()
         driver = {}
         try:
@@ -301,6 +370,24 @@ def main() -> int:
             except Exception as exc:
                 vision["execution_devices_error"] = str(exc)
         payload = dict(scope="Desktop OpenGL; real control disabled; capture/inference only when explicitly opted in", scene=args.scene, cs2_pack=bool(args.cs2_assets), settings=args.settings, cycles=cycle_result, driver=driver, webcam=args.webcam, local_vision=args.local_vision, vision=vision, vsync=args.vsync, stencil_request=args.stencil, actual_stencil=surface.stencilBufferSize() if surface else None, size=[window.width(), window.height()], dpr=window.devicePixelRatioF(), camera_connected=window.camera_worker.connected, gpu_available=window.gpu_compositor.available, gpu_error=window.gpu_compositor.last_error, metrics=result)
+        native=getattr(window,'_endfield_menu',None)
+        payload.update(source_root=str(ROOT),fps_limit=args.fps_limit,utilization=utilization,
+            gpu_counter_error=engines.error,cprofile=bool(profiler),
+            native_device=native.device_info() if native and hasattr(native,'device_info') else {},
+            native_observed_fps=((native.stats()['frames']-native_start[0])/max(.001,time.perf_counter()-native_start[1])) if native is not None else None,
+            graphics_runtime=window.render_runtime.snapshot() if hasattr(window,'render_runtime') else {},
+            limitations='Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero.')
+        if args.startup_trace:
+            payload['startup_trace'] = dict(phases_ms=launch_phases,long_events=long_events,
+                warmup_max_ms=window._gpu_warmup.max_ms,warmup_completed=window._gpu_warmup.completed,
+                scope='Process-local launch phases after environment setup, synthetic video/no devices; not OS disk cold-cache time')
+        import hashlib
+        payload['source_sha256']={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in (
+            'rm_client/ui/polar_app.py','rm_client/ui/minecraft_hud.py',
+            'rm_client/ui/clickgui_gpu.py','rm_client/ui/polar/gpu_warmup.py',
+            'rm_client/ui/polar/renderers/combat_target_hud.py','rm_client/ui/endfield/menu/native.py',
+            'rm_client/ui/endfield/menu/assets/native_renderer/CURRENT.json')}
+        payload['probe_sha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
         (args.out / "metrics.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         print(json.dumps(payload, ensure_ascii=False), flush=True)
         if args.capture:
@@ -309,6 +396,7 @@ def main() -> int:
             app.processEvents()
             window.grabFramebuffer().save(str(args.out / "escape.png"))
         if not args.interactive:
+            if child is not None:child.close()
             window.close()
             close_deadline = time.perf_counter() + 10.0
             def finish_close():

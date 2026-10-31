@@ -486,6 +486,12 @@ def build_settings_center(host):
         status = QLabel("F12 急停始终有效 · 设置不暂停裁判监测 · 返回后不会自动恢复操控")
         status.setProperty("hint",True)
         status.setWordWrap(True)
+        window_mode = video.controls["window_mode"]
+        def indicate_window_mode(_index):
+            # 与其他设置保持草稿语义，明确告知用户真正生效的入口。
+            status.setText(f"显示模式已选择“{window_mode.currentText()}”；"
+                           "点击右下角“应用当前页”后生效。操控保持锁定。")
+        window_mode.currentIndexChanged.connect(indicate_window_mode)
         info = QHBoxLayout(); info.addWidget(status, 1); info.addWidget(search); root.addLayout(info)
         row = QHBoxLayout(); root.addLayout(row)
         reset_hint = QLabel("重置当前分类设置"); row.addWidget(reset_hint); row.addStretch()

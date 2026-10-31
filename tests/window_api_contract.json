@@ -983,5 +983,64 @@
       "removed_at": "2026-10-25",
       "behavior_test": "tests/test_hero_deployment_removed.py"
     }
+  },
+  "frontend_implementations": {
+    "gui_timeline": {
+      "behavior_test": "tests/test_ui_switch.py",
+      "expected": {
+        "kind": "plain-attribute",
+        "sig": "EndfieldWikiTimeline",
+        "type": "EndfieldWikiTimeline"
+      },
+      "reason": "Reviewed Endfield frontend addition in main: explicit implementation alongside unchanged Jello compatibility; no arbitrary replacement allowed."
+    },
+    "inputMethodEvent": {
+      "behavior_test": "tests/endfield/wiki/test_ime.py",
+      "expected": {
+        "call_signature": "(event)",
+        "kind": "bound-method",
+        "sig": "InputDispatchMixin.inputMethodEvent",
+        "type": "method"
+      },
+      "reason": "Reviewed Endfield frontend addition in main: explicit implementation alongside unchanged Jello compatibility; no arbitrary replacement allowed."
+    },
+    "inputMethodQuery": {
+      "behavior_test": "tests/endfield/wiki/test_ime.py",
+      "expected": {
+        "call_signature": "(query)",
+        "kind": "bound-method",
+        "sig": "InputDispatchMixin.inputMethodQuery",
+        "type": "method"
+      },
+      "reason": "Reviewed Endfield frontend addition in main: explicit implementation alongside unchanged Jello compatibility; no arbitrary replacement allowed."
+    },
+    "jello_clickgui": {
+      "behavior_test": "tests/test_ui_switch.py",
+      "expected": {
+        "kind": "plain-attribute",
+        "sig": "EndfieldWikiRenderer",
+        "type": "EndfieldWikiRenderer"
+      },
+      "reason": "Reviewed Endfield frontend addition in main: explicit implementation alongside unchanged Jello compatibility; no arbitrary replacement allowed."
+    },
+    "jello_state": {
+      "behavior_test": "tests/test_ui_switch.py",
+      "expected": {
+        "kind": "plain-attribute",
+        "sig": "EndfieldWikiState",
+        "type": "EndfieldWikiState"
+      },
+      "reason": "Reviewed Endfield frontend addition in main: explicit implementation alongside unchanged Jello compatibility; no arbitrary replacement allowed."
+    },
+    "leaveEvent": {
+      "behavior_test": "tests/endfield/test_endfield_menu.py",
+      "expected": {
+        "call_signature": "(event)",
+        "kind": "bound-method",
+        "sig": "EndfieldMenuMixin.leaveEvent",
+        "type": "method"
+      },
+      "reason": "Reviewed Endfield frontend addition in main: explicit implementation alongside unchanged Jello compatibility; no arbitrary replacement allowed."
+    }
   }
 }

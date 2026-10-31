@@ -52,6 +52,32 @@ class WindowContractTests(unittest.TestCase):
         self.assertTrue(expected)
         self.assertTrue(api.is_clean(self.compare(self.current())))
 
+    def test_reviewed_endfield_implementations_and_legacy_jello_both_compare(self):
+        current = self.current()
+        for name, record in self.contract['frontend_implementations'].items():
+            current['members'][name] = deepcopy(record['expected'])
+        self.assertTrue(api.is_clean(self.compare(current)))
+        self.assertTrue(api.is_clean(self.compare(self.current())))
+
+    def test_frontend_exceptions_do_not_accept_an_arbitrary_type_or_signature(self):
+        for name, record in self.contract['frontend_implementations'].items():
+            for field in record['expected']:
+                with self.subTest(name=name, field=field):
+                    current = self.current()
+                    current['members'][name] = deepcopy(record['expected'])
+                    current['members'][name][field] = 'unreviewed replacement'
+                    self.assertFalse(api.is_clean(self.compare(current)))
+
+    def test_frontend_implementation_requires_explicit_behavior_and_call_contract(self):
+        for key in ('reason', 'behavior_test', 'expected'):
+            modified = deepcopy(self.contract)
+            modified['frontend_implementations']['inputMethodEvent'].pop(key)
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory)/'contract.json'
+                path.write_text(json.dumps(modified), encoding='utf-8')
+                with self.assertRaises(ValueError):
+                    window_contract.load_contract(path, self.baseline)
+
     def test_private_seams_have_real_independent_caller_evidence(self):
         names_by_path = {}
         for name, sources in self.contract["private_members"].items():

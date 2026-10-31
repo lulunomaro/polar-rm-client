@@ -3,11 +3,11 @@ from __future__ import annotations
 
 import time
 
-from PySide6.QtCore import Qt, QRectF, QRect, QSize, QTimer
+from PySide6.QtCore import Qt, QRectF, QRect, QSize, QTimer, QEvent
 from PySide6.QtGui import QColor, QPainter, QPainterPath, QPen, QPolygonF
 from PySide6.QtCore import QPointF
 from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QHBoxLayout, QLabel, QTabBar, QWidget, QSizePolicy,
+    QApplication, QCheckBox, QComboBox, QHBoxLayout, QLabel, QTabBar, QWidget, QSizePolicy,
     QStyledItemDelegate, QStyle,
 )
 
@@ -124,12 +124,62 @@ class EndfieldComboBox(QComboBox):
     def showPopup(self):
         self._popup_timer.stop()
         self._closing = False
-        super().showPopup()
         self._popup = self.view().window()
+        self._popup.installEventFilter(self)
+        # Qt 原生 QRollEffect 会先显示列表快照，再交给本体从透明展开，造成二次闪现。
+        # 只在本次同步调用内屏蔽原生展开，立即恢复应用原有设置。
+        native_animation = QApplication.isEffectEnabled(Qt.UIEffect.UI_AnimateCombo)
+        if native_animation:
+            QApplication.setEffectEnabled(Qt.UIEffect.UI_AnimateCombo, False)
+        try:
+            super().showPopup()
+        finally:
+            if native_animation:
+                QApplication.setEffectEnabled(Qt.UIEffect.UI_AnimateCombo, True)
+        if self._popup.isVisible() and not self._popup_timer.isActive():
+            self._begin_popup_animation()
+
+    def eventFilter(self, watched, event):
+        if watched is self._popup:
+            if (event.type() == QEvent.Type.MouseButtonPress
+                    and event.button() == Qt.MouseButton.LeftButton
+                    and self._switch_popup_tab(event)):
+                return True
+            if event.type() == QEvent.Type.Show:
+                # Windows 的 Qt 原生展开可能延迟 Show；此时才启动本体动画。
+                self._begin_popup_animation()
+            elif event.type() == QEvent.Type.Hide:
+                self._popup_timer.stop()
+                self._closing = False
+                self._popup.setWindowOpacity(1)
+        return super().eventFilter(watched, event)
+
+    def _switch_popup_tab(self, event):
+        """弹窗抓取的分类点击仍归分类栏处理，避免第一次点击只关闭列表。"""
+        point = event.globalPosition().toPoint()
+        if self._popup.rect().contains(self._popup.mapFromGlobal(point)):
+            return False
+        window = self.window()
+        target = window.childAt(window.mapFromGlobal(point))
+        if not isinstance(target, SettingsTabBar) or not target.isEnabled():
+            return False
+        index = target.tabAt(target.mapFromGlobal(point))
+        if index < 0 or not target.isTabEnabled(index):
+            return False
+        self._popup_timer.stop()
+        self._closing = False
+        super().hidePopup()
+        target.setCurrentIndex(index)
+        event.accept()
+        return True
+
+    def _begin_popup_animation(self):
         self._popup_rect = QRect(self._popup.geometry())
         self._opens_up = self._popup_rect.center().y() < self.mapToGlobal(self.rect().center()).y()
         self._popup_started = time.perf_counter()
         self._popup.setWindowOpacity(0)
+        # Show 事件发生在映射窗口之前，先应用初始高度，避免完整列表先露出一帧。
+        self._animate_popup()
         self._popup_timer.start()
 
     def _animate_popup(self):
@@ -148,10 +198,11 @@ class EndfieldComboBox(QComboBox):
         self._popup.setGeometry(rect)
         self._popup.setWindowOpacity(max(0, min(1, alpha)))
         if elapsed >= motion().durations[clip]:
-            self._popup.setWindowOpacity(1)
             self._popup_timer.stop()
             if self._closing:
                 super().hidePopup()
+            else:
+                self._popup.setWindowOpacity(1)
 
     def hidePopup(self):
         from shiboken6 import isValid
