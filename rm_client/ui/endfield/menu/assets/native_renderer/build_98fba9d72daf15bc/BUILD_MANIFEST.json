@@ -2,12 +2,20 @@
   "scope": "retained source renderer with RM content adapter",
   "reference_repository": "https://github.com/DDDuoDuo/EndfieldHUD",
   "reference_commit": "cdbd4f573c8fa3b9c2048fa3d1b089e69196537b",
+<<<<<<<< HEAD:rm_client/ui/endfield/menu/assets/native_renderer/build_98fba9d72daf15bc/BUILD_MANIFEST.json
   "binary_sha256": "251df21bb94f80c689b764c3098e3fae6f68fcda3a11ffc7422ddd26b4fe53ea",
   "adapter_sha256": "98fba9d72daf15bcf5d23259efcd09878a148f0855081b02446d8d702826f52e",
   "adapter_sources": {
     "native/endfield/bridge.cpp": "3d7461f2ce6affcc042a6b7ad7470dcbe5e29bc8d805a3c382ec8ebd8ac4475e",
     "native/endfield/catalog_extension.inc": "48c7d86104b3c087e387554e25dd17ed354ddf129daa722625ad38eca3ebcba8",
     "native/endfield/adapter_selection.hpp": "98c9528428c32dc596f38796bcd894eb54a6416d1aa9087c86b623b01ca3bf98"
+========
+  "binary_sha256": "343dfb738a1ad17b44563431d299062cbf8a329446688ecf22460eafac3f9fec",
+  "adapter_sha256": "e50d62220b6001bb85e3e265c6e42634539aee2c4a5f772b5a1bf91747932b14",
+  "adapter_sources": {
+    "native/endfield/bridge.cpp": "0906c7df49fb0c5965b92cb530c21acb0bf75cc77c192d3ba893ef6b90b2efaa",
+    "native/endfield/catalog_extension.inc": "45b122f36513f49228ff287366792ba05b4f86e77459ed43086408b113e6fe0c"
+>>>>>>>> origin/main:rm_client/ui/endfield/menu/assets/native_renderer/build_e50d62220b6001bb/BUILD_MANIFEST.json
   },
   "compiler": "clang version 19.1.7 (https://github.com/ziglang/zig-bootstrap de1b01a8c1dddf75a560123ac1c2ab182b4830da)\nTarget: x86_64-unknown-windows-gnu\nThread model: posix",
   "derived_translation_units": {

@@ -148,13 +148,13 @@ def open_video_settings(host, embedded=False):
     from PySide6.QtCore import Qt
     from PySide6.QtWidgets import (QComboBox,QDialog,QFormLayout,QHBoxLayout,QLabel,
                                   QPushButton,QTabWidget,QVBoxLayout,QMessageBox)
-    from .endfield.settings.widgets import EndfieldComboBox as QComboBox, add_setting_row
+    from .settings_ui import ComboBox as QComboBox, add_setting_row
     if not embedded:
         host.backend.lock_control("video settings opened")
         host.control.release_all(host.state,host.registry)
     prefs=replace(current_preferences(), window_mode="Borderless" if host.isFullScreen() else "Windowed")
-    from .endfield.settings.shell import EndfieldSettingsDialog
-    dialog=QDialog(host) if embedded else EndfieldSettingsDialog(host)
+    from .settings_ui import SettingsDialogBase
+    dialog=QDialog(host) if embedded else SettingsDialogBase(host)
     try:
         dialog.setWindowTitle("POLAR · 视频设置")
         if embedded:
@@ -175,7 +175,7 @@ def open_video_settings(host, embedded=False):
             form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
             if embedded:
                 form.setContentsMargins(0,0,0,0)
-        from .endfield.settings.scroll import EndfieldScrollArea as QScrollArea
+        from .settings_ui import ScrollArea as QScrollArea
         if embedded:
             # 连续列表直接取得页面所有权，避免隐藏旧ScrollArea继续调整已移走的子页。
             from PySide6.QtWidgets import QGroupBox
@@ -261,7 +261,7 @@ def open_video_settings(host, embedded=False):
             windows_graphics.clicked.connect(open_windows_graphics)
             advanced_form.addRow(windows_graphics)
         quality=QComboBox();quality.addItems(("自定义","低（图传720p / 无MSAA）","中（图传1080p / 2× MSAA）","高（原生图传 / 4× MSAA）"))
-        from .endfield.settings.widgets import SettingsRow
+        from .settings_ui import SettingsRow
         advanced_form.insertRow(0,SettingsRow(QLabel("画面质量"),quality))
         def set_quality(index):
             if not index:return
@@ -316,7 +316,7 @@ def open_video_settings(host, embedded=False):
                     label.hide()
             status.hide()
         for label in dialog.findChildren(QLabel):label.setWordWrap(True)
-        from .endfield.settings.shell import apply_settings_widgets as apply_jello_widgets
+        from .settings_ui import apply_widgets as apply_jello_widgets
         apply_jello_widgets(dialog)
         if embedded:
             crosshair.hide();apply.hide();back.hide()

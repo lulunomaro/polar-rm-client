@@ -6,6 +6,7 @@ import sys
 from typing import TYPE_CHECKING
 
 from .feedback import EndfieldFeedback
+from ..ui_theme import is_jello
 
 if TYPE_CHECKING:
     from .boot import EndfieldBootPresentation
@@ -42,7 +43,7 @@ def advance_feedback(host, now: float) -> None:
     host._endfield_feedback.tick(
         now=now,identity=(host.backend.referee.profile_id,host.state.robot_id),
         connected=host.mqtt.connected and not host.backend.mqtt.mock_output,
-        enabled=bool(module and module.enabled and (audio is None or audio.enabled)),
+        enabled=bool(not is_jello() and module and module.enabled and (audio is None or audio.enabled)),
         threshold=host.get_setting_number(module,"Energy Warn",20),launcher=host.home_visible,
-        audio_enabled=bool(audio and audio.enabled and host.setting_bool(audio,"Enabled",True)),
+        audio_enabled=bool(not is_jello() and audio and audio.enabled and host.setting_bool(audio,"Enabled",True)),
         volume=host.get_setting_number(audio,"UI Volume",45))

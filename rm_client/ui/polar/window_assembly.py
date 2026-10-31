@@ -31,6 +31,7 @@ from ..island_icon_gpu import IslandIconGpuRenderer
 from ..jello_clickgui import JelloClickGuiRenderer
 from ..jello.resources import IMAGES, JelloResources
 from rm_client.ui.endfield.wiki import EndfieldWikiRenderer
+from ..ui_theme import is_jello
 from ..liquid_glass import LiquidGlassRenderer
 from ..minecraft_chat import MinecraftServerChatRenderer
 from ..minecraft_hud import MinecraftCombatHudRenderer
@@ -115,7 +116,8 @@ def create_presentation_services(paths: RuntimePaths) -> PresentationServices:
     motion = GuiMotionController(animation)
     return PresentationServices(
         fonts, animation, motion, ClickGuiLayerCache(), ClickGuiGpuRenderer(),
-        EndfieldWikiRenderer(paths.endfield_wiki_pack, paths.jello_pack),
+        (JelloClickGuiRenderer(paths.jello_pack) if is_jello()
+         else EndfieldWikiRenderer(paths.endfield_wiki_pack, paths.jello_pack)),
         MinecraftCombatHudRenderer(paths.asset("minecraft_hud")),
         StudentUiState(), StudentPanelRenderer(paths.asset("minecraft_hud")),
         MinecraftServerChatRenderer(paths.asset("minecraft_hud")),

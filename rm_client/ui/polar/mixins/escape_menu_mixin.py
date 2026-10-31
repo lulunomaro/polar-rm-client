@@ -68,7 +68,7 @@ class EscapeMenuMixin(EndfieldMenuMixin):
 
     def escape_menu_choices(self):
         labels = ("Cancel", "Exit client") if getattr(self, "_escape_menu_confirm_exit", False) else (
-            "Continue", "Settings", "Return to startup", "Exit client")
+            "Continue", "Settings", "Return to startup", "Exit client", "UI 切换")
         chinese = chinese_enabled(getattr(self, "registry", None))
         return tuple(ui_label(label, chinese) for label in labels)
 
@@ -103,6 +103,9 @@ class EscapeMenuMixin(EndfieldMenuMixin):
         elif index == 3:
             self._escape_menu_confirm_exit = True
             self._escape_menu_selected = 0  # Safe default: Cancel.
+        elif index == 4:
+            from ...ui_switch import open_ui_switch
+            open_ui_switch(self)
         self.frame_scheduler.force()
         self.update()
 

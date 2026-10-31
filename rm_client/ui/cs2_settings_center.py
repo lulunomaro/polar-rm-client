@@ -1,6 +1,6 @@
-"""Endfield 设置中心，沿用既有偏好草稿、事务与输入安全服务。
+"""Endfield / Jello 设置中心，共用偏好草稿、事务与输入安全服务。
 
-历史模块路径保留供旧调用者使用；表现层资源来自本机游戏只读导出。
+历史模块路径保留供旧调用者使用；表现层由本次启动的界面偏好选择。
 """
 from __future__ import annotations
 
@@ -21,11 +21,14 @@ from ..emergency_actions import request_emergency_stop
 from ..model import CONTROL_SLOT_ORDER, build_default_registry, Setting
 from ..module_settings import CONTROL_BIND_OPTIONS
 from .jello_locale import module_label, option_label, setting_label
-from .endfield.settings.shell import EndfieldSettingsDialog as JelloDialog, apply_settings_widgets as apply_jello_widgets
-from .endfield.settings.widgets import EndfieldCheckBox as QCheckBox, EndfieldComboBox as QComboBox, SettingsTabBar, add_setting_row
+from .settings_ui import (
+    SettingsDialogBase as JelloDialog, apply_widgets as apply_jello_widgets,
+    CheckBox as QCheckBox, ComboBox as QComboBox, SettingsTabBar, add_setting_row,
+    ScrollArea as JelloScrollArea,
+)
+from .ui_theme import is_jello
 from .settings_preparation import SettingsBuildQueue
 from .preference_draft import PreferenceDraft
-from .endfield.settings.scroll import EndfieldScrollArea as JelloScrollArea
 # Keep historical imports working while both dialogs use shared services.
 from .settings_application import (
     PAGES, settings_specs, preference_capabilities, validate_draft, apply_registry_draft,
@@ -438,17 +441,20 @@ def build_settings_center(host):
     from .cs2_video_settings import open_video_settings
     dialog = SettingsDialog(host)
     try:
-        dialog.setWindowTitle("POLAR · Endfield 设置")
+        dialog.setWindowTitle("POLAR · Jello 设置" if is_jello() else "POLAR · Endfield 设置")
         dialog.setObjectName("JelloSettingsCenter")  # 稳定的历史对象ID，供已有启动入口使用。
         screen = host.screen()
         available = screen.availableGeometry() if screen else host.rect()
         dialog.resize(max(720, host.width()), max(540, host.height()))
         dialog.setMinimumSize(720, 540)
+        if is_jello():
+            dialog.resize(min(1280, available.width()-30, max(720, host.width()-20)),
+                          min(840, available.height()-40, max(540, host.height()-20)))
         center = host.mapToGlobal(host.rect().center())
         dialog.move(max(available.left(), min(center.x() - dialog.width() // 2, available.right() - dialog.width())),
                     max(available.top(), min(center.y() - dialog.height() // 2, available.bottom() - dialog.height())))
         root = dialog.panel.layout()
-        dialog.heading = QLabel("//设置", dialog.panel)
+        dialog.heading = QLabel("Jello · 设置" if is_jello() else "//设置", dialog.panel)
         dialog.close_button = QPushButton(dialog.panel)
         from .endfield.settings.resources import ASSETS
         from PySide6.QtCore import QSize

@@ -100,4 +100,7 @@ def launch_qt_application(window_factory: Callable[[], QWidget]) -> None:
             _abort_failed_launch(app, window, window._abort_startup, failure)
         raise
     if owns_app:
-        raise SystemExit(app.exec())
+        result = app.exec()
+        from ..ui_switch import finish_ui_restart
+        finish_ui_restart(app)
+        raise SystemExit(result)

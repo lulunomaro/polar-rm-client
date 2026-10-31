@@ -213,8 +213,8 @@ def run(pack: Path | None, out: Path, cycles: int) -> None:
             hover = check_hover(menu, wait, until, codes=(2, 6, 5), position=position)
             assert all(row["stationary"] and row["duplicate_moves"] for row in hover), hover
             report["fullscreen_hover"] = hover
-            from tools.endfield.menu.verify_placeholder import check_window_placeholder
-            report["ui_switch_placeholder"] = check_window_placeholder(window,wait,until,out)
+            from tools.endfield.menu.verify_placeholder import check_window_switch
+            report["ui_switch"] = check_window_switch(window,wait,until,out)
             with patch.object(window.backend, "trigger_estop", return_value=(True, "test-only")) as estop:
                 QTest.keyClick(window, Qt.Key.Key_F12)
                 app.processEvents()

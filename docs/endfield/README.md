@@ -2,6 +2,8 @@
 
 2026-10-25：终端 Wiki、原生 Esc、启动展示和可选语音统一收拢到 `rm_client/ui/endfield/`。既有终端模块、设置对象和客户端动作路由继续复用；通用窗口、GPU 合成、磨砂和后端保留各自职责。
 
+2026-10-26：右侧 UI 切换已接通，确认后自动关闭并拉起，支持 Endfield / Jello 双向切换；详见 [UI 切换](../escape_menu.md#ui-切换2026-10-26)。当前原生版本为 `build_e50d62220b6001bb`，只交付 CURRENT 指向的一代 DLL。下文资源迁移数量与旧构建记录为当时快照。
+
 ## 目录与边界
 
 | 目录或文件 | 职责 |
@@ -9,7 +11,7 @@
 | `rm_client/ui/endfield/lifecycle.py` | 展示对象装配、每帧反馈更新；窗口通过此接口接入 |
 | `rm_client/ui/endfield/wiki/` | 六大类终端、路径、搜索、设置展示、输入和动画；资源位于内部 `assets/` |
 | `rm_client/ui/endfield/wiki/ime.py` | 搜索输入法提交、预编辑与候选框查询；窗口只转发事件 |
-| `rm_client/ui/endfield/menu/` | Esc 原生桥接、客户端动作适配、占位动作定义；资源位于内部 `assets/` |
+| `rm_client/ui/endfield/menu/` | Esc 原生桥接、客户端动作适配与动作标识；资源位于内部 `assets/` |
 | `rm_client/ui/endfield/changelog/` | 原版游戏公告页的本地更新日志、字体、静态资源与独立模态边界；见 [公告适配](changelog/README.md) |
 | `rm_client/ui/endfield/boot.py`、`feedback.py`、`dialogs.py` | 启动展示、可选语音策略、独立对话框 |
 | `native/endfield/` | D3D 桥接与原生目录扩展源码 |

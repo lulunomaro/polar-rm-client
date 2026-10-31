@@ -32,7 +32,7 @@ class EndfieldMenuMixin:
                            paused=QApplication.activeModalWidget() is not None
                            or getattr(self, "_endfield_changelog_pending", False)
                            or getattr(self, "_endfield_settings_pending", False))
-        if action in (2, 5, 6, 7):
+        if action in (2, 5, 6, 7, UI_SWITCH_ACTION):
             pending_flag = "_endfield_changelog_pending" if action == 7 else "_endfield_settings_pending"
             if not getattr(self, pending_flag, False):
                 setattr(self, pending_flag, True)
@@ -48,7 +48,7 @@ class EndfieldMenuMixin:
 
                 # 设置、键位和日志均为Esc子界面，保留菜单；下一轮再进入模态循环。
                 QTimer.singleShot(0, self, open_menu_dialog)
-        elif action and action != UI_SWITCH_ACTION:
+        elif action:
             self.set_escape_menu_visible(False)
             self._endfield_pending_action = action if action != 1 else None
         if self.escape_menu_visible and not menu.requested and (menu.phase == 0 or menu.error):
@@ -140,6 +140,8 @@ class EndfieldMenuMixin:
 
     def dispatch_endfield_action(self, action: int) -> None:
         if action == UI_SWITCH_ACTION:
+            from rm_client.ui.ui_switch import open_ui_switch
+            open_ui_switch(self)
             return
         if action in (2, 6):
             from rm_client.ui.cs2_settings_center import open_settings_center

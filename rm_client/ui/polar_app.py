@@ -489,6 +489,8 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
 
         self.paths = prepare_runtime_paths()
+        from .ui_theme import current_theme
+        self.ui_theme = current_theme()
         self.workspace = self.paths.workspace_root
         self.registry = build_default_registry()
         self.state = RobotState()
@@ -526,6 +528,8 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         from .endfield.lifecycle import create_presentations
         endfield = create_presentations(self.paths)
         self._endfield_feedback,self._endfield_boot,self._endfield_menu = endfield.feedback,endfield.boot,endfield.menu
+        if self.ui_theme == "jello":
+            self._endfield_boot = None
         self.backend.referee_view_observer = self._observe_referee_views
         self.registry.add_toggle_listener(self.on_module_toggled)
         # P6: ModuleRegistry 在 toggle/set/direct assignment 三条 enabled
@@ -668,8 +672,8 @@ class PolarRMWindow(TextMetricsMixin, CombatTargetHudMixin, EspWireframeMixin, M
         self._startup_navigation.defer_static(self.anim_duration(0.42))
         self._startup_last_hover_action = ""
         self.gui_visible = False
-        self.gui_timeline = EndfieldWikiTimeline()
-        self.jello_state = EndfieldWikiState()
+        self.gui_timeline = JelloMainTimeline() if self.ui_theme == "jello" else EndfieldWikiTimeline()
+        self.jello_state = JelloClickGuiState() if self.ui_theme == "jello" else EndfieldWikiState()
         self.startup_page_morph = MorphState(progress=1.0, target=1.0, duration=0.42)
         self.dynamic_island_state = IslandContainerState(response_per_60hz_frame=0.20)
         self._bottom_left_diagnostics: list[tuple[str, QColor, int]] = []

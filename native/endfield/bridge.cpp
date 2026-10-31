@@ -268,7 +268,7 @@ public:
     }
     void activate(std::uint64_t id){
         const auto i=actionCodes.find(id);
-        if(i!=actionCodes.end()&&i->second!=21)shared->action=i->second;
+        if(i!=actionCodes.end())shared->action=i->second;
     }
     void observeHover(){
         const auto hovered=session->hovered();const auto id=hovered.value_or(std::string_view{});

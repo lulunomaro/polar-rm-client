@@ -137,6 +137,7 @@ class EscapeMenuTests(unittest.TestCase):
     def test_exit_confirmation_cancel_and_commit(self):
         self.open()
         self.key(Qt.Key.Key_Up)
+        self.key(Qt.Key.Key_Up)
         self.key(Qt.Key.Key_Return)
         self.assertTrue(self.w._escape_menu_confirm_exit)
         self.w.close.assert_not_called()
@@ -178,7 +179,7 @@ class EscapeMenuTests(unittest.TestCase):
     def test_cs_navigation_rows_are_horizontal_and_contained(self):
         self.open()
         panel, rows, scale = self.w.escape_menu_layout(1000, 620)
-        self.assertEqual(len(rows), 4)
+        self.assertEqual(len(rows), 5)
         self.assertTrue(all(panel.contains(rect) for rect in rows))
         self.assertEqual(len({rect.y() for rect in rows}), 1)
         self.assertEqual(rows[0].height(), 64 * scale)

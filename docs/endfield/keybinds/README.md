@@ -2,7 +2,7 @@
 
 用户截图中的 `Keybind Manager` 已由独立的 Endfield 风格实体键盘替换。主界面为84键布局，包含功能键区、主键区、独立编辑区和方向键；长空格与左右修饰键保留物理比例。Esc 菜单的快捷键入口、模块改绑入口仍分别打开自己的窗口，不跳转或嵌入设置中心。设置中心已有的键位草稿弹窗保持原有归属。
 
-生产入口沿用 `rm_client.ui.jello_keybinds.build_keyboard_manager/open_keyboard_manager`，新表现层位于 `rm_client/ui/endfield/keybinds/`。旧画布仅为兼容及历史回归夹具保留，不再被生产工厂创建。
+生产入口沿用 `rm_client.ui.jello_keybinds.build_keyboard_manager/open_keyboard_manager`，Endfield 表现层位于 `rm_client/ui/endfield/keybinds/`。2026-10-26 接入 UI 切换后，工厂按当前界面选择：Endfield 使用此键位页，Jello 复用原 `KeyboardCanvas`，两者共用绑定会话及校验。
 
 ## 本体依据
 

@@ -111,7 +111,7 @@ class EndfieldMenuTests(unittest.TestCase):
         self.host.dispatch_endfield_action(14)
         self.host.set_clickgui_visible.assert_not_called()
 
-    def test_ui_switch_placeholder_keeps_escape_open_without_navigation(self):
+    def test_ui_switch_defers_dialog_and_keeps_escape_open(self):
         from rm_client.ui.endfield.menu.actions import UI_SWITCH_ACTION
         self.host.set_escape_menu_visible(True)
         self.menu.action = UI_SWITCH_ACTION
@@ -120,13 +120,17 @@ class EndfieldMenuTests(unittest.TestCase):
         self.assertTrue(self.host.escape_menu_visible)
         self.assertTrue(self.menu.requested)
         self.host.dispatch_endfield_action.assert_not_called()
+        APP.processEvents()
+        self.host.dispatch_endfield_action.assert_called_once_with(UI_SWITCH_ACTION)
         self.assertIsNone(self.host._endfield_pending_action)
 
-    def test_ui_switch_direct_dispatch_is_a_noop(self):
+    def test_ui_switch_direct_dispatch_opens_confirmation(self):
         from rm_client.ui.endfield.menu.actions import UI_SWITCH_ACTION
         self.host.set_escape_menu_visible(True)
         self.host.set_clickgui_visible = Mock()
-        self.host.dispatch_endfield_action(UI_SWITCH_ACTION)
+        with patch("rm_client.ui.ui_switch.open_ui_switch") as switch:
+            self.host.dispatch_endfield_action(UI_SWITCH_ACTION)
+        switch.assert_called_once_with(self.host)
         self.host.set_clickgui_visible.assert_not_called()
         self.host.open_student_panel.assert_not_called()
         self.assertTrue(self.host.escape_menu_visible)

@@ -1,4 +1,4 @@
-"""实际D3D验证新增UI切换条目的可见性、按钮反馈和零语义动作。"""
+"""实际 D3D 验证 UI 切换入口、动作及取消后的菜单状态（保留历史脚本名）。"""
 from __future__ import annotations
 
 import argparse
@@ -16,8 +16,8 @@ from tools.endfield.pack import validate
 from tools.endfield.verify_hover import hover_reader
 
 
-def check_window_placeholder(window, wait, until, out):
-    """经真实Qt事件点击新增条目，Esc保持打开且不分发任何客户端动作。"""
+def check_window_switch(window, wait, until, out):
+    """经真实 Qt 点击右侧条目，并取消确认弹窗，保留 Esc 菜单。"""
     from PySide6.QtCore import QPoint, Qt
     from PySide6.QtTest import QTest
     from PySide6.QtGui import QImage
@@ -31,24 +31,38 @@ def check_window_placeholder(window, wait, until, out):
     x,y = point(9);menu.pointer(4,x,y,-30);wait(1.1)
     x,y = point(21);menu.pointer(1,x,y);wait(.65)
     x,y = point(21)
+    from PySide6.QtCore import QTimer
+    from PySide6.QtWidgets import QApplication
+    seen = []
+    def cancel_confirmation():
+        dialog = QApplication.activeModalWidget()
+        if dialog is None:
+            QTimer.singleShot(20, cancel_confirmation)
+            return
+        assert dialog.objectName() == "UISwitchConfirmation"
+        dialog.grab().save(str(out / "ui_switch_confirmation.png"))
+        seen.append(dialog.target_theme)
+        dialog.reject()
     with patch.object(window,"dispatch_endfield_action",wraps=window.dispatch_endfield_action) as dispatch:
+        QTimer.singleShot(200, cancel_confirmation)
         QTest.mouseClick(window,Qt.MouseButton.LeftButton,pos=QPoint(round(x/dpr),round(y/dpr)))
-        wait(.45)
+        until(lambda: bool(seen))
+        wait(.25)
         assert window.escape_menu_visible and not window.gui_visible
-        dispatch.assert_not_called()
-    raw = out/"ui_switch_placeholder.bgra"
+        dispatch.assert_called_once_with(21)
+    raw = out/"ui_switch_cancelled.bgra"
     menu.api.capture(menu.handle,os.fsencode(raw));until(lambda:menu.api.captured(menu.handle)!=0)
     assert menu.api.captured(menu.handle)==1
     width,height = round(window.width()*dpr),round(window.height()*dpr)
     assert QImage(raw.read_bytes(),width,height,width*4,QImage.Format.Format_ARGB32).save(str(raw.with_suffix(".png")))
-    return {"code":21,"dpr":dpr,"escape_still_open":True,"client_actions":0,"status":"PASS"}
+    return {"code":21,"dpr":dpr,"escape_still_open":True,"client_actions":1,"target":seen[0],"status":"PASS"}
 
 
 def run(pack: Path, out: Path):
     from PySide6.QtGui import QImage
     validate(pack)
     out.mkdir(parents=True,exist_ok=False)
-    report = {"scope":"owned native D3D; placeholder never activates a client action","cases":[]}
+    report = {"scope":"owned native D3D; UI switch emits action 21 once per click","cases":[]}
     for width,height,chinese in ((1280,720,True),(1920,1080,False)):
         menu = EndfieldNativeMenu(pack)
         def until(test,timeout=15):
@@ -82,11 +96,12 @@ def run(pack: Path, out: Path):
             capture("ui_switch_hover")
             for _ in range(2):
                 menu.pointer(2,x,y);time.sleep(.04);menu.pointer(3,x,y);time.sleep(.3)
+                assert menu.api.action(menu.handle)==21
                 assert menu.api.action(menu.handle)==0
                 assert menu.phase==1
             capture("ui_switch_after_click")
             report["cases"].append({"physical_size":[width,height],"chinese":chinese,
-                "hover":read_hover(),"clicks":2,"action":0,"phase":menu.phase,"stats":menu.stats()})
+                "hover":read_hover(),"clicks":2,"action":21,"phase":menu.phase,"stats":menu.stats()})
             print(f"PASS UI switch {width}x{height}",flush=True)
         finally:
             menu.close();menu.wait_closed();assert menu.handle==0
