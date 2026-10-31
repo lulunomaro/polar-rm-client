@@ -218,6 +218,8 @@ def open_video_settings(host, embedded=False):
         geom=screen.geometry() if screen else None
         add_setting_row(basic_form,"当前显示器",QLabel(f"{screen.name() if screen else '未知'}  ·  {actual_hz:.1f} Hz"))
         mode=combo(basic_form,"window_mode","显示模式",[("窗口","Windowed"),("全屏（无边框）","Borderless")],prefs.window_mode)
+        mode.setToolTip("选择显示模式后，点击右下角“应用当前页”生效。" if embedded
+                        else "选择显示模式后，点击“应用更改”生效。")
         resolution=combo(basic_form,"resolution","窗口渲染分辨率（物理像素）",[("保持当前","Current"),*((v,v) for v in ("1280×720","1600×900","1920×1080","2560×1440","3840×2160"))],prefs.resolution)
         resolution.setEnabled(mode.currentData()=="Windowed")
         mode.currentIndexChanged.connect(lambda _:resolution.setEnabled(mode.currentData()=="Windowed"))

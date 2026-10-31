@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import time
 
-from PySide6.QtCore import Qt, QTimer, QRectF, QEvent, QCoreApplication
-from PySide6.QtGui import QColor, QPainter, QRadialGradient, QShortcut, QKeySequence
+from PySide6.QtCore import Qt, QTimer, QRectF, QEvent, QCoreApplication, QSize
+from PySide6.QtGui import QColor, QPainter, QRadialGradient, QShortcut, QKeySequence, QFontMetrics
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget, QGraphicsOpacityEffect, QGridLayout
 
 from .resources import motion, ui_font, font_family
@@ -15,6 +15,8 @@ from .geometry import SettingsGeometryGuard
 
 def settings_stylesheet(scale=1):
     px = max(13, round(24*scale))
+    # 按字体高度、上下内边距和边框计算胶囊半径，避免大屏时超过按钮高度的一半。
+    button_radius = (QFontMetrics(ui_font(px)).height() + 2*(8+1)) // 2
     return f"""
     QWidget {{color:#eeeeee;font-family:"{font_family()}";font-size:{px}px;background:transparent;}}
     QLabel {{background:transparent;border:0;}}
@@ -32,7 +34,7 @@ def settings_stylesheet(scale=1):
     QAbstractItemView {{background:#d3d1cf;color:#444444;border:1px solid #999999;outline:0;selection-background-color:#444444;selection-color:#eeeeee;}}
     QAbstractItemView::item {{padding:8px 16px;min-height:24px;}}
     QAbstractItemView::item:hover {{background:#fff500;color:#222222;}}
-    QPushButton {{border:1px solid #ffffff;border-radius:{max(12,round(25*scale))}px;background:#eeeded;color:#444444;padding:8px 22px;}}
+    QPushButton {{border:1px solid #ffffff;border-radius:{button_radius}px;background:#eeeded;color:#444444;padding:8px 22px;}}
     QPushButton:hover {{background:#fff500;color:#222222;border-color:#fff500;}}
     QPushButton:pressed {{background:#bcbca1;}}
     QPushButton:focus {{border:2px solid #fff500;}}
@@ -160,7 +162,10 @@ class EndfieldSettingsDialog(QDialog):
             side = max(110,round(210*scale))
             self.header.layout().setColumnMinimumWidth(0,side)
             self.header.layout().setColumnMinimumWidth(2,side)
-            self.close_button.setFixedSize(max(30,round(42*scale)),max(30,round(42*scale)))
+            close_size = max(30,round(42*scale))
+            self.close_button.setFixedSize(close_size,close_size)
+            icon_size = close_size-2
+            self.close_button.setIconSize(QSize(icon_size,icon_size))
             self.navigation.updateGeometry()
 
     def _scale_scope(self, scope, scale, stylesheet):
