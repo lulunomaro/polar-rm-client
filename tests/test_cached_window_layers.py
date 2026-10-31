@@ -66,6 +66,15 @@ class RasterWindowFrame:
         self.c = c = w.gpu_compositor
         self.original = original
         if original:
+            # The frozen source predates Hero extraction. Restore its inert
+            # display-state seam, not a production alias or active controller.
+            w.hero_deploy_ui = NS(render_visible=False)
+            owners = baseline.OverlayScene.glass_owners
+            def retired_hero_owners(scene, *, radial_visible=False, hero_visible=False):
+                if hero_visible:
+                    raise AssertionError('Frozen non-Hero fixture cannot enable a retired feature')
+                return owners(scene, radial_visible=radial_visible)
+            self.stack.enter_context(patch.object(baseline.OverlayScene, 'glass_owners', retired_hero_owners))
             for name in ("flush_gpu_hud_commands", "flush_gpu_island_icons", "flush_gpu_quick_action_wheel"):
                 method = getattr(baseline.CachedFrameBaseline, name)
                 self.stack.enter_context(patch.object(w, name, MethodType(method, w)))

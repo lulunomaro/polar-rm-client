@@ -1629,6 +1629,10 @@ class BackendManager:
             "h265": "udp hevc", "native": "native 0x0310", "0x0310": "native 0x0310",
         }.get(normalized, normalized)
         self._normal_video_source = normalized
+        if self.state is not None and int(self.state.deploy_mode) == 1:
+            # The operator's choice is retained for exit, never used as a
+            # fallback while the referee owns deployed Native-only video.
+            normalized = "native 0x0310"
         request = VideoSourceRequest(normalized, start)
         previous = self._video_source_request
         if (not _retry and previous is not None and previous.source == normalized
@@ -1844,6 +1848,8 @@ class BackendManager:
         if self._video_source_failures:
             return None, 0.0, ""
         mode = str(source_mode or "Auto").strip().lower()
+        if getattr(getattr(self, "state", None), "deploy_mode", 0) == 1:
+            mode = "native 0x0310"
         if video_source_notice(mode):
             return None, 0.0, "not-implemented"
         want_native = mode in {"auto", "native", "native 0x0310", "0x0310"}
@@ -2115,7 +2121,11 @@ class BackendManager:
         if name == "RobotStaticStatus" and int(data.get("robot_id", 0)) not in {0, int(self.mqtt.client_id)}:
             self.safety.lock_control("referee robot ID differs from MQTT ClientId")
             self.field_log.emit("referee_identity_mismatch", client_id=self.mqtt.client_id, robot_id=data.get("robot_id"))
-        return self.referee_adapter._apply_one(state, name, data)
+        previous_deploy = state.deploy_mode
+        result = self.referee_adapter._apply_one(state, name, data)
+        if name == "DeployModeStatusSync" and state.deploy_mode != previous_deploy:
+            self.set_active_video_source(self._normal_video_source or "Auto")
+        return result
 
     @staticmethod
     def _economy_signature(state: RobotState) -> tuple[Any, ...]:

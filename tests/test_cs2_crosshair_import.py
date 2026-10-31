@@ -357,8 +357,17 @@ class EditorAndPaintTests(unittest.TestCase):
                     rect = QRect(button.mapTo(viewport, QPoint(0, 0)), button.size())
                     self.assertTrue(viewport.rect().contains(rect), (button.text(), rect, viewport.rect()))
                 widget.parameter_scroll.ensureWidgetVisible(widget.controls['Scope Dot Uses Color'])
+                # Endfield intentionally animates ensureWidgetVisible. Pumping
+                # events without advancing time observes its initial position.
+                motion = getattr(widget.parameter_scroll, 'motion', None)
+                if motion is not None:
+                    QTest.qWait(round(motion._duration * 1000) + 100)
                 self.settle()
                 self.assertGreater(widget.parameter_scroll.verticalScrollBar().value(), 0)
+                target = widget.controls['Scope Dot Uses Color']
+                viewport = widget.parameter_scroll.viewport()
+                target_rect = QRect(target.mapTo(viewport, QPoint()), target.size())
+                self.assertTrue(viewport.rect().contains(target_rect), (target_rect, viewport.rect()))
 
     def test_extreme_preview_geometry_does_not_paint_caption_or_padding(self):
         widget = self.embedded_in_host()

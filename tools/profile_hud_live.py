@@ -39,6 +39,7 @@ def main() -> int:
     parser.add_argument("--scene", choices=("hud", "clickgui", "economy", "cs2-kill",'startup','escape','settings','keybinds'), default="hud")
     parser.add_argument('--source-root', type=Path, help='Explicit local baseline checkout; no downloads or source edits')
     parser.add_argument('--fps-limit', type=int, choices=(60,75,90,120,144), default=90)
+    parser.add_argument('--startup-trace', action='store_true', help='Record launch phases and event-loop long tasks; use --warmup 0 for initial frames')
     parser.add_argument("--cs2-assets", type=Path, help="Explicit local personal pack to copy into the isolated test runtime")
     parser.add_argument("--settings", help="Open an existing module's Jello settings (requires --scene clickgui)")
     parser.add_argument("--cycles", type=int, default=0, help="After timing, exercise up to 100 rapid ClickGUI/ESC reversals; mock control only")
@@ -84,10 +85,16 @@ def main() -> int:
     if os.environ.get("QT_QPA_PLATFORM", "").lower() in ("offscreen", "minimal"):
         parser.error("This probe requires an actual desktop OpenGL surface")
 
+    launch_started = time.perf_counter()
+    launch_phases = {}
+    long_events = []
+    def phase(name):
+        launch_phases[name] = (time.perf_counter()-launch_started)*1000
     from PySide6.QtCore import QTimer, Qt, QEvent
     from PySide6.QtGui import QColor, QImage, QLinearGradient, QPainter, QPixmap, QSurfaceFormat
     from PySide6.QtWidgets import QApplication
     from rm_client.ui.polar_app import PolarRMWindow
+    phase('ui_imported')
 
     fmt = QSurfaceFormat()
     fmt.setVersion(3, 3)
@@ -101,12 +108,22 @@ def main() -> int:
     previous_present = None
     class ProbeApplication(QApplication):
         def notify(self, receiver, event):
+            if args.startup_trace:
+                started = time.perf_counter()
+                try:
+                    return super().notify(receiver,event)
+                finally:
+                    elapsed=(time.perf_counter()-started)*1000
+                    if elapsed >= 8 and len(long_events)<2048:
+                        long_events.append(dict(at_ms=(started-launch_started)*1000,
+                            duration_ms=elapsed,receiver=receiver.metaObject().className(),event=int(event.type())))
             if not active or event.type()!=QEvent.Type.Paint:
                 return super().notify(receiver,event)
             started=time.perf_counter()
             try:return super().notify(receiver,event)
             finally:samples['qt.paint.'+receiver.metaObject().className()].append((time.perf_counter()-started)*1000)
     app = ProbeApplication(["POLAR HUD mock-only OpenGL probe"])
+    phase('application_created')
     if args.cs2_assets:
         from rm_client.ui.cs2_assets import Cs2Assets
         pack = Cs2Assets(args.cs2_assets)
@@ -152,6 +169,11 @@ def main() -> int:
                 previous_present = ended
 
     window = ProbeWindow()
+    phase('window_constructed')
+    def first_swap():
+        if 'first_swap' not in launch_phases:
+            phase('first_swap')
+    window.frameSwapped.connect(first_swap)
     window.home_visible = args.scene == 'startup'
     window.gui_visible = False
     window.ui_audio_enabled = False
@@ -202,6 +224,7 @@ def main() -> int:
     if not args.webcam:
         video.start(33)
     window.show()
+    phase('show_returned')
     child = None
     if args.scene=='escape':window.set_escape_menu_visible(True)
     elif args.scene=='settings':
@@ -354,9 +377,14 @@ def main() -> int:
             native_observed_fps=((native.stats()['frames']-native_start[0])/max(.001,time.perf_counter()-native_start[1])) if native is not None else None,
             graphics_runtime=window.render_runtime.snapshot() if hasattr(window,'render_runtime') else {},
             limitations='Synthetic 30Hz video, no real decoder/camera. GPU counters are per-engine percentages, not summed GPU utilization. Missing counters are null, not zero.')
+        if args.startup_trace:
+            payload['startup_trace'] = dict(phases_ms=launch_phases,long_events=long_events,
+                warmup_max_ms=window._gpu_warmup.max_ms,warmup_completed=window._gpu_warmup.completed,
+                scope='Process-local launch phases after environment setup, synthetic video/no devices; not OS disk cold-cache time')
         import hashlib
         payload['source_sha256']={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in (
             'rm_client/ui/polar_app.py','rm_client/ui/minecraft_hud.py',
+            'rm_client/ui/clickgui_gpu.py','rm_client/ui/polar/gpu_warmup.py',
             'rm_client/ui/polar/renderers/combat_target_hud.py','rm_client/ui/endfield/menu/native.py',
             'rm_client/ui/endfield/menu/assets/native_renderer/CURRENT.json')}
         payload['probe_sha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()

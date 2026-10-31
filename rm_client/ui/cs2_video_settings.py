@@ -235,13 +235,17 @@ def open_video_settings(host, embedded=False):
         rows, inventory_error = adapter_rows(prefs.render_adapter)
         adapter = combo(advanced_form,'render_adapter','渲染显卡（Esc D3D，重启生效）',rows,prefs.render_adapter)
         adapter.setObjectName('RenderAdapter')
+        adapter.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        adapter.setMinimumContentsLength(16)
         diagnostics = QLabel(device_summary(host))
+        diagnostics.setWordWrap(True)
         diagnostics.setObjectName('GraphicsDiagnostics')
         diagnostics.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
         advanced_form.addRow(diagnostics)
         graphics_note = QLabel('主窗口 QOpenGLWidget 使用 WGL：显卡由 Windows/驱动决定，不能用 Qt Quick 的 D3D 选项切换。\n'
             '上方选择用于 Esc 独立 D3D 设备；主窗口请在 Windows 图形设置选择此客户端，再重启并核对实际设备。\n'
             + (('显卡枚举失败：'+inventory_error) if inventory_error else ''))
+        graphics_note.setWordWrap(True)
         advanced_form.addRow(graphics_note)
         refresh_graphics = QPushButton('刷新设备诊断')
         def refresh_device_info():

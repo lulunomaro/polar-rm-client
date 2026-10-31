@@ -467,6 +467,28 @@ class ClickGuiGpuRenderer:
                     preserve_weight=preserve_weight,
                 )
 
+    def prewarm_steps(self, fonts, labels, device_pixel_ratio=1.0, **options):
+        """Prepare glyphs in bounded CPU batches; publish only complete pages.
+
+        Called only by the GL-owner warmup queue. No painter or GL resource is
+        held between yields; an interactive frame may safely use the old page.
+        """
+        if not self.available:
+            return
+        self._pixel_ratio = max(1.0, float(device_pixel_ratio))
+        strings = {str(label) for label in labels if str(label)}
+        if not strings:
+            return
+        if options.get('text_profile') == 'jello':
+            options.pop('text_profile')
+            for font in fonts:
+                yield from self._shaped_atlas_steps(font, strings, **options)
+        else:
+            options.pop('text_profile', None)
+            text = ''.join(sorted(set(''.join(strings))))
+            for font in fonts:
+                yield from self._atlas_steps(font, text, **options)
+
     def prewarm_images(self, sources) -> None:
         """Upload stable UI sprites while an OpenGL context is current."""
         if not self.available:
@@ -1242,6 +1264,15 @@ class ClickGuiGpuRenderer:
         raster_scale: float = 1.0,
         preserve_weight: bool = False,
     ) -> _ShapedTextAtlas:
+        steps = self._shaped_atlas_steps(font, texts, raster_scale=raster_scale,
+                                         preserve_weight=preserve_weight)
+        while True:
+            try:
+                next(steps)
+            except StopIteration as result:
+                return result.value
+
+    def _shaped_atlas_steps(self, font, texts, *, raster_scale=1.0, preserve_weight=False):
         """Publish a QTextLayout line atlas before native painting begins.
 
         A line is a single textured quad.  Kerning, fallback metrics and glyph
@@ -1286,7 +1317,7 @@ class ClickGuiGpuRenderer:
         padding = max(3, int(math.ceil(sample_scale * self._pixel_ratio)))
         prepared: list[tuple[str, QTextLayout, int, int, float, float, float]] = []
         pending_layouts = {}
-        for value in sorted(missing):
+        for index, value in enumerate(sorted(missing)):
             layout_key = (key, value)
             shaped = self._shaped_layouts.get(layout_key)
             if shaped is None:
@@ -1298,7 +1329,14 @@ class ClickGuiGpuRenderer:
             if cell_width > 4096 or cell_height > 4096:
                 raise RuntimeError(f"shaped Jello line exceeds 4096px: {value[:80]!r}")
             prepared.append((value, layout, cell_width, cell_height, advance, line_height, ascent))
+            if index % 8 == 7:
+                yield
 
+        if self.shaped_atlases.get(key) is not current:
+            return (yield from self._shaped_atlas_steps(font, texts, raster_scale=raster_scale,
+                                                       preserve_weight=preserve_weight))
+        if self._atlas_locked:
+            raise RuntimeError("shaped text atlas mutation attempted during a render pass")
         created = []
         chunk = []
         area = 0
@@ -1427,7 +1465,17 @@ class ClickGuiGpuRenderer:
         raster_scale: float = 1.0,
         preserve_weight: bool = False,
     ) -> _GlyphAtlas:
-        """Create a complete atlas page and swap it only at a frame boundary."""
+        """Synchronous frame-demand path, sharing the exact warmup rasterizer."""
+        steps = self._atlas_steps(font, text, raster_scale=raster_scale,
+                                  preserve_weight=preserve_weight)
+        while True:
+            try:
+                next(steps)
+            except StopIteration as result:
+                return result.value
+
+    def _atlas_steps(self, font, text, *, raster_scale=1.0, preserve_weight=False):
+        """Build one unchanged glyph page without blocking a turn for all glyphs."""
         raster_scale = max(0.25, float(raster_scale))
         key = self._font_key(font, raster_scale, preserve_weight)
         known = self._atlas_chars.get(key, set())
@@ -1469,7 +1517,11 @@ class ClickGuiGpuRenderer:
 
         metrics = QFontMetricsF(raster_font)
         ordered_chars = sorted(chars)
-        bounds_by_char = {char: metrics.boundingRect(char) for char in ordered_chars}
+        bounds_by_char = {}
+        for index, char in enumerate(ordered_chars):
+            bounds_by_char[char] = metrics.boundingRect(char)
+            if index % 16 == 15:
+                yield
         padding = max(
             4,
             int(math.ceil(self._pixel_ratio * sample_scale * raster_scale * 2.0)),
@@ -1511,6 +1563,15 @@ class ClickGuiGpuRenderer:
         painter.setPen(QColor(255, 255, 255, 255))
         glyphs: dict[str, _Glyph] = {}
         for index, char in enumerate(ordered_chars):
+            if index and index % 16 == 0:
+                painter.end()
+                yield
+                painter.begin(image)
+                painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
+                painter.setRenderHint(QPainter.RenderHint.TextAntialiasing, True)
+                painter.setRenderHint(QPainter.RenderHint.Antialiasing, False)
+                painter.setFont(raster_font)
+                painter.setPen(QColor(255, 255, 255, 255))
             col = index % columns
             row = index // columns
             bounds = bounds_by_char[char]
@@ -1542,6 +1603,13 @@ class ClickGuiGpuRenderer:
             )
         painter.end()
 
+        # A display frame can publish the same font while preparation yields.
+        # Never replace it with a stale page that drops newly requested glyphs.
+        if self.atlases.get(key) is not current:
+            return (yield from self._atlas_steps(font, text, raster_scale=raster_scale,
+                                                preserve_weight=preserve_weight))
+        if self._atlas_locked:
+            raise RuntimeError("glyph atlas mutation attempted during a render pass")
         new_texture = QOpenGLTexture(
             image,
             QOpenGLTexture.MipMapGeneration.DontGenerateMipMaps,

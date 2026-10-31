@@ -33,6 +33,7 @@ def isolated_class(root, relative, name, methods=None, namespace=None):
 def atlas_renderer(root=ROOT):
     cls = isolated_class(root, "rm_client/ui/clickgui_gpu.py", "ClickGuiGpuRenderer", {
         "_font_key", "_ensure_atlas", "_ensure_shaped_atlas",
+        "_atlas_steps", "_shaped_atlas_steps",
     })
     renderer = cls()
     renderer._pixel_ratio = 1.0

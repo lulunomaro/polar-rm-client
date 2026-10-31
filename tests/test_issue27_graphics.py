@@ -112,7 +112,7 @@ class GraphicsTests(unittest.TestCase):
 
     def test_saved_selection_is_configured_before_application_context_creation(self):
         from rm_client.ui.polar import qt_application
-        events=[];application=Mock();application.exec.return_value=0
+        events=[];application=Mock(_polar_ui_restart=None);application.exec.return_value=0
         prefs=replace(video.VideoPreferences(),render_adapter='luid:00000000:00000001')
         with patch.object(qt_application,'QApplication') as qt,patch.object(qt_application,'_retain_window_until_close'),patch.object(video,'configure_surface'),patch.object(video,'restore_startup_window'),patch.object(video,'current_preferences',return_value=prefs),patch.object(devices,'configure_process_graphics',side_effect=lambda value:events.append(('selection',value))):
             qt.instance.return_value=None
